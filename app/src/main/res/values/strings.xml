@@ -1,0 +1,113 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+	<string name="about_hkbs">1950年成立，是聯合聖經公會（UBS）全球147家聖經公會成員之一。一直秉承「讓每一個人能以可負擔的價錢，獲得一本讀得明白的聖經」為宗旨，承擔中文聖經翻譯、出版、分發到社會各階層，並推廣聖經的使命。多年來出版及發行《和合本》、《廣東話聖經》、《呂振中譯本》、《現代中文譯本》、《新標點和合本》等聖經版本。2010年出版《和合本修訂版》新舊約全書，承傳《和合本》聖經近一個世紀對全球華人教會的祝福。</string>
+	<string name="about_arkist">希望每一個人都勤力讀聖經, 明白神的話語。所以自2009年起, 開發Nokia手機聖經程式，並把經文分類、整理，直至現在。願主的話語常與你同在。</string>
+	<string name="app_rule">
+        <![CDATA[
+<p><big><big><u>使用條款</u></big></big><br/><br/>
+在使用「全年好日曆」應用程式前，請細閱本條款及細則：<br/>
+<br/>
+1. 「全年好日曆」應用程式是由Arkist開發，其應用程式及任何更新、修改或提升，均受版權法、商標法及其他有關知識產權法律所保護。<br/>
+<br/>
+2. 「全年好日曆」應用程式的內容，包括文字、介面、圖案、展品、文件及其他組成部分，版權屬香港聖經公會所有；應用程式的任何軟體、代碼、腳本程式等，版權屬Arkist所有。<br/>
+<br/>
+3. 在未經Arkist預先書面批准下，不得仿造、複製、印製、銷售、轉售或利用作商業用途。<br/>
+<br/>
+4. Arkist對「全年好日曆」應用程式所提供的任何服務及特性、缺失、錯誤發送或故障概不負責。<br/>
+<br/>
+5. 須同意只合法使用「全年好日曆」應用程式，而使用方式並不侵犯或限制或妨礙任何第三方使用及享用「全年好日曆」應用程式。 <br/>
+<br/>
+6. 當首次使用「全年好日曆」應用程式，本條款及細則即時生效。Arkist保留權利不時更改本條款及細則。<br/>
+<br/>	
+        ]]>
+    </string>
+<!-- 	<string name="about_hkbs_address">
+        <![CDATA[
+<p>香港聖經公會 Hong Kong Bible Society<br/>
+香港九龍尖沙咀漆咸道南67號安年大廈902室<br/>
+<br/>
+Room 902, Oriental Centre,<br/>
+67 Chatham Road South,<br/>
+Tsimshatsui, Kowloon, Hong Kong<br/>
+<br/>
+電話Tel：(852) 2368 5147<br/>
+傳真 Fax：(852) 2311 0167<br/>
+網頁Website：www.hkbs.org.hk<br/>
+電郵Email：info@hkbs.org.hk<br/></p>
+        ]]> </string>-->
+
+<!-- <p>香港聖經公會 Hong Kong Bible Society<br/>
+<br/> -->
+	<string name="about_hkbs_address">
+        <![CDATA[
+<p>電話Tel：(852) 2368 5147<br/>
+傳真 Fax：(852) 2311 0167<br/>
+網頁Website：www.hkbs.org.hk<br/>
+電郵Email：info@hkbs.org.hk<br/></p>
+        ]]>
+	</string>
+	<string name="about_arkist_address">
+        <![CDATA[
+<center><p>
+網頁Website：www.arkist.org<br/>
+電郵Email：info@arkist.org<br/></p></center>
+        ]]>
+	</string>
+	<string name="about_arkist_address1">網頁Website：www.arkist.org</string>
+	<string name="about_arkist_address2">電郵Email：info@arkist.org</string>
+	<string name="about_hkbs_address1">電話Tel：(852) 2368 5147</string>
+	<string name="about_hkbs_address2">傳真 Fax：(852) 2311 0167</string>
+	<string name="about_hkbs_address3">網頁Website：www.hkbs.org.hk</string>
+	<string name="about_hkbs_address4">電郵Email：info@hkbs.org.hk</string>	
+    <string name="app_name">全年好日曆</string>
+    <string name="app_widget">全年好日曆4x4</string>
+    <string name="main_share">分享</string>
+    <string name="main_bible">閱讀經文</string>
+    <string name="main_others">相關程式</string>
+    <string name="main_calendar">日曆</string>
+    <string name="main_alarm">提醒設定</string>
+    <string name="main_about">關於我們</string>
+    <string name="main_support">支援</string>
+    <string name="main_copy">複製</string>
+    <string name="main_today">今天</string>
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="tomorrow">明天</string>
+    <string name="WordToday">今天</string>
+    <string name="WordGoldVerse">金句</string>
+    <string name="MsgCalendarChangeEventDate">提示: 連續按日期2次可更改 [日期]</string>
+    
+    <string name="quick_response_custom_msg">Custom message\u2026</string>
+    <string name="no_title_label">(No title)</string>
+    <string name="quick_response_email_failed">Failed to find an email program</string>
+	<string name="snooze_label">"Snooze"</string>
+	<string name="email_guests_label">Email guests</string>
+	<string translatable="false" name="email_subject_prefix">Re:\u0020</string>
+<!--
+public String getQuantityString (int id, int quantity, Object... formatArgs)
+the first count parameter selects the appropriate plural string and the second count parameter is inserted into the %d placeholder.  
+ -->
+	<plurals name="Nminutes">
+        <item quantity="one">1 minute</item>
+        <item quantity="other"><xliff:g id="count">%d</xliff:g> minutes</item>
+    </plurals>
+    <!-- number of events in the notification bar -->
+    <plurals name="Nevents">
+        <item quantity="one">1 event</item><!-- This is the label for a 1 event. -->
+        <item quantity="other"><xliff:g id="count">%d</xliff:g> events</item><!-- This is the label for 2 or more events. -->
+    </plurals>
+    <!-- number of remaining events for an alert digest in the notification bar [CHAR LIMIT = 30] -->
+    <plurals name="N_remaining_events">
+        <item quantity="one">+1 event</item>
+        <item quantity="other">+<xliff:g id="count">%d</xliff:g> events</item>
+    </plurals>
+    <!-- This is shown in the popup picker when emailing attendees -->
+    <string name="email_picker_label">Email with</string>
+     <!-- This shows the number of additional reminders that were missed. This
+         is the singular case so it displays '1 more reminder' -->
+    <string name="alert_missed_events_single">(<xliff:g id="reminder_count">%s</xliff:g> more reminder)</string>
+    <!-- This shows the number of additional reminders that were missed.  For example,
+         if there were two additional reminders then this would show
+         '2 more reminders' -->
+    <string name="alert_missed_events_multiple">(<xliff:g id="reminder_count">%s</xliff:g> more reminders)</string>
+    
+</resources>

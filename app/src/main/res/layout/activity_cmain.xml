@@ -1,0 +1,257 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:background="@color/mainBackground"
+    tools:context=".CMain" >
+	<ViewAnimator
+        android:id="@+id/xmlMainContents"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <include
+            android:id="@+id/xmlPage1"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            layout="@layout/activity_page1" />
+
+        <include
+            android:id="@+id/xmlPage2"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            layout="@layout/activity_page2" />
+    </ViewAnimator>
+
+    <RelativeLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:focusableInTouchMode="true" >
+
+        <!-- android:background="@color/black_overlay" -->
+
+        <LinearLayout
+            android:id="@+id/xmlMainTitle"
+            android:layout_width="match_parent"
+            android:layout_height="44dp"
+            android:background="@color/darkGrey"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:padding="4dp"
+                android:src="@drawable/ic_launcher" />
+
+            <org.arkist.share.AxTextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center_vertical|left"
+                android:text="@string/app_name"
+                android:textAppearance="@android:style/TextAppearance.Medium"
+                android:textColor="@color/white" />
+        </LinearLayout>
+
+        <!--
+             android:layout_gravity="bottom|center_horizontal" 
+        
+            tools:ignore="UselessParent"
+        -->
+<!-- 	android:background="@color/black_overlay" -->
+
+        <LinearLayout
+            android:id="@+id/xmlMainControls"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:background="@color/black_overlay"
+            android:orientation="vertical"
+            android:paddingBottom="2dp"
+            android:paddingTop="2dp" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <org.arkist.share.AxTextView
+                    android:id="@+id/mainBtnAbout"
+                    style="@style/MenuStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/main_about"
+                    android:textAppearance="@android:style/TextAppearance.Small"
+                    android:textColor="@color/white" />
+
+                <org.arkist.share.AxTextView
+                    android:id="@+id/mainBtnAlarm"
+                    style="@style/MenuStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/main_alarm"
+                    android:textAppearance="@android:style/TextAppearance.Small"
+                    android:textColor="@color/white" />
+
+                <org.arkist.share.AxTextView
+                    android:id="@+id/mainBtnCalendar"
+                    style="@style/MenuStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/main_calendar"
+                    android:textAppearance="@android:style/TextAppearance.Small"
+                    android:textColor="@color/white" />
+
+                <org.arkist.share.AxTextView
+                    android:id="@+id/mainBtnShare"
+                    style="@style/MenuStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/main_share"
+                    android:textAppearance="@android:style/TextAppearance.Small"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:orientation="horizontal" >
+
+                <org.arkist.share.AxTextView
+                    android:id="@+id/mainBtnPlan"
+                    style="@style/MenuStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/main_others"
+                    android:textAppearance="@android:style/TextAppearance.Small"
+                    android:textColor="@color/white" />
+
+                <org.arkist.share.AxTextView
+                    android:id="@+id/mainBtnBible"
+                    style="@style/MenuStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/main_bible"
+                    android:textAppearance="@android:style/TextAppearance.Small"
+                    android:textColor="@color/white" />
+
+                <org.arkist.share.AxTextView
+                    android:id="@+id/mainBtnToday"
+                    style="@style/MenuStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/main_today"
+                    android:textAppearance="@android:style/TextAppearance.Small"
+                    android:textColor="@color/white" />
+
+                <org.arkist.share.AxTextView
+                    android:id="@+id/mainBtnCopy"
+                    style="@style/MenuStyle"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/main_copy"
+                    android:textAppearance="@android:style/TextAppearance.Small"
+                    android:textColor="@color/white" />
+            </LinearLayout>
+        </LinearLayout>
+    </RelativeLayout>
+    <RelativeLayout 
+        android:id="@+id/xmlAdBanner"
+        android:layout_width="match_parent" 
+		android:layout_height="match_parent"
+		android:clickable="true"
+		android:focusableInTouchMode="true"
+		android:background="@color/black"
+		android:visibility="gone">
+        <!--  
+        android:src="@drawable/banner"
+        -->
+        <ImageView		    
+            android:id="@+id/xmlAdBannerImage"
+            android:layout_marginTop="32dp"
+            android:layout_marginBottom="32dp"
+		    android:layout_width="match_parent" 
+		    android:layout_height="match_parent"
+		    android:background="@color/black"/>
+        <ImageView 
+            android:id="@+id/xmlAdBannerClose"
+            android:layout_width="48dp" 
+            android:layout_height="48dp"
+            android:src="@drawable/img_sat_close"
+            android:layout_alignParentTop="true"
+            android:layout_alignParentRight="true"
+            />
+		 <org.arkist.share.AxTextView 
+		     android:id="@+id/xmlAdBannerText"
+		     android:layout_alignParentRight="true"
+		     android:layout_alignParentBottom="true"
+		     android:layout_marginRight="8dp"
+		     android:layout_marginBottom="4dp"
+		     android:layout_width="wrap_content" 
+		    android:layout_height="wrap_content"
+		    android:textAppearance="@android:style/TextAppearance.Medium"
+		    android:textColor="@color/white"
+		    android:text="繼續"
+		    android:visibility="invisible"
+		     />    
+    </RelativeLayout>
+    <!-- <TextView android:layout_width="wrap_content"
+	    	  android:layout_height="wrap_content"
+	    	  android:text="STANDARD"
+	    	  android:layout_alignParentTop="true"/> -->
+	<LinearLayout
+	    android:id="@+id/xmlMainClickPanel"
+	    android:orientation="vertical"
+	    android:layout_width="match_parent"
+	    android:layout_height="match_parent">
+		<View 
+			android:layout_width="match_parent"
+		    android:layout_height="0dp"
+		    android:layout_weight="1"/>
+		<LinearLayout
+		    android:layout_width="match_parent"
+	    	android:layout_height="96dp"
+	    	android:orientation="horizontal">
+			<org.arkist.share.AxImageView
+			    android:id="@+id/xmlMainClickLeft"
+			    android:layout_width="96dp"
+			    android:layout_height="96dp"
+			    android:background="@drawable/img_back_white"/>
+			<View
+			    android:layout_width="0dp"
+			    android:layout_height="wrap_content"
+			    android:layout_weight="1"/>
+			<org.arkist.share.AxImageView
+			    android:id="@+id/xmlMainClickRight"
+			    android:layout_width="96dp"
+			    android:layout_height="96dp"
+			    android:background="@drawable/img_forward_white"/>    
+		</LinearLayout>
+	    <View 
+			android:layout_width="match_parent"
+		    android:layout_height="0dp"
+		    android:layout_weight="3"/>
+	</LinearLayout>   	  		    	  
+</RelativeLayout>

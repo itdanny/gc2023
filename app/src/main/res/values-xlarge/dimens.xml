@@ -1,0 +1,22 @@
+<resources>
+	<!-- Standard Screen -->
+<!-- TextAppearance.Large -> 22sp
+	 TextAppearance.Medium -> 18sp
+	 TextAppearance.Small -> 14sp -->
+
+	<!-- <dimen name="text_gold_size_l">44sp</dimen>
+	<dimen name="text_gold_size_m">42sp</dimen>
+	<dimen name="text_gold_size_s">40sp</dimen>
+	<dimen name="text_gold_verse">32sp</dimen>
+	
+	<dimen name="text_hint_size_l">39sp</dimen>
+	<dimen name="text_hint_size_s">36sp</dimen>
+	
+    <dimen name="text_top_left">40sp</dimen>
+    <dimen name="text_top_middle">60sp</dimen>
+    <dimen name="text_top_right">40dp</dimen>
+    <dimen name="text_middle">520sp</dimen>
+    <dimen name="text_bottom_left">32sp</dimen>
+    <dimen name="text_bottom_middle">52sp</dimen>
+    <dimen name="text_bottom_right">32dp</dimen> -->    
+</resources>

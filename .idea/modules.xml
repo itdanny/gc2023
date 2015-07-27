@@ -1,0 +1,12 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project version="4">
+  <component name="ProjectModuleManager">
+    <modules>
+      <module fileurl="file://$PROJECT_DIR$/GC2015.iml" filepath="$PROJECT_DIR$/GC2015.iml" />
+      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libArkist/libArkist.iml" filepath="$PROJECT_DIR$/libArkist/libArkist.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libFancyCoverFlow/libFancyCoverFlow.iml" filepath="$PROJECT_DIR$/libFancyCoverFlow/libFancyCoverFlow.iml" />
+      <module fileurl="file://$PROJECT_DIR$/libSuperToasts/libSuperToasts.iml" filepath="$PROJECT_DIR$/libSuperToasts/libSuperToasts.iml" />
+    </modules>
+  </component>
+</project>

@@ -1,0 +1,4 @@
+<resources>
+    <dimen name="clock_view_inner_size">28dp</dimen>
+    <dimen name="ax_text_size_basic">22sp</dimen>
+</resources>

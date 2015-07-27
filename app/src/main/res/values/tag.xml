@@ -1,0 +1,4 @@
+<resources>
+    <item type="id" name="TAG_POSITION"/>
+    <item type="id" name="CALL_MAIN"/>
+</resources>

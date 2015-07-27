@@ -1,0 +1,89 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fcf="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:padding="1dp" >
+
+    <!-- android:scaleType="centerInside" -->
+
+    <FrameLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:background="@android:color/black" >
+
+        <!-- Without this panel it will use the smallest -->
+    </FrameLayout>
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+        
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+    <!-- 
+    Try to change it AxImageView; However, it won't accept any click anymore...bug...do it later...
+     -->
+       <!--  <org.arkist.share.AxImageView -->
+       <ImageView
+            android:id="@+id/xmlCoverFlowItemImage"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:adjustViewBounds="true"
+            android:scaleType="fitXY"/>
+
+        <TextView
+            android:id="@+id/xmlCoverFlowItemText"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_gravity="center_horizontal"
+            android:gravity="center"
+            android:textColor="@android:color/white"
+            android:textSize="@dimen/coverFlow_text_size" />
+        
+        <FrameLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" />
+        
+    </LinearLayout>
+
+</RelativeLayout><!--
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fcf="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical"
+    android:background="@color/black"
+    android:padding="1dp" >
+
+    android:scaleType="centerInside"
+    <FrameLayout 
+        android:layout_width="match_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1">
+        
+    </FrameLayout>
+    <ImageView
+        android:id="@+id/xmlCoverFlowItemImage"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:scaleType="center"
+        android:src="@drawable/img_miracles"/>
+
+    <TextView 
+        android:id="@+id/xmlCoverFlowItemText"
+        android:gravity="center"
+        android:text="耶穌的教訓"
+        android:textSize="@dimen/text_medium"
+        android:textColor="@color/white"
+        android:layout_gravity="center"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content" />
+
+</LinearLayout>
+-->

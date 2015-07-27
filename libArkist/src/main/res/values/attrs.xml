@@ -1,0 +1,21 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources>
+    <declare-styleable name="AxClockView">
+        <attr name="pinned" format="boolean" />
+        <attr name="progress" format="integer" />
+        <attr name="max" format="integer" />
+        <attr name="circleColor" format="color" />
+        <attr name="progressColor" format="color" />
+    </declare-styleable>
+    <declare-styleable name="AxImageView">
+        <attr name="icon_style" format="integer" />   <!--  use enum   -->
+        <attr name="icon_color" format="color" />     
+        <attr name="icon_src" format="reference" />        
+        <attr name="icon_text_size" format="dimension" />
+        <attr name="icon_text_color" format="color" />
+        <attr name="icon_text" format="string" />        
+    </declare-styleable>    
+        <declare-styleable name="ShimmerView">
+        <attr name="reflectionColor" format="color"/>
+    </declare-styleable>
+</resources>

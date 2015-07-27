@@ -1,0 +1,26 @@
+<resources>
+    <color name="clock_view_default_circle_color">#80ffffff</color>
+    <color name="clock_view_default_progress_color">#33b5e5</color>
+    
+	<color name="popup_divider">#565757</color> <!-- Gray -->
+    <color name="popup_item_bkg_pressed">#707070</color> <!--Gray 707070 Green a4f071 -->
+    <color name="popup_item_bkg_normal">#00ffffff</color>
+    <color name="popup_button_bkg_pressed">#a4f071</color>
+    <color name="popup_button_bkg_normal">#88aea7b4</color> <!-- 454545 -->
+    <color name="popup_button_text_normal">#b8b8b8</color>
+    <color name="popup_button_stroke">#00ff26</color>
+    
+    <color name="coverFlow_Background">#ee565757</color> <!-- Gray -->
+    <dimen name="coverFlow_text_size">22sp</dimen>
+    
+    <color name="axDialogTransparentBkg">#cc454545</color>
+    <color name="axDialogBkg">#ff5c8c33</color> <!-- Green -->
+    <color name="axGreyWhite">#d6d6d6</color>
+	<color name="axDarkWhite">#F2F2F2</color>
+	
+	<color name="axMsgError">#eeff0000</color>
+    <color name="axMsgInfo">#ee62a22e</color>
+    <color name="axMsgWarn">#eeFFB433</color>
+    
+    <color name="axYellow">#ffff00</color>
+</resources>

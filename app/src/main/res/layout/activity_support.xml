@@ -1,0 +1,244 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <ScrollView
+        android:id="@+id/scrollView1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent" >
+
+        <LinearLayout
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:orientation="vertical" >
+
+            
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:paddingLeft="18dp"
+                android:paddingRight="18dp"
+                android:text="技術支援"
+                android:textStyle="bold"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+            
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="10dp"
+                android:orientation="horizontal" >
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+                
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="1"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/arkist" />
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+            <!-- <TextView
+                android:id="@+id/supportArkistAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:gravity="left"
+                android:paddingLeft="18dp"
+                android:paddingRight="18dp"
+                android:text="@string/about_arkist_address"
+                android:textAppearance="?android:attr/textAppearanceSmall" /> -->
+			<TextView
+                android:id="@+id/supportArkistAddress1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:paddingLeft="18dp"
+                android:paddingRight="18dp"
+                android:text="@string/about_arkist_address1"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+			<TextView
+                android:id="@+id/supportArkistAddress2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:paddingLeft="18dp"
+                android:paddingRight="18dp"
+                android:text="@string/about_arkist_address2"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+			
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="25dp"
+                android:gravity="center"
+                android:paddingLeft="18dp"
+                android:paddingRight="18dp"
+                android:text="內容查詢"
+                android:textStyle="bold"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+            
+             <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_marginTop="5dp"
+                android:orientation="horizontal" >
+				<FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+                <ImageView
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1.16"
+                    android:adjustViewBounds="true"
+                    android:scaleType="fitXY"
+                    android:src="@drawable/hkbs_logo_2015" />
+
+                <FrameLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1" />
+            </LinearLayout>
+
+ 			<!-- <TextView
+                android:id="@+id/supportHkbsAddress"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:gravity="left"
+                android:paddingLeft="18dp"
+                android:paddingRight="18dp"
+                android:text="@string/about_hkbs_address"
+                android:textAppearance="?android:attr/textAppearanceSmall" /> -->
+                
+                <TextView
+                android:id="@+id/supportHkbsAddress1"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:paddingLeft="18dp"
+                android:paddingRight="18dp"
+                android:text="@string/about_hkbs_address1"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+                
+                <TextView
+                android:id="@+id/supportHkbsAddress2"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:paddingLeft="18dp"
+                android:paddingRight="18dp"
+                android:text="@string/about_hkbs_address2"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+                
+                <TextView
+                android:id="@+id/supportHkbsAddress3"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:paddingLeft="18dp"
+                android:paddingRight="18dp"
+                android:text="@string/about_hkbs_address3"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+                                
+                <TextView
+                android:id="@+id/supportHkbsAddress4"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:paddingLeft="18dp"
+                android:paddingRight="18dp"
+                android:text="@string/about_hkbs_address4"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+                
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="25dp"
+                android:gravity="center"
+                android:paddingLeft="18dp"
+                android:paddingRight="18dp"
+                android:text="日曆地區"
+                android:textStyle="bold"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+            <RelativeLayout 
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent">
+                <Button 
+                    android:id="@+id/xmlSupportHongKong"
+                    android:layout_height="wrap_content"
+                	android:layout_width="wrap_content"
+                	android:layout_centerHorizontal="true"
+                	android:text="香港"/>
+                
+                <Button 
+                    android:id="@+id/xmlSupportTaiWan"
+                    android:layout_height="wrap_content"
+                	android:layout_width="wrap_content"
+                	android:layout_toLeftOf="@id/xmlSupportHongKong"
+                	android:text="台灣"/>
+                
+                <Button 
+                    android:id="@+id/xmlSupportOther"
+                    android:layout_height="wrap_content"
+                	android:layout_width="wrap_content"
+                	android:layout_toRightOf="@id/xmlSupportHongKong"
+                	android:text="其他"/>
+            </RelativeLayout>        
+             <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="25dp"
+                android:gravity="center"
+                android:paddingLeft="18dp"
+                android:paddingRight="18dp"
+                android:text="系統資訊"
+                android:textStyle="bold"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+             <TextView
+                android:id="@+id/xmlSupportVersion"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="5dp"
+                android:gravity="center"
+                android:paddingLeft="18dp"
+                android:paddingRight="18dp"
+                android:text=""
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+        </LinearLayout>
+    </ScrollView>
+
+</LinearLayout>

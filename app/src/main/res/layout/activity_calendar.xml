@@ -1,0 +1,232 @@
+<?xml version="1.0" encoding="utf-8"?>
+<LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent"
+    android:orientation="vertical" >
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:gravity="center"
+        android:orientation="horizontal" >
+
+        <RelativeLayout
+            android:id="@+id/header"
+            android:layout_width="0dp"
+            android:layout_height="wrap_content"
+            android:layout_weight="1"
+            android:background="@android:color/white" >
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:gravity="left" >
+
+                <TextView
+                    android:id="@+id/xmlPrevYear"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:layout_centerHorizontal="true"
+                    android:background="@drawable/widget_unselected_cell_normal_day"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:paddingBottom="2dp"
+                    android:paddingLeft="0dp"
+                    android:paddingRight="2dp"
+                    android:paddingTop="2dp"
+                    android:text="&lt;&lt;"
+                    android:textAppearance="@android:style/TextAppearance.Large"
+                    android:textColor="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/xmlPrevMth"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:layout_centerHorizontal="true"
+                    android:background="@drawable/widget_unselected_cell_normal_day"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:paddingBottom="2dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:paddingTop="2dp"
+                    android:text="&lt;"
+                    android:textAppearance="@android:style/TextAppearance.Large"
+                    android:textColor="@android:color/black" />
+            </LinearLayout>
+
+            <TextView
+                android:id="@+id/xmlCalendarMonth"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerHorizontal="true"
+                android:layout_toRightOf="@id/xmlPrevMth"
+                android:gravity="center"
+                android:paddingBottom="2dp"
+                android:paddingLeft="5dp"
+                android:paddingRight="5dp"
+                android:paddingTop="2dp"
+                android:text="Date"
+                android:textAppearance="@android:style/TextAppearance.Large"
+                android:textColor="@android:color/black" />
+
+            <LinearLayout
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:layout_toRightOf="@id/xmlCalendarMonth"
+                android:gravity="right" >
+
+                <TextView
+                    android:id="@+id/xmlNextMth"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:layout_centerHorizontal="true"
+                    android:background="@drawable/widget_unselected_cell_normal_day"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:paddingBottom="2dp"
+                    android:paddingLeft="5dp"
+                    android:paddingRight="5dp"
+                    android:paddingTop="2dp"
+                    android:text=">"
+                    android:textAppearance="@android:style/TextAppearance.Large"
+                    android:textColor="@android:color/black" />
+
+                <TextView
+                    android:id="@+id/xmlNextYear"
+                    android:layout_width="50dp"
+                    android:layout_height="match_parent"
+                    android:layout_centerHorizontal="true"
+                    android:background="@drawable/widget_unselected_cell_normal_day"
+                    android:clickable="true"
+                    android:gravity="center"
+                    android:paddingBottom="2dp"
+                    android:paddingLeft="2dp"
+                    android:paddingRight="0dp"
+                    android:paddingTop="2dp"
+                    android:text=">>"
+                    android:textAppearance="@android:style/TextAppearance.Large"
+                    android:textColor="@android:color/black" />
+            </LinearLayout>
+        </RelativeLayout>
+
+        <TextView
+            android:id="@+id/xmlToday"
+            android:layout_width="wrap_content"
+            android:layout_height="match_parent"
+            android:layout_centerHorizontal="true"
+            android:background="@drawable/widget_unselected_cell_normal_day"
+            android:clickable="true"
+            android:gravity="center"
+            android:paddingLeft="5dp"
+            android:paddingRight="5dp"
+            android:text=""
+            android:textAppearance="@android:style/TextAppearance.Medium"
+            android:textColor="@android:color/black" />
+    </LinearLayout>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:background="@color/mainColorBeg" />
+
+    <GridView
+        android:id="@+id/xmlGridViewTitle"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_margin="0dp"
+        android:background="@android:color/white"
+        android:gravity="center"
+        android:horizontalSpacing="1dp"
+        android:listSelector="@drawable/gridview_selector_calendar"
+        android:numColumns="7"
+        android:padding="0dp"
+        android:stretchMode="columnWidth"
+        android:verticalSpacing="0dp" />
+
+    <ViewAnimator
+        android:id="@+id/xmlReminderViewAnimator"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content" >
+
+        <GridView
+            android:id="@+id/gridview1"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="0dp"
+            android:background="@color/greyWhite"
+            android:drawSelectorOnTop="true"
+            android:gravity="center"
+            android:horizontalSpacing="1dp"
+            android:listSelector="@drawable/gridview_selector_calendar"
+            android:numColumns="7"
+            android:padding="0dp"
+            android:stretchMode="columnWidth"
+            android:verticalSpacing="1dp" />
+
+        <GridView
+            android:id="@+id/gridview2"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:layout_margin="0dp"
+            android:background="@color/greyWhite"
+            android:drawSelectorOnTop="true"
+            android:gravity="center"
+            android:horizontalSpacing="1dp"
+            android:listSelector="@drawable/gridview_selector_calendar"
+            android:numColumns="7"
+            android:padding="0dp"
+            android:stretchMode="columnWidth"
+            android:verticalSpacing="1dp" />
+    </ViewAnimator>
+
+    <View
+        android:layout_width="fill_parent"
+        android:layout_height="2dp"
+        android:background="@color/mainColorBeg" />
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:background="@color/white"
+        android:orientation="vertical"
+        android:padding="10dp" >
+
+        <LinearLayout
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:orientation="horizontal" >
+
+            <ImageView
+                android:id="@+id/xmlCalendarIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="match_parent"
+                android:layout_marginBottom="2dp"
+                android:layout_marginTop="2dp"
+                android:adjustViewBounds="true"
+                android:scaleType="fitCenter"
+                android:src="@drawable/img_today"
+                android:visibility="gone" />
+
+            <TextView
+                android:id="@+id/xmlCalendarTitle"
+                android:layout_width="0dp"
+                android:layout_height="wrap_content"
+                android:layout_weight="1"
+                android:background="@drawable/widget_unselected_cell_normal_day"
+                android:gravity="left"
+                android:singleLine="true"
+                android:textAppearance="@android:style/TextAppearance.Medium"
+                android:textColor="@color/black" />
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:gravity="center"
+                android:text=">"
+                android:textAppearance="@android:style/TextAppearance.Medium"
+                android:textColor="@color/white" />
+        </LinearLayout>
+    </LinearLayout>
+</LinearLayout>

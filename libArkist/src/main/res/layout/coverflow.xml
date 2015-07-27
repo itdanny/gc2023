@@ -1,0 +1,53 @@
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:fcf="http://schemas.android.com/apk/lib/at.technikum.mti.fancycoverflow"
+    xmlns:app="http://schemas.android.com/apk/res-auto"
+    android:layout_width="match_parent"
+    android:layout_height="match_parent" >
+
+    <LinearLayout
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:orientation="vertical" >
+        <!-- 
+        	If library: 
+        	xmlns:fcf="http://schemas.android.com/apk/lib/at.technikum.mti.fancycoverflow"
+        	Otherwise:
+        	 xmlns:fcf="http://schemas.android.com/apk/res"
+        	-->
+		<at.technikum.mti.fancycoverflow.FancyCoverFlow
+            android:id="@+id/fancyCoverFlow"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            fcf:maxRotation="45"
+            fcf:scaleDownGravity="0.5"
+            fcf:unselectedAlpha="0.3"
+            fcf:unselectedSaturation="0.0"
+            fcf:unselectedScale="0.4" />
+    </LinearLayout>
+
+    <org.arkist.share.AxImageView
+        android:id="@+id/xmlCoverFlowQuit"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_width="60dp"
+        android:layout_height="60dp"
+        android:layout_marginBottom="16dp"
+        android:src="@drawable/quit"
+        android:scaleType="fitCenter"         
+        />
+    <!-- <TextView
+        android:visibility="invisible"
+        android:id="@+id/xmlCoverFlowCancel"
+        android:layout_alignParentBottom="true"
+        android:layout_centerHorizontal="true"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_gravity="center"
+        android:layout_marginBottom="16dp"
+        android:paddingLeft="16dp"
+        android:paddingRight="16dp"
+        android:text="Cancel"
+        android:textColor="@android:color/white"
+        android:textSize="@dimen/coverFlow_text_size" /> -->
+
+</RelativeLayout>

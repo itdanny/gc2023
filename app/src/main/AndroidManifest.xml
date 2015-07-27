@@ -1,0 +1,126 @@
+<?xml version="1.0" encoding="utf-8"?>
+<manifest xmlns:android="http://schemas.android.com/apk/res/android"
+package="com.hkbs.HKBS"
+android:versionCode="22"
+android:versionName="3.19" >
+
+<uses-permission android:name="android.permission.GET_TASKS"/>
+<uses-permission android:name="android.permission.INTERNET"/>
+<uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE"/>
+<uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE"/>
+<uses-permission android:name="android.permission.ACCESS_NETWORK_STATE"/>
+
+<uses-sdk
+    android:minSdkVersion="8"
+    android:targetSdkVersion="19" />
+
+<application
+    android:allowBackup="true"
+    android:icon="@drawable/ic_launcher"
+    android:label="@string/app_name"
+    android:theme="@style/AppTheme" >
+    <activity
+        android:name="com.hkbs.HKBS.SplashScreen"
+        android:configChanges="orientation|keyboardHidden|screenSize"
+        android:screenOrientation="portrait"
+        android:label="@string/app_name"
+        android:theme="@style/FullscreenTheme" >
+        <intent-filter>
+            <action android:name="android.intent.action.MAIN" />
+            <category android:name="android.intent.category.DEFAULT" />
+            <category android:name="android.intent.category.LAUNCHER" />
+        </intent-filter>
+    </activity>
+    <activity
+        android:name="com.hkbs.HKBS.CMain"
+        android:configChanges="orientation|keyboardHidden|screenSize"
+        android:screenOrientation="portrait">
+    </activity>
+    <activity
+        android:name="com.hkbs.HKBS.CalendarActivity"
+        android:configChanges="orientation|keyboardHidden|screenSize"
+        android:screenOrientation="portrait">
+    </activity>
+    <activity
+        android:name="com.hkbs.HKBS.AboutActivity"
+        android:configChanges="orientation|keyboardHidden|screenSize"
+        android:screenOrientation="portrait">
+    </activity>
+    <activity
+        android:name="com.hkbs.HKBS.SupportActivity"
+        android:configChanges="orientation|keyboardHidden|screenSize"
+        android:screenOrientation="portrait">
+    </activity>
+    <activity
+        android:name="com.hkbs.HKBS.AlarmActivity"
+        android:configChanges="orientation|keyboardHidden|screenSize"
+        android:screenOrientation="portrait">
+    </activity>
+    <!-- INTERNAL LISTENER ON inten-filter ACTION -->
+    <!--<receiver-->
+        <!--android:name="com.hkbs.HKBS.MyBroadcast"-->
+        <!--android:exported="false"-->
+        <!--android:enabled="true">-->
+        <!--<intent-filter>-->
+            <!--<action android:name="AxAlarm_Alarm"/> &lt;!&ndash; Please check AxAlarm for value &ndash;&gt;-->
+            <!--<action android:name="AxAlarm_DateChange" /> &lt;!&ndash; Please check AxAlarm for value &ndash;&gt;-->
+        <!--</intent-filter>-->
+    <!--</receiver>-->
+    <!-- EXTERNAL LISTENER ON inten-filter ACTION -->
+    <receiver
+        android:name="com.hkbs.HKBS.MyBroadcast"
+        android:enabled="true"
+        android:permission="android.permission.RECEIVE_BOOT_COMPLETED" > <!-- listen to reboot events -->
+        <intent-filter>
+            <action android:name="AxAlarm_Alarm"/> <!-- Please check AxAlarm for value -->
+            <action android:name="AxAlarm_DateChange" /> <!-- Please check AxAlarm for value -->
+            <action android:name="android.intent.action.BOOT_COMPLETED" />
+            <action android:name="android.intent.action.PACKAGE_ADDED" />
+            <action android:name="android.intent.action.PACKAGE_REMOVED" />
+            <action android:name="android.intent.action.PACKAGE_FIRST_LAUNCH" />
+            <action android:name="android.intent.action.SCREEN_ON" />
+            <action android:name="android.intent.action.SCREEN_OFF" />
+            <action android:name="android.intent.action.ACTION_SHUTDOWN" />
+            <action android:name="android.intent.action.DATE_CHANGED" />
+            <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            <action android:name="android.intent.action.TIME_SET" />
+            <action android:name="android.intent.action.TIME_TICK" />
+            <action android:name="com.hkbs.HKBS.WidgetUpdate" />
+        </intent-filter>
+    </receiver>
+    <!-- <receiver
+        android:name="com.hkbs.HKBS.CWidget"
+        android:exported="false"
+        android:enabled="true">
+        <intent-filter>
+            <action android:name="AxAlarmAction" /> Please check AxAlarm for value
+            <action android:name="AxAlarmAction" /> Please check AxAlarm for value
+        </intent-filter>
+    </receiver> -->
+    <!--<receiver android:name="com.hkbs.HKBS.CWidget">-->
+        <!--<intent-filter>-->
+            <!--<action android:name="android.appwidget.action.APPWIDGET_UPDATE" />-->
+            <!--<action android:name="android.intent.action.TIMEZONE_CHANGED" />-->
+            <!--<action android:name="android.intent.action.TIME_SET" />-->
+            <!--<action android:name="android.intent.action.TIME_TICK" />-->
+            <!--<action android:name="android.intent.action.SCREEN_ON" />-->
+            <!--<action android:name="android.intent.action.BOOT_COMPLETED" />-->
+            <!--<action android:name="android.intent.action.DATE_CHANGED" />-->
+        <!--</intent-filter>-->
+        <!--<meta-data android:name="android.appwidget.provider" android:resource="@xml/my_widget_provider" />-->
+    <!--</receiver>-->
+    <receiver android:name="com.hkbs.HKBS.CWidget">
+        <intent-filter>
+            <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+            <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+            <action android:name="android.intent.action.TIME_SET" />
+            <action android:name="android.intent.action.TIME_TICK" />
+            <action android:name="android.intent.action.SCREEN_ON" />
+            <action android:name="android.intent.action.BOOT_COMPLETED" />
+            <action android:name="android.intent.action.DATE_CHANGED" />
+            <data android:scheme="CalendarWidget" />
+        </intent-filter>
+        <meta-data android:name="android.appwidget.provider" android:resource="@xml/my_widget_provider" />
+    </receiver>
+</application>
+</manifest>

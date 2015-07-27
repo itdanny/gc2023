@@ -1,0 +1,324 @@
+<?xml version="1.0" encoding="utf-8"?>
+<RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
+    android:layout_width="180dp"
+    android:layout_height="240dp"
+    android:background="@color/widgetBackground" >
+
+    <!--
+     	 <include
+            android:id="@+id/xmlPage1"
+            android:visibility="invisible"
+            android:layout_width="match_parent"
+            android:layout_height="match_parent"
+            layout="@layout/activity_page1" />
+    -->
+
+
+    <!-- COPY FGROM 240x320 -->
+
+    <LinearLayout
+        android:id="@+id/xmlPage1"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:clickable="true"
+        android:focusable="true"
+        android:focusableInTouchMode="true"
+        android:orientation="vertical"
+        android:padding="2dp" >
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="2.5" >
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentTop="true"
+                android:orientation="horizontal" >
+
+                <!-- android:text="201X" -->
+                <TextView
+                    android:id="@+id/xmlPage1EngYear"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:inputType="none"
+                    android:textSize="9sp" />
+
+                <!-- android:text="Decemeber" -->
+                <TextView
+                    android:id="@+id/xmlPage1EngMonthName"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="3"
+                    android:gravity="center"
+                    android:inputType="none"
+                    android:textSize="18sp"
+                    android:textStyle="bold" />
+
+                <!-- android:text="一月" -->
+                <TextView
+                    android:id="@+id/xmlPage1ChiMonthName"
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:inputType="none"
+                    android:textSize="9sp" />
+            </LinearLayout>
+
+            <!-- android:text="21" -->
+            <TextView
+                android:id="@+id/xmlPage1Day"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerInParent="true"
+                android:inputType="none"
+                android:textSize="88sp"
+                android:textStyle="bold" />
+
+            <TextView
+                android:id="@+id/xmlPage1Holiday1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentRight="true"
+                android:layout_centerVertical="true"
+                android:layout_marginRight="4dp"
+                android:inputType="none"
+                android:lines="7"
+                android:textSize="8sp"
+                android:textStyle="bold" />
+            <!-- android:text="香\n港\n特\n別\n行\n政\n區" -->
+
+            <TextView
+                android:id="@+id/xmlPage1Holiday2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toLeftOf="@id/xmlPage1Holiday1"
+                android:inputType="none"
+                android:lines="7"
+                android:textSize="8sp"
+                android:textStyle="bold" />
+            <!-- android:text="成\n立\n紀\n念\n日\n翌\n日" -->
+
+            <LinearLayout
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:orientation="horizontal" >
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="match_parent"
+                    android:layout_weight="2" >
+
+                    <!-- android:text="甲午年" -->
+                    <TextView
+                        android:id="@+id/xmlPage1ChiLunarYear"
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:layout_gravity="center"
+                        android:layout_weight="2"
+                        android:gravity="center"
+                        android:inputType="none"
+                        android:textSize="8sp" />
+
+                    <LinearLayout
+                        android:layout_width="match_parent"
+                        android:layout_height="match_parent"
+                        android:gravity="center"
+                        android:orientation="vertical" >
+
+                        <!-- android:text="十二月大" -->
+                        <TextView
+                            android:id="@+id/xmlPage1ChiLeftYear"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:inputType="none"
+                            android:textSize="7sp" />
+
+                        <!-- android:text="初一" -->
+                        <TextView
+                            android:id="@+id/xmlPage1ChiLeftWeather"
+                            android:layout_width="wrap_content"
+                            android:layout_height="wrap_content"
+                            android:inputType="none"
+                            android:textSize="7sp" />
+                    </LinearLayout>
+                </RelativeLayout>
+
+                <RelativeLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_centerVertical="true"
+                    android:layout_gravity="center_vertical"
+                    android:layout_weight="5"
+                    android:gravity="center_vertical" >
+
+                    <ImageView
+                        android:id="@+id/xmlPage1WeekImage"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:adjustViewBounds="true"
+                        android:scaleType="fitXY"
+                        android:src="@drawable/green_weekday_2015" />
+
+                    <!-- android:text="星期二 TUE" -->
+                    <TextView
+                        android:id="@+id/xmlPage1WeekDay"
+                        android:layout_width="match_parent"
+                        android:layout_height="wrap_content"
+                        android:layout_centerVertical="true"
+                        android:gravity="center"
+                        android:inputType="none"
+                        android:paddingLeft="5dp"
+                        android:paddingRight="5dp"
+                        android:textSize="10sp" />
+                </RelativeLayout>
+
+                <LinearLayout
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_weight="2"
+                    android:gravity="center"
+                    android:orientation="vertical" >
+
+                    <!-- android:text="十二月大" -->
+                    <TextView
+                        android:id="@+id/xmlPage1ChiLunarMonth"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        android:textSize="7sp" />
+
+                    <!-- android:text="初一" -->
+                    <TextView
+                        android:id="@+id/xmlPage1ChiLunarDay"
+                        android:layout_width="wrap_content"
+                        android:layout_height="wrap_content"
+                        android:inputType="none"
+                        android:textSize="7sp" />
+                </LinearLayout>
+            </LinearLayout>
+        </RelativeLayout>
+ 		<RelativeLayout
+            android:id="@+id/xmlPage1Middle"
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1"
+            android:paddingTop="5dp" >
+        
+            <ImageView
+                android:id="@+id/xmlPage1ImageFrame"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:adjustViewBounds="true"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
+                android:scaleType="fitXY"
+                android:src="@drawable/green_frame_2015" />
+
+            <!-- android:text="金句金句金句金句金句金句" -->
+
+            <TextView
+                android:id="@+id/xmlPage1GoldText"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_above="@+id/xmlPage1GoldVerse"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"
+                android:layout_marginTop="@dimen/small_c_image_top"
+                android:gravity="center"
+                android:textSize="8sp" />
+
+            <!-- android:text="[XXXXXXXXXX]" -->
+            <TextView
+                android:id="@+id/xmlPage1GoldVerse"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignRight="@+id/xmlPage1GoldText"
+                android:gravity="center_horizontal"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"
+                android:layout_marginBottom="@dimen/small_c_image_bottom"
+                android:textSize="5sp" />
+        </RelativeLayout>
+
+        <RelativeLayout
+            android:layout_width="match_parent"
+            android:layout_height="0dp"
+            android:layout_weight="1" >
+
+            <ImageView
+                android:id="@+id/xmlPage1ImageIcon"
+                android:layout_width="wrap_content"
+                android:layout_height="fill_parent"
+                android:layout_alignParentRight="true"
+                android:adjustViewBounds="true"
+                android:padding="15dp"
+                android:scaleType="fitXY"
+                android:layout_marginBottom="6dp"
+                android:src="@drawable/green_icon_2015"
+                android:visibility="visible" />
+
+            <TextView
+                android:id="@+id/xmlPage1BigText"
+                android:layout_width="match_parent"
+                android:layout_height="match_parent"
+                android:layout_above="@+id/xmlPage1BigHint"
+                android:layout_alignParentTop="true"
+                android:layout_marginRight="20dp"
+                android:layout_marginLeft="10dp"
+                android:layout_marginTop="2dp"
+                android:gravity="center_horizontal"
+                android:textSize="8sp" />
+            <!-- android:text="小知識\n1234567890123456789012\n小知識\n小知識" -->
+
+            <TextView
+                android:id="@+id/xmlPage1BigHint"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignRight="@id/xmlPage1BigText"
+                android:layout_marginBottom="2dp"
+                android:gravity="right|bottom"
+                android:textSize="5sp" /> <!-- 6 -->
+            <!-- android:text="Hint …………………." -->
+
+<!--             <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentBottom="true"
+                android:layout_alignParentLeft="true"
+                android:text="-"
+                android:textSize="8sp" /> -->
+        </RelativeLayout>
+    </LinearLayout>
+
+    <TextView
+        android:id="@+id/xmlWidgetLoading"
+        android:layout_width="match_parent"
+        android:layout_height="match_parent"
+        android:layout_centerInParent="true"
+        android:background="@color/white"
+        android:gravity="center"
+        android:text="Loading..."
+        android:textAppearance="@android:style/TextAppearance.Medium"
+        android:textColor="@color/black"
+        android:visibility="gone" />
+	<TextView
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:background="@color/white"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentRight="true"
+        android:gravity="center"
+        android:text="."
+        android:textSize="12sp"
+        android:textColor="@color/black"/>
+</RelativeLayout>
