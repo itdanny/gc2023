@@ -1,5 +1,12 @@
 package com.hkbs.HKBS;
 
+import android.content.ContentValues;
+import android.content.Context;
+import android.util.DisplayMetrics;
+import android.view.WindowManager;
+
+import com.hkbs.HKBS.arkUtil.MyUtil;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -12,15 +19,8 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
-import android.content.ContentValues;
-import android.content.Context;
-import android.util.DisplayMetrics;
-import android.view.WindowManager;
-
-import com.hkbs.HKBS.arkUtil.MyUtil;
-
 public class MyDailyBread {
-	static private boolean IS_CURRENT_YEAR_2015_ONLY = false;
+	static private boolean IS_CURRENT_YEAR_2016_ONLY = false;
 	static private boolean IS_CHECK_FUTURE_CHARS_ONLY = false;// PLEASE SET IT TO [[[false]]] for release
 	static private boolean IS_CHECK_VALID_VERSE = false;
 	static private boolean IS_CHECK_FIELD_VALUES = false; // MUST CHECK; DONOT SET TO false
@@ -92,11 +92,11 @@ public class MyDailyBread {
 	    return myDailyBread;
 	}
 	private void setValidRange(){
-		if (IS_CURRENT_YEAR_2015_ONLY){
+		if (IS_CURRENT_YEAR_2016_ONLY){
 			validFrDate = Calendar.getInstance();
 			validFrDate.set(2014, 10, 1, 23, 59, 59); // 11-01
 			validToDate = Calendar.getInstance();
-			validToDate.set(2015, 11, 31, 0, 0, 0); // 2013-12-1
+			validToDate.set(2016, 11, 31, 0, 0, 0); // 2013-12-1
 		}
 	}
 	public Calendar getValidFrDate(){

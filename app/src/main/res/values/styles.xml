@@ -21,8 +21,8 @@
     <style name="FullscreenTheme" parent="android:Theme.NoTitleBar">
         <item name="android:windowContentOverlay">@null</item>
         <item name="android:windowBackground">@null</item>
-        <item name="buttonBarStyle">@style/ButtonBar</item>
-        <item name="buttonBarButtonStyle">@style/ButtonBarButton</item>
+        <!--<item name="buttonBarStyle">@style/ButtonBar</item>-->
+        <!--<item name="buttonBarButtonStyle">@style/ButtonBarButton</item>-->
     </style>
 
     <style name="MenuStyle">
@@ -43,7 +43,9 @@
         <!-- <item name="android:background">@android:drawable/bottom_bar</item> -->
     </style>
 
-    <style name="ButtonBarButton" />
+    <style name="ButtonBarButton">
+        <item name="android:paddingTop">0dp</item>
+    </style>
 
     <style name="NotificationPrimaryText" parent="@android:style/TextAppearance.Medium" />
 
