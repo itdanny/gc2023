@@ -259,6 +259,17 @@
             android:visibility="visible" />
 
         <TextView
+            android:id="@+id/xmlPage2BigHint"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignRight="@id/xmlPage2BigText"
+            android:layout_marginBottom="4dp"
+            android:gravity="right|bottom"
+            android:text="Hint …………………."
+            android:textSize="32sp" />
+
+        <TextView
             android:id="@+id/xmlPage2BigText"
             android:layout_width="match_parent"
             android:layout_height="match_parent"
@@ -269,19 +280,8 @@
             android:layout_marginTop="4dp"
             android:layout_marginLeft="40dp"
             android:gravity="left|top"
-            android:text="小知識\n小知識\n小知識\n小知識"
+            android:text="小知識\n小知識\n小知識\n小知識\n"
             android:textSize="38sp" />
-
-        <TextView
-            android:id="@+id/xmlPage2BigHint"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_alignParentBottom="true"
-            android:layout_alignRight="@id/xmlPage2BigText"
-            android:layout_marginBottom="4dp"
-            android:gravity="right|bottom"
-            android:text="Hint …………………."
-            android:textSize="32sp" />
 
         <!--
              <TextView

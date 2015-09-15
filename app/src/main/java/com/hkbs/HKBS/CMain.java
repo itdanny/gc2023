@@ -1,14 +1,5 @@
 package com.hkbs.HKBS;
 
-import java.io.OutputStream;
-import java.util.Calendar;
-
-import org.arkist.share.AxAlarm;
-import org.arkist.share.AxDebug;
-import org.arkist.share.AxImageView;
-import org.arkist.share.AxTextView;
-import org.arkist.share.AxTools;
-
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
 import android.appwidget.AppWidgetManager;
@@ -32,6 +23,7 @@ import android.util.Log;
 import android.util.TypedValue;
 import android.view.GestureDetector;
 import android.view.Gravity;
+import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
@@ -48,6 +40,14 @@ import com.hkbs.HKBS.arkUtil.MyGestureListener;
 import com.hkbs.HKBS.arkUtil.MyUtil;
 import com.hkbs.HKBS.util.SystemUiHider;
 
+import org.arkist.share.AxAlarm;
+import org.arkist.share.AxImageView;
+import org.arkist.share.AxTextView;
+import org.arkist.share.AxTools;
+
+import java.io.OutputStream;
+import java.util.Calendar;
+
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
@@ -55,14 +55,15 @@ import com.hkbs.HKBS.util.SystemUiHider;
  * @see SystemUiHider
  */
 public class CMain extends MyActivity {
-	final static private boolean IS_2015=true;
+    final static private boolean IS_2015_OR_LATER =true;
 	final static private boolean DEBUG=false;
 	final static private String TAG = CMain.class.getSimpleName();
 	final static private String CHI_MONTHS [] = {"一","二","三","四","五","六","七","八","九","十","十一","十二"};
 	
 	final static private int CALL_FROM_EXTERNAL_APP=-999;
 	private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
-	
+
+    static public int mCalendarYear=2015;
 	static private float _scaleDensity=0;
 	static private Calendar mDisplayDay;
 	static private String mGoldVerse;
@@ -74,8 +75,27 @@ public class CMain extends MyActivity {
 	static public String mScreenType="";
 	private LinearLayout page1;
 	private LinearLayout page2;
-	
-	private GestureDetector mGesture = new GestureDetector(getBaseContext(), new MyGestureListener(new MyGestureListener.Callback() {
+    @Override
+    public boolean onKeyDown(int keyCode, KeyEvent event) {
+        switch (keyCode) {
+            case KeyEvent.KEYCODE_DPAD_UP:
+                gotoPriorMonth();
+                return true;
+            case KeyEvent.KEYCODE_DPAD_LEFT:
+                gotoPrevDay();
+                return true;
+            case KeyEvent.KEYCODE_DPAD_DOWN:
+                gotoNextMonth();
+                return true;
+            case KeyEvent.KEYCODE_DPAD_RIGHT:
+                gotoNextDay();
+                return true;
+            default:
+                return super.onKeyDown(keyCode,event);
+        }
+    }
+
+    private GestureDetector mGesture = new GestureDetector(getBaseContext(), new MyGestureListener(new MyGestureListener.Callback() {
 		@Override public boolean onClick(MotionEvent e) { // !!! SetClicable to TRUE !!!
 			//MyUtil.log(TAG,"mGesture.onClick");
 //			if (!isTitleShown){
@@ -783,7 +803,7 @@ public class CMain extends MyActivity {
 	private int getID(int nbr, String extension){
 		int resultVal = getResources().getIdentifier("xmlPage"+nbr+extension, "id", "com.hkbs.HKBS");
 		if (resultVal==0){
-			MyUtil.logError(TAG, "Error on:"+"xmlPage"+nbr+extension);
+			MyUtil.logError(TAG, "Error on:" + "xmlPage" + nbr + extension);
 		}
 		return resultVal; 
 	}
@@ -807,6 +827,19 @@ public class CMain extends MyActivity {
 			MyGestureListener.flingInFromRight(getApplicationContext(), mViewAnimator);			
 		}
 	}
+    private void gotoPriorMonth(){
+        Calendar newCalendar = Calendar.getInstance();
+        newCalendar.setTimeInMillis(mDisplayDay.getTimeInMillis());
+        newCalendar.add(Calendar.MONTH,-1);
+        if (newCalendar.compareTo(mDailyBread.getValidFrDate())<=0){
+            Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
+        } else {
+            mDisplayDay.setTimeInMillis(newCalendar.getTimeInMillis());
+            mViewIndex=mViewIndex==1?2:1;
+            onRefreshPage(mViewIndex);
+            MyGestureListener.flingInFromLeft(getApplicationContext(), mViewAnimator);
+        }
+    }
 	private void gotoNextDay(){
 		if (mDisplayDay.compareTo(mDailyBread.getValidToDate())>=0){
 			Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
@@ -817,6 +850,19 @@ public class CMain extends MyActivity {
 			MyGestureListener.flingInFromLeft(getApplicationContext(), mViewAnimator);			
 		}
 	}
+    private void gotoNextMonth(){
+        Calendar newCalendar = Calendar.getInstance();
+        newCalendar.setTimeInMillis(mDisplayDay.getTimeInMillis());
+        newCalendar.add(Calendar.MONTH,+1);
+        if (newCalendar.compareTo(mDailyBread.getValidToDate())>=0){
+            Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
+        } else {
+            mDisplayDay.setTimeInMillis(newCalendar.getTimeInMillis());
+            mViewIndex=mViewIndex==1?2:1;
+            onRefreshPage(mViewIndex);
+            MyGestureListener.flingInFromLeft(getApplicationContext(), mViewAnimator);
+        }
+    }
 	private void onRefreshPage(int nbr){
 		
 		if (mDisplayDay.compareTo(mDailyBread.getValidToDate())>0){
@@ -1016,8 +1062,13 @@ public class CMain extends MyActivity {
 		
 		final ImageView pageImageFrame = (ImageView) findViewById(getID(nbr, "ImageFrame"));
 		pageImageFrame.setImageDrawable(getResources().getDrawable(isHoliday?R.drawable.red_frame_2015:R.drawable.green_frame_2015));
-		final ImageView pageImageIcon = (ImageView) findViewById(getID(nbr, "ImageIcon"));
-		pageImageIcon.setImageDrawable(getResources().getDrawable(isHoliday?R.drawable.red_icon_2015:R.drawable.green_icon_2015));
+
+        final ImageView pageImageIcon = (ImageView) findViewById(getID(nbr, "ImageIcon"));
+        if (curYear>=2016){
+            pageImageIcon.setImageDrawable(null);
+        } else {
+            pageImageIcon.setImageDrawable(getResources().getDrawable(isHoliday ? R.drawable.red_icon_2015 : R.drawable.green_icon_2015));
+        }
 
 		// get ContentValues from dailyBread file
 		ContentValues cv = mDailyBread.getContentValues(curYear, curMonth, curDay);
@@ -1029,7 +1080,7 @@ public class CMain extends MyActivity {
 		pageGoldText.setTextColor(textColor);
 		
 		int goldFontSize;
-		if (IS_2015){
+		if (MyDailyBread.mCurrentYear>=2015){
 			goldFontSize = getFontSizeByText(pageGoldText, cv.getAsString(MyDailyBread.wGoldText));
 		} else {
 			goldFontSize = getGoldFontSize(pageGoldText,cv.getAsString(MyDailyBread.wGoldSize));
@@ -1041,7 +1092,7 @@ public class CMain extends MyActivity {
 		}
 		
 		final TextView pageGoldVerse = (TextView) findViewById(getID(nbr, "GoldVerse"));
-		pageGoldVerse.setText(cv.getAsString(MyDailyBread.wGoldVerse)+"；和合本修訂版");
+		pageGoldVerse.setText(cv.getAsString(MyDailyBread.wGoldVerse)+(MyDailyBread.mCurrentYear>=2015?"":"；和合本修訂版"));
 		pageGoldVerse.setTextColor(textColor);
 		// From HKBS, size change to less than Gold
 		if (mScreenType.contentEquals("small")){
@@ -1052,6 +1103,10 @@ public class CMain extends MyActivity {
 		} else {
 			pageGoldVerse.setTextSize(TypedValue.COMPLEX_UNIT_PX, goldFontSize-dp2px(6));
 		}
+        if (curYear>=2010){
+            pageGoldVerse.setGravity(Gravity.CENTER_HORIZONTAL);
+            //pageBigText.setGravity(Gravity.CENTER_HORIZONTAL);
+        }
 		mGoldVerse = cv.getAsString(MyDailyBread.wGoldVerse);
 		
 //		String [] goldLines = cv.getAsString(MyDailyBread.wGoldText).split("#");
@@ -1074,9 +1129,9 @@ public class CMain extends MyActivity {
 			pageGoldText.setGravity(Gravity.CENTER | Gravity.CENTER_VERTICAL);
 		}
 		
-		/*
-		 *  BIG TEXT (心靈雞湯）
-		 */
+		/****************************************************************************************
+		 *  BIG TEXT (心靈雞湯）: pageBigText (1st line smaller); (SIZE IS SMALLER THAN GOLD TEXT)
+		 ************************************************************************************/
 		final TextView pageBigText = (TextView) findViewById(getID(nbr, "BigText"));
 		// Any Heading ":"
 		String colonText = ":"; // English Style colon
@@ -1100,14 +1155,20 @@ public class CMain extends MyActivity {
 		if (colonPos>=0){
 			String lines [] = bigText.split("#");
 			bigText= "<small>"+bigText.substring(0, colonPos+1)+"</small>"+bigText.substring(colonPos+1).replace("#", "<br>");
-			if (lines.length<=3){
+			//2015.09.15 Remove below since some line 4 cause display half only
+			//if (lines.length<=3){
 				bigText=bigText+"<br>";
-			}
+			//}
 			pageBigText.setText(Html.fromHtml(bigText));
 		} else {
 			pageBigText.setText(bigText.replace("#", "\n"));
 		}
-		pageBigText.setTextColor(textColor);
+        //2015.09.15 Height won't auto-adjust
+        //http://stackoverflow.com/questions/9541196/androidtextview-height-doesnt-change-after-shrinking-the-font-size
+        //pageBigText.setText(pageBigText.getText(), TextView.BufferType.SPANNABLE);
+        //final String DOUBLE_BYTE_WORDJOINER = "\u2060";
+        //pageBigText.setText(pageBigText.getText() + DOUBLE_BYTE_WORDJOINER);
+        pageBigText.setTextColor(textColor);
 		//pageBigText.setTextSize(TypedValue.COMPLEX_UNIT_PX, getBigFontSize(pageBigText,cv.getAsString(MyDailyBread.wBigSize)));
 		// From HKBS, same size
 		//int bigTextSize = getBigFontSize(pageBigText,"M");
@@ -1125,22 +1186,44 @@ public class CMain extends MyActivity {
 //		}
 		Log.d(TAG,"screenType="+mScreenType+" bigTextSize="+bigTextSize);
 		pageBigText.setTextSize(TypedValue.COMPLEX_UNIT_PX, bigTextSize);
-//		
+        if (curYear>=2016) {
+            pageBigText.setGravity(Gravity.CENTER);
+        } else {
+            pageBigText.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+        }
+        //		final String bigSize = cv.getAsString(MyDailyBread.wBigSize);
+//		if (bigSize.equalsIgnoreCase("L")){
+//			pageBigText.setTextSize(TypedValue.COMPLEX_UNIT_PX,MyDailyBread.mHintSizeL);
+//		} else if (bigSize.equalsIgnoreCase("S")){
+//			pageBigText.setTextSize(TypedValue.COMPLEX_UNIT_PX,MyDailyBread.mHintSizeS);
+//		}
+
+//		final String bigAlign = cv.getAsString(MyDailyBread.wBigAlign);
+//		if (bigAlign.equalsIgnoreCase("L")){
+//			pageBigText.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+//		} else if (bigAlign.equalsIgnoreCase("C")){
+//			pageBigText.setGravity(Gravity.CENTER | Gravity.CENTER_VERTICAL);
+//		} else {
+//			pageBigText.setGravity(Gravity.CENTER | Gravity.CENTER_VERTICAL);
+//		}
+
 //		String [] bigLines = cv.getAsString(MyDailyBread.wBigText).split("#");
 //		int bigMaxCharcters=0;
 //    	for (int i=0;i<bigLines.length;i++){
 //    		bigMaxCharcters=Math.max(bigMaxCharcters,bigLines[i].length());
-//    	}    	
-//		
+//    	}
+//
 //		RelativeLayout.LayoutParams lpBig = (RelativeLayout.LayoutParams) pageBigText.getLayoutParams();
-//		int bigFontSize = (int) Math.floor((MyDailyBread.mAppWidth - 
+//		int bigFontSize = (int) Math.floor((MyDailyBread.mAppWidth -
 //		       	 dp2px(lpBig.leftMargin) - dp2px(lpBig.rightMargin) ) /
 //		       	bigMaxCharcters);
 //		if (bigFontSize+2>goldFontSize){//Don't let hint size to large even bigger than bible verse
 //			bigFontSize=goldFontSize-2;
 //		}
 //		pageBigText.setTextSize(TypedValue.COMPLEX_UNIT_PX, bigFontSize);
-		
+        /***********************************************************************************
+         * 最後一行字 : pageHintText (SIZE IS STANDARD)
+         ************************************************************************************/
 		final TextView pageHintText = (TextView) findViewById(getID(nbr, "BigHint"));
 		pageHintText.setText(cv.getAsString(MyDailyBread.wSmallText));
 		pageHintText.setTextColor(textColor);
@@ -1152,37 +1235,10 @@ public class CMain extends MyActivity {
 		} else if (mScreenType.contains("standard")){
 			hintSize = (int) (pageBigText.getTextSize() - dp2px(4));
 		} else {
-			hintSize = (int) (pageBigText.getTextSize() - dp2px(4));
-//			if (diagnol(CMain.this)>7.0){
-//				hintSize=hintSize-dp2px(6);									
-//			} else {
-//				hintSize=hintSize-dp2px(4);
-//			}			
+			hintSize = (int) (pageBigText.getTextSize() - dp2px(4));//hintSize=hintSize-dp2px(diagnol(CMain.this)>7.0?6:4);
 		}
 		pageHintText.setTextSize(TypedValue.COMPLEX_UNIT_PX, hintSize);//DC: 2013.12.12
-		
-//		final String bigSize = cv.getAsString(MyDailyBread.wBigSize);
-//		if (bigSize.equalsIgnoreCase("L")){
-//			pageBigText.setTextSize(TypedValue.COMPLEX_UNIT_PX,MyDailyBread.mHintSizeL);
-//		} else if (bigSize.equalsIgnoreCase("S")){
-//			pageBigText.setTextSize(TypedValue.COMPLEX_UNIT_PX,MyDailyBread.mHintSizeS);
-//		}
-		
-		// From HKBS, standard align LEFT
-		pageBigText.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-//		final String bigAlign = cv.getAsString(MyDailyBread.wBigAlign);
-//		if (bigAlign.equalsIgnoreCase("L")){
-//			pageBigText.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-//		} else if (bigAlign.equalsIgnoreCase("C")){
-//			pageBigText.setGravity(Gravity.CENTER | Gravity.CENTER_VERTICAL);			
-//		} else {
-//			pageBigText.setGravity(Gravity.CENTER | Gravity.CENTER_VERTICAL);
-//		}
-		if (curYear>=2010){
-			pageGoldVerse.setGravity(Gravity.CENTER_HORIZONTAL);
-			//pageBigText.setGravity(Gravity.CENTER_HORIZONTAL);			
-		}
-	}	
+	}
 	private int getFontSizeByText(TextView textView, String str){
 		String textLines [] = str.split("#");
 		int maxChars=0;

@@ -20,10 +20,11 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 public class MyDailyBread {
-	static private boolean IS_CURRENT_YEAR_2016_ONLY = false;
+    static public int mCurrentYear=2016;
+	static private boolean IS_CURRENT_YEAR_ONLY = false;
 	static private boolean IS_CHECK_FUTURE_CHARS_ONLY = false;// PLEASE SET IT TO [[[false]]] for release
-	static private boolean IS_CHECK_VALID_VERSE = false;
-	static private boolean IS_CHECK_FIELD_VALUES = false; // MUST CHECK; DONOT SET TO false
+	static private boolean IS_CHECK_VALID_VERSE = true;
+	static private boolean IS_CHECK_FIELD_VALUES = true; // MUST CHECK; DONOT SET TO false
 	
 	final static private boolean DEBUG=true;
 	final static private String TAG = MyDailyBread.class.getSimpleName();
@@ -92,11 +93,11 @@ public class MyDailyBread {
 	    return myDailyBread;
 	}
 	private void setValidRange(){
-		if (IS_CURRENT_YEAR_2016_ONLY){
+		if (IS_CURRENT_YEAR_ONLY){
 			validFrDate = Calendar.getInstance();
-			validFrDate.set(2014, 10, 1, 23, 59, 59); // 11-01
+			validFrDate.set(mCurrentYear-1,  8, 1, 23, 59, 59); // 9-1
 			validToDate = Calendar.getInstance();
-			validToDate.set(2016, 11, 31, 0, 0, 0); // 2013-12-1
+			validToDate.set(mCurrentYear, 11, 31, 0, 0, 0); // 2016-12-21
 		}
 	}
 	public Calendar getValidFrDate(){

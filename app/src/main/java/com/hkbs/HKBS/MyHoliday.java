@@ -1,10 +1,10 @@
 package com.hkbs.HKBS;
 
+import com.hkbs.HKBS.arkUtil.MyUtil;
+
 import java.text.SimpleDateFormat;
 import java.util.Date;
 import java.util.Locale;
-
-import com.hkbs.HKBS.arkUtil.MyUtil;
 
 public class MyHoliday {
 	static final private String [] SPECIAL = new String [] {
@@ -17,7 +17,9 @@ public class MyHoliday {
         "20140511母親節",
 		"20140615父親節",
         "20150510母親節",
-		"20150621父親節"
+		"20150621父親節",
+        "20150508母親節",
+        "20150619父親節"
 	};
 	static final private String [] HOLIDAYS_HK = new String [] {
 		"20110101一月一日",
@@ -120,6 +122,28 @@ public class MyHoliday {
         "20151021重陽節",
         "20151225聖誕節",
         "20151226聖誕節後第一個周日",
+
+            "20160101一月一日",
+            "20160208農曆年初一",
+            "20160209農曆年初二",
+            "20160210農曆年初三",
+            "20160325耶穌受難節",
+            "20160326耶穌受難節翌日",
+            "20160327復活節",
+            "20160328復活節星期一",
+            "20160404清明節",
+            "20160501勞動節",
+            "20160502勞動節翌日",
+            "20160514佛誕",
+            "20160609端午節",
+            "20160701香港特別行政區成立紀念日",
+            "20160916中秋節翌日",
+            "20161001國慶日",
+            "20161009重陽節",
+            "20161010重陽節翌日",
+            "20161225聖誕節",
+            "20161226聖誕節後第一個周日",
+            "20161226聖誕節後第二個周日"
 		
 	};
 	static final private String [] HOLIDAYS_TW = new String [] {

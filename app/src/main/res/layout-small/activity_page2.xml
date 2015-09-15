@@ -276,7 +276,7 @@
                     android:layout_marginRight="5dp"
                     android:layout_marginLeft="20dp"
                     android:gravity="left|top"
-                    android:text="小知識\n小知識\n小知識\n小知識"
+                    android:text="小知識\n小知識\n小知識\n小知識\n"
                     android:textSize="8sp" />
 
 		    </RelativeLayout>
