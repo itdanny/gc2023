@@ -5,9 +5,9 @@ import android.app.Dialog;
 import android.view.View;
 import android.view.ViewGroup;
 import android.view.WindowManager;
-import android.widget.AdapterView.OnItemClickListener;
 import android.widget.ImageView;
 import android.widget.TextView;
+
 import at.technikum.mti.fancycoverflow.FancyCoverFlow;
 import at.technikum.mti.fancycoverflow.FancyCoverFlowAdapter;
 import at.technikum.mti.fancycoverflow.ecogallery.EcoGalleryAdapterView;
@@ -73,8 +73,7 @@ public class AxCoverFlow extends Dialog {
 	private String[] mItems;
 	private int[] mImages;
 	private CoverFlowAdapter coverFlowAdapter;
-	private FancyCoverFlow coverFlow; 
-
+	private FancyCoverFlow coverFlow;
 	public AxCoverFlow(Activity activity, int startIndex, String[] items, int[] images, EcoGalleryAdapterView.OnItemClickListener onItemClick, android.view.View.OnClickListener onClick) {
 		super(activity, android.R.style.Theme_Black_NoTitleBar_Fullscreen);
 
@@ -87,13 +86,6 @@ public class AxCoverFlow extends Dialog {
 		this.getWindow().setBackgroundDrawableResource(R.color.coverFlow_Background);
 
 		View contentView = (View) activity.getLayoutInflater().inflate(R.layout.coverflow, null);
-//		TextView tvCancel = (TextView) contentView.findViewById(R.id.xmlCoverFlowCancel);
-//		tvCancel.setOnClickListener(new View.OnClickListener() {
-//			@Override
-//			public void onClick(View v) {
-//				AxCoverFlow.this.dismiss();
-//			}
-//		});
 		AxImageView imageView = (AxImageView) contentView.findViewById(R.id.xmlCoverFlowQuit);
 		imageView.setOnClickListener(onClick);
 
@@ -108,7 +100,7 @@ public class AxCoverFlow extends Dialog {
 		coverFlow.setReflectionEnabled(true);
 		coverFlow.setReflectionRatio(0.3f);
 		coverFlow.setReflectionGap(0);
-		coverFlow.setSelection(startIndex);		
+		coverFlow.setSelection(startIndex);
 	}
 	public View getChildAt(int index){
 		return coverFlow.getChildAt(index);

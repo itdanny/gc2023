@@ -175,10 +175,11 @@
                     android:textAppearance="@android:style/TextAppearance.Small"
                     android:textColor="@color/white" />
             </LinearLayout>
+
         </LinearLayout>
     </RelativeLayout>
-    <RelativeLayout 
-        android:id="@+id/xmlAdBanner"
+
+    <RelativeLayout android:id="@+id/xmlAdBanner"
         android:layout_width="match_parent" 
 		android:layout_height="match_parent"
 		android:clickable="true"
@@ -221,10 +222,9 @@
 	    	  android:layout_height="wrap_content"
 	    	  android:text="STANDARD"
 	    	  android:layout_alignParentTop="true"/> -->
-	<LinearLayout
-	    android:id="@+id/xmlMainClickPanel"
+	<LinearLayout android:id="@+id/xmlMainClickPanel"
 	    android:orientation="vertical"
-	    android:layout_width="match_parent"
+        android:layout_width="match_parent"
 	    android:layout_height="match_parent">
 		<View 
 			android:layout_width="match_parent"

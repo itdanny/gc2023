@@ -18,6 +18,7 @@ import android.os.Handler;
 import android.provider.MediaStore.Images;
 import android.provider.MediaStore.Images.Media;
 import android.text.Html;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.util.TypedValue;
@@ -56,7 +57,7 @@ import java.util.Calendar;
  */
 public class CMain extends MyActivity {
     final static private boolean IS_2015_OR_LATER =true;
-	final static private boolean DEBUG=false;
+	final static private boolean DEBUG=true;
 	final static private String TAG = CMain.class.getSimpleName();
 	final static private String CHI_MONTHS [] = {"一","二","三","四","五","六","七","八","九","十","十一","十二"};
 	
@@ -78,17 +79,24 @@ public class CMain extends MyActivity {
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
+            case KeyEvent.KEYCODE_W:
             case KeyEvent.KEYCODE_DPAD_UP:
                 gotoPriorMonth();
                 return true;
+            case KeyEvent.KEYCODE_A:
             case KeyEvent.KEYCODE_DPAD_LEFT:
                 gotoPrevDay();
                 return true;
+            case KeyEvent.KEYCODE_X:
             case KeyEvent.KEYCODE_DPAD_DOWN:
                 gotoNextMonth();
                 return true;
+            case KeyEvent.KEYCODE_D:
             case KeyEvent.KEYCODE_DPAD_RIGHT:
                 gotoNextDay();
+                return true;
+            case KeyEvent.KEYCODE_S:
+                onClickToday(this);
                 return true;
             default:
                 return super.onKeyDown(keyCode,event);
@@ -162,7 +170,30 @@ public class CMain extends MyActivity {
 		AxAlarm.setDailyOnDateChange(CMain.this);
 		
 		CWidget.broadcastMe(CMain.this);
-		
+
+        String defaultCountry = MyUtil.getPrefStr(MyUtil.PREF_COUNTRY, "");
+        if (TextUtils.isEmpty(defaultCountry)) {
+            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
+            CharSequence items[] = {"台灣", "香港", "其他"};
+            alertBuilder.setTitle("請選擇日曆地區：");
+            alertBuilder.setItems(items, new DialogInterface.OnClickListener() {
+                @Override
+                public void onClick(DialogInterface dialog, int which) {
+                    switch (which) {
+                        case 0:
+                            MyUtil.setPrefStr(MyUtil.PREF_COUNTRY, "TW");
+                            break;
+                        case 1:
+                            MyUtil.setPrefStr(MyUtil.PREF_COUNTRY, "HK");
+                            break;
+                        default:
+                            MyUtil.setPrefStr(MyUtil.PREF_COUNTRY, "CN");
+                            break;
+                    }
+                }
+            });
+            alertBuilder.show();
+        }
 	}
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
 	private void setControlsVisibility(boolean isVisible){
@@ -1073,15 +1104,31 @@ public class CMain extends MyActivity {
 		// get ContentValues from dailyBread file
 		ContentValues cv = mDailyBread.getContentValues(curYear, curMonth, curDay);
 
-		// GOLD TEXT
+		/****************************************************************************************
+         *  GOLD TEXT 金句
+         ************************************************************************************/
 		
 		final TextView pageGoldText = (TextView) findViewById(getID(nbr, "GoldText"));
-		pageGoldText.setText(cv.getAsString(MyDailyBread.wGoldText).replace("#", "\n"));
-		pageGoldText.setTextColor(textColor);
-		
+        String theText = cv.getAsString(MyDailyBread.wGoldText);
+        final String text [] = theText.split("#");
+        int charPerLines=0;
+        for (int i=0;i<text.length;i++){
+            charPerLines=Math.max(charPerLines,text[i].length());
+        }
+        pageGoldText.setTextColor(textColor);
 		int goldFontSize;
 		if (MyDailyBread.mCurrentYear>=2015){
-			goldFontSize = getFontSizeByText(pageGoldText, cv.getAsString(MyDailyBread.wGoldText));
+            // 2015.09.16 To protect small device overflow, we don't allow 4 lines
+            if (text.length>=4){//Relocate characters automatically
+                theText=theText.replace("#","");
+                charPerLines = (int) Math.ceil(theText.length() / 3);
+                theText = theText.substring(0,charPerLines)+"#"+
+                          theText.substring(charPerLines,charPerLines+charPerLines)+"#"+
+                          theText.substring(charPerLines+charPerLines);
+                Log.w(TAG,"OldText="+cv.getAsString(MyDailyBread.wGoldText));
+                Log.w(TAG,"NewText="+theText);
+            }
+			goldFontSize = getFontSizeByText(pageGoldText, theText);
 		} else {
 			goldFontSize = getGoldFontSize(pageGoldText,cv.getAsString(MyDailyBread.wGoldSize));
 			if (mScreenType.contentEquals("small")){
@@ -1090,47 +1137,54 @@ public class CMain extends MyActivity {
 				pageGoldText.setTextSize(TypedValue.COMPLEX_UNIT_PX,goldFontSize);
 			}
 		}
-		
+        pageGoldText.setText(theText.replace("#", "\n"));
+
+        String goldAlign = cv.getAsString(MyDailyBread.wGoldAlign);
+        if (curYear<=2012 || curYear>=2016){
+            goldAlign="C";
+        }
+        if (goldAlign.equalsIgnoreCase("L")){
+            pageGoldText.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+        } else if (goldAlign.equalsIgnoreCase("C")){
+            pageGoldText.setGravity(Gravity.CENTER | Gravity.CENTER_VERTICAL);
+        } else {
+            pageGoldText.setGravity(Gravity.CENTER | Gravity.CENTER_VERTICAL);
+        }
+
+        /****************************************************************************************
+         *  GOLD TEXT 金句經文出處
+         ************************************************************************************/
+
 		final TextView pageGoldVerse = (TextView) findViewById(getID(nbr, "GoldVerse"));
 		pageGoldVerse.setText(cv.getAsString(MyDailyBread.wGoldVerse)+(MyDailyBread.mCurrentYear>=2015?"":"；和合本修訂版"));
 		pageGoldVerse.setTextColor(textColor);
 		// From HKBS, size change to less than Gold
-		if (mScreenType.contentEquals("small")){
-			pageGoldVerse.setTextSize(TypedValue.COMPLEX_UNIT_PX, goldFontSize-dp2px(6));
-		} else if (mScreenType.contentEquals("sw600dp")){
-			//pageGoldVerse.setTextSize(TypedValue.COMPLEX_UNIT_PX,  goldFontSize-dp2px(12));
-			pageGoldVerse.setTextSize(TypedValue.COMPLEX_UNIT_PX, pageChiLunarMonth.getTextSize());
-		} else {
-			pageGoldVerse.setTextSize(TypedValue.COMPLEX_UNIT_PX, goldFontSize-dp2px(6));
-		}
+        if (MyDailyBread.mCurrentYear>=2015 & charPerLines>20){
+            // If size is too small, just a little bit different
+            pageGoldVerse.setTextSize(TypedValue.COMPLEX_UNIT_PX, goldFontSize - dp2px(1));
+        } else {
+            if (mScreenType.contentEquals("small")) {
+                pageGoldVerse.setTextSize(TypedValue.COMPLEX_UNIT_PX, goldFontSize - dp2px(6));
+            } else if (mScreenType.contentEquals("sw600dp")) {
+                pageGoldVerse.setTextSize(TypedValue.COMPLEX_UNIT_PX, pageChiLunarMonth.getTextSize());
+            } else {
+                pageGoldVerse.setTextSize(TypedValue.COMPLEX_UNIT_PX, goldFontSize - dp2px(6));
+            }
+        }
         if (curYear>=2010){
             pageGoldVerse.setGravity(Gravity.CENTER_HORIZONTAL);
-            //pageBigText.setGravity(Gravity.CENTER_HORIZONTAL);
         }
-		mGoldVerse = cv.getAsString(MyDailyBread.wGoldVerse);
-		
-//		String [] goldLines = cv.getAsString(MyDailyBread.wGoldText).split("#");
-//		int goldMaxCharacters=0;
-//    	for (int i=0;i<goldLines.length;i++){
-//    		goldMaxCharacters=Math.max(goldMaxCharacters,goldLines[i].length());
-//    		MyUtil.log(TAG,"Line"+i+":"+goldLines[i]);
-//    	}    	
-//    	dp2px    	
-    	
-		String goldAlign = cv.getAsString(MyDailyBread.wGoldAlign);
-		if (curYear<=2012){
-			goldAlign="C";
-		} 
-		if (goldAlign.equalsIgnoreCase("L")){
-			pageGoldText.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-		} else if (goldAlign.equalsIgnoreCase("C")){
-			pageGoldText.setGravity(Gravity.CENTER | Gravity.CENTER_VERTICAL);			
-		} else {
-			pageGoldText.setGravity(Gravity.CENTER | Gravity.CENTER_VERTICAL);
-		}
-		
+        if (curYear>=2015){
+            if (mScreenType.contentEquals("standard")) {
+                RelativeLayout.LayoutParams goldVerseLP = (RelativeLayout.LayoutParams) pageGoldVerse.getLayoutParams();
+                goldVerseLP.setMargins(goldVerseLP.leftMargin, goldVerseLP.topMargin, goldVerseLP.rightMargin, dp2px(22));
+                pageGoldVerse.setLayoutParams(goldVerseLP);
+            }
+        }
+        mGoldVerse = cv.getAsString(MyDailyBread.wGoldVerse);
+
 		/****************************************************************************************
-		 *  BIG TEXT (心靈雞湯）: pageBigText (1st line smaller); (SIZE IS SMALLER THAN GOLD TEXT)
+		 *  HINT BIG TEXT (心靈雞湯）: pageBigText (1st line smaller); (SIZE IS SMALLER THAN GOLD TEXT)
 		 ************************************************************************************/
 		final TextView pageBigText = (TextView) findViewById(getID(nbr, "BigText"));
 		// Any Heading ":"
@@ -1163,33 +1217,34 @@ public class CMain extends MyActivity {
 		} else {
 			pageBigText.setText(bigText.replace("#", "\n"));
 		}
-        //2015.09.15 Height won't auto-adjust
-        //http://stackoverflow.com/questions/9541196/androidtextview-height-doesnt-change-after-shrinking-the-font-size
-        //pageBigText.setText(pageBigText.getText(), TextView.BufferType.SPANNABLE);
-        //final String DOUBLE_BYTE_WORDJOINER = "\u2060";
-        //pageBigText.setText(pageBigText.getText() + DOUBLE_BYTE_WORDJOINER);
         pageBigText.setTextColor(textColor);
-		//pageBigText.setTextSize(TypedValue.COMPLEX_UNIT_PX, getBigFontSize(pageBigText,cv.getAsString(MyDailyBread.wBigSize)));
-		// From HKBS, same size
-		//int bigTextSize = getBigFontSize(pageBigText,"M");
-		//if (bigTextSize > pageGoldVerse.getTextSize()){
-			int bigTextSize;
-			if (mScreenType.contains("sw600dp")){
-				//bigTextSize = (int) (pageGoldText.getTextSize() - dp2px(9));
-				bigTextSize = (int) pageChiLunarMonth.getTextSize();
-			} else {
-				bigTextSize = (int) (pageGoldText.getTextSize() - dp2px(4));
-			}
-		//}
-//		if (mIsSmallScreen){
-//			bigTextSize = bigTextSize - dp2px(2);
-//		}
-		Log.d(TAG,"screenType="+mScreenType+" bigTextSize="+bigTextSize);
+		int bigTextSize;
+        if (MyDailyBread.mCurrentYear>=2015 & charPerLines>20){
+            // If size is too small, just a little bit different
+            if (mScreenType.contains("sw600dp")) {
+                bigTextSize = (int) pageChiLunarMonth.getTextSize();
+            } else {
+                bigTextSize = (int) (pageGoldText.getTextSize() - dp2px(2));
+            }
+        } else {
+            if (mScreenType.contains("sw600dp")) {
+                bigTextSize = (int) pageChiLunarMonth.getTextSize();
+            } else {
+                bigTextSize = (int) (pageGoldText.getTextSize() - dp2px(4));
+            }
+        }
 		pageBigText.setTextSize(TypedValue.COMPLEX_UNIT_PX, bigTextSize);
         if (curYear>=2016) {
-            pageBigText.setGravity(Gravity.CENTER);
+            pageBigText.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
+            RelativeLayout.LayoutParams bigTextLP = (RelativeLayout.LayoutParams) pageBigText.getLayoutParams();
+            int margin=Math.min(bigTextLP.leftMargin,bigTextLP.rightMargin);
+            bigTextLP.setMargins(margin,bigTextLP.topMargin,margin,bigTextLP.bottomMargin);
+            pageBigText.setLayoutParams(bigTextLP);
         } else {
             pageBigText.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
+        }
+        if (DEBUG) {
+            Log.d(TAG, "screenType=" + mScreenType + " Hint TextSize=" + bigTextSize + " " + pageBigText.getHeight()+" "+curYear+"-"+(curMonth+1)+"-"+curDay);
         }
         //		final String bigSize = cv.getAsString(MyDailyBread.wBigSize);
 //		if (bigSize.equalsIgnoreCase("L")){
@@ -1225,15 +1280,15 @@ public class CMain extends MyActivity {
          * 最後一行字 : pageHintText (SIZE IS STANDARD)
          ************************************************************************************/
 		final TextView pageHintText = (TextView) findViewById(getID(nbr, "BigHint"));
-		pageHintText.setText(cv.getAsString(MyDailyBread.wSmallText));
-		pageHintText.setTextColor(textColor);
-		// From HKBS, same size or little smaller
+            pageHintText.setText(cv.getAsString(MyDailyBread.wSmallText));
+            pageHintText.setTextColor(textColor);
+        // From HKBS, same size or little smaller
 		int hintSize = getBigFontSize(pageBigText,"S");
 		//Log.i(TAG,"Dialog:"+diagnol(CMain.this)+" Big Font Size:"+bigTextSize);		
 		if (mScreenType.contains("small")){
 			hintSize = (int) (pageBigText.getTextSize() - dp2px(2));
 		} else if (mScreenType.contains("standard")){
-			hintSize = (int) (pageBigText.getTextSize() - dp2px(4));
+			hintSize = (int) (pageBigText.getTextSize() - dp2px(3));
 		} else {
 			hintSize = (int) (pageBigText.getTextSize() - dp2px(4));//hintSize=hintSize-dp2px(diagnol(CMain.this)>7.0?6:4);
 		}
@@ -1245,12 +1300,12 @@ public class CMain extends MyActivity {
 		for (int i=0;i<textLines.length;i++){
 			maxChars = Math.max(maxChars, textLines[i].length());
 		}			
-		if (mScreenType.contentEquals("small")){
+		if (mScreenType.equalsIgnoreCase("small")){
 			maxChars = maxChars < 20 ? 20 : maxChars;
 		} else if (mScreenType.contentEquals("sw600dp")){
 			maxChars = maxChars < 17 ? 17 : maxChars;// 17 change to 19 since 小米Note cannot display
 		} else {
-			maxChars = maxChars < 16 ? 16 : maxChars;
+			maxChars = maxChars < 18 ? 18 : maxChars;
 		}
 		int fontSize = getFontSizeByMaxCharacters(textView,maxChars);
 		textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize);

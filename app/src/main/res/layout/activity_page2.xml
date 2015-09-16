@@ -4,13 +4,14 @@
     android:clickable="true"
     android:focusable="true"
     android:focusableInTouchMode="true"
+    android:weightSum="38"
     android:orientation="vertical"
     android:padding="2dp" >
 
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2" >
+        android:layout_weight="20" >
 		<TextView
 		    android:id="@+id/xmlPage2ScreenType"
 		    android:tag="standard"
@@ -18,7 +19,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_alignParentLeft="true"
-            android:text=".."
+            android:text=" "
             android:textSize="8sp" />
         <LinearLayout
             android:layout_width="match_parent"
@@ -216,7 +217,7 @@
         android:id="@+id/xmlPage2Middle"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1.1"
+        android:layout_weight="11"
         android:paddingTop="5dp" >
 
         <ImageView
@@ -263,7 +264,7 @@
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.7" >
+        android:layout_weight="7" >
 
         <ImageView
             android:id="@+id/xmlPage2ImageIcon"
@@ -283,9 +284,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
             android:layout_alignRight="@+id/xmlPage2BigText"
-            android:layout_marginBottom="4dp"
+            android:layout_marginBottom="2dp"
             android:layout_marginRight="20dp"
-            android:layout_marginLeft="20dp"
+            android:layout_marginLeft="10dp"
             android:gravity="right|bottom"
             android:text="Hint …………………."
             android:textSize="14sp" />
@@ -293,10 +294,9 @@
         <TextView
             android:id="@+id/xmlPage2BigText"
             android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            android:layout_above="@+id/xmlPage2BigHint"
+            android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_marginRight="20dp"
+            android:layout_marginRight="5dp"
             android:layout_marginLeft="20dp"
             android:layout_marginTop="0dp"
             android:gravity="left|top"
