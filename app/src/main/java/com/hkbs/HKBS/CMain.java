@@ -60,6 +60,9 @@ public class CMain extends MyActivity {
 	final static private boolean DEBUG=true;
 	final static private String TAG = CMain.class.getSimpleName();
 	final static private String CHI_MONTHS [] = {"一","二","三","四","五","六","七","八","九","十","十一","十二"};
+    final static private String STD_LAYOUT = "standard";
+    final static private String SMALL_LAYOUT = "small";
+    final static private String SW600_LAYOUT = "sw600dp";
 	
 	final static private int CALL_FROM_EXTERNAL_APP=-999;
 	private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
@@ -868,7 +871,7 @@ public class CMain extends MyActivity {
             mDisplayDay.setTimeInMillis(newCalendar.getTimeInMillis());
             mViewIndex=mViewIndex==1?2:1;
             onRefreshPage(mViewIndex);
-            MyGestureListener.flingInFromLeft(getApplicationContext(), mViewAnimator);
+            MyGestureListener.flingInFromRight(getApplicationContext(), mViewAnimator);
         }
     }
 	private void gotoNextDay(){
@@ -1119,19 +1122,29 @@ public class CMain extends MyActivity {
 		int goldFontSize;
 		if (MyDailyBread.mCurrentYear>=2015){
             // 2015.09.16 To protect small device overflow, we don't allow 4 lines
-            if (text.length>=4){//Relocate characters automatically
+            if (charPerLines>=22 && text.length==3){//Relocate characters automatically (But, should be smaller size to occupy)
                 theText=theText.replace("#","");
-                charPerLines = (int) Math.ceil(theText.length() / 3);
+                charPerLines = (int) Math.ceil(theText.length() / 4);
                 theText = theText.substring(0,charPerLines)+"#"+
                           theText.substring(charPerLines,charPerLines+charPerLines)+"#"+
-                          theText.substring(charPerLines+charPerLines);
-                Log.w(TAG,"OldText="+cv.getAsString(MyDailyBread.wGoldText));
-                Log.w(TAG,"NewText="+theText);
+                          theText.substring(charPerLines+charPerLines,charPerLines+charPerLines+charPerLines)+"#"+
+                          theText.substring(charPerLines+charPerLines+charPerLines);
+                if (DEBUG) {
+                    Log.e(TAG, "OldText=" + cv.getAsString(MyDailyBread.wGoldText));
+                    Log.e(TAG, "NewText=" + theText);
+                }
+                if (mScreenType.equalsIgnoreCase(SMALL_LAYOUT)) {
+                    goldFontSize = getFontSizeByText(pageGoldText, theText) - dp2px(2);
+                } else {
+                    goldFontSize = getFontSizeByText(pageGoldText, theText);
+                }
+            } else {
+                goldFontSize = getFontSizeByText(pageGoldText, theText);
             }
-			goldFontSize = getFontSizeByText(pageGoldText, theText);
+            pageGoldText.setTextSize(TypedValue.COMPLEX_UNIT_PX,goldFontSize);
 		} else {
 			goldFontSize = getGoldFontSize(pageGoldText,cv.getAsString(MyDailyBread.wGoldSize));
-			if (mScreenType.contentEquals("small")){
+			if (mScreenType.equalsIgnoreCase(SMALL_LAYOUT)){
 				pageGoldText.setTextSize(TypedValue.COMPLEX_UNIT_PX, goldFontSize-dp2px(3));
 			} else {
 				pageGoldText.setTextSize(TypedValue.COMPLEX_UNIT_PX,goldFontSize);
@@ -1152,20 +1165,20 @@ public class CMain extends MyActivity {
         }
 
         /****************************************************************************************
-         *  GOLD TEXT 金句經文出處
+         *  GOLD VERSE TEXT 金句經文出處
          ************************************************************************************/
 
 		final TextView pageGoldVerse = (TextView) findViewById(getID(nbr, "GoldVerse"));
-		pageGoldVerse.setText(cv.getAsString(MyDailyBread.wGoldVerse)+(MyDailyBread.mCurrentYear>=2015?"":"；和合本修訂版"));
+		pageGoldVerse.setText(cv.getAsString(MyDailyBread.wGoldVerse)+(curYear>=2016?"":"；和合本修訂版"));
 		pageGoldVerse.setTextColor(textColor);
 		// From HKBS, size change to less than Gold
         if (MyDailyBread.mCurrentYear>=2015 & charPerLines>20){
             // If size is too small, just a little bit different
             pageGoldVerse.setTextSize(TypedValue.COMPLEX_UNIT_PX, goldFontSize - dp2px(1));
         } else {
-            if (mScreenType.contentEquals("small")) {
+            if (mScreenType.equalsIgnoreCase(SMALL_LAYOUT)) {
                 pageGoldVerse.setTextSize(TypedValue.COMPLEX_UNIT_PX, goldFontSize - dp2px(6));
-            } else if (mScreenType.contentEquals("sw600dp")) {
+            } else if (mScreenType.equalsIgnoreCase(SW600_LAYOUT)) {
                 pageGoldVerse.setTextSize(TypedValue.COMPLEX_UNIT_PX, pageChiLunarMonth.getTextSize());
             } else {
                 pageGoldVerse.setTextSize(TypedValue.COMPLEX_UNIT_PX, goldFontSize - dp2px(6));
@@ -1175,7 +1188,7 @@ public class CMain extends MyActivity {
             pageGoldVerse.setGravity(Gravity.CENTER_HORIZONTAL);
         }
         if (curYear>=2015){
-            if (mScreenType.contentEquals("standard")) {
+            if (mScreenType.equalsIgnoreCase(STD_LAYOUT)) {
                 RelativeLayout.LayoutParams goldVerseLP = (RelativeLayout.LayoutParams) pageGoldVerse.getLayoutParams();
                 goldVerseLP.setMargins(goldVerseLP.leftMargin, goldVerseLP.topMargin, goldVerseLP.rightMargin, dp2px(22));
                 pageGoldVerse.setLayoutParams(goldVerseLP);
@@ -1205,14 +1218,11 @@ public class CMain extends MyActivity {
 			} else {
 				colonPos = englishColonPos;
 			}			
-		} 
+		}
+        String lines [] = bigText.split("#");
 		if (colonPos>=0){
-			String lines [] = bigText.split("#");
 			bigText= "<small>"+bigText.substring(0, colonPos+1)+"</small>"+bigText.substring(colonPos+1).replace("#", "<br>");
-			//2015.09.15 Remove below since some line 4 cause display half only
-			//if (lines.length<=3){
-				bigText=bigText+"<br>";
-			//}
+			bigText=bigText+"<br>";
 			pageBigText.setText(Html.fromHtml(bigText));
 		} else {
 			pageBigText.setText(bigText.replace("#", "\n"));
@@ -1221,22 +1231,22 @@ public class CMain extends MyActivity {
 		int bigTextSize;
         if (MyDailyBread.mCurrentYear>=2015 & charPerLines>20){
             // If size is too small, just a little bit different
-            if (mScreenType.contains("sw600dp")) {
+            if (mScreenType.equalsIgnoreCase(SW600_LAYOUT) || mScreenType.equalsIgnoreCase(SMALL_LAYOUT)) {
                 bigTextSize = (int) pageChiLunarMonth.getTextSize();
             } else {
                 bigTextSize = (int) (pageGoldText.getTextSize() - dp2px(2));
             }
         } else {
-            if (mScreenType.contains("sw600dp")) {
+            if (mScreenType.equalsIgnoreCase(SW600_LAYOUT) || mScreenType.equalsIgnoreCase(SMALL_LAYOUT)) {
                 bigTextSize = (int) pageChiLunarMonth.getTextSize();
             } else {
                 bigTextSize = (int) (pageGoldText.getTextSize() - dp2px(4));
             }
         }
 		pageBigText.setTextSize(TypedValue.COMPLEX_UNIT_PX, bigTextSize);
+        RelativeLayout.LayoutParams bigTextLP = (RelativeLayout.LayoutParams) pageBigText.getLayoutParams();
         if (curYear>=2016) {
             pageBigText.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
-            RelativeLayout.LayoutParams bigTextLP = (RelativeLayout.LayoutParams) pageBigText.getLayoutParams();
             int margin=Math.min(bigTextLP.leftMargin,bigTextLP.rightMargin);
             bigTextLP.setMargins(margin,bigTextLP.topMargin,margin,bigTextLP.bottomMargin);
             pageBigText.setLayoutParams(bigTextLP);
@@ -1246,36 +1256,6 @@ public class CMain extends MyActivity {
         if (DEBUG) {
             Log.d(TAG, "screenType=" + mScreenType + " Hint TextSize=" + bigTextSize + " " + pageBigText.getHeight()+" "+curYear+"-"+(curMonth+1)+"-"+curDay);
         }
-        //		final String bigSize = cv.getAsString(MyDailyBread.wBigSize);
-//		if (bigSize.equalsIgnoreCase("L")){
-//			pageBigText.setTextSize(TypedValue.COMPLEX_UNIT_PX,MyDailyBread.mHintSizeL);
-//		} else if (bigSize.equalsIgnoreCase("S")){
-//			pageBigText.setTextSize(TypedValue.COMPLEX_UNIT_PX,MyDailyBread.mHintSizeS);
-//		}
-
-//		final String bigAlign = cv.getAsString(MyDailyBread.wBigAlign);
-//		if (bigAlign.equalsIgnoreCase("L")){
-//			pageBigText.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-//		} else if (bigAlign.equalsIgnoreCase("C")){
-//			pageBigText.setGravity(Gravity.CENTER | Gravity.CENTER_VERTICAL);
-//		} else {
-//			pageBigText.setGravity(Gravity.CENTER | Gravity.CENTER_VERTICAL);
-//		}
-
-//		String [] bigLines = cv.getAsString(MyDailyBread.wBigText).split("#");
-//		int bigMaxCharcters=0;
-//    	for (int i=0;i<bigLines.length;i++){
-//    		bigMaxCharcters=Math.max(bigMaxCharcters,bigLines[i].length());
-//    	}
-//
-//		RelativeLayout.LayoutParams lpBig = (RelativeLayout.LayoutParams) pageBigText.getLayoutParams();
-//		int bigFontSize = (int) Math.floor((MyDailyBread.mAppWidth -
-//		       	 dp2px(lpBig.leftMargin) - dp2px(lpBig.rightMargin) ) /
-//		       	bigMaxCharcters);
-//		if (bigFontSize+2>goldFontSize){//Don't let hint size to large even bigger than bible verse
-//			bigFontSize=goldFontSize-2;
-//		}
-//		pageBigText.setTextSize(TypedValue.COMPLEX_UNIT_PX, bigFontSize);
         /***********************************************************************************
          * 最後一行字 : pageHintText (SIZE IS STANDARD)
          ************************************************************************************/
@@ -1285,9 +1265,9 @@ public class CMain extends MyActivity {
         // From HKBS, same size or little smaller
 		int hintSize = getBigFontSize(pageBigText,"S");
 		//Log.i(TAG,"Dialog:"+diagnol(CMain.this)+" Big Font Size:"+bigTextSize);		
-		if (mScreenType.contains("small")){
+		if (mScreenType.equalsIgnoreCase(SMALL_LAYOUT)){
 			hintSize = (int) (pageBigText.getTextSize() - dp2px(2));
-		} else if (mScreenType.contains("standard")){
+		} else if (mScreenType.equalsIgnoreCase(STD_LAYOUT)){
 			hintSize = (int) (pageBigText.getTextSize() - dp2px(3));
 		} else {
 			hintSize = (int) (pageBigText.getTextSize() - dp2px(4));//hintSize=hintSize-dp2px(diagnol(CMain.this)>7.0?6:4);
@@ -1299,10 +1279,11 @@ public class CMain extends MyActivity {
 		int maxChars=0;
 		for (int i=0;i<textLines.length;i++){
 			maxChars = Math.max(maxChars, textLines[i].length());
-		}			
-		if (mScreenType.equalsIgnoreCase("small")){
-			maxChars = maxChars < 20 ? 20 : maxChars;
-		} else if (mScreenType.contentEquals("sw600dp")){
+		}
+        // Control characters not too big; Value bigger Letter Smaller
+		if (mScreenType.equalsIgnoreCase(SMALL_LAYOUT)){
+			maxChars = maxChars < 16 ? 16 : maxChars;
+		} else if (mScreenType.equalsIgnoreCase(SW600_LAYOUT)){
 			maxChars = maxChars < 17 ? 17 : maxChars;// 17 change to 19 since 小米Note cannot display
 		} else {
 			maxChars = maxChars < 18 ? 18 : maxChars;

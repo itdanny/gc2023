@@ -177,6 +177,7 @@
                 android:layout_height="wrap_content"
                 android:layout_weight="2"
                 android:gravity="center"
+                android:paddingRight="10dp"
                 android:orientation="vertical" >
 
                 <TextView
@@ -263,7 +264,8 @@
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
-            android:layout_alignRight="@id/xmlPage2BigText"
+            android:layout_alignParentRight="true"
+            android:layout_marginRight="40dp"
             android:layout_marginBottom="4dp"
             android:gravity="right|bottom"
             android:text="Hint …………………."
@@ -275,9 +277,9 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_marginBottom="10dp"
-            android:layout_marginRight="10dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="20dp"
             android:layout_marginTop="4dp"
-            android:layout_marginLeft="40dp"
             android:gravity="left|top"
             android:text="小知識\n小知識\n小知識\n小知識\n"
             android:textSize="38sp" />

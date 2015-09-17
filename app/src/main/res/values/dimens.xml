@@ -38,7 +38,7 @@
 	 <dimen name="big_p_image_top">15dp</dimen>	 
 	 <dimen name="big_p_image_bottom">47dp</dimen>
 	 
-	 <dimen name="big_lunar_font_size">22sp</dimen>
+	 <dimen name="big_lunar_font_size">28sp</dimen>
 	 
 	 <!-- SMALL for Gold Text and Verse -->
 	 <dimen name="small_c_image_top">5dp</dimen>
@@ -46,7 +46,7 @@
 	 <dimen name="small_p_image_top">2dp</dimen>	 
 	 <dimen name="small_p_image_bottom">14dp</dimen>
 	 
-	 <dimen name="small_lunar_font_size">11sp</dimen>
+	 <dimen name="small_lunar_font_size">12sp</dimen>
 	 
     <integer name="animation_speed_fling">350</integer>
     <integer name="animation_speed_slide">250</integer>
