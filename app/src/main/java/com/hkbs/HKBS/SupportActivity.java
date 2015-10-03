@@ -1,17 +1,16 @@
 package com.hkbs.HKBS;
 
-import java.util.Calendar;
-
-import com.hkbs.HKBS.arkUtil.MyUtil;
-
 import android.os.Build;
 import android.os.Bundle;
-import android.text.Html;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.TextView;
+
+import com.hkbs.HKBS.arkUtil.MyUtil;
+
+import java.util.Calendar;
 
 public class SupportActivity extends MyActivity implements OnClickListener {
 	
@@ -48,7 +47,8 @@ public class SupportActivity extends MyActivity implements OnClickListener {
 		TextView tvVersion = (TextView) findViewById(R.id.xmlSupportVersion);
 		String appVersionName = "?";
 		try {
-			appVersionName = getPackageManager().getPackageInfo(getPackageName(),0).versionName;
+			//appVersionName = String.valueOf(getPackageManager().getPackageInfo(getPackageName(),0).versionCode);
+            appVersionName = getPackageManager().getPackageInfo(getPackageName(),0).versionName;
 		} catch (Exception e){
 			//
 		}

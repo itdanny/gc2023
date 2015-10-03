@@ -21,7 +21,7 @@ import java.util.Map.Entry;
 import java.util.Set;
 
 public class MyDailyBread {
-    static public int mCurrentYear=2016;//Valid Range will be from last SEPT
+    static public int mCurrentYear=2015;//Valid Range will be from last SEPT
 	static private boolean IS_CURRENT_YEAR_ONLY = true;
 	static private boolean IS_CHECK_FUTURE_CHARS_ONLY = false;// PLEASE SET IT TO [[[false]]] for release
 	static private boolean IS_CHECK_VALID_VERSE = true;

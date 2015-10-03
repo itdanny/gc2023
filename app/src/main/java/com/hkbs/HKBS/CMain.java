@@ -11,12 +11,14 @@ import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
+import android.graphics.Canvas;
+import android.graphics.Matrix;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore.Images;
-import android.provider.MediaStore.Images.Media;
 import android.text.Html;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
@@ -46,6 +48,7 @@ import org.arkist.share.AxImageView;
 import org.arkist.share.AxTextView;
 import org.arkist.share.AxTools;
 
+import java.io.File;
 import java.io.OutputStream;
 import java.util.Calendar;
 
@@ -285,7 +288,15 @@ public class CMain extends MyActivity {
 		}
 		
 		contentView.setDrawingCacheEnabled(true);
+        //contentView.buildDrawingCache(true);
 		screenShot = contentView.getDrawingCache();
+        if (screenShot==null){
+            screenShot = takeSnapshot(contentView);
+            if (screenShot==null){
+                screenShot = loadBitmapFromView(contentView);
+            }
+        }
+        //contentView.setDrawingCacheEnabled(false);
 		
 		mControlsView.setVisibility(controlVisibility);
 		mTitleView.setVisibility(titleVisibility);
@@ -302,10 +313,30 @@ public class CMain extends MyActivity {
 //	        fos.close();
 //	    } catch (FileNotFoundException e) {
 //	        Log.e("GREC", e.getMessage(), e);
-//	    } catch (IOException e) {
+//	    } catch (IOException e) {adb
 //	        Log.e("GREC", e.getMessage(), e);
 //	    }
 	}
+    private Bitmap bitmap;
+    private Bitmap takeSnapshot(View v) {
+        if(bitmap!=null) {
+            bitmap.recycle();
+            bitmap=null;
+        }
+        bitmap = Bitmap.createBitmap(v.getWidth(), v.getHeight(),Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(bitmap);
+                                          /*c.drawBitmap(v.getDrawingCache(), 0, 0, null);
+                                          v.destroyDrawingCache();*/
+        v.draw(c);
+        return bitmap;
+    }
+    public static Bitmap loadBitmapFromView(View v) {
+        Bitmap b = Bitmap.createBitmap( v.getLayoutParams().width, v.getLayoutParams().height, Bitmap.Config.ARGB_8888);
+        Canvas c = new Canvas(b);
+        v.layout(0, 0, v.getLayoutParams().width, v.getLayoutParams().height);
+        v.draw(c);
+        return b;
+    }
 	private void onCreateSetButtons(){
 		// Upon interacting with UI controls, delay any scheduled hide()
 		// operations to prevent the jarring behavior of controls going away
@@ -492,21 +523,51 @@ public class CMain extends MyActivity {
 	private void copyImage(Context context){
 		// Some Android device not support !! 
 	}
+    static public Bitmap getThumbnail(Bitmap target, int expectedSize, boolean isByHeight){ // ignore isByHeight
+        int width = target.getWidth();
+        int height = target.getHeight();
+        if (width<= expectedSize && height<= expectedSize) return target;
+        Matrix matrix = new Matrix();
+        float scale = ((float) expectedSize)/ (height>width?height:width);
+        matrix.postScale(scale, scale);
+        Bitmap result = Bitmap.createBitmap(target, 0, 0, width, height, matrix, true);
+        return result;
+    }
 	private void shareImage(Context context){
 		ContentValues values = new ContentValues();
 		values.put(Images.Media.TITLE, "title");
 		values.put(Images.Media.MIME_TYPE, "image/jpeg");
-		Uri uri = getContentResolver().insert(Media.EXTERNAL_CONTENT_URI,values);
-
+		//Uri uri = getContentResolver().insert(Media.EXTERNAL_CONTENT_URI,values);
+        String fileName =  "pic_" + String.valueOf( System.currentTimeMillis() ) + ".jpg";
+        Uri uri= Uri.fromFile(new File( Environment.getExternalStorageDirectory(),fileName));
+        //Uri uri = Uri.fromFile(new File(getFilesDir(),fileName));
 		OutputStream outstream;
-		try {
+        int tryCounter=1;
+        try {
 		    outstream = getContentResolver().openOutputStream(uri);
-		    screenShot.compress(Bitmap.CompressFormat.JPEG, 100, outstream);
+            boolean anyError=false;
+            try {
+                screenShot.compress(Bitmap.CompressFormat.JPEG, 100, outstream);
+            } catch (Exception e) {
+                anyError = true;
+            }
+            if (anyError){
+                outstream.close();
+                outstream = getContentResolver().openOutputStream(uri);
+                tryCounter++;
+                Bitmap smallBitmap = getThumbnail(screenShot, 640, true);
+                if (!smallBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outstream)){
+                    tryCounter++;
+                    smallBitmap = getThumbnail(screenShot, 320, true);
+                    smallBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outstream);
+                }
+            }
+            outstream.flush();
 		    outstream.close();
 		} catch (Exception e) {
-		    System.err.println(e.toString());
+            Toast.makeText(this,"Error:"+tryCounter+" "+e.toString(),Toast.LENGTH_LONG).show();
+		    //System.err.println(e.toString());
 		}
-
 		Intent share = new Intent(Intent.ACTION_SEND);
 		share.setType("image/jpeg");
 		share.putExtra(android.content.Intent.EXTRA_SUBJECT, "全年好日曆經文分享");

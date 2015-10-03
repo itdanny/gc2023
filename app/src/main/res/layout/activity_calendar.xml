@@ -18,6 +18,7 @@
             android:background="@android:color/white" >
 
             <LinearLayout
+                android:id="@+id/xmlPrevSection"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:gravity="left" >
@@ -55,12 +56,13 @@
                     android:textColor="@android:color/black" />
             </LinearLayout>
 
+            <!--android:layout_toRightOf="@id/xmlPrevSection"-->
             <TextView
                 android:id="@+id/xmlCalendarMonth"
                 android:layout_width="wrap_content"
                 android:layout_height="wrap_content"
                 android:layout_centerHorizontal="true"
-                android:layout_toRightOf="@id/xmlPrevMth"
+
                 android:gravity="center"
                 android:paddingBottom="2dp"
                 android:paddingLeft="5dp"
