@@ -16,21 +16,6 @@
 
 package com.hkbs.HKBS;
 
-import java.text.SimpleDateFormat;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.Map;
-
-import com.hkbs.HKBS.R;
-import com.hkbs.HKBS.arkCalendar.MyCalendar;
-import com.hkbs.HKBS.arkCalendar.MyCalendarLunar;
-import com.hkbs.HKBS.arkCalendar.MyCalendar.MyDayEvents;
-import com.hkbs.HKBS.arkCalendar.MyCalendarLunar.solar;
-import com.hkbs.HKBS.arkUtil.MySquareView;
-import com.hkbs.HKBS.arkUtil.MyUtil;
-
 import android.content.Context;
 import android.text.Html;
 import android.view.LayoutInflater;
@@ -39,6 +24,19 @@ import android.view.ViewGroup;
 import android.widget.BaseAdapter;
 import android.widget.ImageView;
 import android.widget.TextView;
+
+import com.hkbs.HKBS.arkCalendar.MyCalendar;
+import com.hkbs.HKBS.arkCalendar.MyCalendar.MyDayEvents;
+import com.hkbs.HKBS.arkCalendar.MyCalendarLunar;
+import com.hkbs.HKBS.arkUtil.MySquareView;
+import com.hkbs.HKBS.arkUtil.MyUtil;
+
+import java.text.SimpleDateFormat;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.Map;
 
 public class CalendarAdapter extends BaseAdapter {
 	static final public SimpleDateFormat sdfDate = new SimpleDateFormat("yyyyMMdd", Locale.US);
@@ -120,7 +118,7 @@ public class CalendarAdapter extends BaseAdapter {
 		TextView dayView;
 		if (convertView == null) { // if it's not recycled, initialize some attributes
 			LayoutInflater vi = (LayoutInflater) actContext.getSystemService(Context.LAYOUT_INFLATER_SERVICE);
-			v = vi.inflate(R.layout.activity_calendar_adapter, null);
+			v = vi.inflate(R.layout.activity_calendar_adapter,null);
 		}
 		dayView = (TextView) v.findViewById(R.id.xmlDay);
 		// disable empty days from the beginning

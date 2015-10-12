@@ -1,4 +1,5 @@
 <resources>
+    <dimen name="screen_type">1px</dimen>
 	<!-- Standard Screen -->
 <!-- TextAppearance.Large -> 22sp
 	 TextAppearance.Medium -> 18sp
@@ -54,6 +55,12 @@
     <dimen name="appwidget_margin">0dp</dimen>
 	<dimen name="appwidget_min_width">294dp</dimen>
 	<dimen name="appwidget_min_height">294dp</dimen>
+
+    <!--
+Refer to App Widget Documentation for margin information
+http://developer.android.com/guide/topics/appwidgets/index.html#CreatingLayout
+    -->
+    <!--<dimen name="widget_margin">8dp</dimen>-->
     
     <!-- <item name="backgroundAlpha" format="float" type="dimen">0.7</item> -->
     

@@ -1,4 +1,5 @@
 <resources>
+    <dimen name="screen_type">2px</dimen>
 	<!-- Standard Screen -->
 <!-- TextAppearance.Large -> 22sp
 	 TextAppearance.Medium -> 18sp

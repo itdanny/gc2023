@@ -1,18 +1,6 @@
 package com.hkbs.HKBS.arkCalendar;
 
-import java.util.HashMap;
-import java.util.Locale;
-import java.util.TimeZone;
-
-
-
-import com.hkbs.HKBS.CMain;
-import com.hkbs.HKBS.R;
-import com.hkbs.HKBS.R.string;
-import com.hkbs.HKBS.arkUtil.MyUtil;
-
 import android.annotation.SuppressLint;
-import android.app.Activity;
 import android.app.Notification;
 import android.app.NotificationManager;
 import android.content.ContentResolver;
@@ -28,6 +16,14 @@ import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.text.format.Time;
 import android.util.Log;
+
+import com.hkbs.HKBS.CMain;
+import com.hkbs.HKBS.R;
+import com.hkbs.HKBS.arkUtil.MyUtil;
+
+import java.util.HashMap;
+import java.util.Locale;
+import java.util.TimeZone;
 /*
  * Should not have CalendarContract (API-14) in this class
  */
@@ -347,7 +343,7 @@ public class Api8 {
             flags |= DateUtils.FORMAT_SHOW_DATE;
         }
         String dateRange = AlertUtils.formatDateRange(context, startMillis,startMillis, flags);
-        if (!allDay && tz != Time.getCurrentTimezone()) {
+        if (!allDay && !tz.contentEquals(Time.getCurrentTimezone())) {
             // Assumes time was set to the current tz
             time.set(startMillis);
             boolean isDST = time.isDst != 0;

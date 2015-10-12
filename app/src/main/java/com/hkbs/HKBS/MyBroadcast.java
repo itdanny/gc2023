@@ -1,11 +1,5 @@
 package com.hkbs.HKBS;
 
-import java.util.Calendar;
-
-import org.arkist.share.AxAlarm;
-
-import com.hkbs.HKBS.arkUtil.MyUtil;
-
 import android.annotation.SuppressLint;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
@@ -20,6 +14,12 @@ import android.content.res.Resources;
 import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
+
+import com.hkbs.HKBS.arkUtil.MyUtil;
+
+import org.arkist.share.AxAlarm;
+
+import java.util.Calendar;
 
 public class MyBroadcast extends BroadcastReceiver {
     final static private String TAG = MyBroadcast.class.getSimpleName();
@@ -101,21 +101,26 @@ public class MyBroadcast extends BroadcastReceiver {
 		}
 	}
 	static public void updateAllWidget(Context context){
-		MyUtil.log(TAG, "updateAllWidget.");
+		MyUtil.log(TAG, "updateAllWidget");
     	AppWidgetManager widgetMgr = AppWidgetManager.getInstance(context);
     	int [] widgets = widgetMgr.getAppWidgetIds(new ComponentName(context,CWidget.class));
-    	for (int i=0;i<widgets.length;i++){
-    		Intent intent = new Intent();
-    		intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-    		//intent.setData(ContentUris.withAppendedId(Uri.EMPTY, buttonID));
-    		intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgets[i]);
-    		intent.putExtra(AppWidgetManager.EXTRA_CUSTOM_EXTRAS, REQUEST_WIDGET);
-    		intent.putExtra(AppWidgetManager.EXTRA_CUSTOM_INFO, "");
-    		// below statment should be different on every call so that it won't reuse and can't broadcase wrong variables
-    		//intentCounter++;
-    		intent.setData(Uri.withAppendedPath(Uri.parse(URI_SCHEME+ "://widget/"+REQUEST_WIDGET+"/"), String.valueOf(widgets[i])));
-    		context.sendBroadcast(intent);	
-    	}
+        if (widgets==null) {
+            MyUtil.log(TAG, "updateAllWidget NULL");
+        } else if (widgets.length!=0){
+            MyUtil.log(TAG, "updateAllWidget " + widgets.length);
+            for (int i = 0; i < widgets.length; i++) {
+                Intent intent = new Intent();
+                intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+                //intent.setData(ContentUris.withAppendedId(Uri.EMPTY, buttonID));
+                intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgets[i]);
+                intent.putExtra(AppWidgetManager.EXTRA_CUSTOM_EXTRAS, REQUEST_WIDGET);
+                intent.putExtra(AppWidgetManager.EXTRA_CUSTOM_INFO, "");
+                // below statment should be different on every call so that it won't reuse and can't broadcase wrong variables
+                //intentCounter++;
+                intent.setData(Uri.withAppendedPath(Uri.parse(URI_SCHEME + "://widget/" + REQUEST_WIDGET + "/"), String.valueOf(widgets[i])));
+                context.sendBroadcast(intent);
+            }
+        }
 	}
 	/*
 	 * 

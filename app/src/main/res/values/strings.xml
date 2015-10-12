@@ -109,5 +109,5 @@ the first count parameter selects the appropriate plural string and the second c
          if there were two additional reminders then this would show
          '2 more reminders' -->
     <string name="alert_missed_events_multiple">(<xliff:g id="reminder_count">%s</xliff:g> more reminders)</string>
-    
+
 </resources>

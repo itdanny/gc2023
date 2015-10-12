@@ -82,6 +82,7 @@ public class CMain extends MyActivity {
 	static public String mScreenType="";
 	private LinearLayout page1;
 	private LinearLayout page2;
+    private Handler handler;
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
@@ -177,29 +178,8 @@ public class CMain extends MyActivity {
 		
 		CWidget.broadcastMe(CMain.this);
 
-        String defaultCountry = MyUtil.getPrefStr(MyUtil.PREF_COUNTRY, "");
-        if (TextUtils.isEmpty(defaultCountry)) {
-            AlertDialog.Builder alertBuilder = new AlertDialog.Builder(this);
-            CharSequence items[] = {"台灣", "香港", "其他"};
-            alertBuilder.setTitle("請選擇日曆地區：");
-            alertBuilder.setItems(items, new DialogInterface.OnClickListener() {
-                @Override
-                public void onClick(DialogInterface dialog, int which) {
-                    switch (which) {
-                        case 0:
-                            MyUtil.setPrefStr(MyUtil.PREF_COUNTRY, "TW");
-                            break;
-                        case 1:
-                            MyUtil.setPrefStr(MyUtil.PREF_COUNTRY, "HK");
-                            break;
-                        default:
-                            MyUtil.setPrefStr(MyUtil.PREF_COUNTRY, "CN");
-                            break;
-                    }
-                }
-            });
-            alertBuilder.show();
-        }
+        MyUtil.log(TAG, "StartApp3..............End");
+
 	}
 	@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
 	private void setControlsVisibility(boolean isVisible){
@@ -880,7 +860,38 @@ public class CMain extends MyActivity {
 //			mBroadcast = new MyBroadcast();
 //			registerReceiver(mBroadcast, new IntentFilter());
 //		}
-		onRefreshPage(mViewIndex);		
+        MyUtil.log(TAG, "onResume");
+        onRefreshPage(mViewIndex);
+        MyUtil.log(TAG, "onResumeAfterOnRefreshPage");
+        String defaultCountry = MyUtil.getPrefStr(MyUtil.PREF_COUNTRY, "");
+        if (TextUtils.isEmpty(defaultCountry)) {
+            handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(CMain.this);
+                    CharSequence items[] = {"台灣", "香港", "其他"};
+                    alertBuilder.setTitle("請選擇日曆地區：");
+                    alertBuilder.setItems(items, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which) {
+                                case 0:
+                                    MyUtil.setPrefStr(MyUtil.PREF_COUNTRY, "TW");
+                                    break;
+                                case 1:
+                                    MyUtil.setPrefStr(MyUtil.PREF_COUNTRY, "HK");
+                                    break;
+                                default:
+                                    MyUtil.setPrefStr(MyUtil.PREF_COUNTRY, "CN");
+                                    break;
+                            }
+                        }
+                    });
+                    alertBuilder.show();
+                }
+            }, 1000);
+        }
 	}
 	@Override
 	protected void onPause() {

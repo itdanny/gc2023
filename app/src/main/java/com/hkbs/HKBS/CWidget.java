@@ -1,9 +1,5 @@
 package com.hkbs.HKBS;
 
-import java.util.Calendar;
-
-import org.arkist.share.AxAlarm;
-
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
 import android.appwidget.AppWidgetProvider;
@@ -12,16 +8,19 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.View;
-import android.widget.ImageView;
+import android.view.WindowManager;
 import android.widget.RemoteViews;
-import android.widget.TextView;
 
-import com.hkbs.HKBS.R;
 import com.hkbs.HKBS.arkCalendar.MyCalendarLunar;
 import com.hkbs.HKBS.arkUtil.MyUtil;
+
+import org.arkist.share.AxAlarm;
+import org.arkist.share.AxTools;
+
+import java.util.Calendar;
 
 public class CWidget extends AppWidgetProvider {
 	final static private boolean DEBUG = true;
@@ -31,24 +30,41 @@ public class CWidget extends AppWidgetProvider {
 	public CWidget() {
 
 	}
+    @Override
+    public void onEnabled(Context context) {
+        // Enter relevant functionality for when the first widget is created
+    }
+
+    @Override
+    public void onDisabled(Context context) {
+        // Enter relevant functionality for when the last widget is disabled
+    }
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		super.onReceive(context, intent);	
 		MyUtil.log(TAG, "widget.onReceive"+((intent!=null && intent.getAction()!=null)?intent.getAction():""));
 		// Whatever receive; just do it.
 		
-//		int actionID = intent.getIntExtra(AppWidgetManager.EXTRA_CUSTOM_EXTRAS,0);
-//		switch (actionID){
-//			case MyBroadcast.REQUEST_WIDGET:
-		
-			    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-			    ComponentName thisAppWidget = new ComponentName(context.getPackageName(), CWidget.class.getName());
-			    int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisAppWidget);
-			    onUpdate(context, appWidgetManager, appWidgetIds);
-				
-//				break;
-//		}
-		AxAlarm.setDailyOnDateChange(context);
+////		int actionID = intent.getIntExtra(AppWidgetManager.EXTRA_CUSTOM_EXTRAS,0);
+////		switch (actionID){
+////			case MyBroadcast.REQUEST_WIDGET:
+//
+//			    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+//			    ComponentName thisAppWidget = new ComponentName(context.getPackageName(), CWidget.class.getName());
+//			    int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisAppWidget);
+//			    onUpdate(context, appWidgetManager, appWidgetIds);
+//
+////				break;
+////		}
+//		AxAlarm.setDailyOnDateChange(context);
+
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        ComponentName thisAppWidget = new ComponentName(context.getPackageName(), CWidget.class.getName());
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisAppWidget);
+        onUpdate(context, appWidgetManager, appWidgetIds);
+
+        AxAlarm.setDailyOnDateChange(context);
+
 	}
 	@Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
@@ -59,7 +75,21 @@ public class CWidget extends AppWidgetProvider {
 			onRefresh(recRef); // No Intent
 			doUpdateAppWidgetNow(context, recRef.views, recRef.widgetID);
 	    }
+//        final int N = appWidgetIds.length;
+//        for (int i = 0; i < N; i++) {
+//            updateAppWidget(context, appWidgetManager, appWidgetIds[i]);
+//        }
 	}
+//    static void updateAppWidget(Context context, AppWidgetManager appWidgetManager,
+//                                int appWidgetId) {
+//
+//        CharSequence widgetText = context.getString(R.string.appwidget_text);
+//        // Construct the RemoteViews object
+//        RemoteViews views = new RemoteViews(context.getPackageName(), R.layout.new_app_widget);
+//        views.setTextViewText(R.id.appwidget_text, widgetText);
+//        // Instruct the widget manager to update the widget
+//        appWidgetManager.updateAppWidget(appWidgetId, views);
+//    }
 	private void doUpdateAppWidgetNow(Context context, RemoteViews views, int widgetID){
     	if (DEBUG) Log.i(TAG,"doUpdateAppWidgetNow");
     	AppWidgetManager appMgr = AppWidgetManager.getInstance(context);
@@ -250,18 +280,38 @@ public class CWidget extends AppWidgetProvider {
 		public int widgetAction;
 		public AppWidgetManager appMgr;
 		
-		public ReceiveRef(Context context, Intent intent){
-			this.context = context;
-			this.views = new RemoteViews(context.getPackageName(), R.layout.activity_cwidget);
-			this.appMgr = AppWidgetManager.getInstance(context);
-			this.intent = intent;
-			this.widgetID = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,AppWidgetManager.INVALID_APPWIDGET_ID);
-			this.widgetAction = intent.getIntExtra(AppWidgetManager.EXTRA_CUSTOM_EXTRAS,0);
-			if (DEBUG) Log.i(TAG,"onReceiveAction:"+this.widgetAction+","+this.widgetID);
-		}
-		public ReceiveRef(Context context, int widgetID){
-			this.context = context;
-			this.views = new RemoteViews(context.getPackageName(), R.layout.activity_cwidget);
+//		public ReceiveRef(Context context, Intent intent){
+//			this.context = context;
+//			this.views = new RemoteViews(context.getPackageName(), R.layout.activity_cwidget);
+//			this.appMgr = AppWidgetManager.getInstance(context);
+//			this.intent = intent;
+//			this.widgetID = intent.getIntExtra(AppWidgetManager.EXTRA_APPWIDGET_ID,AppWidgetManager.INVALID_APPWIDGET_ID);
+//			this.widgetAction = intent.getIntExtra(AppWidgetManager.EXTRA_CUSTOM_EXTRAS,0);
+//			if (DEBUG) Log.i(TAG,"onReceiveAction:"+this.widgetAction+","+this.widgetID);
+//		}
+		public ReceiveRef(Context context, int widgetID) {
+            this.context = context;
+            DisplayMetrics metrics = new DisplayMetrics();
+            WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+            wm.getDefaultDisplay().getMetrics(metrics);
+            int screen_type=(int) context.getResources().getDimension(R.dimen.screen_type);
+            // 240 -> 216 ; 320 -> 339
+            int smallSize= AxTools.dp2px(180);//widget size is 180
+            int standardSize=AxTools.dp2px(240);//widget size is 240
+            int sw600Size=AxTools.dp2px(414);//AxTools.dp2px(360);//widget size is 360
+            if (DEBUG) Log.i(TAG,"screenType:"+screen_type+" "+metrics.widthPixels+" "+smallSize+" "+standardSize+" "+sw600Size);
+            if (screen_type==0 || screen_type==2){//small & large
+                this.views = new RemoteViews(context.getPackageName(), R.layout.activity_cwidget);
+            } else {
+                if (metrics.widthPixels > 1000){//sw600Size){
+                    if (DEBUG) Log.i(TAG,"Widget Standard Big");
+                    this.views = new RemoteViews(context.getPackageName(), R.layout.activity_cwidget_sw600dp);
+                } else {
+                    if (DEBUG) Log.i(TAG,"Widget Standard Small");
+                    this.views = new RemoteViews(context.getPackageName(), R.layout.activity_cwidget);
+                }
+            }
+
 			this.appMgr = AppWidgetManager.getInstance(context);
 			this.widgetID = widgetID;
 			this.intent = null;

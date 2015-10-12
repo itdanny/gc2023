@@ -148,7 +148,7 @@ public class AlertUtils {
         StringBuilder sb = new StringBuilder(formatDateRange(context, startMillis,
                 startMillis, flags));
 
-        if (!allDay && tz != Time.getCurrentTimezone()) {
+        if (!allDay && !tz.contentEquals(Time.getCurrentTimezone())) {
             // Assumes time was set to the current tz
             time.set(startMillis);
             boolean isDST = time.isDst != 0;
