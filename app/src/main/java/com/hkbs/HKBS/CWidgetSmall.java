@@ -22,12 +22,12 @@ import org.arkist.share.AxTools;
 
 import java.util.Calendar;
 
-public class CWidget extends AppWidgetProvider {
+public class CWidgetSmall extends AppWidgetProvider {
 	final static private boolean DEBUG = true;
-	final static private String TAG = CWidget.class.getSimpleName();
+	final static private String TAG = CWidgetSmall.class.getSimpleName();
 	final static private String CHI_MONTHS [] = {"一","二","三","四","五","六","七","八","九","十","十一","十二"};
-    public boolean isLarger=false;
-	public CWidget() {
+
+	public CWidgetSmall() {
 
 	}
     @Override
@@ -59,7 +59,7 @@ public class CWidget extends AppWidgetProvider {
 //		AxAlarm.setDailyOnDateChange(context);
 
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-        ComponentName thisAppWidget = new ComponentName(context.getPackageName(), CWidget.class.getName());
+        ComponentName thisAppWidget = new ComponentName(context.getPackageName(), CWidgetSmall.class.getName());
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisAppWidget);
         onUpdate(context, appWidgetManager, appWidgetIds);
 
@@ -95,7 +95,7 @@ public class CWidget extends AppWidgetProvider {
     	AppWidgetManager appMgr = AppWidgetManager.getInstance(context);
     	try {
 	    	if (widgetID==0){
-	    		ComponentName cname = new ComponentName(context, CWidget.class);
+	    		ComponentName cname = new ComponentName(context, CWidgetSmall.class);
 	    		appMgr.updateAppWidget(cname, views);
 	    		if (DEBUG) Log.i(TAG,"updateAppWidget All");
 	    	} else {
@@ -301,11 +301,11 @@ public class CWidget extends AppWidgetProvider {
             int sw600Size=AxTools.dp2px(360);//AxTools.dp2px(360);//widget size is 360
             if (DEBUG) Log.i(TAG,"screenType:"+screen_type+" "+metrics.widthPixels+" "+smallSize+" "+standardSize+" "+sw600Size);
             //if (android.os.Build.MODEL.equalsIgnoreCase("SM-A8000")){
-//            if (MyUtil.scaleDensity(context)==3 && MyUtil.widthPixels(context)==1080 && MyUtil.heightPixels(context)==1920){
-//                this.views = new RemoteViews(context.getPackageName(), R.layout.activity_cwidget_large);
-//            } else {
-                this.views = new RemoteViews(context.getPackageName(), R.layout.activity_cwidget);
-//            }
+            //if (MyUtil.scaleDensity(context)==3 && MyUtil.widthPixels(context)==1080 && MyUtil.heightPixels(context)==1920){
+                this.views = new RemoteViews(context.getPackageName(), R.layout.activity_cwidget_small);
+            //} else {
+            //    this.views = new RemoteViews(context.getPackageName(), R.layout.activity_cwidget);
+           // }
 //            if (screen_type==0 || screen_type==2){//small & large (use its default in folder)
 //                this.views = new RemoteViews(context.getPackageName(), R.layout.activity_cwidget);
 //            } else {

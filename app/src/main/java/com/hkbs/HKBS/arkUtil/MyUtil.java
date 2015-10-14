@@ -1,13 +1,5 @@
 package com.hkbs.HKBS.arkUtil;
 
-import java.text.SimpleDateFormat;
-import java.util.Locale;
-import java.util.Map;
-import java.util.TimeZone;
-
-import com.google.analytics.tracking.android.EasyTracker;
-import com.google.analytics.tracking.android.MapBuilder;
-
 import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Context;
@@ -16,6 +8,7 @@ import android.graphics.Bitmap;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
+import android.os.Build;
 import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
@@ -24,6 +17,14 @@ import android.util.Log;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
+
+import com.google.analytics.tracking.android.EasyTracker;
+import com.google.analytics.tracking.android.MapBuilder;
+
+import java.text.SimpleDateFormat;
+import java.util.Locale;
+import java.util.Map;
+import java.util.TimeZone;
 
 public class MyUtil {
 	final static private String TAG = MyUtil.class.getSimpleName();	
@@ -260,7 +261,11 @@ public class MyUtil {
     	if (_scaleDensity==0){
 	    	final WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
 	    	final DisplayMetrics dm = new DisplayMetrics();
-	        wm.getDefaultDisplay().getMetrics(dm);
+            if (Build.VERSION.SDK_INT >=17) {
+                wm.getDefaultDisplay().getRealMetrics(dm);
+            } else {
+                wm.getDefaultDisplay().getMetrics(dm);
+            }
 	        return dm.scaledDensity;
     	} else {
     		return _scaleDensity;
@@ -269,7 +274,11 @@ public class MyUtil {
     public static double diagnol(Context context){
     	final WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
     	final DisplayMetrics dm = new DisplayMetrics();
-        wm.getDefaultDisplay().getMetrics(dm);
+        if (Build.VERSION.SDK_INT >=17) {
+            wm.getDefaultDisplay().getRealMetrics(dm);
+        } else {
+            wm.getDefaultDisplay().getMetrics(dm);
+        }
     	final float heightInches = dm.heightPixels /dm.ydpi;
         final float widthInches = dm.widthPixels /dm.xdpi;
         return Math.sqrt((heightInches*heightInches)+(widthInches*widthInches));
@@ -280,13 +289,21 @@ public class MyUtil {
     public static int heightPixels(Context context){
     	final WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
     	final DisplayMetrics dm = new DisplayMetrics();
-        wm.getDefaultDisplay().getMetrics(dm);
+        if (Build.VERSION.SDK_INT >=17) {
+            wm.getDefaultDisplay().getRealMetrics(dm);
+        } else {
+            wm.getDefaultDisplay().getMetrics(dm);
+        }
         return dm.heightPixels;
     }
     public static int widthPixels(Context context){
     	final WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
     	final DisplayMetrics dm = new DisplayMetrics();
-        wm.getDefaultDisplay().getMetrics(dm);
+        if (Build.VERSION.SDK_INT >=17) {
+            wm.getDefaultDisplay().getRealMetrics(dm);
+        } else {
+            wm.getDefaultDisplay().getMetrics(dm);
+        }
         return dm.widthPixels;
     }
 }

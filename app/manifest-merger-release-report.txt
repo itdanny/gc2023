@@ -217,3 +217,19 @@ ADDED from AndroidManifest.xml:120:13
 		ADDED from AndroidManifest.xml:122:17
 	android:name
 		ADDED from AndroidManifest.xml:121:17
+receiver#com.hkbs.HKBS.CWidgetLarge
+ADDED from AndroidManifest.xml:124:9
+	android:enabled
+		ADDED from AndroidManifest.xml:126:19
+	android:label
+		ADDED from AndroidManifest.xml:125:19
+	android:name
+		ADDED from AndroidManifest.xml:124:19
+receiver#com.hkbs.HKBS.CWidgetSmall
+ADDED from AndroidManifest.xml:141:9
+	android:enabled
+		ADDED from AndroidManifest.xml:143:19
+	android:label
+		ADDED from AndroidManifest.xml:142:19
+	android:name
+		ADDED from AndroidManifest.xml:141:19

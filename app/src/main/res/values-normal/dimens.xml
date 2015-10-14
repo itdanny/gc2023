@@ -1,0 +1,31 @@
+<resources>
+    <dimen name="screen_type">5px</dimen>
+	<!-- Standard Screen -->
+<!-- TextAppearance.Large -> 22sp
+	 TextAppearance.Medium -> 18sp
+	 TextAppearance.Small -> 14sp -->
+
+	<!-- <dimen name="text_gold_size_l">36sp</dimen>
+	<dimen name="text_gold_size_m">34sp</dimen>
+	<dimen name="text_gold_size_s">32sp</dimen>
+	<dimen name="text_hint_size_l">34sp</dimen>
+	<dimen name="text_hint_size_s">32sp</dimen> -->
+	
+	
+	
+	<!-- <dimen name="text_gold_size_l">36sp</dimen>
+	<dimen name="text_gold_size_m">32sp</dimen>
+	<dimen name="text_gold_size_s">28sp</dimen>
+	<dimen name="text_gold_verse">26sp</dimen>
+	
+	<dimen name="text_hint_size_l">31sp</dimen> less than top_left 1
+	<dimen name="text_hint_size_s">28sp</dimen>
+	
+    <dimen name="text_top_left">32sp</dimen>
+    <dimen name="text_top_middle">48sp</dimen>
+    <dimen name="text_top_right">32dp</dimen>
+    <dimen name="text_middle">320sp</dimen>
+    <dimen name="text_bottom_left">20sp</dimen>
+    <dimen name="text_bottom_middle">36sp</dimen>
+    <dimen name="text_bottom_right">20dp</dimen> -->    
+</resources>
