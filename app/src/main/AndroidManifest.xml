@@ -6,7 +6,7 @@
 
     <uses-sdk
         android:minSdkVersion="8"
-        android:targetSdkVersion="19" />
+        android:targetSdkVersion="23" />
 
     <uses-permission android:name="android.permission.GET_TASKS" />
     <uses-permission android:name="android.permission.INTERNET" />
@@ -62,6 +62,9 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" >
         </activity>
+        <activity
+            android:name=".JustBroadcast">
+        </activity>
         <!-- INTERNAL LISTENER ON inten-filter ACTION -->
         <!-- <receiver -->
         <!-- android:name="com.hkbs.HKBS.MyBroadcast" -->
@@ -92,6 +95,7 @@
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
                 <action android:name="android.intent.action.TIME_SET" />
                 <action android:name="android.intent.action.TIME_TICK" />
+                <action android:name="android.intent.action." />
                 <action android:name="com.hkbs.HKBS.WidgetUpdate" />
             </intent-filter>
         </receiver>
@@ -106,7 +110,8 @@
         </intent-filter>
     </receiver>
         -->
-        <receiver android:name=".CWidget" >
+        <receiver android:name=".CWidgetNormal"
+                  android:label="標準版面">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />

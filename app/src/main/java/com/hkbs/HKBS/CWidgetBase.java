@@ -22,14 +22,20 @@ import org.arkist.share.AxTools;
 
 import java.util.Calendar;
 
-public class CWidget extends AppWidgetProvider {
+public class CWidgetBase extends AppWidgetProvider {
 	final static private boolean DEBUG = true;
-	final static private String TAG = CWidget.class.getSimpleName();
+	final static private String TAG = CWidgetBase.class.getSimpleName();
 	final static private String CHI_MONTHS [] = {"一","二","三","四","五","六","七","八","九","十","十一","十二"};
     public boolean isLarger=false;
-	public CWidget() {
+	public CWidgetBase() {
 
 	}
+    public String getLayoutTag(){
+        return "";
+    }
+    public int getLayoutId(){
+        return R.layout.activity_cwidget;
+    }
     @Override
     public void onEnabled(Context context) {
         // Enter relevant functionality for when the first widget is created
@@ -42,7 +48,6 @@ public class CWidget extends AppWidgetProvider {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		super.onReceive(context, intent);	
-		MyUtil.log(TAG, "widget.onReceive"+((intent!=null && intent.getAction()!=null)?intent.getAction():""));
 		// Whatever receive; just do it.
 		
 ////		int actionID = intent.getIntExtra(AppWidgetManager.EXTRA_CUSTOM_EXTRAS,0);
@@ -57,21 +62,28 @@ public class CWidget extends AppWidgetProvider {
 ////				break;
 ////		}
 //		AxAlarm.setDailyOnDateChange(context);
-
-        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
-        ComponentName thisAppWidget = new ComponentName(context.getPackageName(), CWidget.class.getName());
-        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisAppWidget);
-        onUpdate(context, appWidgetManager, appWidgetIds);
+        MyUtil.log(getLayoutTag(), "widget.onReceive "+((intent!=null && intent.getAction()!=null)?intent.getAction():""));
+        refreshAll(context);
 
         AxAlarm.setDailyOnDateChange(context);
 
 	}
-	@Override
+    public String getClassName(){
+        return CWidgetBase.class.getName();
+    }
+    private void refreshAll(Context context){
+        AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
+        ComponentName thisAppWidget = new ComponentName(context.getPackageName(), getClassName());
+        int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisAppWidget);
+        MyUtil.log(getLayoutTag(), "RefreshAll "+appWidgetIds.length+ "("+context.getPackageName()+")");
+        onUpdate(context, appWidgetManager, appWidgetIds);
+    }
+    @Override
 	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
 		super.onUpdate(context, appWidgetManager, appWidgetIds);
-		MyUtil.log(TAG, "widget.onUpdate");
+		MyUtil.log(getLayoutTag(), "widget.onUpdate nbrOfWidgets="+appWidgetIds.length);
 		for (int i=0; i<appWidgetIds.length; i++) {
-			ReceiveRef recRef = new ReceiveRef(context, appWidgetIds[i]); 
+			ReceiveRef recRef = new ReceiveRef(context, appWidgetIds[i], getLayoutId());
 			onRefresh(recRef); // No Intent
 			doUpdateAppWidgetNow(context, recRef.views, recRef.widgetID);
 	    }
@@ -91,13 +103,13 @@ public class CWidget extends AppWidgetProvider {
 //        appWidgetManager.updateAppWidget(appWidgetId, views);
 //    }
 	private void doUpdateAppWidgetNow(Context context, RemoteViews views, int widgetID){
-    	if (DEBUG) Log.i(TAG,"doUpdateAppWidgetNow");
+    	if (DEBUG) Log.i(getLayoutTag(),"doUpdateAppWidgetNow");
     	AppWidgetManager appMgr = AppWidgetManager.getInstance(context);
     	try {
 	    	if (widgetID==0){
-	    		ComponentName cname = new ComponentName(context, CWidget.class);
+	    		ComponentName cname = new ComponentName(context, getClassName());
 	    		appMgr.updateAppWidget(cname, views);
-	    		if (DEBUG) Log.i(TAG,"updateAppWidget All");
+	    		if (DEBUG) Log.i(getLayoutTag(),"updateAppWidget All");
 	    	} else {
 	    		appMgr.updateAppWidget(widgetID, views);
 	    	}
@@ -107,13 +119,19 @@ public class CWidget extends AppWidgetProvider {
     	}
 	}
 	private void onRefresh(ReceiveRef recRef){
-		MyUtil.log(TAG, "widget.onRefresh");
+		MyUtil.log(getLayoutTag(), "widget.onRefresh");
 		MyUtil.initMyUtil(recRef.context);
 		MyDailyBread mDailyBread = MyDailyBread.getInstance(recRef.context);
 		Intent intent = new Intent(recRef.context, CMain.class);
 		PendingIntent pendingIntent = PendingIntent.getActivity(recRef.context, 
         		0, intent, PendingIntent.FLAG_UPDATE_CURRENT);//PendingIntent.FLAG_UPDATE_CURRENT
 		recRef.views.setOnClickPendingIntent(R.id.xmlPage1Middle, pendingIntent);
+
+        Intent broadcastIntent=new Intent(recRef.context, JustBroadcast.class);
+        PendingIntent broadcastPendingIntent = PendingIntent.getActivity(recRef.context,
+                0, broadcastIntent, PendingIntent.FLAG_UPDATE_CURRENT);//PendingIntent.FLAG_UPDATE_CURRENT
+        recRef.views.setOnClickPendingIntent(R.id.xmlPage1, broadcastPendingIntent);
+        recRef.views.setOnClickPendingIntent(R.id.xmlPage2, broadcastPendingIntent);
 		
 		int nbr = 1;
 		Context context = recRef.context;
@@ -279,6 +297,7 @@ public class CWidget extends AppWidgetProvider {
 		public int widgetID;
 		public int widgetAction;
 		public AppWidgetManager appMgr;
+        private int mLayoutId;
 		
 //		public ReceiveRef(Context context, Intent intent){
 //			this.context = context;
@@ -289,7 +308,8 @@ public class CWidget extends AppWidgetProvider {
 //			this.widgetAction = intent.getIntExtra(AppWidgetManager.EXTRA_CUSTOM_EXTRAS,0);
 //			if (DEBUG) Log.i(TAG,"onReceiveAction:"+this.widgetAction+","+this.widgetID);
 //		}
-		public ReceiveRef(Context context, int widgetID) {
+		public ReceiveRef(Context context, int widgetID, int layoutId) {
+            this.mLayoutId=layoutId;
             this.context = context;
             DisplayMetrics metrics = new DisplayMetrics();
             WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
@@ -304,25 +324,13 @@ public class CWidget extends AppWidgetProvider {
 //            if (MyUtil.scaleDensity(context)==3 && MyUtil.widthPixels(context)==1080 && MyUtil.heightPixels(context)==1920){
 //                this.views = new RemoteViews(context.getPackageName(), R.layout.activity_cwidget_large);
 //            } else {
-                this.views = new RemoteViews(context.getPackageName(), R.layout.activity_cwidget);
+            this.views = new RemoteViews(context.getPackageName(), mLayoutId);
 //            }
-//            if (screen_type==0 || screen_type==2){//small & large (use its default in folder)
-//                this.views = new RemoteViews(context.getPackageName(), R.layout.activity_cwidget);
-//            } else {
-//                if (metrics.widthPixels >= sw600Size){//sw600Size){
-//                    if (DEBUG) Log.i(TAG,"Widget Standard Big");
-//                    this.views = new RemoteViews(context.getPackageName(), R.layout.activity_cwidget_large);
-//                } else {
-//                    if (DEBUG) Log.i(TAG,"Widget Standard Small");
-//                    this.views = new RemoteViews(context.getPackageName(), R.layout.activity_cwidget);
-//                }
-//            }
-
 			this.appMgr = AppWidgetManager.getInstance(context);
 			this.widgetID = widgetID;
 			this.intent = null;
 			this.widgetAction = 0;
-			if (DEBUG) Log.i(TAG,"onUpdateAction:"+this.widgetID);
+			if (DEBUG) Log.i(TAG,"onUpdateActionWidgetId="+this.widgetID);
 		}
 	}
 	// It will auto update for every 30 minutes. NO need currently.

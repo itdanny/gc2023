@@ -57,18 +57,18 @@ public class MyBroadcast extends BroadcastReceiver {
 			} else if (intentAction.equals(Intent.ACTION_SCREEN_ON)) {
 	        	screenIsOn = true;
 	            isStopUpdateWidget = false;	            
-	            MyBroadcast.updateAllWidget(context);		
+	            //MyBroadcast.updateAllWidget(context);
 			} else if ( intentAction.equals(Intent.ACTION_BOOT_COMPLETED) || 
 						intentAction.equals(Intent.ACTION_PACKAGE_ADDED) || 
 						intentAction.equals(Intent.ACTION_PACKAGE_FIRST_LAUNCH)){
 				setReceiverOn(context);
-				MyBroadcast.updateAllWidget(context);
+				//MyBroadcast.updateAllWidget(context);
 			} else if ( intentAction.equals(Intent.ACTION_SHUTDOWN) || 
 						intentAction.equals(Intent.ACTION_PACKAGE_REMOVED)){
 				setReceiverOff(context);			
 			} else if (intentAction.equals(AxAlarm.MANIFEST_ACTION_DATE_CHANGE)){
 				Log.i(TAG, "Action Alarm DateChange");
-				MyBroadcast.updateAllWidget(context);
+				//MyBroadcast.updateAllWidget(context);
 			} else if (intentAction.equals(AxAlarm.MANIFEST_ACTION_ALARM)){
 				Log.i(TAG, "Action Alarm Alarm");
 				doDailyGoldSentence(context);
@@ -78,11 +78,12 @@ public class MyBroadcast extends BroadcastReceiver {
 //				if (requestCode==AxAlarm.BROADTCAST_REQUEST_CODE){
 //					doDailyGoldSentence(context);
 //				} else 
-				if (requestCode==REQUEST_WIDGET){
-					MyBroadcast.updateAllWidget(context);					
-				}
+				//if (requestCode==REQUEST_WIDGET){
+					//MyBroadcast.updateAllWidget(context);
+				//}
 			}
         }
+        MyBroadcast.updateAllWidget(context);
 		lastScreenState=screenIsOn;
 		
 	}
@@ -101,13 +102,20 @@ public class MyBroadcast extends BroadcastReceiver {
 		}
 	}
 	static public void updateAllWidget(Context context){
-		MyUtil.log(TAG, "updateAllWidget");
-    	AppWidgetManager widgetMgr = AppWidgetManager.getInstance(context);
-    	int [] widgets = widgetMgr.getAppWidgetIds(new ComponentName(context,CWidget.class));
+		updateAllWidgetByClass(context, CWidgetNormal.class);
+        updateAllWidgetByClass(context, CWidgetLarge.class);
+        updateAllWidgetByClass(context, CWidgetSmall.class);
+        updateAllWidgetByClass(context, CWidgetBase.class);
+	}
+    static private void updateAllWidgetByClass(Context context, Class widgetClass){
+        AppWidgetManager widgetMgr = AppWidgetManager.getInstance(context);
+        int [] widgets = widgetMgr.getAppWidgetIds(new ComponentName(context,widgetClass));
         if (widgets==null) {
-            MyUtil.log(TAG, "updateAllWidget NULL");
+            MyUtil.log(TAG, "updateAllWidget "+widgetClass.getSimpleName()+" NULL");
+        } else if (widgets.length==0){
+            MyUtil.log(TAG, "updateAllWidget "+widgetClass.getSimpleName()+" 0");
         } else if (widgets.length!=0){
-            MyUtil.log(TAG, "updateAllWidget " + widgets.length);
+            MyUtil.log(TAG, "updateAllWidget "+widgetClass.getSimpleName()+" "+widgets.length);
             for (int i = 0; i < widgets.length; i++) {
                 Intent intent = new Intent();
                 intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
@@ -121,7 +129,7 @@ public class MyBroadcast extends BroadcastReceiver {
                 context.sendBroadcast(intent);
             }
         }
-	}
+    }
 	/*
 	 * 
 	 * 

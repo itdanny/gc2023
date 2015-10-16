@@ -176,7 +176,7 @@ public class CMain extends MyActivity {
 		AxAlarm.setDailyAlarm(CMain.this, AxAlarm.MODE.SET_DEFAULT, 9, 0);
 		AxAlarm.setDailyOnDateChange(CMain.this);
 		
-		CWidget.broadcastMe(CMain.this);
+		CWidgetNormal.broadcastMe(CMain.this);
 
         MyUtil.log(TAG, "StartApp3..............End");
 
