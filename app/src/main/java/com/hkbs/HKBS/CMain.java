@@ -59,6 +59,7 @@ import java.util.Calendar;
  * @see SystemUiHider
  */
 public class CMain extends MyActivity {
+    final static public boolean IS_2016_OR_LATER = true;
     final static private boolean IS_2015_OR_LATER =true;
 	final static private boolean DEBUG=true;
 	final static private String TAG = CMain.class.getSimpleName();
@@ -1127,13 +1128,19 @@ public class CMain extends MyActivity {
 		case Calendar.FRIDAY: pageWeekDay.setText("星期五 FRI"); break;
 		case Calendar.SATURDAY: pageWeekDay.setText("星期六 SAT"); break;		
 		}		
-		pageWeekDay.setTextColor(getResources().getColor(R.color.white));
+
 //		pageWeekDay.setBackgroundResource(isHoliday?R.drawable.round_corner_holiday:R.drawable.round_corner_weekday);
 //		BitmapDrawable result = MyUtil.scaleDrawable(getResources().getDrawable(R.drawable.green_weekday_2015), pageWeekDay.getWidth());
 //		pageWeekDay.setBackgroundDrawable(result);
 		final ImageView pageWeekImage = (ImageView) findViewById(getID(nbr, "WeekImage"));
-		pageWeekImage.setImageResource(isHoliday?R.drawable.red_weekday_2015:R.drawable.green_weekday_2015);
-		
+        if (IS_2016_OR_LATER) {
+            pageWeekImage.setImageResource(isHoliday ? R.drawable.red_weekday_2016 : R.drawable.green_weekday_2016);
+            //pageWeekDay.setTextColor(textColor);
+        } else {
+            pageWeekImage.setImageResource(isHoliday ? R.drawable.red_weekday_2015 : R.drawable.green_weekday_2015);
+        }
+        pageWeekDay.setTextColor(getResources().getColor(R.color.white));
+
 		final TextView pageChiLunarDay = (TextView) findViewById(getID(nbr, "ChiLunarDay"));
 		pageChiLunarDay.setText(lunar.toChineseDD()+"日");
 		pageChiLunarDay.setTextColor(textColor);
@@ -1165,15 +1172,31 @@ public class CMain extends MyActivity {
 			pageChiLeftYear.setVisibility(View.VISIBLE);
 			pageChiLunarYear.setVisibility(View.GONE);			
 		}
-		
-		final ImageView pageImageFrame = (ImageView) findViewById(getID(nbr, "ImageFrame"));
-		pageImageFrame.setImageDrawable(getResources().getDrawable(isHoliday?R.drawable.red_frame_2015:R.drawable.green_frame_2015));
+        final ImageView pageImageFrameUpper = (ImageView) findViewById(getID(nbr, "ImageFrameUpper"));
+        final ImageView pageImageFrameLower = (ImageView) findViewById(getID(nbr, "ImageFrameLower"));
+        final ImageView pageImageFrame = (ImageView) findViewById(getID(nbr, "ImageFrame"));
+		if (IS_2016_OR_LATER) {
+            pageImageFrameUpper.setImageDrawable(getResources().getDrawable(isHoliday ? R.drawable.red_frame_2016_upper : R.drawable.green_frame_2016_upper));
+            pageImageFrameLower.setImageDrawable(getResources().getDrawable(isHoliday ? R.drawable.red_frame_2016_lower : R.drawable.green_frame_2016_lower));
+            pageImageFrameUpper.setVisibility(View.VISIBLE);
+            pageImageFrameLower.setVisibility(View.VISIBLE);
+            pageImageFrame.setVisibility(View.GONE);
+        } else {
+            pageImageFrame.setImageDrawable(getResources().getDrawable(isHoliday?R.drawable.red_frame_2015:R.drawable.green_frame_2015));
+            pageImageFrameUpper.setVisibility(View.GONE);
+            pageImageFrameLower.setVisibility(View.GONE);
+            pageImageFrame.setVisibility(View.VISIBLE);
+        }
 
         final ImageView pageImageIcon = (ImageView) findViewById(getID(nbr, "ImageIcon"));
-        if (curYear>=2016){
-            pageImageIcon.setImageDrawable(null);
+        if (CMain.IS_2016_OR_LATER) {
+            pageImageIcon.setImageDrawable(getResources().getDrawable(isHoliday ? R.drawable.red_icon_2016 : R.drawable.green_icon_2016));
         } else {
-            pageImageIcon.setImageDrawable(getResources().getDrawable(isHoliday ? R.drawable.red_icon_2015 : R.drawable.green_icon_2015));
+            if (curYear >= 2016) {
+                pageImageIcon.setImageDrawable(null);
+            } else {
+                pageImageIcon.setImageDrawable(getResources().getDrawable(isHoliday ? R.drawable.red_icon_2015 : R.drawable.green_icon_2015));
+            }
         }
 
 		// get ContentValues from dailyBread file

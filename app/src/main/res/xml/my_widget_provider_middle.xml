@@ -18,9 +18,9 @@
     <!--android:resizeMode="vertical|horizontal"-->
     <!--android:updatePeriodMillis="10000" />-->
 <appwidget-provider xmlns:android="http://schemas.android.com/apk/res/android"
-                    android:initialLayout="@layout/activity_cwidget_small"
-                    android:minWidth="110dip"
-                    android:minHeight="110dip"
+                    android:initialLayout="@layout/activity_cwidget_middle"
+                    android:minWidth="250dip"
+                    android:minHeight="250dip"
                     android:previewImage="@drawable/widget_screen"
                     android:resizeMode="vertical|horizontal"
                     android:updatePeriodMillis="50000" />

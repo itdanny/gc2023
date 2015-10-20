@@ -222,25 +222,36 @@
                 android:adjustViewBounds="true"
                 android:paddingLeft="2dp"
                 android:paddingRight="2dp"
+                android:visibility="gone"
                 android:scaleType="fitXY"
                 android:src="@drawable/green_frame_2015" />
+            <ImageView
+                android:id="@+id/xmlPage1ImageFrameUpper"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:visibility="gone"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
+                android:scaleType="fitCenter"
+                android:layout_alignParentTop="true"
+                android:src="@drawable/green_frame_2016_upper" />
+            <ImageView
+                android:id="@+id/xmlPage1ImageFrameLower"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:visibility="gone"
+                android:adjustViewBounds="true"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
+                android:scaleType="fitCenter"
+                android:layout_alignParentBottom="true"
+                android:src="@drawable/green_frame_2016_lower" />
 
             <!-- 
             android:text="金句金句金句金句金句金句金句金句金句金句金\n金句2\n金句3\n金句4" 
             android:text="金句金句金句金句金句金句"
             -->
-            <TextView
-                android:id="@+id/xmlPage1GoldText"
-                android:layout_width="fill_parent"
-                android:layout_height="fill_parent"
-                android:layout_above="@+id/xmlPage1GoldVerse"
-                android:layout_marginLeft="12dp"
-                android:layout_marginRight="12dp"
-                android:layout_marginTop="@dimen/std_c_image_top"
-                android:gravity="center"
-                android:textSize="11sp" />
-
-            <!-- android:text="[XXXXXXXXXX]" -->
             <TextView
                 android:id="@+id/xmlPage1GoldVerse"
                 android:layout_width="wrap_content"
@@ -251,7 +262,20 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="28dp"
                 android:gravity="right|bottom"
+                android:textSize="5sp" />
+            <TextView
+                android:id="@+id/xmlPage1GoldText"
+                android:layout_width="fill_parent"
+                android:layout_height="fill_parent"
+                android:layout_above="@+id/xmlPage1GoldVerse"
+                android:layout_marginLeft="12dp"
+                android:layout_marginRight="12dp"
+                android:layout_marginTop="@dimen/std_c_image_top"
+                android:gravity="center"
                 android:textSize="9sp" />
+
+            <!-- android:text="[XXXXXXXXXX]" -->
+
         </RelativeLayout>
 
         <RelativeLayout

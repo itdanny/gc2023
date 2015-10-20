@@ -103,6 +103,7 @@ public class MyBroadcast extends BroadcastReceiver {
 	}
 	static public void updateAllWidget(Context context){
 		updateAllWidgetByClass(context, CWidgetNormal.class);
+        updateAllWidgetByClass(context, CWidgetXLarge.class);
         updateAllWidgetByClass(context, CWidgetLarge.class);
         updateAllWidgetByClass(context, CWidgetSmall.class);
         updateAllWidgetByClass(context, CWidgetBase.class);

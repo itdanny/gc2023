@@ -209,8 +209,31 @@
                     android:adjustViewBounds="true"
                     android:paddingLeft="2dp"
                     android:paddingRight="2dp"
+                    android:visibility="gone"
                     android:scaleType="fitXY"
                     android:src="@drawable/green_frame_2015" />
+                <ImageView
+                    android:id="@+id/xmlPage1ImageFrameUpper"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:paddingLeft="2dp"
+                    android:paddingRight="2dp"
+                    android:visibility="gone"
+                    android:scaleType="fitCenter"
+                    android:layout_alignParentTop="true"
+                    android:src="@drawable/green_frame_2016_upper" />
+                <ImageView
+                    android:id="@+id/xmlPage1ImageFrameLower"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:paddingLeft="2dp"
+                    android:paddingRight="2dp"
+                    android:visibility="gone"
+                    android:scaleType="fitCenter"
+                    android:layout_alignParentBottom="true"
+                    android:src="@drawable/green_frame_2016_lower" />
 
                 <TextView
                     android:id="@+id/xmlPage1GoldText"

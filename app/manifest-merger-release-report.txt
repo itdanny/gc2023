@@ -135,101 +135,127 @@ ADDED from AndroidManifest.xml:60:9
 		ADDED from AndroidManifest.xml:62:13
 	android:name
 		ADDED from AndroidManifest.xml:61:13
+activity#com.hkbs.HKBS.JustBroadcast
+ADDED from AndroidManifest.xml:65:9
+	android:name
+		ADDED from AndroidManifest.xml:66:13
 receiver#com.hkbs.HKBS.MyBroadcast
-ADDED from AndroidManifest.xml:76:9
+ADDED from AndroidManifest.xml:79:9
 	android:enabled
-		ADDED from AndroidManifest.xml:78:13
+		ADDED from AndroidManifest.xml:81:13
 	android:permission
-		ADDED from AndroidManifest.xml:79:13
+		ADDED from AndroidManifest.xml:82:13
 	android:name
-		ADDED from AndroidManifest.xml:77:13
-intent-filter#AxAlarm_Alarm+AxAlarm_DateChange+android.appwidget.action.APPWIDGET_UPDATE+android.intent.action.ACTION_SHUTDOWN+android.intent.action.BOOT_COMPLETED+android.intent.action.DATE_CHANGED+android.intent.action.PACKAGE_ADDED+android.intent.action.PACKAGE_FIRST_LAUNCH+android.intent.action.PACKAGE_REMOVED+android.intent.action.SCREEN_OFF+android.intent.action.SCREEN_ON+android.intent.action.TIMEZONE_CHANGED+android.intent.action.TIME_SET+android.intent.action.TIME_TICK+com.hkbs.HKBS.WidgetUpdate
-ADDED from AndroidManifest.xml:80:13
+		ADDED from AndroidManifest.xml:80:13
+intent-filter#AxAlarm_Alarm+AxAlarm_DateChange+android.appwidget.action.APPWIDGET_UPDATE+android.intent.action.+android.intent.action.ACTION_SHUTDOWN+android.intent.action.BOOT_COMPLETED+android.intent.action.DATE_CHANGED+android.intent.action.PACKAGE_ADDED+android.intent.action.PACKAGE_FIRST_LAUNCH+android.intent.action.PACKAGE_REMOVED+android.intent.action.SCREEN_OFF+android.intent.action.SCREEN_ON+android.intent.action.TIMEZONE_CHANGED+android.intent.action.TIME_SET+android.intent.action.TIME_TICK+com.hkbs.HKBS.WidgetUpdate
+ADDED from AndroidManifest.xml:83:13
 action#AxAlarm_Alarm
-ADDED from AndroidManifest.xml:81:17
-	android:name
-		ADDED from AndroidManifest.xml:81:25
-action#AxAlarm_DateChange
-ADDED from AndroidManifest.xml:82:17
-	android:name
-		ADDED from AndroidManifest.xml:82:25
-action#android.appwidget.action.APPWIDGET_UPDATE
-ADDED from AndroidManifest.xml:83:17
-	android:name
-		ADDED from AndroidManifest.xml:83:25
-action#android.intent.action.BOOT_COMPLETED
 ADDED from AndroidManifest.xml:84:17
 	android:name
 		ADDED from AndroidManifest.xml:84:25
-action#android.intent.action.PACKAGE_ADDED
+action#AxAlarm_DateChange
 ADDED from AndroidManifest.xml:85:17
 	android:name
 		ADDED from AndroidManifest.xml:85:25
-action#android.intent.action.PACKAGE_REMOVED
+action#android.appwidget.action.APPWIDGET_UPDATE
 ADDED from AndroidManifest.xml:86:17
 	android:name
 		ADDED from AndroidManifest.xml:86:25
-action#android.intent.action.PACKAGE_FIRST_LAUNCH
+action#android.intent.action.BOOT_COMPLETED
 ADDED from AndroidManifest.xml:87:17
 	android:name
 		ADDED from AndroidManifest.xml:87:25
-action#android.intent.action.SCREEN_ON
+action#android.intent.action.PACKAGE_ADDED
 ADDED from AndroidManifest.xml:88:17
 	android:name
 		ADDED from AndroidManifest.xml:88:25
-action#android.intent.action.SCREEN_OFF
+action#android.intent.action.PACKAGE_REMOVED
 ADDED from AndroidManifest.xml:89:17
 	android:name
 		ADDED from AndroidManifest.xml:89:25
-action#android.intent.action.ACTION_SHUTDOWN
+action#android.intent.action.PACKAGE_FIRST_LAUNCH
 ADDED from AndroidManifest.xml:90:17
 	android:name
 		ADDED from AndroidManifest.xml:90:25
-action#android.intent.action.DATE_CHANGED
+action#android.intent.action.SCREEN_ON
 ADDED from AndroidManifest.xml:91:17
 	android:name
 		ADDED from AndroidManifest.xml:91:25
-action#android.intent.action.TIMEZONE_CHANGED
+action#android.intent.action.SCREEN_OFF
 ADDED from AndroidManifest.xml:92:17
 	android:name
 		ADDED from AndroidManifest.xml:92:25
-action#android.intent.action.TIME_SET
+action#android.intent.action.ACTION_SHUTDOWN
 ADDED from AndroidManifest.xml:93:17
 	android:name
 		ADDED from AndroidManifest.xml:93:25
-action#android.intent.action.TIME_TICK
+action#android.intent.action.DATE_CHANGED
 ADDED from AndroidManifest.xml:94:17
 	android:name
 		ADDED from AndroidManifest.xml:94:25
-action#com.hkbs.HKBS.WidgetUpdate
+action#android.intent.action.TIMEZONE_CHANGED
 ADDED from AndroidManifest.xml:95:17
 	android:name
 		ADDED from AndroidManifest.xml:95:25
-receiver#com.hkbs.HKBS.CWidget
-ADDED from AndroidManifest.xml:109:9
+action#android.intent.action.TIME_SET
+ADDED from AndroidManifest.xml:96:17
 	android:name
-		ADDED from AndroidManifest.xml:109:19
+		ADDED from AndroidManifest.xml:96:25
+action#android.intent.action.TIME_TICK
+ADDED from AndroidManifest.xml:97:17
+	android:name
+		ADDED from AndroidManifest.xml:97:25
+action#android.intent.action.
+ADDED from AndroidManifest.xml:98:17
+	android:name
+		ADDED from AndroidManifest.xml:98:25
+action#com.hkbs.HKBS.WidgetUpdate
+ADDED from AndroidManifest.xml:99:17
+	android:name
+		ADDED from AndroidManifest.xml:99:25
+receiver#com.hkbs.HKBS.CWidgetNormal
+ADDED from AndroidManifest.xml:113:9
+	android:label
+		ADDED from AndroidManifest.xml:114:19
+	android:name
+		ADDED from AndroidManifest.xml:113:19
 intent-filter#android.appwidget.action.APPWIDGET_UPDATE+android.intent.action.BOOT_COMPLETED+android.intent.action.DATE_CHANGED+android.intent.action.SCREEN_ON+android.intent.action.TIMEZONE_CHANGED+android.intent.action.TIME_SET+android.intent.action.TIME_TICK
-ADDED from AndroidManifest.xml:110:13
+ADDED from AndroidManifest.xml:115:13
 meta-data#android.appwidget.provider
-ADDED from AndroidManifest.xml:120:13
+ADDED from AndroidManifest.xml:125:13
 	android:resource
-		ADDED from AndroidManifest.xml:122:17
+		ADDED from AndroidManifest.xml:127:17
 	android:name
-		ADDED from AndroidManifest.xml:121:17
+		ADDED from AndroidManifest.xml:126:17
 receiver#com.hkbs.HKBS.CWidgetLarge
-ADDED from AndroidManifest.xml:124:9
+ADDED from AndroidManifest.xml:129:9
 	android:enabled
-		ADDED from AndroidManifest.xml:126:19
+		ADDED from AndroidManifest.xml:131:19
 	android:label
-		ADDED from AndroidManifest.xml:125:19
+		ADDED from AndroidManifest.xml:130:19
 	android:name
-		ADDED from AndroidManifest.xml:124:19
+		ADDED from AndroidManifest.xml:129:19
 receiver#com.hkbs.HKBS.CWidgetSmall
-ADDED from AndroidManifest.xml:141:9
+ADDED from AndroidManifest.xml:146:9
 	android:enabled
-		ADDED from AndroidManifest.xml:143:19
+		ADDED from AndroidManifest.xml:148:19
 	android:label
-		ADDED from AndroidManifest.xml:142:19
+		ADDED from AndroidManifest.xml:147:19
 	android:name
-		ADDED from AndroidManifest.xml:141:19
+		ADDED from AndroidManifest.xml:146:19
+receiver#com.hkbs.HKBS.CWidgetMiddle
+ADDED from AndroidManifest.xml:163:9
+	android:enabled
+		ADDED from AndroidManifest.xml:165:19
+	android:label
+		ADDED from AndroidManifest.xml:164:19
+	android:name
+		ADDED from AndroidManifest.xml:163:19
+receiver#com.hkbs.HKBS.CWidgetXLarge
+ADDED from AndroidManifest.xml:180:9
+	android:enabled
+		ADDED from AndroidManifest.xml:182:19
+	android:label
+		ADDED from AndroidManifest.xml:181:19
+	android:name
+		ADDED from AndroidManifest.xml:180:19

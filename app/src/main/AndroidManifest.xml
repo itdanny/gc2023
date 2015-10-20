@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hkbs.HKBS"
-    android:versionCode="28"
-    android:versionName="3.25" >
+    android:versionCode="30"
+    android:versionName="3.27" >
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -159,6 +159,40 @@
             <meta-data
                 android:name="android.appwidget.provider"
                 android:resource="@xml/my_widget_provider_small" />
+        </receiver>
+        <receiver android:name=".CWidgetMiddle"
+                  android:label="中版面"
+                  android:enabled="@bool/middleWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIME_TICK" />
+                <action android:name="android.intent.action.SCREEN_ON" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+                <!--<data android:scheme="CalendarWidget" />-->
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/my_widget_provider_middle" />
+        </receiver>
+        <receiver android:name=".CWidgetXLarge"
+                  android:label="特大版面"
+                  android:enabled="@bool/xlargerWidget">
+            <intent-filter>
+                <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIME_TICK" />
+                <action android:name="android.intent.action.SCREEN_ON" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+                <!--<data android:scheme="CalendarWidget" />-->
+            </intent-filter>
+            <meta-data
+                android:name="android.appwidget.provider"
+                android:resource="@xml/my_widget_provider_xlarge" />
         </receiver>
     </application>
 

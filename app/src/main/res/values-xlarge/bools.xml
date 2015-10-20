@@ -2,4 +2,6 @@
 <resources>
     <bool name="largerWidget">false</bool>
     <bool name="smallerWidget">true</bool>
+    <bool name="middleWidget">true</bool>
+    <bool name="xlargerWidget">true</bool>
 </resources>

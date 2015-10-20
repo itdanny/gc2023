@@ -28,13 +28,13 @@
 	 <!--  DC  2014.10.18  -->
 	 <!-- Samsung S5 -->
 	 <dimen name="std_c_image_top">7dp</dimen>
-	 <dimen name="std_c_image_bottom">9dp</dimen>
+	 <dimen name="std_c_image_bottom">8dp</dimen>
 	 <dimen name="std_p_image_top">2dp</dimen>	 
 	 <dimen name="std_p_image_bottom">29dp</dimen>
 	 
 	 <dimen name="std_lunar_font_size">15sp</dimen>
 	 <!-- Samsung Tablet -->
-	 <dimen name="big_c_image_top">7dp</dimen>
+	 <dimen name="big_c_image_top">0dp</dimen>
 	 <dimen name="big_c_image_bottom">12dp</dimen>
 	 <dimen name="big_p_image_top">15dp</dimen>	 
 	 <dimen name="big_p_image_bottom">47dp</dimen>

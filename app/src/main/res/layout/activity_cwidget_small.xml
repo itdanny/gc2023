@@ -219,8 +219,31 @@
                 android:adjustViewBounds="true"
                 android:paddingLeft="2dp"
                 android:paddingRight="2dp"
+                android:visibility="gone"
                 android:scaleType="fitXY"
                 android:src="@drawable/green_frame_2015" />
+            <ImageView
+                android:id="@+id/xmlPage1ImageFrameUpper"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
+                android:visibility="gone"
+                android:scaleType="fitCenter"
+                android:layout_alignParentTop="true"
+                android:src="@drawable/green_frame_2016_upper" />
+            <ImageView
+                android:id="@+id/xmlPage1ImageFrameLower"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
+                android:visibility="gone"
+                android:scaleType="fitCenter"
+                android:layout_alignParentBottom="true"
+                android:src="@drawable/green_frame_2016_lower" />
 
             <!-- android:text="金句金句金句金句金句金句金句" -->
 
@@ -233,7 +256,7 @@
                 android:layout_marginRight="12dp"
                 android:layout_marginTop="@dimen/small_c_image_top"
                 android:gravity="center"
-                android:textSize="8sp" />
+                android:textSize="6sp" />
 
             <!-- android:text="[XXXXXXXXXX]" -->
             <TextView
@@ -242,11 +265,11 @@
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
                 android:layout_alignRight="@+id/xmlPage1GoldText"
-                android:gravity="center_horizontal"
+                android:gravity="right|bottom"
                 android:layout_marginLeft="12dp"
                 android:layout_marginRight="12dp"
                 android:layout_marginBottom="@dimen/small_c_image_bottom"
-                android:textSize="5sp" />
+                android:textSize="3sp" />
         </RelativeLayout>
 
         <RelativeLayout
@@ -276,7 +299,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="2dp"
                 android:gravity="center_horizontal"
-                android:textSize="8sp" />
+                android:textSize="6sp" />
             <!-- android:text="小知識\n1234567890123456789012\n小知識\n小知識" -->
 
             <TextView
@@ -287,7 +310,7 @@
                 android:layout_alignRight="@id/xmlPage1BigText"
                 android:layout_marginBottom="2dp"
                 android:gravity="right|bottom"
-                android:textSize="5sp" /> <!-- 6 -->
+                android:textSize="3sp" /> <!-- 6 -->
             <!-- android:text="Hint …………………." -->
 
 <!--             <TextView

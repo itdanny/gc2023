@@ -225,9 +225,14 @@ public class CWidgetBase extends AppWidgetProvider {
 		case Calendar.FRIDAY: recRef.views.setTextViewText(getID(context, nbr, "WeekDay"),"星期五 FRI"); break;
 		case Calendar.SATURDAY: recRef.views.setTextViewText(getID(context, nbr, "WeekDay"),"星期六 SAT"); break;		
 		}
-		recRef.views.setTextColor(getID(context, nbr, "WeekDay"), context.getResources().getColor(R.color.white));
-		
-		recRef.views.setImageViewResource(getID(context, nbr, "WeekImage"), isHoliday?R.drawable.red_weekday_2015:R.drawable.green_weekday_2015);
+
+        recRef.views.setTextColor(getID(context, nbr, "WeekDay"), context.getResources().getColor(R.color.white));
+        if (CMain.IS_2016_OR_LATER) {
+            //recRef.views.setTextColor(getID(context, nbr, "WeekDay"), textColor);
+            recRef.views.setImageViewResource(getID(context, nbr, "WeekImage"), isHoliday ? R.drawable.red_weekday_2016 : R.drawable.green_weekday_2016);
+        } else {
+            recRef.views.setImageViewResource(getID(context, nbr, "WeekImage"), isHoliday?R.drawable.red_weekday_2015:R.drawable.green_weekday_2015);
+        }
 
 		recRef.views.setTextViewText(getID(context, nbr, "ChiLunarDay"), lunar.toChineseDD()+"日");
 		recRef.views.setTextColor(getID(context, nbr, "ChiLunarDay"), textColor);
@@ -253,9 +258,23 @@ public class CWidgetBase extends AppWidgetProvider {
 			recRef.views.setViewVisibility(getID(context, nbr, "ChiLeftYear"), View.VISIBLE);
 			recRef.views.setViewVisibility(getID(context, nbr, "ChiLeftWeather"), View.VISIBLE);
 		}
-		
-		recRef.views.setImageViewResource(getID(context, nbr, "ImageFrame"), isHoliday?R.drawable.red_frame_2015:R.drawable.green_frame_2015);
-		recRef.views.setImageViewResource(getID(context, nbr, "ImageIcon"), isHoliday?R.drawable.red_icon_2015:R.drawable.green_icon_2015);
+		if (CMain.IS_2016_OR_LATER) {
+            recRef.views.setImageViewResource(getID(context, nbr, "ImageFrameUpper"), isHoliday ? R.drawable.red_frame_2016_upper : R.drawable.green_frame_2016_upper);
+            recRef.views.setImageViewResource(getID(context, nbr, "ImageFrameLower"), isHoliday ? R.drawable.red_frame_2016_lower : R.drawable.green_frame_2016_lower);
+            recRef.views.setViewVisibility(getID(context, nbr, "ImageFrameUpper"), View.VISIBLE);
+            recRef.views.setViewVisibility(getID(context, nbr, "ImageFrameLower"), View.VISIBLE);
+            recRef.views.setViewVisibility(getID(context, nbr, "ImageFrame"), View.GONE);
+        } else {
+            recRef.views.setImageViewResource(getID(context, nbr, "ImageFrame"), isHoliday ? R.drawable.red_frame_2015 : R.drawable.green_frame_2015);
+            recRef.views.setViewVisibility(getID(context, nbr, "ImageFrameUpper"), View.GONE);
+            recRef.views.setViewVisibility(getID(context, nbr, "ImageFrameLower"), View.GONE);
+            recRef.views.setViewVisibility(getID(context, nbr, "ImageFrame"), View.VISIBLE);
+        }
+        if (CMain.IS_2016_OR_LATER) {
+            recRef.views.setImageViewResource(getID(context, nbr, "ImageIcon"), isHoliday ? R.drawable.red_icon_2016 : R.drawable.green_icon_2016);
+        } else {
+            recRef.views.setImageViewResource(getID(context, nbr, "ImageIcon"), isHoliday?R.drawable.red_icon_2015:R.drawable.green_icon_2015);
+        }
 
 		// get ContentValues from dailyBread file
 		ContentValues cv = mDailyBread.getContentValues(curYear, curMonth, curDay);
@@ -264,12 +283,20 @@ public class CWidgetBase extends AppWidgetProvider {
 		recRef.views.setTextViewText(getID(context, nbr, "GoldVerse"),cv.getAsString(MyDailyBread.wGoldVerse)+":和合本修訂版");
 		recRef.views.setTextColor(getID(context, nbr, "GoldVerse"), textColor);
 		
-		String mGoldText = cv.getAsString(MyDailyBread.wGoldText).replace("#", " ");
-		if (mGoldText.length()>=12){
-			mGoldText = mGoldText.substring(0, 12)+"...\n(按此觀看更多)";
-		} else {
-			mGoldText = mGoldText.substring(0, mGoldText.length());
-		}
+		String mGoldText;
+//        if (getClassName().equalsIgnoreCase(CWidgetMiddle.class.getName()) ||
+//            getClassName().equalsIgnoreCase(CWidgetLarge.class.getName()) ||
+//            getClassName().equalsIgnoreCase(CWidgetNormal.class.getName())){
+            mGoldText = cv.getAsString(MyDailyBread.wGoldText).replace("#", "\n");
+            mGoldText = mGoldText.substring(0, mGoldText.length());
+//        } else {
+//            mGoldText = cv.getAsString(MyDailyBread.wGoldText).replace("#", " ");
+//            if (mGoldText.length() >= 12) {
+//                mGoldText = mGoldText.substring(0, 12) + "...\n(按此觀看更多)";
+//            } else {
+//                mGoldText = mGoldText.substring(0, mGoldText.length());
+//            }
+//        }
 		recRef.views.setTextViewText(getID(context, nbr, "GoldText"),mGoldText);
 		recRef.views.setTextColor(getID(context, nbr, "GoldText"), textColor);
 		
@@ -319,7 +346,8 @@ public class CWidgetBase extends AppWidgetProvider {
             int smallSize= AxTools.dp2px(180);//widget size is 180
             int standardSize=AxTools.dp2px(240);//widget size is 240
             int sw600Size=AxTools.dp2px(360);//AxTools.dp2px(360);//widget size is 360
-            if (DEBUG) Log.i(TAG,"screenType:"+screen_type+" "+metrics.widthPixels+" "+smallSize+" "+standardSize+" "+sw600Size);
+            int largeHeight=AxTools.dp2px(480);//AxTools.dp2px(360);//widget size is 360
+            if (DEBUG) Log.i(TAG,"screenType:"+screen_type+" "+metrics.widthPixels+" "+smallSize+" "+standardSize+" "+sw600Size+" "+largeHeight);
             //if (android.os.Build.MODEL.equalsIgnoreCase("SM-A8000")){
 //            if (MyUtil.scaleDensity(context)==3 && MyUtil.widthPixels(context)==1080 && MyUtil.heightPixels(context)==1920){
 //                this.views = new RemoteViews(context.getPackageName(), R.layout.activity_cwidget_large);

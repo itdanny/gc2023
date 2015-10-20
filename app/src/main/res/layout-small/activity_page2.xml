@@ -210,7 +210,30 @@
                     android:paddingLeft="2dp"
                     android:paddingRight="2dp"
                     android:scaleType="fitXY"
+                    android:visibility="gone"
                     android:src="@drawable/green_frame_2015" />
+                <ImageView
+                    android:id="@+id/xmlPage2ImageFrameUpper"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:paddingLeft="2dp"
+                    android:paddingRight="2dp"
+                    android:visibility="gone"
+                    android:scaleType="fitCenter"
+                    android:layout_alignParentTop="true"
+                    android:src="@drawable/green_frame_2016_upper" />
+                <ImageView
+                    android:id="@+id/xmlPage2ImageFrameLower"
+                    android:layout_width="fill_parent"
+                    android:layout_height="wrap_content"
+                    android:adjustViewBounds="true"
+                    android:paddingLeft="2dp"
+                    android:paddingRight="2dp"
+                    android:visibility="gone"
+                    android:scaleType="fitCenter"
+                    android:layout_alignParentBottom="true"
+                    android:src="@drawable/green_frame_2016_lower" />
 
                 <TextView
                     android:id="@+id/xmlPage2GoldText"

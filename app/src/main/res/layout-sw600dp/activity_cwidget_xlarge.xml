@@ -1,7 +1,7 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="152dp"
-    android:layout_height="194dp"
+    android:layout_width="504dp"
+    android:layout_height="672dp"
     android:background="@color/widgetBackground" >
 
     <!--
@@ -35,9 +35,10 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentTop="true"
+                android:layout_marginTop="6dp"
                 android:orientation="horizontal" >
 
-                <!-- android:text="201X" -->
+                <!-- android:text="2015" -->
                 <TextView
                     android:id="@+id/xmlPage1EngYear"
                     android:layout_width="0dp"
@@ -45,7 +46,7 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:inputType="none"
-                    android:textSize="9sp" />
+                    android:textSize="28sp" />
 
                 <!-- android:text="Decemeber" -->
                 <TextView
@@ -55,7 +56,7 @@
                     android:layout_weight="3"
                     android:gravity="center"
                     android:inputType="none"
-                    android:textSize="18sp"
+                    android:textSize="39sp"
                     android:textStyle="bold" />
 
                 <!-- android:text="一月" -->
@@ -66,9 +67,8 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:inputType="none"
-                    android:textSize="9sp" />
+                    android:textSize="28sp" />
             </LinearLayout>
-
             <!-- android:text="21" -->
             <TextView
                 android:id="@+id/xmlPage1Day"
@@ -76,9 +76,10 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:inputType="none"
-                android:textSize="72sp"
+                android:textSize="229sp"
                 android:textStyle="bold" />
 
+            <!-- android:text="香\n港\n特\n別\n行\n政\n區" -->
             <TextView
                 android:id="@+id/xmlPage1Holiday1"
                 android:layout_width="wrap_content"
@@ -87,11 +88,11 @@
                 android:layout_centerVertical="true"
                 android:layout_marginRight="4dp"
                 android:inputType="none"
-                android:lines="7"
-                android:textSize="8sp"
+                android:lines="7"                
+                android:textSize="22sp"
                 android:textStyle="bold" />
-            <!-- android:text="香\n港\n特\n別\n行\n政\n區" -->
 
+            <!-- android:text="成\n立\n紀\n念\n日\n翌\n日" -->
             <TextView
                 android:id="@+id/xmlPage1Holiday2"
                 android:layout_width="wrap_content"
@@ -100,9 +101,8 @@
                 android:layout_toLeftOf="@id/xmlPage1Holiday1"
                 android:inputType="none"
                 android:lines="7"
-                android:textSize="8sp"
+                android:textSize="22sp"
                 android:textStyle="bold" />
-            <!-- android:text="成\n立\n紀\n念\n日\n翌\n日" -->
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -124,7 +124,7 @@
                         android:layout_weight="2"
                         android:gravity="center"
                         android:inputType="none"
-                        android:textSize="8sp" />
+                        android:textSize="21sp" />
 
                     <LinearLayout
                         android:layout_width="match_parent"
@@ -138,7 +138,7 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:inputType="none"
-                            android:textSize="7sp" />
+                            android:textSize="19sp" />
 
                         <!-- android:text="初一" -->
                         <TextView
@@ -146,17 +146,14 @@
                             android:layout_width="wrap_content"
                             android:layout_height="wrap_content"
                             android:inputType="none"
-                            android:textSize="7sp" />
+                            android:textSize="19sp" />
                     </LinearLayout>
                 </RelativeLayout>
 
                 <RelativeLayout
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
-                    android:layout_centerVertical="true"
-                    android:layout_gravity="center_vertical"
-                    android:layout_weight="5"
-                    android:gravity="center_vertical" >
+                    android:layout_weight="5" >
 
                     <ImageView
                         android:id="@+id/xmlPage1WeekImage"
@@ -177,7 +174,7 @@
                         android:inputType="none"
                         android:paddingLeft="5dp"
                         android:paddingRight="5dp"
-                        android:textSize="10sp" />
+                        android:textSize="19sp" />
                 </RelativeLayout>
 
                 <LinearLayout
@@ -193,7 +190,7 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:inputType="none"
-                        android:textSize="7sp" />
+                        android:textSize="14sp" />
 
                     <!-- android:text="初一" -->
                     <TextView
@@ -201,17 +198,21 @@
                         android:layout_width="wrap_content"
                         android:layout_height="wrap_content"
                         android:inputType="none"
-                        android:textSize="7sp" />
+                        android:textSize="19sp" />
                 </LinearLayout>
             </LinearLayout>
         </RelativeLayout>
- 		<RelativeLayout
+<!-- Below can be added to make frame fully visible on this activity_cwidget.xml at layout-sw600dp ONLY
+	 Indeed, user can press and hold to expand the frame. So, not add finally.
+			android:paddingLeft="5dp"
+            android:paddingRight="5dp" -->
+        <RelativeLayout
             android:id="@+id/xmlPage1Middle"
             android:layout_width="match_parent"
             android:layout_height="0dp"
             android:layout_weight="1"
             android:paddingTop="5dp" >
-        
+
             <ImageView
                 android:id="@+id/xmlPage1ImageFrame"
                 android:layout_width="fill_parent"
@@ -219,17 +220,17 @@
                 android:adjustViewBounds="true"
                 android:paddingLeft="2dp"
                 android:paddingRight="2dp"
-                android:visibility="gone"
                 android:scaleType="fitXY"
+                android:visibility="gone"
                 android:src="@drawable/green_frame_2015" />
             <ImageView
                 android:id="@+id/xmlPage1ImageFrameUpper"
                 android:layout_width="fill_parent"
                 android:layout_height="wrap_content"
                 android:adjustViewBounds="true"
+                android:visibility="gone"
                 android:paddingLeft="2dp"
                 android:paddingRight="2dp"
-                android:visibility="gone"
                 android:scaleType="fitCenter"
                 android:layout_alignParentTop="true"
                 android:src="@drawable/green_frame_2016_upper" />
@@ -240,23 +241,24 @@
                 android:adjustViewBounds="true"
                 android:paddingLeft="2dp"
                 android:paddingRight="2dp"
-                android:visibility="gone"
                 android:scaleType="fitCenter"
+                android:visibility="gone"
                 android:layout_alignParentBottom="true"
                 android:src="@drawable/green_frame_2016_lower" />
 
-            <!-- android:text="金句金句金句金句金句金句金句" -->
-
+            <!-- android:text="金句金句金句金句金句金句金句金句金句金句金\n金句2\n金句3\n金句4" -->
             <TextView
                 android:id="@+id/xmlPage1GoldText"
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_above="@+id/xmlPage1GoldVerse"
-                android:layout_marginLeft="12dp"
-                android:layout_marginRight="12dp"
-                android:layout_marginTop="@dimen/small_c_image_top"
+                android:layout_marginTop="4dp"
+                android:layout_marginLeft="25dp"
+                android:layout_marginRight="25dp"
+                android:layout_marginBottom="@dimen/big_c_image_top"
                 android:gravity="center"
-                android:textSize="5sp" />
+                android:maxLines="3"
+                android:textSize="24sp" />
 
             <!-- android:text="[XXXXXXXXXX]" -->
             <TextView
@@ -264,12 +266,12 @@
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_alignParentBottom="true"
-                android:layout_alignRight="@+id/xmlPage1GoldText"
+                android:layout_alignParentRight="true"
+                android:layout_marginBottom="@dimen/big_c_image_bottom"
+                android:layout_marginLeft="20dp"
+                android:layout_marginRight="38dp"
                 android:gravity="center_horizontal"
-                android:layout_marginLeft="12dp"
-                android:layout_marginRight="12dp"
-                android:layout_marginBottom="@dimen/small_c_image_bottom"
-                android:textSize="2sp" />
+                android:textSize="15sp" /><!-- right|bottom -->
         </RelativeLayout>
 
         <RelativeLayout
@@ -289,19 +291,20 @@
                 android:src="@drawable/green_icon_2015"
                 android:visibility="visible" />
 
+            <!-- android:text="小知識\n1234567890123456789012\n小知識\n小知識" -->
             <TextView
                 android:id="@+id/xmlPage1BigText"
                 android:layout_width="match_parent"
                 android:layout_height="match_parent"
                 android:layout_above="@+id/xmlPage1BigHint"
                 android:layout_alignParentTop="true"
-                android:layout_marginRight="20dp"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="2dp"
+                android:layout_marginRight="20dp"
+                android:layout_marginTop="6dp"
                 android:gravity="center_horizontal"
-                android:textSize="8sp" />
-            <!-- android:text="小知識\n1234567890123456789012\n小知識\n小知識" -->
+                android:textSize="22sp" /><!-- left|top -->
 
+			<!-- android:text="Hint …………………." -->
             <TextView
                 android:id="@+id/xmlPage1BigHint"
                 android:layout_width="wrap_content"
@@ -309,9 +312,8 @@
                 android:layout_alignParentBottom="true"
                 android:layout_alignRight="@id/xmlPage1BigText"
                 android:layout_marginBottom="2dp"
-                android:gravity="right|bottom"
-                android:textSize="5sp" /> <!-- 6 -->
-            <!-- android:text="Hint …………………." -->
+                android:gravity="right|bottom" 
+                android:textSize="18sp" /> <!-- 15dp --><!-- android:gravity="right|bottom" -->
 
 <!--             <TextView
                 android:layout_width="wrap_content"
@@ -334,14 +336,14 @@
         android:textAppearance="@android:style/TextAppearance.Medium"
         android:textColor="@color/black"
         android:visibility="gone" />
-	<!--<TextView-->
+    <!--<TextView-->
         <!--android:layout_width="wrap_content"-->
         <!--android:layout_height="wrap_content"-->
         <!--android:background="@color/white"-->
         <!--android:layout_alignParentBottom="true"-->
         <!--android:layout_alignParentRight="true"-->
         <!--android:gravity="center"-->
-        <!--android:text="."-->
+        <!--android:text="_"-->
         <!--android:textSize="12sp"-->
         <!--android:textColor="@color/black"/>-->
 </RelativeLayout>

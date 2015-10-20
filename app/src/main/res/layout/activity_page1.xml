@@ -231,7 +231,30 @@
             android:layout_marginRight="2dp"
             android:adjustViewBounds="true"
             android:scaleType="fitXY"
+            android:visibility="gone"
             android:src="@drawable/green_frame_2015" />
+        <ImageView
+            android:id="@+id/xmlPage1ImageFrameUpper"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
+            android:visibility="gone"
+            android:scaleType="fitCenter"
+            android:layout_alignParentTop="true"
+            android:src="@drawable/green_frame_2016_upper" />
+        <ImageView
+            android:id="@+id/xmlPage1ImageFrameLower"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
+            android:visibility="gone"
+            android:scaleType="fitCenter"
+            android:layout_alignParentBottom="true"
+            android:src="@drawable/green_frame_2016_lower" />
 
         <!--
         android:text="金句金句金句金句金句金句金句金句金句\n金句2\n金句3\n金句4"

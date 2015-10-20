@@ -221,7 +221,30 @@
                 android:paddingLeft="2dp"
                 android:paddingRight="2dp"
                 android:scaleType="fitXY"
+                android:visibility="gone"
                 android:src="@drawable/green_frame_2015" />
+            <ImageView
+                android:id="@+id/xmlPage1ImageFrameUpper"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:visibility="gone"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
+                android:scaleType="fitCenter"
+                android:layout_alignParentTop="true"
+                android:src="@drawable/green_frame_2016_upper" />
+            <ImageView
+                android:id="@+id/xmlPage1ImageFrameLower"
+                android:layout_width="fill_parent"
+                android:layout_height="wrap_content"
+                android:adjustViewBounds="true"
+                android:paddingLeft="2dp"
+                android:paddingRight="2dp"
+                android:scaleType="fitCenter"
+                android:visibility="gone"
+                android:layout_alignParentBottom="true"
+                android:src="@drawable/green_frame_2016_lower" />
 
             <!-- android:text="金句金句金句金句金句金句金句金句金句金句金\n金句2\n金句3\n金句4" -->
             <TextView
@@ -229,11 +252,13 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_above="@+id/xmlPage1GoldVerse"
+                android:layout_marginTop="4dp"
                 android:layout_marginLeft="25dp"
                 android:layout_marginRight="25dp"
                 android:layout_marginBottom="@dimen/big_c_image_top"
                 android:gravity="center"
-                android:textSize="16sp" />
+                android:maxLines="3"
+                android:textSize="14sp" />
 
             <!-- android:text="[XXXXXXXXXX]" -->
             <TextView
@@ -246,7 +271,7 @@
                 android:layout_marginLeft="20dp"
                 android:layout_marginRight="38dp"
                 android:gravity="center_horizontal"
-                android:textSize="12sp" /><!-- right|bottom -->
+                android:textSize="11sp" /><!-- right|bottom -->
         </RelativeLayout>
 
         <RelativeLayout
