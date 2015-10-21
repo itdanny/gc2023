@@ -259,11 +259,15 @@ public class CWidgetBase extends AppWidgetProvider {
 			recRef.views.setViewVisibility(getID(context, nbr, "ChiLeftWeather"), View.VISIBLE);
 		}
 		if (CMain.IS_2016_OR_LATER) {
-            recRef.views.setImageViewResource(getID(context, nbr, "ImageFrameUpper"), isHoliday ? R.drawable.red_frame_2016_upper : R.drawable.green_frame_2016_upper);
-            recRef.views.setImageViewResource(getID(context, nbr, "ImageFrameLower"), isHoliday ? R.drawable.red_frame_2016_lower : R.drawable.green_frame_2016_lower);
-            recRef.views.setViewVisibility(getID(context, nbr, "ImageFrameUpper"), View.VISIBLE);
-            recRef.views.setViewVisibility(getID(context, nbr, "ImageFrameLower"), View.VISIBLE);
-            recRef.views.setViewVisibility(getID(context, nbr, "ImageFrame"), View.GONE);
+//            recRef.views.setImageViewResource(getID(context, nbr, "ImageFrameUpper"), isHoliday ? R.drawable.red_frame_2016_upper : R.drawable.green_frame_2016_upper);
+//            recRef.views.setImageViewResource(getID(context, nbr, "ImageFrameLower"), isHoliday ? R.drawable.red_frame_2016_lower : R.drawable.green_frame_2016_lower);
+//            recRef.views.setViewVisibility(getID(context, nbr, "ImageFrameUpper"), View.VISIBLE);
+//            recRef.views.setViewVisibility(getID(context, nbr, "ImageFrameLower"), View.VISIBLE);
+//            recRef.views.setViewVisibility(getID(context, nbr, "ImageFrame"), View.GONE);
+            recRef.views.setImageViewResource(getID(context, nbr, "ImageFrame"), isHoliday ? R.drawable.red_frame_2016 : R.drawable.green_frame_2016);
+            recRef.views.setViewVisibility(getID(context, nbr, "ImageFrameUpper"), View.GONE);
+            recRef.views.setViewVisibility(getID(context, nbr, "ImageFrameLower"), View.GONE);
+            recRef.views.setViewVisibility(getID(context, nbr, "ImageFrame"), View.VISIBLE);
         } else {
             recRef.views.setImageViewResource(getID(context, nbr, "ImageFrame"), isHoliday ? R.drawable.red_frame_2015 : R.drawable.green_frame_2015);
             recRef.views.setViewVisibility(getID(context, nbr, "ImageFrameUpper"), View.GONE);

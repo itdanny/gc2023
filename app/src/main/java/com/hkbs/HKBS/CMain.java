@@ -60,7 +60,7 @@ import java.util.Calendar;
  */
 public class CMain extends MyActivity {
     final static public boolean IS_2016_OR_LATER = true;
-    final static private boolean IS_2015_OR_LATER =true;
+    final static private boolean IS_2015_OR_LATER = true;
 	final static private boolean DEBUG=true;
 	final static private String TAG = CMain.class.getSimpleName();
 	final static private String CHI_MONTHS [] = {"一","二","三","四","五","六","七","八","九","十","十一","十二"};
@@ -1176,11 +1176,15 @@ public class CMain extends MyActivity {
         final ImageView pageImageFrameLower = (ImageView) findViewById(getID(nbr, "ImageFrameLower"));
         final ImageView pageImageFrame = (ImageView) findViewById(getID(nbr, "ImageFrame"));
 		if (IS_2016_OR_LATER) {
-            pageImageFrameUpper.setImageDrawable(getResources().getDrawable(isHoliday ? R.drawable.red_frame_2016_upper : R.drawable.green_frame_2016_upper));
-            pageImageFrameLower.setImageDrawable(getResources().getDrawable(isHoliday ? R.drawable.red_frame_2016_lower : R.drawable.green_frame_2016_lower));
-            pageImageFrameUpper.setVisibility(View.VISIBLE);
-            pageImageFrameLower.setVisibility(View.VISIBLE);
-            pageImageFrame.setVisibility(View.GONE);
+//            pageImageFrameUpper.setImageDrawable(getResources().getDrawable(isHoliday ? R.drawable.red_frame_2016_upper : R.drawable.green_frame_2016_upper));
+//            pageImageFrameLower.setImageDrawable(getResources().getDrawable(isHoliday ? R.drawable.red_frame_2016_lower : R.drawable.green_frame_2016_lower));
+//            pageImageFrameUpper.setVisibility(View.VISIBLE);
+//            pageImageFrameLower.setVisibility(View.VISIBLE);
+//            pageImageFrame.setVisibility(View.GONE);
+            pageImageFrame.setImageDrawable(getResources().getDrawable(isHoliday?R.drawable.red_frame_2016:R.drawable.green_frame_2016));
+            pageImageFrameUpper.setVisibility(View.GONE);
+            pageImageFrameLower.setVisibility(View.GONE);
+            pageImageFrame.setVisibility(View.VISIBLE);
         } else {
             pageImageFrame.setImageDrawable(getResources().getDrawable(isHoliday?R.drawable.red_frame_2015:R.drawable.green_frame_2015));
             pageImageFrameUpper.setVisibility(View.GONE);
