@@ -8,6 +8,10 @@ public class CWidgetLarge extends CWidgetBase {
         return R.layout.activity_cwidget_large;
     }
     @Override
+    public String getClassTag(){
+        return "l";
+    }
+    @Override
     public String getLayoutTag(){
         return CWidgetLarge.class.getSimpleName();
     }

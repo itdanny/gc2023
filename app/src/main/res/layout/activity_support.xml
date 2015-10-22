@@ -12,10 +12,11 @@
         <LinearLayout
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
+            android:layout_marginTop="15dp"
             android:orientation="vertical" >
 
-            
             <TextView
+                android:id="@+id/supportTechnicalHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -85,8 +86,17 @@
                 android:paddingRight="18dp"
                 android:text="@string/about_arkist_address2"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
-			
+
+            <Button
+                android:id="@+id/supportGetSupport"
+                android:text="聯絡我們"
+                android:gravity="center"
+                android:layout_gravity="center"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"/>
+
             <TextView
+                android:id="@+id/supportContentHeader"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -99,6 +109,7 @@
                 android:textAppearance="?android:attr/textAppearanceMedium" />
             
              <LinearLayout
+                android:id="@+id/xmlSupportHKBS_Name"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_marginTop="5dp"
@@ -132,7 +143,11 @@
                 android:paddingRight="18dp"
                 android:text="@string/about_hkbs_address"
                 android:textAppearance="?android:attr/textAppearanceSmall" /> -->
-                
+                <LinearLayout
+                    android:id="@+id/xmlSupportHKBS_Addr"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:orientation="vertical">
                 <TextView
                 android:id="@+id/supportHkbsAddress1"
                 android:layout_width="match_parent"
@@ -180,6 +195,7 @@
                 android:paddingRight="18dp"
                 android:text="@string/about_hkbs_address4"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
+                </LinearLayout>
                 
             <TextView
                 android:layout_width="match_parent"

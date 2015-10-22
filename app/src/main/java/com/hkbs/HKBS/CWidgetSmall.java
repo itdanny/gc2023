@@ -4,6 +4,10 @@ public class CWidgetSmall extends CWidgetBase {
     public CWidgetSmall() {
     }
     @Override
+    public String getClassTag(){
+        return "s";
+    }
+    @Override
     public int getLayoutId() {
         return R.layout.activity_cwidget_small;
     }

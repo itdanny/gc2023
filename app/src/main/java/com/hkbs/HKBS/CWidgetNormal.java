@@ -3,6 +3,10 @@ public class CWidgetNormal extends CWidgetBase {
 	public CWidgetNormal() {
 	}
     @Override
+    public String getClassTag(){
+        return "n";
+    }
+    @Override
     public int getLayoutId() {
         return R.layout.activity_cwidget;
     }

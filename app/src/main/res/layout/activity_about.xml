@@ -70,6 +70,7 @@
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
             <TextView
+                android:id="@+id/xmlAboutCopyright"
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"
@@ -80,7 +81,7 @@
                 android:paddingRight="2dp"
                 android:autoLink="web"
     			android:linksClickable="true"
-                android:text="版權聲明\n全年好日曆 2015 ＠香港聖經公會 版權所有\n和合本修訂版 2006, 2010 ©香港聖經公會 版權所有\n蒙香港聖經公會允許使用\nwww.hkbs.org.hk"
+                android:text="@string/about_copyright2016"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
 
             <Button
@@ -103,7 +104,7 @@
                 android:gravity="left|top"
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
-                android:text="@string/app_rule"
+                android:text="@string/app_rule2015"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
         </LinearLayout>
 

@@ -61,7 +61,8 @@ import java.util.Calendar;
 public class CMain extends MyActivity {
     final static public boolean IS_2016_OR_LATER = true;
     final static private boolean IS_2015_OR_LATER = true;
-	final static private boolean DEBUG=true;
+	final static public boolean DEBUG=true;
+
 	final static private String TAG = CMain.class.getSimpleName();
 	final static private String CHI_MONTHS [] = {"一","二","三","四","五","六","七","八","九","十","十一","十二"};
     final static private String STD_LAYOUT = "standard";
@@ -341,6 +342,11 @@ public class CMain extends MyActivity {
 		});
 		
 		AxTextView mainBtnBible = (AxTextView) findViewById(R.id.mainBtnBible);
+        if (CMain.IS_2016_OR_LATER){
+            mainBtnBible.setText(R.string.main_support);
+        } else {
+            mainBtnBible.setText(R.string.main_bible);
+        }
 		//mainBtnBible.setOnTouchListener(mDelayHideTouchListener);
 		mainBtnBible.setOnClickListener(new View.OnClickListener() {
 			@Override
@@ -799,13 +805,24 @@ public class CMain extends MyActivity {
 			}
 			verse = Integer.valueOf(bcv.substring(secondDigitStartPos, digitEndPos));
 		}
-		Object [] eabcv = new Object [] {
-				"tr ",
-				bookAbbrev,
-				Integer.valueOf(bookNbr),
-				Integer.valueOf(chapter),
-				Integer.valueOf(verse)
-				};
+        Object[] eabcv;
+        if (CMain.IS_2016_OR_LATER) {
+            eabcv = new Object[]{
+                    "tc ",
+                    bookAbbrev,
+                    Integer.valueOf(bookNbr),
+                    Integer.valueOf(chapter),
+                    Integer.valueOf(verse)
+            };
+        } else {
+            eabcv = new Object []{
+                    "tr ",
+                    bookAbbrev,
+                    Integer.valueOf(bookNbr),
+                    Integer.valueOf(chapter),
+                    Integer.valueOf(verse)
+            };
+        };
 		//String finalBCV = bookAbbrev+" "+chapter+":"+verse;
 		return eabcv;//"tr "+finalBCV;
 		//return "rc 創 5:2";
@@ -908,7 +925,7 @@ public class CMain extends MyActivity {
 		mViewAnimator.setOutAnimation(null);
 	}
 	private int getID(int nbr, String extension){
-		int resultVal = getResources().getIdentifier("xmlPage"+nbr+extension, "id", "com.hkbs.HKBS");
+		int resultVal = getResources().getIdentifier("xmlPage"+nbr+extension, "id",CMain.this.getPackageName());
 		if (resultVal==0){
 			MyUtil.logError(TAG, "Error on:" + "xmlPage" + nbr + extension);
 		}
@@ -1181,7 +1198,11 @@ public class CMain extends MyActivity {
 //            pageImageFrameUpper.setVisibility(View.VISIBLE);
 //            pageImageFrameLower.setVisibility(View.VISIBLE);
 //            pageImageFrame.setVisibility(View.GONE);
-            pageImageFrame.setImageDrawable(getResources().getDrawable(isHoliday?R.drawable.red_frame_2016:R.drawable.green_frame_2016));
+            //if (AxTools.getScreenWidth()>=650){
+                pageImageFrame.setImageDrawable(getResources().getDrawable(isHoliday?R.drawable.red_frame_2016:R.drawable.green_frame_2016));
+            //} else {
+            //    pageImageFrame.setImageDrawable(getResources().getDrawable(isHoliday?R.drawable.red_frame_2016:R.drawable.green_frame_2016_26));
+            //}
             pageImageFrameUpper.setVisibility(View.GONE);
             pageImageFrameLower.setVisibility(View.GONE);
             pageImageFrame.setVisibility(View.VISIBLE);
@@ -1196,6 +1217,7 @@ public class CMain extends MyActivity {
         if (CMain.IS_2016_OR_LATER) {
             pageImageIcon.setImageDrawable(getResources().getDrawable(isHoliday ? R.drawable.red_icon_2016 : R.drawable.green_icon_2016));
         } else {
+            pageImageIcon.setScaleType(ImageView.ScaleType.FIT_XY);
             if (curYear >= 2016) {
                 pageImageIcon.setImageDrawable(null);
             } else {
@@ -1278,7 +1300,9 @@ public class CMain extends MyActivity {
             if (mScreenType.equalsIgnoreCase(SMALL_LAYOUT)) {
                 pageGoldVerse.setTextSize(TypedValue.COMPLEX_UNIT_PX, goldFontSize - dp2px(6));
             } else if (mScreenType.equalsIgnoreCase(SW600_LAYOUT)) {
-                pageGoldVerse.setTextSize(TypedValue.COMPLEX_UNIT_PX, pageChiLunarMonth.getTextSize());
+                int suggestSize = (int) pageChiLunarMonth.getTextSize();
+                suggestSize=Math.min(suggestSize,(int) (goldFontSize * 0.8)); // Use dp2px too less
+                pageGoldVerse.setTextSize(TypedValue.COMPLEX_UNIT_PX, suggestSize);
             } else {
                 pageGoldVerse.setTextSize(TypedValue.COMPLEX_UNIT_PX, goldFontSize - dp2px(6));
             }
@@ -1353,7 +1377,7 @@ public class CMain extends MyActivity {
             pageBigText.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
         }
         if (DEBUG) {
-            Log.d(TAG, "screenType=" + mScreenType + " Hint TextSize=" + bigTextSize + " " + pageBigText.getHeight()+" "+curYear+"-"+(curMonth+1)+"-"+curDay);
+            Log.w(TAG, "Device="+getString(R.string.deviceType)+" screenType=" + mScreenType + " Hint TextSize=" + bigTextSize + " " + pageBigText.getHeight()+" "+curYear+"-"+(curMonth+1)+"-"+curDay);
         }
         /***********************************************************************************
          * 最後一行字 : pageHintText (SIZE IS STANDARD)
@@ -1466,6 +1490,13 @@ public class CMain extends MyActivity {
     	return _scaleDensity;
     }
 	private void onClickViewBible(Context context){
+        if (CMain.IS_2016_OR_LATER){
+            MyUtil.trackClick(context, "Support", "M");
+            Intent intent = new Intent(context, SupportActivity.class);
+            startActivityForResult(intent, MyUtil.REQUEST_SUPPORT);
+            overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
+            return;
+        }
 		boolean isShownAdBanner = AxTools.getPrefBoolean("pref_showBanner", false);
 		//isShownAdBanner=false;
 		if (isShownAdBanner){

@@ -23,13 +23,16 @@ import org.arkist.share.AxTools;
 import java.util.Calendar;
 
 public class CWidgetBase extends AppWidgetProvider {
-	final static private boolean DEBUG = true;
+	final static private boolean DEBUG = true && CMain.DEBUG;
 	final static private String TAG = CWidgetBase.class.getSimpleName();
 	final static private String CHI_MONTHS [] = {"一","二","三","四","五","六","七","八","九","十","十一","十二"};
     public boolean isLarger=false;
 	public CWidgetBase() {
 
 	}
+    public String getClassTag(){
+        return "";
+    }
     public String getLayoutTag(){
         return "";
     }
@@ -167,8 +170,7 @@ public class CWidgetBase extends AppWidgetProvider {
 		// Assign Date Related TextView		
 		recRef.views.setTextViewText(getID(context, nbr, "Day"), String.valueOf(curDay));
 		recRef.views.setTextColor(getID(context, nbr, "Day"), textColor);
-		
-		
+
 		final int maxCharacters=7;
 		if (holiday.equals("")){
 			recRef.views.setViewVisibility(getID(context, nbr, "Holiday1"), View.GONE);
@@ -258,13 +260,35 @@ public class CWidgetBase extends AppWidgetProvider {
 			recRef.views.setViewVisibility(getID(context, nbr, "ChiLeftYear"), View.VISIBLE);
 			recRef.views.setViewVisibility(getID(context, nbr, "ChiLeftWeather"), View.VISIBLE);
 		}
+        float layoutWidthInPixels=0;
 		if (CMain.IS_2016_OR_LATER) {
 //            recRef.views.setImageViewResource(getID(context, nbr, "ImageFrameUpper"), isHoliday ? R.drawable.red_frame_2016_upper : R.drawable.green_frame_2016_upper);
 //            recRef.views.setImageViewResource(getID(context, nbr, "ImageFrameLower"), isHoliday ? R.drawable.red_frame_2016_lower : R.drawable.green_frame_2016_lower);
 //            recRef.views.setViewVisibility(getID(context, nbr, "ImageFrameUpper"), View.VISIBLE);
 //            recRef.views.setViewVisibility(getID(context, nbr, "ImageFrameLower"), View.VISIBLE);
 //            recRef.views.setViewVisibility(getID(context, nbr, "ImageFrame"), View.GONE);
-            recRef.views.setImageViewResource(getID(context, nbr, "ImageFrame"), isHoliday ? R.drawable.red_frame_2016 : R.drawable.green_frame_2016);
+            String dimenIdStr = context.getString(R.string.layoutType)+getClassTag()+"_width";
+            //Log.e(TAG,"package name="+context.getPackageName());
+            int dimenId = context.getResources().getIdentifier(dimenIdStr, "dimen",context.getPackageName());// "com.hkbs.HKBS"
+
+            try {
+                layoutWidthInPixels = context.getResources().getDimension(dimenId);
+            } catch (Exception e1){
+                try {
+                    dimenIdStr = "v"+getClassTag()+"_width";
+                    dimenId = context.getResources().getIdentifier(dimenIdStr, "dimen",context.getPackageName());// "com.hkbs.HKBS"
+                    layoutWidthInPixels = context.getResources().getDimension(dimenId);
+                } catch (Exception e2) {
+                    Log.e(TAG,"Cannot find dimen resource = "+dimenId+" "+dimenIdStr);
+                }
+            }
+            // For Widget only since some layout is very small
+            // Scale down image caused image quality bad
+            if (layoutWidthInPixels<650) {
+                recRef.views.setImageViewResource(getID(context, nbr, "ImageFrame"), isHoliday ? R.drawable.red_frame_2016_26 : R.drawable.green_frame_2016_26);
+            } else {
+                recRef.views.setImageViewResource(getID(context, nbr, "ImageFrame"), isHoliday ? R.drawable.red_frame_2016 : R.drawable.green_frame_2016);
+            }
             recRef.views.setViewVisibility(getID(context, nbr, "ImageFrameUpper"), View.GONE);
             recRef.views.setViewVisibility(getID(context, nbr, "ImageFrameLower"), View.GONE);
             recRef.views.setViewVisibility(getID(context, nbr, "ImageFrame"), View.VISIBLE);
@@ -301,21 +325,37 @@ public class CWidgetBase extends AppWidgetProvider {
 //                mGoldText = mGoldText.substring(0, mGoldText.length());
 //            }
 //        }
-		recRef.views.setTextViewText(getID(context, nbr, "GoldText"),mGoldText);
+		recRef.views.setTextViewText(getID(context, nbr, "GoldText"), mGoldText);
 		recRef.views.setTextColor(getID(context, nbr, "GoldText"), textColor);
 		
-		recRef.views.setTextViewText(getID(context, nbr, "BigText"),cv.getAsString(MyDailyBread.wBigText).replace("#", "\n"));
+		recRef.views.setTextViewText(getID(context, nbr, "BigText"), cv.getAsString(MyDailyBread.wBigText).replace("#", "\n"));
 		recRef.views.setTextColor(getID(context, nbr, "BigText"), textColor);
 		
-		recRef.views.setTextViewText(getID(context, nbr, "BigHint"),cv.getAsString(MyDailyBread.wSmallText));
+		recRef.views.setTextViewText(getID(context, nbr, "BigHint"), cv.getAsString(MyDailyBread.wSmallText));
 		recRef.views.setTextColor(getID(context, nbr, "BigHint"), textColor);
 		
 		// All completed ..... show
 		recRef.views.setViewVisibility(R.id.xmlWidgetLoading, View.GONE);
 		recRef.views.setViewVisibility(R.id.xmlPage1, View.VISIBLE);
+
+        if (DEBUG){
+            String appVersionName = "?";
+            try {
+                appVersionName = context.getPackageManager().getPackageInfo(context.getPackageName(),0).versionName;
+            } catch (Exception e){
+                //
+            }
+            appVersionName="v"+appVersionName+"."+context.getString(R.string.deviceType)+getClassTag()+" "+AxTools.getScreenWidth()+":"+layoutWidthInPixels;
+            Log.w(TAG, appVersionName);
+            recRef.views.setTextViewText(R.id.xmlWidgetVersion, appVersionName);
+            recRef.views.setTextColor(R.id.xmlWidgetVersion, textColor);
+            recRef.views.setViewVisibility(R.id.xmlWidgetVersion, View.VISIBLE);
+        } else {
+            recRef.views.setViewVisibility(R.id.xmlWidgetVersion, View.GONE);
+        }
 	}
 	private int getID(Context context, int nbr, String extension){
-		int resultVal = context.getResources().getIdentifier("xmlPage"+nbr+extension, "id", "com.hkbs.HKBS");
+		int resultVal = context.getResources().getIdentifier("xmlPage"+nbr+extension, "id",context.getPackageName());
 		if (resultVal==0){
 			MyUtil.logError(TAG, "Error on:"+"xmlPage"+nbr+extension);
 		}

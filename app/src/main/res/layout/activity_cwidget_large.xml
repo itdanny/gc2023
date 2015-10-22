@@ -1,7 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
-    android:layout_width="360dp"
-    android:layout_height="480dp"
+
+                android:layout_width="@dimen/vl_width"
+                android:layout_height="@dimen/vl_height"
     android:background="@color/widgetBackground" >
 
     <!--
@@ -286,7 +287,7 @@
                 android:layout_alignParentRight="true"
                 android:adjustViewBounds="true"
                 android:padding="15dp"
-                android:scaleType="fitXY"
+                android:scaleType="centerInside"
                 android:layout_marginBottom="6dp"
                 android:src="@drawable/green_icon_2015"
                 android:visibility="visible" />
@@ -336,14 +337,16 @@
         android:textAppearance="@android:style/TextAppearance.Medium"
         android:textColor="@color/black"
         android:visibility="gone" />
-    <!--<TextView-->
-        <!--android:layout_width="wrap_content"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:background="@color/white"-->
-        <!--android:layout_alignParentBottom="true"-->
-        <!--android:layout_alignParentRight="true"-->
-        <!--android:gravity="center"-->
-        <!--android:text="_"-->
-        <!--android:textSize="12sp"-->
-        <!--android:textColor="@color/black"/>-->
+    <TextView
+        android:id="@+id/xmlWidgetVersion"
+        android:layout_width="wrap_content"
+        android:layout_height="wrap_content"
+        android:layout_alignParentBottom="true"
+        android:layout_alignParentLeft="true"
+        android:layout_marginLeft="2dp"
+        android:layout_marginBottom="1dp"
+        android:gravity="left"
+        android:text="nl"
+        android:textSize="13sp"
+        android:textColor="@color/greyWhite"/>
 </RelativeLayout>

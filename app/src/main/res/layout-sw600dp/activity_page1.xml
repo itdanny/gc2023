@@ -275,7 +275,7 @@
             android:layout_alignParentRight="true"
             android:adjustViewBounds="true"
             android:padding="36dp" 
-            android:scaleType="fitXY"
+            android:scaleType="centerInside"
             android:layout_marginBottom="12dp"
             android:src="@drawable/green_icon_2015"
             android:visibility="visible" />

@@ -4,6 +4,10 @@ public class CWidgetXLarge extends CWidgetBase {
 	public CWidgetXLarge() {
 	}
     @Override
+    public String getClassTag(){
+        return "x";
+    }
+    @Override
     public int getLayoutId() {
         return R.layout.activity_cwidget_xlarge;
     }

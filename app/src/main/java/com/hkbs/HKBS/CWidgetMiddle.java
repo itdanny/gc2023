@@ -4,6 +4,10 @@ public class CWidgetMiddle extends CWidgetBase {
 	public CWidgetMiddle() {
 	}
     @Override
+    public String getClassTag(){
+        return "m";
+    }
+    @Override
     public int getLayoutId() {
         return R.layout.activity_cwidget_middle;
     }

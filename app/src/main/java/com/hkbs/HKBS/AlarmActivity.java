@@ -1,7 +1,5 @@
 package com.hkbs.HKBS;
 
-import org.arkist.share.AxAlarm;
-
 import android.os.Bundle;
 import android.view.Window;
 import android.widget.CheckBox;
@@ -9,6 +7,8 @@ import android.widget.ImageView;
 import android.widget.TimePicker;
 
 import com.hkbs.HKBS.arkUtil.MyUtil;
+
+import org.arkist.share.AxAlarm;
 
 public class AlarmActivity extends MyActivity {
 //	final static private String TAG = AlarmActivity.class.getSimpleName();
@@ -24,9 +24,15 @@ public class AlarmActivity extends MyActivity {
 		
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_alarm);
-		ImageView imageView = (ImageView) findViewById(R.id.imageView1);	
 //		try {
-			imageView.setImageResource(R.drawable.alarm_2015);
+        if (CMain.IS_2016_OR_LATER){
+            ((ImageView) findViewById(R.id.imageView1)).setImageResource(R.drawable.alarm_2016);
+            ((ImageView) findViewById(R.id.imageView2)).setImageResource(R.drawable.bkg_2_2016);
+        } else {
+            ((ImageView) findViewById(R.id.imageView1)).setImageResource(R.drawable.alarm_2015);
+            ((ImageView) findViewById(R.id.imageView2)).setImageResource(R.drawable.bkg_2_2015);
+        }
+
 //		} catch (Exception e){
 //			BitmapFactory.Options options=new BitmapFactory.Options();
 //		    options.inSampleSize = 4;
