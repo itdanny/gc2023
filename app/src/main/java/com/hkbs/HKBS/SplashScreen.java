@@ -4,7 +4,8 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
- 
+import android.widget.ImageView;
+
 public class SplashScreen extends Activity {
  
     // Splash screen timer
@@ -14,6 +15,12 @@ public class SplashScreen extends Activity {
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_splash);
+        ImageView imageView = (ImageView) findViewById(R.id.imgLogo);
+        if (CMain.IS_2016_OR_LATER) {
+            imageView.setImageResource(R.drawable.splash_640_960_2106);
+        } else{
+            imageView.setImageResource(R.drawable.splash_640_960);
+        }
  
         new Handler().postDelayed(new Runnable() {
  
