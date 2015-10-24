@@ -38,6 +38,8 @@ import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewAnimator;
 
+import com.daimajia.androidanimations.library.Techniques;
+import com.daimajia.androidanimations.library.YoYo;
 import com.hkbs.HKBS.arkCalendar.MyCalendarLunar;
 import com.hkbs.HKBS.arkUtil.MyGestureListener;
 import com.hkbs.HKBS.arkUtil.MyUtil;
@@ -61,30 +63,31 @@ import java.util.Calendar;
 public class CMain extends MyActivity {
     final static public boolean IS_2016_OR_LATER = true;
     final static private boolean IS_2015_OR_LATER = true;
-	final static public boolean DEBUG=true;
+    final static public boolean DEBUG = true;
 
-	final static private String TAG = CMain.class.getSimpleName();
-	final static private String CHI_MONTHS [] = {"一","二","三","四","五","六","七","八","九","十","十一","十二"};
+    final static private String TAG = CMain.class.getSimpleName();
+    final static private String CHI_MONTHS[] = {"一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二"};
     final static private String STD_LAYOUT = "standard";
     final static private String SMALL_LAYOUT = "small";
     final static private String SW600_LAYOUT = "sw600dp";
-	
-	final static private int CALL_FROM_EXTERNAL_APP=-999;
-	private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
 
-    static public int mCalendarYear=2015;
-	static private float _scaleDensity=0;
-	static private Calendar mDisplayDay;
-	static private String mGoldVerse;
-	 
-//	private View mContentsView;
-	private View mControlsView;
-	private View mLeftRightPanel;
-	private View mTitleView;
-	static public String mScreenType="";
-	private LinearLayout page1;
-	private LinearLayout page2;
+    final static private int CALL_FROM_EXTERNAL_APP = -999;
+    private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
+
+    static public int mCalendarYear = 2015;
+    static private float _scaleDensity = 0;
+    static private Calendar mDisplayDay;
+    static private String mGoldVerse;
+
+    //	private View mContentsView;
+    private View mControlsView;
+    private View mLeftRightPanel;
+    private View mTitleView;
+    static public String mScreenType = "";
+    private LinearLayout page1;
+    private LinearLayout page2;
     private Handler handler;
+
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
         switch (keyCode) {
@@ -108,135 +111,145 @@ public class CMain extends MyActivity {
                 onClickToday(this);
                 return true;
             default:
-                return super.onKeyDown(keyCode,event);
+                return super.onKeyDown(keyCode, event);
         }
     }
 
     private GestureDetector mGesture = new GestureDetector(getBaseContext(), new MyGestureListener(new MyGestureListener.Callback() {
-		@Override public boolean onClick(MotionEvent e) { // !!! SetClicable to TRUE !!!
-			//MyUtil.log(TAG,"mGesture.onClick");
+        @Override
+        public boolean onClick(MotionEvent e) { // !!! SetClicable to TRUE !!!
+            //MyUtil.log(TAG,"mGesture.onClick");
 //			if (!isTitleShown){
 //				saveScreenShot();
 //			}
-			setControlsVisibility(!isTitleShown);
-			return true;
-		}
-		@Override public boolean onLongPress(MotionEvent e) {return false;}
-		@Override
-		public boolean onRight() {
-			//MyUtil.log(TAG,"mGesture.onRight");
-			gotoNextDay();
-			return true;
-		}			
-		@Override
-		public boolean onLeft() {
-			//MyUtil.log(TAG,"mGesture.onLeftx");
-			gotoPrevDay();
-			return true;
-		}			
-	}));
-	private View.OnTouchListener mViewOnTouch = new View.OnTouchListener() {
-		@Override public boolean onTouch(View v, MotionEvent event) {
-			//MyUtil.log(TAG,"mViewOnTouch.onTouch");
-			mGesture.onTouchEvent(event);
-			return false;				
-		}		
-	};
-	
-	private ViewAnimator mViewAnimator;
-	private boolean isTitleShown=true;
-	private int mViewIndex=1;
-	public MyDailyBread mDailyBread; 
-	
-	@Override
-	protected void onCreate(Bundle savedInstanceState) {
-		super.onCreate(savedInstanceState);
-		requestWindowFeature(Window.FEATURE_NO_TITLE);
-		AxTools.init(CMain.this);
-		scaleDensity(getApplicationContext());
-		MyUtil.initMyUtil(this);
-		MyUtil.log(TAG,"StartApp3..............");
-		
+            setControlsVisibility(!isTitleShown);
+            return true;
+        }
+
+        @Override
+        public boolean onLongPress(MotionEvent e) {
+            return false;
+        }
+
+        @Override
+        public boolean onRight() {
+            //MyUtil.log(TAG,"mGesture.onRight");
+            gotoNextDay();
+            return true;
+        }
+
+        @Override
+        public boolean onLeft() {
+            //MyUtil.log(TAG,"mGesture.onLeftx");
+            gotoPrevDay();
+            return true;
+        }
+    }));
+    private View.OnTouchListener mViewOnTouch = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View v, MotionEvent event) {
+            //MyUtil.log(TAG,"mViewOnTouch.onTouch");
+            mGesture.onTouchEvent(event);
+            return false;
+        }
+    };
+
+    private ViewAnimator mViewAnimator;
+    private boolean isTitleShown = true;
+    private int mViewIndex = 1;
+    public MyDailyBread mDailyBread;
+
+    @Override
+    protected void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        requestWindowFeature(Window.FEATURE_NO_TITLE);
+        AxTools.init(CMain.this);
+        scaleDensity(getApplicationContext());
+        MyUtil.initMyUtil(this);
+        MyUtil.log(TAG, "StartApp3..............");
+
 //		final ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
 //		final List<RunningTaskInfo> recentTasks = activityManager.getRunningTasks(Integer.MAX_VALUE);
 //	    for (int i = 0; i < recentTasks.size(); i++){
 //	        MyUtil.log(TAG, "Application executed : " +recentTasks.get(i).baseActivity.toShortString()+ "\t\t ID: "+recentTasks.get(i).id+"");         
 //	    }
 //		
-		setContentView(R.layout.activity_cmain);
-		
-		mDisplayDay = Calendar.getInstance();
+        setContentView(R.layout.activity_cmain);
+
+        mDisplayDay = Calendar.getInstance();
 //		mContentsView = findViewById(R.id.xmlMainContents);
-		mViewAnimator = (ViewAnimator) findViewById(R.id.xmlMainContents);
-		mControlsView = findViewById(R.id.xmlMainControls);
-		mLeftRightPanel = findViewById(R.id.xmlMainClickPanel);
-		mTitleView = findViewById(R.id.xmlMainTitle);
-		mDailyBread = MyDailyBread.getInstance(CMain.this);
-		
-		onCreateSetButtons();
-		
-		AxAlarm.setDailyAlarm(CMain.this, AxAlarm.MODE.SET_DEFAULT, 9, 0);
-		AxAlarm.setDailyOnDateChange(CMain.this);
-		
-		CWidgetNormal.broadcastMe(CMain.this);
+        mViewAnimator = (ViewAnimator) findViewById(R.id.xmlMainContents);
+        mControlsView = findViewById(R.id.xmlMainControls);
+        mLeftRightPanel = findViewById(R.id.xmlMainClickPanel);
+        mTitleView = findViewById(R.id.xmlMainTitle);
+        mDailyBread = MyDailyBread.getInstance(CMain.this);
+
+        onCreateSetButtons();
+
+        AxAlarm.setDailyAlarm(CMain.this, AxAlarm.MODE.SET_DEFAULT, 9, 0);
+        AxAlarm.setDailyOnDateChange(CMain.this);
+
+        CWidgetNormal.broadcastMe(CMain.this);
 
         MyUtil.log(TAG, "StartApp3..............End");
 
-	}
-	@TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
-	private void setControlsVisibility(boolean isVisible){
-		if (isTitleShown==isVisible){
-			return;
-		}
-		if (this.isFinishing()) return;
-		if (mControlsView==null) mControlsView=findViewById(R.id.xmlMainControls);
-		if (mTitleView==null) mTitleView=findViewById(R.id.xmlMainTitle);
-		int mControlsHeight=0;
-		int mTitleHeight=0;
-		int mShortAnimTime=0;
-		isTitleShown=isVisible;
-		AxTextView mainBtnPlan = (AxTextView) findViewById(R.id.mainBtnPlan);
-		if (mainBtnPlan!=null){
-			Intent intent = CMain.this.getPackageManager().getLaunchIntentForPackage("org.arkist.cnote");
-			if (intent != null){ // Exist
-				mainBtnPlan.setText("聖經行事曆");
-			}
-		}
-		if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-			// If the ViewPropertyAnimator API is available
-			// (Honeycomb MR2 and later), use it to animate the
-			// in-layout UI controls at the bottom of the
-			// screen.
-			if (mControlsHeight == 0) {
-				mControlsHeight = mControlsView.getHeight();
-			}
-			if (mShortAnimTime == 0) {
-				mShortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-			}
-			mControlsView.animate().translationY(isVisible ? 0 : mControlsHeight).setDuration(mShortAnimTime);
-			
-			if (mTitleHeight == 0) {
-				mTitleHeight = mTitleView.getHeight();
-			}
-			if (mShortAnimTime == 0) {
-				mShortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-			}
-			mTitleView.animate().translationY(isVisible ? 0 : -mTitleHeight).setDuration(mShortAnimTime);
-			
-		} else {
-			// If the ViewPropertyAnimator APIs aren't
-			// available, simply show or hide the in-layout UI
-			// controls.
-			mControlsView.setVisibility(isVisible ? View.VISIBLE : View.GONE);
-			mTitleView.setVisibility(isVisible ? View.VISIBLE : View.GONE);
-		}
-		mLeftRightPanel.setVisibility(isVisible ? View.VISIBLE : View.GONE);
-		if (isVisible) {
-			// Schedule a hide().
-			delayedHide(AUTO_HIDE_DELAY_MILLIS);
-		}
-	}
-//	private DatePickerDialog.OnDateSetListener dateListener = new DatePickerDialog.OnDateSetListener() {
+    }
+
+    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+    private void setControlsVisibility(boolean isVisible) {
+        if (isTitleShown == isVisible) {
+            return;
+        }
+        if (this.isFinishing()) return;
+        if (mControlsView == null) mControlsView = findViewById(R.id.xmlMainControls);
+        if (mTitleView == null) mTitleView = findViewById(R.id.xmlMainTitle);
+        int mControlsHeight = 0;
+        int mTitleHeight = 0;
+        int mShortAnimTime = 0;
+        isTitleShown = isVisible;
+        AxTextView mainBtnPlan = (AxTextView) findViewById(R.id.mainBtnPlan);
+        if (mainBtnPlan != null) {
+            Intent intent = CMain.this.getPackageManager().getLaunchIntentForPackage("org.arkist.cnote");
+            if (intent != null) { // Exist
+                mainBtnPlan.setText("聖經行事曆");
+            }
+        }
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
+            // If the ViewPropertyAnimator API is available
+            // (Honeycomb MR2 and later), use it to animate the
+            // in-layout UI controls at the bottom of the
+            // screen.
+            if (mControlsHeight == 0) {
+                mControlsHeight = mControlsView.getHeight();
+            }
+            if (mShortAnimTime == 0) {
+                mShortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+            }
+            mControlsView.animate().translationY(isVisible ? 0 : mControlsHeight).setDuration(mShortAnimTime);
+
+            if (mTitleHeight == 0) {
+                mTitleHeight = mTitleView.getHeight();
+            }
+            if (mShortAnimTime == 0) {
+                mShortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+            }
+            mTitleView.animate().translationY(isVisible ? 0 : -mTitleHeight).setDuration(mShortAnimTime);
+
+        } else {
+            // If the ViewPropertyAnimator APIs aren't
+            // available, simply show or hide the in-layout UI
+            // controls.
+            mControlsView.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+            mTitleView.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+        }
+        mLeftRightPanel.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+        if (isVisible) {
+            // Schedule a hide().
+            delayedHide(AUTO_HIDE_DELAY_MILLIS);
+        }
+    }
+
+    //	private DatePickerDialog.OnDateSetListener dateListener = new DatePickerDialog.OnDateSetListener() {
 //		@Override
 //		public void onDateSet(DatePicker view, int year, int monthOfYear, int dayOfMonth) {
 //			Calendar checkDate = Calendar.getInstance();
@@ -247,45 +260,46 @@ public class CMain extends MyActivity {
 //			}
 //		}
 //	};
-	private Bitmap screenShot;
-	private void saveScreenShot(){
-		// Get bitmap
-		View contentView = this.findViewById(android.R.id.content);
-		
-		int controlVisibility = mControlsView.getVisibility();
-		mControlsView.setVisibility(View.GONE);
-		int titleVisibility = mTitleView.getVisibility();
-		mTitleView.setVisibility(View.GONE);
-		View leftView = findViewById(R.id.xmlMainClickLeft);
-		int leftVisibility=0; 
-		if (leftView!=null){
-			leftView.setVisibility(View.GONE);
-			leftVisibility = leftView.getVisibility();
-		}
-		View rightView = findViewById(R.id.xmlMainClickRight);
-		int rightVisibility=0; 
-		if (rightView!=null){
-			rightView.setVisibility(View.GONE);
-			rightVisibility = rightView.getVisibility();
-		}
-		
-		contentView.setDrawingCacheEnabled(true);
+    private Bitmap screenShot;
+
+    private void saveScreenShot() {
+        // Get bitmap
+        View contentView = this.findViewById(android.R.id.content);
+
+        int controlVisibility = mControlsView.getVisibility();
+        mControlsView.setVisibility(View.GONE);
+        int titleVisibility = mTitleView.getVisibility();
+        mTitleView.setVisibility(View.GONE);
+        View leftView = findViewById(R.id.xmlMainClickLeft);
+        int leftVisibility = 0;
+        if (leftView != null) {
+            leftView.setVisibility(View.GONE);
+            leftVisibility = leftView.getVisibility();
+        }
+        View rightView = findViewById(R.id.xmlMainClickRight);
+        int rightVisibility = 0;
+        if (rightView != null) {
+            rightView.setVisibility(View.GONE);
+            rightVisibility = rightView.getVisibility();
+        }
+
+        contentView.setDrawingCacheEnabled(true);
         //contentView.buildDrawingCache(true);
-		screenShot = contentView.getDrawingCache();
-        if (screenShot==null){
+        screenShot = contentView.getDrawingCache();
+        if (screenShot == null) {
             screenShot = takeSnapshot(contentView);
-            if (screenShot==null){
+            if (screenShot == null) {
                 screenShot = loadBitmapFromView(contentView);
             }
         }
         //contentView.setDrawingCacheEnabled(false);
-		
-		mControlsView.setVisibility(controlVisibility);
-		mTitleView.setVisibility(titleVisibility);
-		if (leftView!=null) leftView.setVisibility(leftVisibility);
-		if (rightView!=null) rightView.setVisibility(rightVisibility);
-		
-		// Save bitmap
+
+        mControlsView.setVisibility(controlVisibility);
+        mTitleView.setVisibility(titleVisibility);
+        if (leftView != null) leftView.setVisibility(leftVisibility);
+        if (rightView != null) rightView.setVisibility(rightVisibility);
+
+        // Save bitmap
 //		File imagePath = new File(Environment.getExternalStorageDirectory() + "/screenshot.png");
 //	    FileOutputStream fos;
 //	    try {
@@ -298,189 +312,197 @@ public class CMain extends MyActivity {
 //	    } catch (IOException e) {adb
 //	        Log.e("GREC", e.getMessage(), e);
 //	    }
-	}
+    }
+
     private Bitmap bitmap;
+
     private Bitmap takeSnapshot(View v) {
-        if(bitmap!=null) {
+        if (bitmap != null) {
             bitmap.recycle();
-            bitmap=null;
+            bitmap = null;
         }
-        bitmap = Bitmap.createBitmap(v.getWidth(), v.getHeight(),Bitmap.Config.ARGB_8888);
+        bitmap = Bitmap.createBitmap(v.getWidth(), v.getHeight(), Bitmap.Config.ARGB_8888);
         Canvas c = new Canvas(bitmap);
                                           /*c.drawBitmap(v.getDrawingCache(), 0, 0, null);
                                           v.destroyDrawingCache();*/
         v.draw(c);
         return bitmap;
     }
+
     public static Bitmap loadBitmapFromView(View v) {
-        Bitmap b = Bitmap.createBitmap( v.getLayoutParams().width, v.getLayoutParams().height, Bitmap.Config.ARGB_8888);
+        Bitmap b = Bitmap.createBitmap(v.getLayoutParams().width, v.getLayoutParams().height, Bitmap.Config.ARGB_8888);
         Canvas c = new Canvas(b);
         v.layout(0, 0, v.getLayoutParams().width, v.getLayoutParams().height);
         v.draw(c);
         return b;
     }
-	private void onCreateSetButtons(){
-		// Upon interacting with UI controls, delay any scheduled hide()
-		// operations to prevent the jarring behavior of controls going away
-		// while interacting with the UI.
-		AxTextView mainBtnCal = (AxTextView) findViewById(R.id.mainBtnCalendar);
-		//mainBtnCal.setOnTouchListener(mDelayHideTouchListener);
-		mainBtnCal.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				onClickSelectCalendar(CMain.this);
-			}
-		});
-		
-		AxTextView mainBtnPlan = (AxTextView) findViewById(R.id.mainBtnPlan);
-		//mainBtnPlan.setOnTouchListener(mDelayHideTouchListener);
-		mainBtnPlan.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				onClickViewOthers(CMain.this);
-			}
-		});
-		
-		AxTextView mainBtnBible = (AxTextView) findViewById(R.id.mainBtnBible);
-        if (CMain.IS_2016_OR_LATER){
+
+    private void onCreateSetButtons() {
+        // Upon interacting with UI controls, delay any scheduled hide()
+        // operations to prevent the jarring behavior of controls going away
+        // while interacting with the UI.
+        AxTextView mainBtnCal = (AxTextView) findViewById(R.id.mainBtnCalendar);
+        //mainBtnCal.setOnTouchListener(mDelayHideTouchListener);
+        mainBtnCal.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickSelectCalendar(CMain.this);
+            }
+        });
+
+        AxTextView mainBtnPlan = (AxTextView) findViewById(R.id.mainBtnPlan);
+        //mainBtnPlan.setOnTouchListener(mDelayHideTouchListener);
+        mainBtnPlan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickViewOthers(CMain.this);
+            }
+        });
+
+        AxTextView mainBtnBible = (AxTextView) findViewById(R.id.mainBtnBible);
+        if (CMain.IS_2016_OR_LATER) {
             mainBtnBible.setText(R.string.main_support);
         } else {
             mainBtnBible.setText(R.string.main_bible);
         }
-		//mainBtnBible.setOnTouchListener(mDelayHideTouchListener);
-		mainBtnBible.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				onClickViewBible(CMain.this);
-			}
-		});
-		
-		AxTextView mainBtnShare = (AxTextView) findViewById(R.id.mainBtnShare);
-		//mainBtnShare.setOnTouchListener(mDelayHideTouchListener);
-		mainBtnShare.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				onClickShare(CMain.this);
-			}
-		});
-		
-		AxTextView mainBtnAlarm = (AxTextView) findViewById(R.id.mainBtnAlarm);
-		//mainBtnAlarm.setOnTouchListener(mDelayHideTouchListener);
-		mainBtnAlarm.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				onClickAlarm(CMain.this);
-			}
-		});
-		
-		AxTextView mainBtnAbout = (AxTextView) findViewById(R.id.mainBtnAbout);
-		//mainBtnAbout.setOnTouchListener(mDelayHideTouchListener);
-		mainBtnAbout.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				onClickAbout(CMain.this);
-			}
-		});
-		
-		AxTextView mainBtnCopy = (AxTextView) findViewById(R.id.mainBtnCopy);
-		//mainBtnSupport.setOnTouchListener(mDelayHideTouchListener);
-		mainBtnCopy.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				onClickCopy(CMain.this);
-			}
-		});
-		
-		AxTextView mainBtnToday = (AxTextView) findViewById(R.id.mainBtnToday);
-		//mainBtnToday.setOnTouchListener(mDelayHideTouchListener);
-		mainBtnToday.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				onClickToday(CMain.this);
-			}
-		});
-	}
-	@Override
-	protected void onPostCreate(Bundle savedInstanceState) {
-		super.onPostCreate(savedInstanceState);
+        //mainBtnBible.setOnTouchListener(mDelayHideTouchListener);
+        mainBtnBible.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickViewBible(CMain.this);
+            }
+        });
 
-		// Trigger the initial hide() shortly after the activity has been
-		// created, to briefly hint to the user that UI controls
-		// are available.
-		delayedHide(100);
-	}
+        AxTextView mainBtnShare = (AxTextView) findViewById(R.id.mainBtnShare);
+        //mainBtnShare.setOnTouchListener(mDelayHideTouchListener);
+        mainBtnShare.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickShare(CMain.this);
+            }
+        });
 
-	/**
-	 * Touch listener to use for in-layout UI controls to delay hiding the
-	 * system UI. This is to prevent the jarring behavior of controls going away
-	 * while interacting with activity UI.
-	 */
-	View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
-		@Override
-		public boolean onTouch(View view, MotionEvent motionEvent) {
-			delayedHide(AUTO_HIDE_DELAY_MILLIS);
-			return false;
-		}
-	};
+        AxTextView mainBtnAlarm = (AxTextView) findViewById(R.id.mainBtnAlarm);
+        //mainBtnAlarm.setOnTouchListener(mDelayHideTouchListener);
+        mainBtnAlarm.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickAlarm(CMain.this);
+            }
+        });
 
-	Handler mHideHandler = new Handler();
-	Runnable mHideRunnable = new Runnable() {
-		@Override
-		public void run() {
-			setControlsVisibility(false);
-			//mSystemUiHider.hide();
-		}
-	};
+        AxTextView mainBtnAbout = (AxTextView) findViewById(R.id.mainBtnAbout);
+        //mainBtnAbout.setOnTouchListener(mDelayHideTouchListener);
+        mainBtnAbout.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickAbout(CMain.this);
+            }
+        });
 
-	/**
-	 * Schedules a call to hide() in [delay] milliseconds, canceling any
-	 * previously scheduled calls.
-	 */
-	private void delayedHide(int delayMillis) {
-		mHideHandler.removeCallbacks(mHideRunnable);
-		mHideHandler.postDelayed(mHideRunnable, delayMillis);
-	}
-	AlertDialog alert;
-	DialogInterface.OnClickListener shareListener = new DialogInterface.OnClickListener() {
-	    @Override
-	    public void onClick(DialogInterface dialog, int which) {
-	      switch (which) {
-	      case 0: // Text
-    	    shareText(CMain.this);
-	        break;
-	      case 1: // IMage
-	    	shareImage(CMain.this);
-	        break;
-	      default:
-	        break;
-	      }
-	    }
-	  };
-		DialogInterface.OnClickListener copyListener = new DialogInterface.OnClickListener() {
-		    @Override
-		    public void onClick(DialogInterface dialog, int which) {
-		      switch (which) {
-		      case 0: // Text
-	    	    copyText(CMain.this);
-		        break;
-		      case 1: // Image
-		    	copyImage(CMain.this);
-		        break;
-		      default:
-		        break;
-		      }
-		    }
-		  };
-	private void popSelectTextImage(Context context, DialogInterface.OnClickListener listener){
-		AlertDialog.Builder builder = new AlertDialog.Builder(this);
-	    builder.setTitle("請選擇分享:");
-	    String[] options = { "文字", "圖像"};
-	    builder.setItems(options, listener);
-	    builder.setNegativeButton("取消", null);
-	    alert = builder.create();	    
-	    alert.show();
-	}
-	private void onClickCopy(Context context){
+        AxTextView mainBtnCopy = (AxTextView) findViewById(R.id.mainBtnCopy);
+        //mainBtnSupport.setOnTouchListener(mDelayHideTouchListener);
+        mainBtnCopy.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickCopy(CMain.this);
+            }
+        });
+
+        AxTextView mainBtnToday = (AxTextView) findViewById(R.id.mainBtnToday);
+        //mainBtnToday.setOnTouchListener(mDelayHideTouchListener);
+        mainBtnToday.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickToday(CMain.this);
+            }
+        });
+    }
+
+    @Override
+    protected void onPostCreate(Bundle savedInstanceState) {
+        super.onPostCreate(savedInstanceState);
+
+        // Trigger the initial hide() shortly after the activity has been
+        // created, to briefly hint to the user that UI controls
+        // are available.
+        delayedHide(100);
+    }
+
+    /**
+     * Touch listener to use for in-layout UI controls to delay hiding the
+     * system UI. This is to prevent the jarring behavior of controls going away
+     * while interacting with activity UI.
+     */
+    View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
+        @Override
+        public boolean onTouch(View view, MotionEvent motionEvent) {
+            delayedHide(AUTO_HIDE_DELAY_MILLIS);
+            return false;
+        }
+    };
+
+    Handler mHideHandler = new Handler();
+    Runnable mHideRunnable = new Runnable() {
+        @Override
+        public void run() {
+            setControlsVisibility(false);
+            //mSystemUiHider.hide();
+        }
+    };
+
+    /**
+     * Schedules a call to hide() in [delay] milliseconds, canceling any
+     * previously scheduled calls.
+     */
+    private void delayedHide(int delayMillis) {
+        mHideHandler.removeCallbacks(mHideRunnable);
+        mHideHandler.postDelayed(mHideRunnable, delayMillis);
+    }
+
+    AlertDialog alert;
+    DialogInterface.OnClickListener shareListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which) {
+                case 0: // Text
+                    shareText(CMain.this);
+                    break;
+                case 1: // IMage
+                    shareImage(CMain.this);
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+    DialogInterface.OnClickListener copyListener = new DialogInterface.OnClickListener() {
+        @Override
+        public void onClick(DialogInterface dialog, int which) {
+            switch (which) {
+                case 0: // Text
+                    copyText(CMain.this);
+                    break;
+                case 1: // Image
+                    copyImage(CMain.this);
+                    break;
+                default:
+                    break;
+            }
+        }
+    };
+
+    private void popSelectTextImage(Context context, DialogInterface.OnClickListener listener) {
+        AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("請選擇分享:");
+        String[] options = {"文字", "圖像"};
+        builder.setItems(options, listener);
+        builder.setNegativeButton("取消", null);
+        alert = builder.create();
+        alert.show();
+    }
+
+    private void onClickCopy(Context context) {
 //		AlertDialog.Builder builder = new AlertDialog.Builder(this);
 //	    builder.setTitle("請選擇分享:");
 //	    String[] options = { "文字", "圖像"};
@@ -488,117 +510,124 @@ public class CMain extends MyActivity {
 //	    builder.setNegativeButton("取消", null);
 //	    alert = builder.create();	    
 //	    alert.show();		
-		
-		copyText(context);
-	}
-	private void onClickShare(Context context){
-		saveScreenShot();
-		popSelectTextImage(context, shareListener);
-	}
-	private void copyText(Context context){
-		int curYear = mDisplayDay.get(Calendar.YEAR);
-		int curMonth = mDisplayDay.get(Calendar.MONTH);
-		int curDay = mDisplayDay.get(Calendar.DAY_OF_MONTH);
-		ContentValues cv = mDailyBread.getContentValues(curYear, curMonth, curDay);
-		final String verse = cv.getAsString(MyDailyBread.wGoldText).replace("#", " ") +
-							"["+cv.getAsString(MyDailyBread.wGoldVerse)+" RCUV]";
-		MyClipboardManager mgr = new MyClipboardManager();
-		mgr.copyToClipboard(CMain.this, verse);
-		Toast.makeText(getApplicationContext(), "已把金句放到剪貼薄", Toast.LENGTH_SHORT).show();
-		//onClickSupport(CMain.this);
-	}
-	private void copyImage(Context context){
-		// Some Android device not support !! 
-	}
-    static public Bitmap getThumbnail(Bitmap target, int expectedSize, boolean isByHeight){ // ignore isByHeight
+
+        copyText(context);
+    }
+
+    private void onClickShare(Context context) {
+        saveScreenShot();
+        popSelectTextImage(context, shareListener);
+    }
+
+    private void copyText(Context context) {
+        int curYear = mDisplayDay.get(Calendar.YEAR);
+        int curMonth = mDisplayDay.get(Calendar.MONTH);
+        int curDay = mDisplayDay.get(Calendar.DAY_OF_MONTH);
+        ContentValues cv = mDailyBread.getContentValues(curYear, curMonth, curDay);
+        final String verse = cv.getAsString(MyDailyBread.wGoldText).replace("#", " ") +
+                "[" + cv.getAsString(MyDailyBread.wGoldVerse) + " RCUV]";
+        MyClipboardManager mgr = new MyClipboardManager();
+        mgr.copyToClipboard(CMain.this, verse);
+        Toast.makeText(getApplicationContext(), "已把金句放到剪貼薄", Toast.LENGTH_SHORT).show();
+        //onClickSupport(CMain.this);
+    }
+
+    private void copyImage(Context context) {
+        // Some Android device not support !!
+    }
+
+    static public Bitmap getThumbnail(Bitmap target, int expectedSize, boolean isByHeight) { // ignore isByHeight
         int width = target.getWidth();
         int height = target.getHeight();
-        if (width<= expectedSize && height<= expectedSize) return target;
+        if (width <= expectedSize && height <= expectedSize) return target;
         Matrix matrix = new Matrix();
-        float scale = ((float) expectedSize)/ (height>width?height:width);
+        float scale = ((float) expectedSize) / (height > width ? height : width);
         matrix.postScale(scale, scale);
         Bitmap result = Bitmap.createBitmap(target, 0, 0, width, height, matrix, true);
         return result;
     }
-	private void shareImage(Context context){
-		ContentValues values = new ContentValues();
-		values.put(Images.Media.TITLE, "title");
-		values.put(Images.Media.MIME_TYPE, "image/jpeg");
-		//Uri uri = getContentResolver().insert(Media.EXTERNAL_CONTENT_URI,values);
-        String fileName =  "pic_" + String.valueOf( System.currentTimeMillis() ) + ".jpg";
-        Uri uri= Uri.fromFile(new File( Environment.getExternalStorageDirectory(),fileName));
+
+    private void shareImage(Context context) {
+        ContentValues values = new ContentValues();
+        values.put(Images.Media.TITLE, "title");
+        values.put(Images.Media.MIME_TYPE, "image/jpeg");
+        //Uri uri = getContentResolver().insert(Media.EXTERNAL_CONTENT_URI,values);
+        String fileName = "pic_" + String.valueOf(System.currentTimeMillis()) + ".jpg";
+        Uri uri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), fileName));
         //Uri uri = Uri.fromFile(new File(getFilesDir(),fileName));
-		OutputStream outstream;
-        int tryCounter=1;
+        OutputStream outstream;
+        int tryCounter = 1;
         try {
-		    outstream = getContentResolver().openOutputStream(uri);
-            boolean anyError=false;
+            outstream = getContentResolver().openOutputStream(uri);
+            boolean anyError = false;
             try {
                 screenShot.compress(Bitmap.CompressFormat.JPEG, 100, outstream);
             } catch (Exception e) {
                 anyError = true;
             }
-            if (anyError){
+            if (anyError) {
                 outstream.close();
                 outstream = getContentResolver().openOutputStream(uri);
                 tryCounter++;
                 Bitmap smallBitmap = getThumbnail(screenShot, 640, true);
-                if (!smallBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outstream)){
+                if (!smallBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outstream)) {
                     tryCounter++;
                     smallBitmap = getThumbnail(screenShot, 320, true);
                     smallBitmap.compress(Bitmap.CompressFormat.JPEG, 100, outstream);
                 }
             }
             outstream.flush();
-		    outstream.close();
-		} catch (Exception e) {
-            Toast.makeText(this,"Error:"+tryCounter+" "+e.toString(),Toast.LENGTH_LONG).show();
-		    //System.err.println(e.toString());
-		}
-		Intent share = new Intent(Intent.ACTION_SEND);
-		share.setType("image/jpeg");
-		share.putExtra(android.content.Intent.EXTRA_SUBJECT, "全年好日曆經文分享");
-		share.putExtra(android.content.Intent.EXTRA_STREAM, uri);
-		startActivity(Intent.createChooser(share, "分享圖像"));
-		
+            outstream.close();
+        } catch (Exception e) {
+            Toast.makeText(this, "Error:" + tryCounter + " " + e.toString(), Toast.LENGTH_LONG).show();
+            //System.err.println(e.toString());
+        }
+        Intent share = new Intent(Intent.ACTION_SEND);
+        share.setType("image/jpeg");
+        share.putExtra(android.content.Intent.EXTRA_SUBJECT, "全年好日曆經文分享");
+        share.putExtra(android.content.Intent.EXTRA_STREAM, uri);
+        startActivity(Intent.createChooser(share, "分享圖像"));
+
 //		Intent share = new Intent(Intent.ACTION_SEND);
 //		share.setType("image/jpeg");
 //		share.putExtra(Intent.EXTRA_STREAM, Uri.parse(Environment.getExternalStorageDirectory().getPath()+"/screenshot.png"));
 //		startActivity(Intent.createChooser(share, "分享圖像"));
-	}
-	private void shareText(Context context){	
-		int curYear = mDisplayDay.get(Calendar.YEAR);
-		int curMonth = mDisplayDay.get(Calendar.MONTH);
-		int curDay = mDisplayDay.get(Calendar.DAY_OF_MONTH);
-		ContentValues cv = mDailyBread.getContentValues(curYear, curMonth, curDay);
-		final String verse = cv.getAsString(MyDailyBread.wGoldText).replace("#", " ") +
-							"["+cv.getAsString(MyDailyBread.wGoldVerse)+"；和合本修訂版]";
-		MyUtil.trackClick(context, "Share", "M");
-		Intent intent = new Intent(android.content.Intent.ACTION_SEND);
-		intent.setType("text/plain");
-		intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "全年好日曆經文分享");//getResources().getString(R.string.app_name)
-		intent.putExtra(android.content.Intent.EXTRA_TEXT, verse);
-		startActivity(Intent.createChooser(intent, getResources().getString(R.string.app_name)));
-	}
-	static final public String [] BOOKS_ENG = new String [] {
-		"GEN","EXO","LEV","NUM",
-        "DEU","JOS","JDG","RUT",
-        "1SA","2SA","1KI","2KI",
-        "1CH","2CH","EZR","NEH",
-        "EST","JOB","PSA","PRO",
-        "ECC","SNG","ISA","JER",
-        "LAM","EZK","DAN","HOS",
-        "JOL","AMO","OBA","JON",
-        "MIC","NAM","HAB","ZEP",
-        "HAG","ZEC","MAL","MAT",
-        "MRK","LUK","JHN","ACT",
-        "ROM","1CO","2CO","GAL",
-        "EPH","PHP","COL","1TH",
-        "2TH","1TI","2TI","TIT",
-        "PHM","HEB","JAS","1PE",
-        "2PE","1JN","2JN","3JN",
-        "JUD","REV"
-	};
+    }
+
+    private void shareText(Context context) {
+        int curYear = mDisplayDay.get(Calendar.YEAR);
+        int curMonth = mDisplayDay.get(Calendar.MONTH);
+        int curDay = mDisplayDay.get(Calendar.DAY_OF_MONTH);
+        ContentValues cv = mDailyBread.getContentValues(curYear, curMonth, curDay);
+        final String verse = cv.getAsString(MyDailyBread.wGoldText).replace("#", " ") +
+                "[" + cv.getAsString(MyDailyBread.wGoldVerse) + "；和合本修訂版]";
+        MyUtil.trackClick(context, "Share", "M");
+        Intent intent = new Intent(android.content.Intent.ACTION_SEND);
+        intent.setType("text/plain");
+        intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "全年好日曆經文分享");//getResources().getString(R.string.app_name)
+        intent.putExtra(android.content.Intent.EXTRA_TEXT, verse);
+        startActivity(Intent.createChooser(intent, getResources().getString(R.string.app_name)));
+    }
+
+    static final public String[] BOOKS_ENG = new String[]{
+            "GEN", "EXO", "LEV", "NUM",
+            "DEU", "JOS", "JDG", "RUT",
+            "1SA", "2SA", "1KI", "2KI",
+            "1CH", "2CH", "EZR", "NEH",
+            "EST", "JOB", "PSA", "PRO",
+            "ECC", "SNG", "ISA", "JER",
+            "LAM", "EZK", "DAN", "HOS",
+            "JOL", "AMO", "OBA", "JON",
+            "MIC", "NAM", "HAB", "ZEP",
+            "HAG", "ZEC", "MAL", "MAT",
+            "MRK", "LUK", "JHN", "ACT",
+            "ROM", "1CO", "2CO", "GAL",
+            "EPH", "PHP", "COL", "1TH",
+            "2TH", "1TI", "2TI", "TIT",
+            "PHM", "HEB", "JAS", "1PE",
+            "2PE", "1JN", "2JN", "3JN",
+            "JUD", "REV"
+    };
 //	static final public String [][] BOOKS_ENG = new String [][] {
 //		{"1","Genesis","Gen"},
 //		{"2","Exodus","Exo"},
@@ -668,143 +697,144 @@ public class CMain extends MyActivity {
 //		{"66","Revelation","Rev"}
 //	};
 
-	static final public String [][] BOOKS_CHT = new String [][] {
-		{"1","創世記","創"},
-		{"2","出埃及記","出"},
-		{"3","利未記","利"},
-		{"4","民數記","民"},
-		{"5","申命記","申"},
-		{"6","約書亞記","書"},
-		{"7","士師記","士"},
-		{"8","路得記","得"},
-		{"9","撒母耳記上","撒上"},
-		{"10","撒母耳記下","撒下"},
-		{"11","列王紀上","王上"},
-		{"12","列王紀下","王下"},
-		{"13","歷代志上","代上"},
-		{"14","歷代志下","代下"},
-		{"15","以斯拉記","拉"},
-		{"16","尼希米記","尼"},
-		{"17","以斯帖記","斯"},
-		{"18","約伯記","伯"},
-		{"19","詩篇","詩"},
-		{"20","箴言","箴"},
-		{"21","傳道書","傳"},
-		{"22","雅歌","歌"},
-		{"23","以賽亞書","賽"},
-		{"24","耶利米書","耶"},
-		{"25","耶利米哀歌","哀"},
-		{"26","以西結書","結"},
-		{"27","但以理書","但"},
-		{"28","何西阿書","何"},
-		{"29","約珥書","珥"},
-		{"30","阿摩司書","摩"},
-		{"31","俄巴底亞書","俄"},
-		{"32","約拿書","拿"},
-		{"33","彌迦書","彌"},
-		{"34","那鴻書","鴻"},
-		{"35","哈巴谷書","哈"},
-		{"36","西番雅書","番"},
-		{"37","哈該書","該"},
-		{"38","撒迦利亞書","亞"},
-		{"39","瑪拉基書","瑪"},
-		{"40","馬太福音","太"},
-		{"41","馬可福音","可"},
-		{"42","路加福音","路"},
-		{"43","約翰福音","約"},
-		{"44","使徒行傳","徒"},
-		{"45","羅馬書","羅"},
-		{"46","哥林多前書","林前"},
-		{"47","哥林多後書","林後"},
-		{"48","加拉太書","加"},
-		{"49","以弗所書","弗"},
-		{"50","腓立比書","腓"},
-		{"51","歌羅西書","西"},
-		{"52","帖撒羅尼迦前書","帖前"},
-		{"53","帖撒羅尼迦後書","帖後"},
-		{"54","提摩太前書","提前"},
-		{"55","提摩太後書","提後"},
-		{"56","提多書","多"},
-		{"57","腓利門書","門"},
-		{"58","希伯來書","來"},
-		{"59","雅各書","雅"},
-		{"60","彼得前書","彼前"},
-		{"61","彼得後書","彼後"},
-		{"62","約翰一書","約一"},
-		{"62","約翰二書","約二"},
-		{"62","約翰三書","約三"},
-		{"65","猶大書","猶"},
-		{"66","啟示錄","啟"}
-	};
-	static String digits = "0123456789";
-	static public Object[] getEBCV(String bcv){
-		int digitFirstPos=0;
-		for (int i=0;i<bcv.length();i++){
-			if (digits.contains(bcv.substring(i, i+1))){
-				digitFirstPos=i;
-				break;
-			}			
-		}
-		int bookNbr=0;
-		String bookName = bcv.substring(0, digitFirstPos).trim();
-		bookName.replace("一","壹");
-		bookName.replace("二","貳");
-		bookName.replace("三","參");
-		String bookAbbrev="";
-		for (int i=0;i<BOOKS_CHT.length;i++){
-			if (bookName.equalsIgnoreCase(BOOKS_CHT[i][1])){
-				bookAbbrev = BOOKS_CHT[i][2];
-				bookNbr=i+1;
-				break;
-			}
-		}
-		if (bookAbbrev.equalsIgnoreCase("")){
-			MyUtil.logError(TAG, "Cannot find:"+bookName);
-			return null;
-		}
-		int digitStopPos=0;
-		for (int i=digitFirstPos+1;i<bcv.length();i++){
-			if (digits.contains(bcv.substring(i, i+1))){
-				continue;
-			} else {
-				digitStopPos=i;
-				break;
-			}
-		}
-		if (digitStopPos==0){
-			MyUtil.logError(TAG, "Cannot find digitStopPos");
-			return null;
-		}
-		int chapter = Integer.valueOf(bcv.substring(digitFirstPos, digitStopPos));
-		int secondDigitStartPos=0;
-		for (int i=digitStopPos;i<bcv.length();i++){
-			if (digits.contains(bcv.substring(i, i+1))){
-				secondDigitStartPos=i;
-				break;
-			}		
-		}
-		int verse=0;
-		if (secondDigitStartPos==0){
-			// if cannot find then we suppose the first stop digit is for verse, not chapter
-			//MyUtil.logError(TAG, "Cannot find secondDigitStartPos");
-			//return null;
-			verse = chapter;
-			chapter = 1;			
-		} else {
-			int digitEndPos=0;
-			for (int i=secondDigitStartPos+1;i<bcv.length();i++){
-				if (digits.contains(bcv.substring(i, i+1))){			
-					continue;
-				} else {
-					digitEndPos=i;
-					break;
-				}
-			}
-			if (digitEndPos==0){
-				digitEndPos=bcv.length();
-			}
-			verse = Integer.valueOf(bcv.substring(secondDigitStartPos, digitEndPos));
-		}
+    static final public String[][] BOOKS_CHT = new String[][]{
+            {"1", "創世記", "創"},
+            {"2", "出埃及記", "出"},
+            {"3", "利未記", "利"},
+            {"4", "民數記", "民"},
+            {"5", "申命記", "申"},
+            {"6", "約書亞記", "書"},
+            {"7", "士師記", "士"},
+            {"8", "路得記", "得"},
+            {"9", "撒母耳記上", "撒上"},
+            {"10", "撒母耳記下", "撒下"},
+            {"11", "列王紀上", "王上"},
+            {"12", "列王紀下", "王下"},
+            {"13", "歷代志上", "代上"},
+            {"14", "歷代志下", "代下"},
+            {"15", "以斯拉記", "拉"},
+            {"16", "尼希米記", "尼"},
+            {"17", "以斯帖記", "斯"},
+            {"18", "約伯記", "伯"},
+            {"19", "詩篇", "詩"},
+            {"20", "箴言", "箴"},
+            {"21", "傳道書", "傳"},
+            {"22", "雅歌", "歌"},
+            {"23", "以賽亞書", "賽"},
+            {"24", "耶利米書", "耶"},
+            {"25", "耶利米哀歌", "哀"},
+            {"26", "以西結書", "結"},
+            {"27", "但以理書", "但"},
+            {"28", "何西阿書", "何"},
+            {"29", "約珥書", "珥"},
+            {"30", "阿摩司書", "摩"},
+            {"31", "俄巴底亞書", "俄"},
+            {"32", "約拿書", "拿"},
+            {"33", "彌迦書", "彌"},
+            {"34", "那鴻書", "鴻"},
+            {"35", "哈巴谷書", "哈"},
+            {"36", "西番雅書", "番"},
+            {"37", "哈該書", "該"},
+            {"38", "撒迦利亞書", "亞"},
+            {"39", "瑪拉基書", "瑪"},
+            {"40", "馬太福音", "太"},
+            {"41", "馬可福音", "可"},
+            {"42", "路加福音", "路"},
+            {"43", "約翰福音", "約"},
+            {"44", "使徒行傳", "徒"},
+            {"45", "羅馬書", "羅"},
+            {"46", "哥林多前書", "林前"},
+            {"47", "哥林多後書", "林後"},
+            {"48", "加拉太書", "加"},
+            {"49", "以弗所書", "弗"},
+            {"50", "腓立比書", "腓"},
+            {"51", "歌羅西書", "西"},
+            {"52", "帖撒羅尼迦前書", "帖前"},
+            {"53", "帖撒羅尼迦後書", "帖後"},
+            {"54", "提摩太前書", "提前"},
+            {"55", "提摩太後書", "提後"},
+            {"56", "提多書", "多"},
+            {"57", "腓利門書", "門"},
+            {"58", "希伯來書", "來"},
+            {"59", "雅各書", "雅"},
+            {"60", "彼得前書", "彼前"},
+            {"61", "彼得後書", "彼後"},
+            {"62", "約翰一書", "約一"},
+            {"62", "約翰二書", "約二"},
+            {"62", "約翰三書", "約三"},
+            {"65", "猶大書", "猶"},
+            {"66", "啟示錄", "啟"}
+    };
+    static String digits = "0123456789";
+
+    static public Object[] getEBCV(String bcv) {
+        int digitFirstPos = 0;
+        for (int i = 0; i < bcv.length(); i++) {
+            if (digits.contains(bcv.substring(i, i + 1))) {
+                digitFirstPos = i;
+                break;
+            }
+        }
+        int bookNbr = 0;
+        String bookName = bcv.substring(0, digitFirstPos).trim();
+        bookName.replace("一", "壹");
+        bookName.replace("二", "貳");
+        bookName.replace("三", "參");
+        String bookAbbrev = "";
+        for (int i = 0; i < BOOKS_CHT.length; i++) {
+            if (bookName.equalsIgnoreCase(BOOKS_CHT[i][1])) {
+                bookAbbrev = BOOKS_CHT[i][2];
+                bookNbr = i + 1;
+                break;
+            }
+        }
+        if (bookAbbrev.equalsIgnoreCase("")) {
+            MyUtil.logError(TAG, "Cannot find:" + bookName);
+            return null;
+        }
+        int digitStopPos = 0;
+        for (int i = digitFirstPos + 1; i < bcv.length(); i++) {
+            if (digits.contains(bcv.substring(i, i + 1))) {
+                continue;
+            } else {
+                digitStopPos = i;
+                break;
+            }
+        }
+        if (digitStopPos == 0) {
+            MyUtil.logError(TAG, "Cannot find digitStopPos");
+            return null;
+        }
+        int chapter = Integer.valueOf(bcv.substring(digitFirstPos, digitStopPos));
+        int secondDigitStartPos = 0;
+        for (int i = digitStopPos; i < bcv.length(); i++) {
+            if (digits.contains(bcv.substring(i, i + 1))) {
+                secondDigitStartPos = i;
+                break;
+            }
+        }
+        int verse = 0;
+        if (secondDigitStartPos == 0) {
+            // if cannot find then we suppose the first stop digit is for verse, not chapter
+            //MyUtil.logError(TAG, "Cannot find secondDigitStartPos");
+            //return null;
+            verse = chapter;
+            chapter = 1;
+        } else {
+            int digitEndPos = 0;
+            for (int i = secondDigitStartPos + 1; i < bcv.length(); i++) {
+                if (digits.contains(bcv.substring(i, i + 1))) {
+                    continue;
+                } else {
+                    digitEndPos = i;
+                    break;
+                }
+            }
+            if (digitEndPos == 0) {
+                digitEndPos = bcv.length();
+            }
+            verse = Integer.valueOf(bcv.substring(secondDigitStartPos, digitEndPos));
+        }
         Object[] eabcv;
         if (CMain.IS_2016_OR_LATER) {
             eabcv = new Object[]{
@@ -815,65 +845,70 @@ public class CMain extends MyActivity {
                     Integer.valueOf(verse)
             };
         } else {
-            eabcv = new Object []{
+            eabcv = new Object[]{
                     "tr ",
                     bookAbbrev,
                     Integer.valueOf(bookNbr),
                     Integer.valueOf(chapter),
                     Integer.valueOf(verse)
             };
-        };
-		//String finalBCV = bookAbbrev+" "+chapter+":"+verse;
-		return eabcv;//"tr "+finalBCV;
-		//return "rc 創 5:2";
-	}
-	@Override
-	public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-		super.onActivityResult(requestCode, resultCode, intent);
-		if (DEBUG) MyUtil.log(TAG,"onActivityResult:"+requestCode+","+resultCode);
-		switch (requestCode) {
-		case MyUtil.REQUEST_CALENDAR:
-			if (resultCode==RESULT_OK) {	
-				long newTime = intent.getLongExtra(MyUtil.EXTRA_SELECT_MILLSEC,0);
-				if (DEBUG) MyUtil.log(TAG, "CMain:"+newTime);
-				if (newTime!=0){
-					Calendar newDate = Calendar.getInstance();
-					newDate.setTimeInMillis(newTime);
-					if (isWithinRange(newDate)){
-						mDisplayDay.setTimeInMillis(newTime);
-					}					
-				}
-			}
-			overridePendingTransition(R.anim.zoom_enter,R.anim.zoom_exit);
-			break;
-		case MyUtil.REQUEST_ABOUT:
-			overridePendingTransition(R.anim.zoom_enter,R.anim.zoom_exit);
-			break;
-		case MyUtil.REQUEST_SUPPORT:
-			overridePendingTransition(R.anim.zoom_enter,R.anim.zoom_exit);
-			break;
-		}
-	}
-	private boolean isWithinRange(Calendar checkDate){
-		if (checkDate.compareTo(mDailyBread.getValidToDate())>0 ||
-			checkDate.compareTo(mDailyBread.getValidFrDate())<0 ){
-			Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
-			return false;
-		} else {
-			return true;
-		}
-		
-	}
-	@Override
-	public void onStop(){
-		super.onStop();
-		cleanAnimation();
-	}
-// For testing only since we want broadcast onReceive event app stopped	
+        }
+        ;
+        //String finalBCV = bookAbbrev+" "+chapter+":"+verse;
+        return eabcv;//"tr "+finalBCV;
+        //return "rc 創 5:2";
+    }
+
+    @Override
+    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+        super.onActivityResult(requestCode, resultCode, intent);
+        if (DEBUG) MyUtil.log(TAG, "onActivityResult:" + requestCode + "," + resultCode);
+        switch (requestCode) {
+            case MyUtil.REQUEST_CALENDAR:
+                if (resultCode == RESULT_OK) {
+                    long newTime = intent.getLongExtra(MyUtil.EXTRA_SELECT_MILLSEC, 0);
+                    if (DEBUG) MyUtil.log(TAG, "CMain:" + newTime);
+                    if (newTime != 0) {
+                        Calendar newDate = Calendar.getInstance();
+                        newDate.setTimeInMillis(newTime);
+                        if (isWithinRange(newDate)) {
+                            mDisplayDay.setTimeInMillis(newTime);
+                        }
+                    }
+                }
+                overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
+                break;
+            case MyUtil.REQUEST_ABOUT:
+                overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
+                break;
+            case MyUtil.REQUEST_SUPPORT:
+                overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
+                break;
+        }
+    }
+
+    private boolean isWithinRange(Calendar checkDate) {
+        if (checkDate.compareTo(mDailyBread.getValidToDate()) > 0 ||
+                checkDate.compareTo(mDailyBread.getValidFrDate()) < 0) {
+            Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
+            return false;
+        } else {
+            return true;
+        }
+
+    }
+
+    @Override
+    public void onStop() {
+        super.onStop();
+        cleanAnimation();
+    }
+
+    // For testing only since we want broadcast onReceive event app stopped
 //	static private MyBroadcast mBroadcast; 
-	@Override
-	protected void onResume() {
-		super.onResume();
+    @Override
+    protected void onResume() {
+        super.onResume();
 //		if (android.os.Build.VERSION.SDK_INT < 11) {
 //			mBroadcast = new MyBroadcast();
 //			registerReceiver(mBroadcast, new IntentFilter());
@@ -910,28 +945,32 @@ public class CMain extends MyActivity {
                 }
             }, 1000);
         }
-	}
-	@Override
-	protected void onPause() {
-		super.onPause();
+    }
+
+    @Override
+    protected void onPause() {
+        super.onPause();
 //		if (android.os.Build.VERSION.SDK_INT < 11) {
 //			if (mBroadcast!=null){
 //				unregisterReceiver(mBroadcast);
 //			}
 //		}
-	}
-	private void cleanAnimation(){
-		mViewAnimator.setInAnimation(null);
-		mViewAnimator.setOutAnimation(null);
-	}
-	private int getID(int nbr, String extension){
-		int resultVal = getResources().getIdentifier("xmlPage"+nbr+extension, "id",CMain.this.getPackageName());
-		if (resultVal==0){
-			MyUtil.logError(TAG, "Error on:" + "xmlPage" + nbr + extension);
-		}
-		return resultVal; 
-	}
-//	private void onRefresh(){
+    }
+
+    private void cleanAnimation() {
+        mViewAnimator.setInAnimation(null);
+        mViewAnimator.setOutAnimation(null);
+    }
+
+    private int getID(int nbr, String extension) {
+        int resultVal = getResources().getIdentifier("xmlPage" + nbr + extension, "id", CMain.this.getPackageName());
+        if (resultVal == 0) {
+            MyUtil.logError(TAG, "Error on:" + "xmlPage" + nbr + extension);
+        }
+        return resultVal;
+    }
+
+    //	private void onRefresh(){
 //		//Toast.makeText(getApplicationContext(), "View:"+mViewIndex+" "+MyUtil.sdfYYYYMMDD.format(mDisplayDay.getTime()), Toast.LENGTH_SHORT).show();
 //		if (mViewIndex==1){
 //			onRefreshPage(1);
@@ -941,54 +980,100 @@ public class CMain extends MyActivity {
 //			mViewIndex=1;
 //		}
 //	}
-	private void gotoPrevDay(){
-		if (mDisplayDay.compareTo(mDailyBread.getValidFrDate())<=0){
-			Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
-		} else {
-			mDisplayDay.add(Calendar.DAY_OF_MONTH, -1);
-			mViewIndex=mViewIndex==1?2:1;
-			onRefreshPage(mViewIndex);
-			MyGestureListener.flingInFromRight(getApplicationContext(), mViewAnimator);			
-		}
-	}
-    private void gotoPriorMonth(){
-        Calendar newCalendar = Calendar.getInstance();
-        newCalendar.setTimeInMillis(mDisplayDay.getTimeInMillis());
-        newCalendar.add(Calendar.MONTH,-1);
-        if (newCalendar.compareTo(mDailyBread.getValidFrDate())<=0){
+    private void gotoPrevDay() {
+        if (mDisplayDay.compareTo(mDailyBread.getValidFrDate()) <= 0) {
             Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
         } else {
-            mDisplayDay.setTimeInMillis(newCalendar.getTimeInMillis());
-            mViewIndex=mViewIndex==1?2:1;
+            mDisplayDay.add(Calendar.DAY_OF_MONTH, -1);
+            mViewIndex = mViewIndex == 1 ? 2 : 1;
             onRefreshPage(mViewIndex);
             MyGestureListener.flingInFromRight(getApplicationContext(), mViewAnimator);
         }
     }
-	private void gotoNextDay(){
-		if (mDisplayDay.compareTo(mDailyBread.getValidToDate())>=0){
-			Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
-		} else {
-			mDisplayDay.add(Calendar.DAY_OF_MONTH, +1);
-			mViewIndex=mViewIndex==1?2:1;
-			onRefreshPage(mViewIndex);
-			MyGestureListener.flingInFromLeft(getApplicationContext(), mViewAnimator);			
-		}
-	}
-    private void gotoNextMonth(){
+
+    private void gotoPriorMonth() {
         Calendar newCalendar = Calendar.getInstance();
         newCalendar.setTimeInMillis(mDisplayDay.getTimeInMillis());
-        newCalendar.add(Calendar.MONTH,+1);
-        if (newCalendar.compareTo(mDailyBread.getValidToDate())>=0){
+        newCalendar.add(Calendar.MONTH, -1);
+        if (newCalendar.compareTo(mDailyBread.getValidFrDate()) <= 0) {
             Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
         } else {
             mDisplayDay.setTimeInMillis(newCalendar.getTimeInMillis());
-            mViewIndex=mViewIndex==1?2:1;
+            mViewIndex = mViewIndex == 1 ? 2 : 1;
+            onRefreshPage(mViewIndex);
+            MyGestureListener.flingInFromRight(getApplicationContext(), mViewAnimator);
+        }
+    }
+
+    private void gotoNextDay() {
+        if (mDisplayDay.compareTo(mDailyBread.getValidToDate()) >= 0) {
+            Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
+        } else {
+            mDisplayDay.add(Calendar.DAY_OF_MONTH, +1);
+            mViewIndex = mViewIndex == 1 ? 2 : 1;
             onRefreshPage(mViewIndex);
             MyGestureListener.flingInFromLeft(getApplicationContext(), mViewAnimator);
         }
     }
+
+    private void gotoNextMonth() {
+        Calendar newCalendar = Calendar.getInstance();
+        newCalendar.setTimeInMillis(mDisplayDay.getTimeInMillis());
+        newCalendar.add(Calendar.MONTH, +1);
+        if (newCalendar.compareTo(mDailyBread.getValidToDate()) >= 0) {
+            Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
+        } else {
+            mDisplayDay.setTimeInMillis(newCalendar.getTimeInMillis());
+            mViewIndex = mViewIndex == 1 ? 2 : 1;
+            onRefreshPage(mViewIndex);
+            MyGestureListener.flingInFromLeft(getApplicationContext(), mViewAnimator);
+        }
+    }
+
+    private int getFontSizeUponSize(TextView textView, float portion, String theText, int maxLines, float textRatioOfTextView){
+        String textLines[] = theText.split("#");
+        // Middle Ratio 20:11:7 (Not yet rendering, cannot calculate other size)
+        int statusBarHeight = 0;
+        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
+        if(resourceId>0){
+            statusBarHeight = getResources().getDimensionPixelSize(resourceId);
+        }
+        int textUsableHeight = (int) ((MyUtil.heightPixels(CMain.this) - statusBarHeight) * portion * 0.8);
+        //int maxLinesForGoldText = 3;
+        if(textLines.length>maxLines){//Relocate characters automatically (But, should be smaller size to occupy)
+            if (maxLines==3) {
+                theText = theText.replace("#", "");
+                final int charPerLines = (int) Math.ceil(theText.length() / maxLines);
+                theText = theText.substring(0, charPerLines) + "#" +
+                        theText.substring(charPerLines, charPerLines + charPerLines) + "#" +
+                        theText.substring(charPerLines + charPerLines);
+                textLines = theText.split("#");
+            } else if (maxLines==4){
+                    theText = theText.replace("#", "");
+                    final int charPerLines = (int) Math.ceil(theText.length() / maxLines);
+                    theText = theText.substring(0, charPerLines) + "#" +
+                            theText.substring(charPerLines, charPerLines + charPerLines) + "#" +
+                            theText.substring(charPerLines + charPerLines, charPerLines + charPerLines + charPerLines) + "#" +
+                            theText.substring(charPerLines + charPerLines + charPerLines);
+                    textLines = theText.split("#");
+            }
+        }
+        int maxChars = 0;
+        for(int i = 0;i<textLines.length;i++){
+            maxChars = Math.max(maxChars, textLines[i].length());
+        }
+        //int newBigFontSize = getFontSizeByMaxCharacters(textView, maxChars);
+        RelativeLayout.LayoutParams lpGold = (RelativeLayout.LayoutParams) textView.getLayoutParams();
+        int usableWidth = (int) Math.floor((MyDailyBread.mAppWidth -
+                dp2px(page1.getPaddingLeft()) - dp2px(page1.getPaddingRight()) -
+                dp2px(lpGold.leftMargin) - dp2px(lpGold.rightMargin) -
+                dp2px(textView.getPaddingLeft()) - dp2px(textView.getPaddingRight())));
+        int maxFontSizeUponUsableWidth = (int) (usableWidth / maxChars);
+        int usableHeight = (int) (textUsableHeight * textRatioOfTextView); //0.9 for smaller
+        int maxFontSizeUponUsableHeight = (int) (usableHeight / maxLines);
+        return Math.min(maxFontSizeUponUsableHeight, maxFontSizeUponUsableWidth);
+    }
 	private void onRefreshPage(int nbr){
-		
 		if (mDisplayDay.compareTo(mDailyBread.getValidToDate())>0){
 			mDisplayDay.setTimeInMillis(mDailyBread.getValidToDate().getTimeInMillis());
 		} else if (mDisplayDay.compareTo(mDailyBread.getValidFrDate())<0 ){
@@ -1054,15 +1139,6 @@ public class CMain extends MyActivity {
 		final TextView pageDay = (TextView) findViewById(getID(nbr, "Day"));
 		pageDay.setText(String.valueOf(curDay));
 		pageDay.setTextColor(textColor);
-//		pageDay.setTextSize(TypedValue.COMPLEX_UNIT_PX, (int) Math.floor(MyUtil.widthPixels(CMain.this)/3));
-//		pageDay.setOnTouchListener(mDelayHideTouchListener);
-//		pageDay.setOnClickListener(new View.OnClickListener() {
-//			@Override
-//			public void onClick(View v) {				
-//				MyUtil.log(TAG, "click");
-//				MyUtil.popDate(CMain.this,MyDailyBread.getDayString(mDisplayDay), dateListener);
-//			}
-//		});
 		final int maxCharacters=7;
 		final TextView pageHoliday1 = (TextView) findViewById(getID(nbr, "Holiday1"));
 		final TextView pageHoliday2 = (TextView) findViewById(getID(nbr, "Holiday2"));
@@ -1233,6 +1309,16 @@ public class CMain extends MyActivity {
          ************************************************************************************/
 		
 		final TextView pageGoldText = (TextView) findViewById(getID(nbr, "GoldText"));
+        final TextView pageGoldVerse = (TextView) findViewById(getID(nbr, "GoldVerse"));
+
+        Calendar calendar = Calendar.getInstance();
+        if (IS_2016_OR_LATER) {
+            if (calendar.get(Calendar.YEAR) == curYear &&
+                    calendar.get(Calendar.MONTH) == curMonth &&
+                    calendar.get(Calendar.DAY_OF_MONTH) == curDay) {
+                YoYo.with(Techniques.Bounce).duration(1000).playOn(pageGoldText);
+            }
+        }
         String theText = cv.getAsString(MyDailyBread.wGoldText);
         final String text [] = theText.split("#");
         int charPerLines=0;
@@ -1242,27 +1328,33 @@ public class CMain extends MyActivity {
         pageGoldText.setTextColor(textColor);
 		int goldFontSize;
 		if (MyDailyBread.mCurrentYear>=2015){
-            // 2015.09.16 To protect small device overflow, we don't allow 4 lines
-            if (charPerLines>=22 && text.length==3){//Relocate characters automatically (But, should be smaller size to occupy)
-                theText=theText.replace("#","");
-                charPerLines = (int) Math.ceil(theText.length() / 4);
-                theText = theText.substring(0,charPerLines)+"#"+
-                          theText.substring(charPerLines,charPerLines+charPerLines)+"#"+
-                          theText.substring(charPerLines+charPerLines,charPerLines+charPerLines+charPerLines)+"#"+
-                          theText.substring(charPerLines+charPerLines+charPerLines);
-                if (DEBUG) {
-                    Log.e(TAG, "OldText=" + cv.getAsString(MyDailyBread.wGoldText));
-                    Log.e(TAG, "NewText=" + theText);
-                }
-                if (mScreenType.equalsIgnoreCase(SMALL_LAYOUT)) {
-                    goldFontSize = getFontSizeByText(pageGoldText, theText) - dp2px(2);
+            if (IS_2016_OR_LATER){
+                goldFontSize = getFontSizeByMaxCharacters(pageGoldText, 22);//Gold Text not more than 20; 26 should be small enough
+                int goldTextFontSize2016=getFontSizeUponSize(pageGoldText, (float) 11 / 38, theText, 3, (float) 0.5);
+                pageGoldText.setTextSize(TypedValue.COMPLEX_UNIT_PX, goldTextFontSize2016);
+            } else {
+                // 2015.09.16 To protect small device overflow, we don't allow 4 lines
+                if (charPerLines >= 22 && text.length == 3) {//Relocate characters automatically (But, should be smaller size to occupy)
+                    theText = theText.replace("#", "");
+                    charPerLines = (int) Math.ceil(theText.length() / 4);
+                    theText = theText.substring(0, charPerLines) + "#" +
+                            theText.substring(charPerLines, charPerLines + charPerLines) + "#" +
+                            theText.substring(charPerLines + charPerLines, charPerLines + charPerLines + charPerLines) + "#" +
+                            theText.substring(charPerLines + charPerLines + charPerLines);
+                    if (DEBUG) {
+                        Log.e(TAG, "OldText=" + cv.getAsString(MyDailyBread.wGoldText));
+                        Log.e(TAG, "NewText=" + theText);
+                    }
+                    if (mScreenType.equalsIgnoreCase(SMALL_LAYOUT)) {
+                        goldFontSize = getFontSizeByText(pageGoldText, theText) - dp2px(2);
+                    } else {
+                        goldFontSize = getFontSizeByText(pageGoldText, theText);
+                    }
                 } else {
                     goldFontSize = getFontSizeByText(pageGoldText, theText);
                 }
-            } else {
-                goldFontSize = getFontSizeByText(pageGoldText, theText);
+                pageGoldText.setTextSize(TypedValue.COMPLEX_UNIT_PX,goldFontSize);
             }
-            pageGoldText.setTextSize(TypedValue.COMPLEX_UNIT_PX,goldFontSize);
 		} else {
 			goldFontSize = getGoldFontSize(pageGoldText,cv.getAsString(MyDailyBread.wGoldSize));
 			if (mScreenType.equalsIgnoreCase(SMALL_LAYOUT)){
@@ -1289,22 +1381,26 @@ public class CMain extends MyActivity {
          *  GOLD VERSE TEXT 金句經文出處
          ************************************************************************************/
 
-		final TextView pageGoldVerse = (TextView) findViewById(getID(nbr, "GoldVerse"));
+
 		pageGoldVerse.setText(cv.getAsString(MyDailyBread.wGoldVerse)+(curYear>=2016?"":"；和合本修訂版"));
 		pageGoldVerse.setTextColor(textColor);
 		// From HKBS, size change to less than Gold
-        if (MyDailyBread.mCurrentYear>=2015 & charPerLines>20){
-            // If size is too small, just a little bit different
-            pageGoldVerse.setTextSize(TypedValue.COMPLEX_UNIT_PX, goldFontSize - dp2px(1));
+        if (IS_2016_OR_LATER) {
+            pageGoldVerse.setTextSize(TypedValue.COMPLEX_UNIT_PX, getFontSizeByMaxCharacters(pageGoldText, 22));
         } else {
-            if (mScreenType.equalsIgnoreCase(SMALL_LAYOUT)) {
-                pageGoldVerse.setTextSize(TypedValue.COMPLEX_UNIT_PX, goldFontSize - dp2px(6));
-            } else if (mScreenType.equalsIgnoreCase(SW600_LAYOUT)) {
-                int suggestSize = (int) pageChiLunarMonth.getTextSize();
-                suggestSize=Math.min(suggestSize,(int) (goldFontSize * 0.8)); // Use dp2px too less
-                pageGoldVerse.setTextSize(TypedValue.COMPLEX_UNIT_PX, suggestSize);
+            if (MyDailyBread.mCurrentYear >= 2015 & charPerLines > 20) {
+                // If size is too small, just a little bit different
+                pageGoldVerse.setTextSize(TypedValue.COMPLEX_UNIT_PX, goldFontSize - dp2px(1));
             } else {
-                pageGoldVerse.setTextSize(TypedValue.COMPLEX_UNIT_PX, goldFontSize - dp2px(6));
+                if (mScreenType.equalsIgnoreCase(SMALL_LAYOUT)) {
+                    pageGoldVerse.setTextSize(TypedValue.COMPLEX_UNIT_PX, goldFontSize - dp2px(6));
+                } else if (mScreenType.equalsIgnoreCase(SW600_LAYOUT)) {
+                    int suggestSize = (int) pageChiLunarMonth.getTextSize();
+                    suggestSize = Math.min(suggestSize, (int) (goldFontSize * 0.8)); // Use dp2px too less
+                    pageGoldVerse.setTextSize(TypedValue.COMPLEX_UNIT_PX, suggestSize);
+                } else {
+                    pageGoldVerse.setTextSize(TypedValue.COMPLEX_UNIT_PX, goldFontSize - dp2px(6));
+                }
             }
         }
         if (curYear>=2010){
@@ -1342,6 +1438,21 @@ public class CMain extends MyActivity {
 				colonPos = englishColonPos;
 			}			
 		}
+        int bigTextSize;
+        if (IS_2016_OR_LATER){
+            String wisdomLines [] = bigText.split("#");
+            if (wisdomLines.length==1){
+                if (wisdomLines [0].length()>=15) {
+                    if (wisdomLines[0].length() <= 20) {
+                        bigText = bigText.substring(0, 10) + "#" + bigText.substring(10);
+                    } else if (wisdomLines[0].length() < 30) {
+                        bigText = bigText.substring(0, 10) + "#" + bigText.substring(10,20)+"#"+bigText.substring(20);
+                    }
+                }
+            }
+            bigTextSize=getFontSizeUponSize(pageBigText, (float) 7 / 38, bigText, 4,(float) 0.8);
+            pageBigText.setTextSize(TypedValue.COMPLEX_UNIT_PX, bigTextSize);
+        }
         String lines [] = bigText.split("#");
 		if (colonPos>=0){
 			bigText= "<small>"+bigText.substring(0, colonPos+1)+"</small>"+bigText.substring(colonPos+1).replace("#", "<br>");
@@ -1351,22 +1462,23 @@ public class CMain extends MyActivity {
 			pageBigText.setText(bigText.replace("#", "\n"));
 		}
         pageBigText.setTextColor(textColor);
-		int bigTextSize;
-        if (MyDailyBread.mCurrentYear>=2015 & charPerLines>20){
-            // If size is too small, just a little bit different
-            if (mScreenType.equalsIgnoreCase(SW600_LAYOUT) || mScreenType.equalsIgnoreCase(SMALL_LAYOUT)) {
-                bigTextSize = (int) pageChiLunarMonth.getTextSize();
+        if (!IS_2016_OR_LATER){
+            if (MyDailyBread.mCurrentYear >= 2015 & charPerLines > 20) {
+                // If size is too small, just a little bit different
+                if (mScreenType.equalsIgnoreCase(SW600_LAYOUT) || mScreenType.equalsIgnoreCase(SMALL_LAYOUT)) {
+                    bigTextSize = (int) pageChiLunarMonth.getTextSize();
+                } else {
+                    bigTextSize = (int) (goldFontSize - dp2px(2));
+                }
             } else {
-                bigTextSize = (int) (pageGoldText.getTextSize() - dp2px(2));
+                if (mScreenType.equalsIgnoreCase(SW600_LAYOUT) || mScreenType.equalsIgnoreCase(SMALL_LAYOUT)) {
+                    bigTextSize = (int) pageChiLunarMonth.getTextSize();
+                } else {
+                    bigTextSize = (int) (goldFontSize - dp2px(4));
+                }
             }
-        } else {
-            if (mScreenType.equalsIgnoreCase(SW600_LAYOUT) || mScreenType.equalsIgnoreCase(SMALL_LAYOUT)) {
-                bigTextSize = (int) pageChiLunarMonth.getTextSize();
-            } else {
-                bigTextSize = (int) (pageGoldText.getTextSize() - dp2px(4));
-            }
+            pageBigText.setTextSize(TypedValue.COMPLEX_UNIT_PX, bigTextSize);
         }
-		pageBigText.setTextSize(TypedValue.COMPLEX_UNIT_PX, bigTextSize);
         RelativeLayout.LayoutParams bigTextLP = (RelativeLayout.LayoutParams) pageBigText.getLayoutParams();
         if (curYear>=2016) {
             pageBigText.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
@@ -1403,15 +1515,22 @@ public class CMain extends MyActivity {
 		for (int i=0;i<textLines.length;i++){
 			maxChars = Math.max(maxChars, textLines[i].length());
 		}
+//            Rect bounds = new Rect();
+//            String text = new String(new char[maxChars]).replace("\0", "M");
+//            Paint paint = textView.getPaint();
+//            paint.getTextBounds(text, 0, text.length(), bounds);
+//            int textHeight = bounds.bottom + bounds.height();
+
         // Control characters not too big; Value bigger Letter Smaller
-		if (mScreenType.equalsIgnoreCase(SMALL_LAYOUT)){
-			maxChars = maxChars < 16 ? 16 : maxChars;
-		} else if (mScreenType.equalsIgnoreCase(SW600_LAYOUT)){
-			maxChars = maxChars < 17 ? 17 : maxChars;// 17 change to 19 since 小米Note cannot display
-		} else {
-			maxChars = maxChars < 18 ? 18 : maxChars;
-		}
-		int fontSize = getFontSizeByMaxCharacters(textView,maxChars);
+        int fontSize;
+            if (mScreenType.equalsIgnoreCase(SMALL_LAYOUT)) {
+                maxChars = maxChars < 16 ? 16 : maxChars;
+            } else if (mScreenType.equalsIgnoreCase(SW600_LAYOUT)) {
+                maxChars = maxChars < 17 ? 17 : maxChars;// 17 change to 19 since 小米Note cannot display
+            } else {
+                maxChars = maxChars < 18 ? 18 : maxChars;
+            }
+            fontSize = getFontSizeByMaxCharacters(textView, maxChars);
 		textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize);
 		return fontSize; 
 	}

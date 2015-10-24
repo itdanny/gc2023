@@ -314,10 +314,12 @@ public class MyDailyBread {
 				    				maxGold_L_date = getDayString(lastYear, lastMonth, lastDay);
 				    			}
 				    			mMaxGold_L_characters=Math.max(mMaxGold_L_characters,goldLines[i].length());
-                                if (goldLines[i].length()<mMinGold_L_characters){
-                                    minGold_L_date = getDayString(lastYear, lastMonth, lastDay);
+                                if (goldLines.length==1) {
+                                    if (goldLines[i].length() < mMinGold_L_characters) {
+                                        minGold_L_date = getDayString(lastYear, lastMonth, lastDay);
+                                    }
+                                    mMinGold_L_characters = Math.min(mMinGold_L_characters, goldLines[i].length());
                                 }
-                                mMinGold_L_characters=Math.min(mMinGold_L_characters, goldLines[i].length());
 
 				    		} else if (cv.getAsString(wGoldSize).equalsIgnoreCase("M")){
 				    			if (goldLines[i].length()>mMaxGold_M_characters){
@@ -325,20 +327,24 @@ public class MyDailyBread {
 				    				maxGold_M_date = getDayString(lastYear, lastMonth, lastDay);
 				    			}
 				    			mMaxGold_M_characters=Math.max(mMaxGold_M_characters,goldLines[i].length());
-                                if (goldLines[i].length()<mMinGold_M_characters){
-                                    minGold_M_date = getDayString(lastYear, lastMonth, lastDay);
+                                if (goldLines.length==1) {
+                                    if (goldLines[i].length() < mMinGold_M_characters) {
+                                        minGold_M_date = getDayString(lastYear, lastMonth, lastDay);
+                                    }
+                                    mMinGold_M_characters = Math.min(mMinGold_M_characters, goldLines[i].length());
                                 }
-                                mMinGold_M_characters=Math.min(mMinGold_M_characters, goldLines[i].length());
 				    		} else {
 				    			if (goldLines[i].length()>mMaxGold_S_characters){
 				    				maxGold_S_str = goldLines[i];
 				    				maxGold_S_date = getDayString(lastYear, lastMonth, lastDay);
 				    			}
 				    			mMaxGold_S_characters=Math.max(mMaxGold_S_characters,goldLines[i].length());
-                                if (goldLines[i].length()<mMinGold_S_characters){
-                                    minGold_S_date = getDayString(lastYear, lastMonth, lastDay);
+                                if (goldLines.length==1) {
+                                    if (goldLines[i].length() < mMinGold_S_characters) {
+                                        minGold_S_date = getDayString(lastYear, lastMonth, lastDay);
+                                    }
+                                    mMinGold_S_characters = Math.min(mMinGold_S_characters, goldLines[i].length());
                                 }
-                                mMinGold_S_characters=Math.min(mMinGold_S_characters, goldLines[i].length());
 				    		}				    		
 				    	}
 

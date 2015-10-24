@@ -296,7 +296,7 @@
                     android:layout_height="match_parent"
                     android:layout_alignParentTop="true"
                     android:layout_marginRight="5dp"
-                    android:layout_marginLeft="20dp"
+                    android:layout_marginLeft="10dp"
                     android:gravity="left|top"
                     android:text="小知識\n1234567890123456789012\n小知識\n小知識\n"
                     android:textSize="8sp" />
