@@ -34,6 +34,7 @@
             android:layout_width="match_parent"
             android:layout_height="44dp"
             android:background="@color/darkGrey"
+            android:alpha="0.7"
             android:orientation="horizontal" >
 
             <ImageView

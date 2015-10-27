@@ -81,7 +81,7 @@
                     android:gravity="center"
                     android:text="@string/main_about"
                     style="@style/MenuStyle"
-                    android:textSize="12sp"/>
+                    android:textSize="@dimen/small_menu_font_size"/>
                 
                 <org.arkist.share.AxTextView
                     android:id="@+id/mainBtnAlarm"
@@ -92,7 +92,7 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="@string/main_alarm"
-                    android:textSize="12sp"/>
+                    android:textSize="@dimen/small_menu_font_size"/>
                 
                 <org.arkist.share.AxTextView
                     android:id="@+id/mainBtnCalendar"
@@ -103,7 +103,7 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="@string/main_calendar"
-                    android:textSize="12sp"/>
+                    android:textSize="@dimen/small_menu_font_size"/>
                 
                 <org.arkist.share.AxTextView
                     android:id="@+id/mainBtnShare"
@@ -114,7 +114,7 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="@string/main_share"
-                    android:textSize="12sp"/>
+                    android:textSize="@dimen/small_menu_font_size"/>
                                 
             </LinearLayout>
 
@@ -132,7 +132,7 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="@string/main_others"
-                    android:textSize="12sp"/>
+                    android:textSize="@dimen/small_menu_font_size"/>
 
                 <org.arkist.share.AxTextView
                     android:id="@+id/mainBtnBible"
@@ -143,7 +143,7 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="@string/main_bible"
-                    android:textSize="12sp"/>                
+                    android:textSize="@dimen/small_menu_font_size"/>
                     
                 <org.arkist.share.AxTextView
                     android:id="@+id/mainBtnToday"
@@ -154,7 +154,7 @@
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="@string/main_today"
-                    android:textSize="12sp"/>
+                    android:textSize="@dimen/small_menu_font_size"/>
                 
                 <org.arkist.share.AxTextView
                     android:id="@+id/mainBtnCopy"
@@ -165,7 +165,7 @@
                     android:gravity="center"
                     style="@style/MenuStyle"
                     android:text="@string/main_copy"
-                    android:textSize="12sp"/>
+                    android:textSize="@dimen/small_menu_font_size"/>
                 
             </LinearLayout>
         </LinearLayout>

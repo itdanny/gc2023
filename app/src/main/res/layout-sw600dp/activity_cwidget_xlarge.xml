@@ -258,7 +258,7 @@
                 android:layout_marginBottom="@dimen/big_c_image_top"
                 android:gravity="center"
                 android:maxLines="3"
-                android:textSize="24sp" />
+                android:textSize="23sp" />
 
             <!-- android:text="[XXXXXXXXXX]" -->
             <TextView

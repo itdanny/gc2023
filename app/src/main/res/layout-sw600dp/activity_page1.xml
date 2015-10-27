@@ -280,6 +280,18 @@
             android:src="@drawable/green_icon_2015"
             android:visibility="visible" />
 
+        <TextView
+            android:id="@+id/xmlPage1BigText"
+            android:layout_width="match_parent"
+            android:layout_height="wrap_content"
+            android:layout_alignParentTop="true"
+            android:layout_marginBottom="10dp"
+            android:layout_marginTop="4dp"
+            android:layout_marginLeft="50dp"
+            android:layout_marginRight="@dimen/ln_wisdom_right_margin"
+            android:gravity="left|top"
+            android:text="小知識\n1234567890123456789012\n小知識\n小知識\n"
+            android:textSize="38sp" />
 
         <TextView
             android:id="@+id/xmlPage1BigHint"
@@ -293,19 +305,6 @@
             android:text="Hint …………………."
             android:textSize="32sp" />
 
-
-        <TextView
-            android:id="@+id/xmlPage1BigText"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_alignParentTop="true"
-            android:layout_marginBottom="10dp"
-            android:layout_marginTop="4dp"
-            android:layout_marginLeft="50dp"
-            android:layout_marginRight="10dp"
-            android:gravity="left|top"
-            android:text="小知識\n1234567890123456789012\n小知識\n小知識\n"
-            android:textSize="38sp" />
     </RelativeLayout>
 
 </LinearLayout>

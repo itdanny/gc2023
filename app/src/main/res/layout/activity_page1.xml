@@ -23,6 +23,7 @@
             android:text=" "
             android:textSize="8sp" />
         <LinearLayout
+            android:id="@+id/xmlPage1UpperTopLine"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
@@ -65,16 +66,6 @@
         </LinearLayout>
 
         <TextView
-            android:id="@+id/xmlPage1Day"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:layout_centerInParent="true"
-            android:inputType="none"
-            android:text="21"
-            android:textSize="160sp"
-            android:textStyle="bold" />
-
-        <TextView
             android:id="@+id/xmlPage1Holiday1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
@@ -100,6 +91,7 @@
             android:textStyle="bold" />
 
         <LinearLayout
+            android:id="@+id/xmlPage1UpperBottomLine"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentBottom="true"
@@ -214,6 +206,18 @@
                     android:textSize="@dimen/std_lunar_font_size" />
             </LinearLayout>
         </LinearLayout>
+
+        <TextView
+            android:id="@+id/xmlPage1Day"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerInParent="true"
+            android:gravity="center"
+            android:inputType="none"
+            android:text="21"
+            android:textSize="160sp"
+            android:textStyle="bold" />
+
     </RelativeLayout>
 
     <RelativeLayout
@@ -265,8 +269,8 @@
             android:layout_width="fill_parent"
             android:layout_height="fill_parent"
             android:layout_marginBottom="20dp"
-            android:layout_marginLeft="5dp"
-            android:layout_marginRight="5dp"
+            android:layout_marginLeft="@dimen/std_gold_left_right"
+            android:layout_marginRight="@dimen/std_gold_left_right"
             android:layout_marginTop="@dimen/std_p_image_top"
             android:gravity="center"            
             android:textSize="22sp" />
@@ -310,7 +314,7 @@
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
             android:layout_marginLeft="30dp"
-            android:layout_marginRight="10dp"
+            android:layout_marginRight="@dimen/std_wisdom_right_margin"
             android:layout_marginTop="0dp"
             android:gravity="left|top"
             android:text="小知識\n1234567890123456789012\n小知識\n小知識\n"

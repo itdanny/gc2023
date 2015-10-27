@@ -12,7 +12,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="2">
+                android:layout_weight="20">
 			<TextView
 			    android:id="@+id/xmlPage1ScreenType"
 				android:tag="small"
@@ -70,7 +70,7 @@
                     android:layout_centerInParent="true"
                     android:inputType="none"
                     android:text="21"
-                    android:textSize="148sp"
+                    android:textSize="@dimen/small_day_font_size"
                     android:textStyle="bold" />
                 
                 <TextView
@@ -144,6 +144,7 @@
              </RelativeLayout>
 
                     <RelativeLayout
+                        android:layout_gravity="center_vertical"
 					    android:layout_width="0dp"
                         android:layout_height="wrap_content"
                         android:layout_weight="5">
@@ -160,13 +161,13 @@
 	                        android:id="@+id/xmlPage1WeekDay"
 	                        android:layout_width="match_parent"
 	                        android:layout_height="wrap_content"
-	                        android:layout_centerVertical="true"
-	                        android:gravity="center"
+                            android:layout_centerInParent="true"
+                            android:gravity="center"
 	                        android:inputType="none"
 	                        android:paddingLeft="5dp"
 	                        android:paddingRight="5dp"
 	                        android:text="星期二 TUE"
-	                        android:textSize="16sp" />					    
+	                        android:textSize="@dimen/small_weekday_font_size" />
 					</RelativeLayout>
 
                     <LinearLayout
@@ -199,7 +200,7 @@
                 android:id="@+id/xmlPage1Middle"
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="1.1"
+                android:layout_weight="11"
                 android:paddingTop="1dp" >
 
                 <ImageView
@@ -240,8 +241,8 @@
                     android:layout_width="fill_parent"
                     android:layout_height="fill_parent"
                     android:layout_marginBottom="14dp"
-                    android:layout_marginLeft="5dp"
-                    android:layout_marginRight="5dp"
+                    android:layout_marginLeft="@dimen/small_gold_left_right"
+                    android:layout_marginRight="@dimen/small_gold_left_right"
                     android:layout_marginTop="@dimen/small_p_image_top"
                     android:gravity="center"
                     android:text="金句金句金句金句金句金句金句金句金句金句金\n金句2\n金句3\n金句4"
@@ -264,7 +265,7 @@
             <RelativeLayout
                 android:layout_width="match_parent"
                 android:layout_height="0dp"
-                android:layout_weight="0.7"
+                android:layout_weight="7"
                 >
 
                 <ImageView
@@ -279,27 +280,29 @@
                     android:src="@drawable/green_icon_2015"
                     android:visibility="visible" />
 <!-- 2014 marginTop is 6dp -->
-				<TextView
+
+                <TextView
+                    android:id="@+id/xmlPage1BigText"
+                    android:layout_width="match_parent"
+                    android:layout_height="wrap_content"
+                    android:layout_alignParentTop="true"
+                    android:layout_marginRight="@dimen/small_wisdom_right_margin"
+                    android:layout_marginLeft="10dp"
+                    android:gravity="left|top"
+                    android:text="小知識\n1234567890123456789012\n小知識\n小知識\n"
+                    android:textSize="8sp" />
+
+                <TextView
                     android:id="@+id/xmlPage1BigHint"
                     android:layout_width="wrap_content"
                     android:layout_height="wrap_content"
                     android:layout_alignParentBottom="true"
                     android:layout_alignParentRight="true"
-                    android:layout_marginBottom="4dp"
-                    android:layout_marginRight="20dp"
+                    android:layout_marginBottom="@dimen/small_p_image_bottom"
+                    android:layout_marginRight="@dimen/small_p_image_right"
                     android:gravity="right|bottom"
                     android:text="Hint …………………."
                     android:textSize="10sp" />
-                <TextView
-                    android:id="@+id/xmlPage1BigText"
-                    android:layout_width="match_parent"
-                    android:layout_height="match_parent"
-                    android:layout_alignParentTop="true"
-                    android:layout_marginRight="5dp"
-                    android:layout_marginLeft="10dp"
-                    android:gravity="left|top"
-                    android:text="小知識\n1234567890123456789012\n小知識\n小知識\n"
-                    android:textSize="8sp" />
 
 		    </RelativeLayout>
         </LinearLayout>

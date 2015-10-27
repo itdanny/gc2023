@@ -1,5 +1,5 @@
 <resources>
-    <!-- Stored in Layout -->
+    <!-- Widget Stored in Layout -->
     <dimen name="vs_width">152dp</dimen>
     <dimen name="vs_height">194dp</dimen>
     <dimen name="vn_width">216dp</dimen>
@@ -8,14 +8,16 @@
     <dimen name="vl_height">480dp</dimen>
     <dimen name="vm_width">270dp</dimen>
     <dimen name="vm_height">360dp</dimen>
-    <!-- Stored in Layout-small -->
+    <!-- Widget Stored in Layout-small -->
     <dimen name="sn_width">152dp</dimen>
     <dimen name="sn_height">194dp</dimen>
+
     <dimen name="sm_width">216dp</dimen>
     <dimen name="sm_height">324dp</dimen>
-    <!-- Stored in Layout-large -->
+    <!-- Widget Stored in Layout-large -->
     <dimen name="ln_width">324dp</dimen>
     <dimen name="ln_height">432dp</dimen>
+    <dimen name="ln_wisdom_right_margin">5dp</dimen>
     <dimen name="lx_width">504dp</dimen>
     <dimen name="lx_height">672dp</dimen>
 
@@ -49,9 +51,10 @@
 	 <!-- Samsung S5 -->
 	 <dimen name="std_c_image_top">7dp</dimen>
 	 <dimen name="std_c_image_bottom">8dp</dimen>
-	 <dimen name="std_p_image_top">2dp</dimen>	 
-	 <dimen name="std_p_image_bottom">29dp</dimen>
-	 
+	 <dimen name="std_p_image_top">2dp</dimen>
+     <dimen name="std_p_image_bottom">16dp</dimen> <!-- Now control by code -->
+     <dimen name="std_gold_left_right">5dp</dimen>
+     <dimen name="std_wisdom_right_margin">5dp</dimen>
 	 <dimen name="std_lunar_font_size">15sp</dimen>
 	 <!-- Samsung Tablet -->
 	 <dimen name="big_c_image_top">0dp</dimen>
@@ -62,10 +65,16 @@
 	 <dimen name="big_lunar_font_size">28sp</dimen>
 	 
 	 <!-- SMALL for Gold Text and Verse -->
-	 <dimen name="small_c_image_top">5dp</dimen>
+     <dimen name="small_menu_font_size">10sp</dimen>
+     <dimen name="small_day_font_size">100sp</dimen>
+     <dimen name="small_weekday_font_size">14sp</dimen>
+     <dimen name="small_gold_left_right">5dp</dimen>
+     <dimen name="small_wisdom_right_margin">5dp</dimen>
+     <dimen name="small_c_image_top">5dp</dimen>
 	 <dimen name="small_c_image_bottom">4dp</dimen>
 	 <dimen name="small_p_image_top">2dp</dimen>	 
-	 <dimen name="small_p_image_bottom">14dp</dimen>
+	 <dimen name="small_p_image_bottom">4dp</dimen>
+     <dimen name="small_p_image_right">5dp</dimen>
 	 
 	 <dimen name="small_lunar_font_size">12sp</dimen>
 	 
