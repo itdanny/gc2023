@@ -1,28 +1,38 @@
 <RelativeLayout xmlns:android="http://schemas.android.com/apk/res/android"
     xmlns:tools="http://schemas.android.com/tools"
+    android:id="@+id/xmlRoot"
+    android:clickable="true"
+    android:focusable="true"
+    android:focusableInTouchMode="true"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
     android:background="@color/mainBackground"
     tools:context=".CMain" >
-
-    <ViewAnimator
-        android:id="@+id/xmlMainContents"
+    <com.hkbs.HKBS.CustomViewPager
+        android:id="@+id/pager"
+        android:focusable="false"
+        android:focusableInTouchMode="false"
         android:layout_width="match_parent"
-        android:layout_height="match_parent" >
+        android:layout_height="match_parent">
+    </com.hkbs.HKBS.CustomViewPager>
+    <!--<ViewAnimator-->
+        <!--android:id="@+id/xmlMainContents"-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="match_parent" >-->
 
-        <include
-            android:id="@+id/xmlPage1"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            layout="@layout/activity_page1" />
+        <!--<include-->
+            <!--android:id="@+id/xmlPage1"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--layout="@layout/activity_page1" />-->
 
-        <include
-            android:id="@+id/xmlPage2"
-            android:layout_width="match_parent"
-            android:layout_height="match_parent"
-            layout="@layout/activity_page2" />
-        
-    </ViewAnimator>
+        <!--<include-->
+            <!--android:id="@+id/xmlPage2"-->
+            <!--android:layout_width="match_parent"-->
+            <!--android:layout_height="match_parent"-->
+            <!--layout="@layout/activity_page2" />-->
+        <!-- -->
+    <!--</ViewAnimator>-->
     <RelativeLayout
         android:layout_width="match_parent"
         android:layout_height="match_parent"

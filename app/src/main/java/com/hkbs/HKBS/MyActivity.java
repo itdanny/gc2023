@@ -1,12 +1,12 @@
 package com.hkbs.HKBS;
 
+import android.os.Bundle;
+import android.support.v4.app.FragmentActivity;
+
 import com.google.analytics.tracking.android.EasyTracker;
 import com.hkbs.HKBS.arkUtil.MyUtil;
 
-import android.app.Activity;
-import android.os.Bundle;
-
-public class MyActivity extends Activity {
+public class MyActivity extends FragmentActivity {
 
 	public MyActivity() {
 		

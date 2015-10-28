@@ -39,7 +39,7 @@ public class SupportActivity extends MyActivity implements OnClickListener {
 //		TextView arkist = (TextView) findViewById(R.id.supportArkistAddress);
 //		arkist.setText(Html.fromHtml(getString(R.string.about_arkist_address)));
 
-        if (CMain.IS_2016_OR_LATER){
+        if (CMain.IS_2016_VERSION){
             findViewById(R.id.supportTechnicalHeader).setVisibility(View.GONE);
             findViewById(R.id.supportContentHeader).setVisibility(View.GONE);
             findViewById(R.id.xmlSupportHKBS_Name).setVisibility(View.GONE);

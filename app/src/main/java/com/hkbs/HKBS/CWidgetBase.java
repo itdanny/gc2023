@@ -134,15 +134,15 @@ public class CWidgetBase extends AppWidgetProvider {
         PendingIntent broadcastPendingIntent = PendingIntent.getActivity(recRef.context,
                 0, broadcastIntent, PendingIntent.FLAG_UPDATE_CURRENT);//PendingIntent.FLAG_UPDATE_CURRENT
         recRef.views.setOnClickPendingIntent(R.id.xmlPage1, broadcastPendingIntent);
-        recRef.views.setOnClickPendingIntent(R.id.xmlPage2, broadcastPendingIntent);
+        //recRef.views.setOnClickPendingIntent(R.id.xmlPage2, broadcastPendingIntent);
 		
 		int nbr = 1;
 		Context context = recRef.context;
 		Calendar mDisplayDay = Calendar.getInstance();
 		// Protect Function
-		if (mDisplayDay.compareTo(mDailyBread.getValidToDate())>0){
+		if (mDisplayDay.compareTo(mDailyBread.getValidToDate())>=0){
 			mDisplayDay.setTimeInMillis(mDailyBread.getValidToDate().getTimeInMillis());
-		} else if (mDisplayDay.compareTo(mDailyBread.getValidFrDate())<0 ){
+		} else if (mDisplayDay.compareTo(mDailyBread.getValidFrDate())<=0 ){
 			mDisplayDay.setTimeInMillis(mDailyBread.getValidFrDate().getTimeInMillis());	
 		}
 //		mDisplayDay.set(Calendar.YEAR, 2014);
@@ -229,7 +229,7 @@ public class CWidgetBase extends AppWidgetProvider {
 		}
 
         recRef.views.setTextColor(getID(context, nbr, "WeekDay"), context.getResources().getColor(R.color.white));
-        if (CMain.IS_2016_OR_LATER) {
+        if (curYear>=2016) {
             //recRef.views.setTextColor(getID(context, nbr, "WeekDay"), textColor);
             recRef.views.setImageViewResource(getID(context, nbr, "WeekImage"), isHoliday ? R.drawable.red_weekday_2016 : R.drawable.green_weekday_2016);
         } else {
@@ -261,7 +261,7 @@ public class CWidgetBase extends AppWidgetProvider {
 			recRef.views.setViewVisibility(getID(context, nbr, "ChiLeftWeather"), View.VISIBLE);
 		}
         float layoutWidthInPixels=0;
-		if (CMain.IS_2016_OR_LATER) {
+		if (CMain.IS_2016_VERSION) {
 //            recRef.views.setImageViewResource(getID(context, nbr, "ImageFrameUpper"), isHoliday ? R.drawable.red_frame_2016_upper : R.drawable.green_frame_2016_upper);
 //            recRef.views.setImageViewResource(getID(context, nbr, "ImageFrameLower"), isHoliday ? R.drawable.red_frame_2016_lower : R.drawable.green_frame_2016_lower);
 //            recRef.views.setViewVisibility(getID(context, nbr, "ImageFrameUpper"), View.VISIBLE);
@@ -298,17 +298,16 @@ public class CWidgetBase extends AppWidgetProvider {
             recRef.views.setViewVisibility(getID(context, nbr, "ImageFrameLower"), View.GONE);
             recRef.views.setViewVisibility(getID(context, nbr, "ImageFrame"), View.VISIBLE);
         }
-        if (CMain.IS_2016_OR_LATER) {
+        if (curYear>=2016) {
             recRef.views.setImageViewResource(getID(context, nbr, "ImageIcon"), isHoliday ? R.drawable.red_icon_2016 : R.drawable.green_icon_2016);
         } else {
             recRef.views.setImageViewResource(getID(context, nbr, "ImageIcon"), isHoliday?R.drawable.red_icon_2015:R.drawable.green_icon_2015);
         }
-
 		// get ContentValues from dailyBread file
 		ContentValues cv = mDailyBread.getContentValues(curYear, curMonth, curDay);
 
 		// GOLD TEXT
-		recRef.views.setTextViewText(getID(context, nbr, "GoldVerse"),cv.getAsString(MyDailyBread.wGoldVerse)+":和合本修訂版");
+		recRef.views.setTextViewText(getID(context, nbr, "GoldVerse"),cv.getAsString(MyDailyBread.wGoldVerse)+(curYear>=2016?";和合本]":"；和合本修訂版]"));
 		recRef.views.setTextColor(getID(context, nbr, "GoldVerse"), textColor);
 		
 		String mGoldText;

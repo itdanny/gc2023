@@ -1,10 +1,7 @@
 <LinearLayout xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="match_parent"
     android:layout_height="match_parent"
-    android:clickable="true"
-    android:focusable="true"
     android:weightSum="38"
-    android:focusableInTouchMode="true"
     android:orientation="vertical"
     android:padding="2dp" >
 
@@ -237,28 +234,28 @@
             android:scaleType="fitXY"
             android:visibility="gone"
             android:src="@drawable/green_frame_2015" />
-        <ImageView
-            android:id="@+id/xmlPage1ImageFrameUpper"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:paddingLeft="2dp"
-            android:paddingRight="2dp"
-            android:visibility="gone"
-            android:scaleType="fitCenter"
-            android:layout_alignParentTop="true"
-            android:src="@drawable/green_frame_2016_upper" />
-        <ImageView
-            android:id="@+id/xmlPage1ImageFrameLower"
-            android:layout_width="fill_parent"
-            android:layout_height="wrap_content"
-            android:adjustViewBounds="true"
-            android:paddingLeft="2dp"
-            android:paddingRight="2dp"
-            android:visibility="gone"
-            android:scaleType="fitCenter"
-            android:layout_alignParentBottom="true"
-            android:src="@drawable/green_frame_2016_lower" />
+        <!--<ImageView-->
+            <!--android:id="@+id/xmlPage1ImageFrameUpper"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:adjustViewBounds="true"-->
+            <!--android:paddingLeft="2dp"-->
+            <!--android:paddingRight="2dp"-->
+            <!--android:visibility="gone"-->
+            <!--android:scaleType="fitCenter"-->
+            <!--android:layout_alignParentTop="true"-->
+            <!--android:src="@drawable/green_frame_2016_upper" />-->
+        <!--<ImageView-->
+            <!--android:id="@+id/xmlPage1ImageFrameLower"-->
+            <!--android:layout_width="fill_parent"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:adjustViewBounds="true"-->
+            <!--android:paddingLeft="2dp"-->
+            <!--android:paddingRight="2dp"-->
+            <!--android:visibility="gone"-->
+            <!--android:scaleType="fitCenter"-->
+            <!--android:layout_alignParentBottom="true"-->
+            <!--android:src="@drawable/green_frame_2016_lower" />-->
 
         <!--
         android:text="金句金句金句金句金句金句金句金句金句\n金句2\n金句3\n金句4"

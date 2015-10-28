@@ -13,37 +13,28 @@ import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
-import android.graphics.Paint;
-import android.graphics.Rect;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore.Images;
-import android.text.Html;
-import android.text.TextPaint;
+import android.support.v4.app.Fragment;
+import android.support.v4.app.FragmentManager;
+import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.util.Log;
-import android.util.TypedValue;
 import android.view.GestureDetector;
-import android.view.Gravity;
 import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.ImageView;
-import android.widget.LinearLayout;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
-import android.widget.ViewAnimator;
 
-import com.daimajia.androidanimations.library.Techniques;
-import com.daimajia.androidanimations.library.YoYo;
-import com.hkbs.HKBS.arkCalendar.MyCalendarLunar;
 import com.hkbs.HKBS.arkUtil.MyGestureListener;
 import com.hkbs.HKBS.arkUtil.MyUtil;
 import com.hkbs.HKBS.util.SystemUiHider;
@@ -64,31 +55,37 @@ import java.util.Calendar;
  * @see SystemUiHider
  */
 public class CMain extends MyActivity {
-    final static public boolean IS_2016_OR_LATER = true;
-    final static private boolean IS_2015_OR_LATER = true;
+    final static public boolean IS_2016_VERSION = true;
+    final static public boolean is_2016DayShown(){
+        if (mDisplayDay==null){
+            Calendar calendar = Calendar.getInstance();
+            return calendar.get(Calendar.YEAR)>=2016;
+        }
+        int curYear = mDisplayDay.get(Calendar.YEAR);
+//        Calendar calendar = Calendar.getInstance();
+//        return calendar.get(Calendar.YEAR)>=2016;
+        return curYear>=2016;
+    }
+//    final static private boolean IS_2015_OR_LATER = true;
     final static public boolean DEBUG = true;
 
     final static private String TAG = CMain.class.getSimpleName();
-    final static private String CHI_MONTHS[] = {"一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二"};
-    final static private String STD_LAYOUT = "standard";
-    final static private String SMALL_LAYOUT = "small";
-    final static private String SW600_LAYOUT = "sw600dp";
 
     final static private int CALL_FROM_EXTERNAL_APP = -999;
     private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
 
-    static public int mCalendarYear = 2015;
-    static private float _scaleDensity = 0;
+//    static public int mCalendarYear = 2015;
+//    static private float _scaleDensity = 0;
     static private Calendar mDisplayDay;
-    static private String mGoldVerse;
-
+    static public String mGoldVerse;
     //	private View mContentsView;
     private View mControlsView;
     private View mLeftRightPanel;
     private View mTitleView;
     static public String mScreenType = "";
-    private LinearLayout page1;
-    private LinearLayout page2;
+
+//    private LinearLayout page1;
+//    private LinearLayout page2;
     private Handler handler;
 
     @Override
@@ -121,29 +118,18 @@ public class CMain extends MyActivity {
     private GestureDetector mGesture = new GestureDetector(getBaseContext(), new MyGestureListener(new MyGestureListener.Callback() {
         @Override
         public boolean onClick(MotionEvent e) { // !!! SetClicable to TRUE !!!
-            //MyUtil.log(TAG,"mGesture.onClick");
-//			if (!isTitleShown){
-//				saveScreenShot();
-//			}
+            if (DEBUG) MyUtil.log(TAG, "onClick day="+mDisplayDay.get(Calendar.DAY_OF_MONTH));
             setControlsVisibility(!isTitleShown);
             return true;
         }
-
-        @Override
-        public boolean onLongPress(MotionEvent e) {
+        @Override public boolean onLongPress(MotionEvent e) {
             return false;
         }
-
-        @Override
-        public boolean onRight() {
-            //MyUtil.log(TAG,"mGesture.onRight");
+        @Override public boolean onRight() {
             gotoNextDay();
             return true;
         }
-
-        @Override
-        public boolean onLeft() {
-            //MyUtil.log(TAG,"mGesture.onLeftx");
+        @Override public boolean onLeft() {
             gotoPrevDay();
             return true;
         }
@@ -151,23 +137,46 @@ public class CMain extends MyActivity {
     private View.OnTouchListener mViewOnTouch = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View v, MotionEvent event) {
-            //MyUtil.log(TAG,"mViewOnTouch.onTouch");
             mGesture.onTouchEvent(event);
             return false;
         }
     };
 
-    private ViewAnimator mViewAnimator;
+    //private ViewAnimator mViewAnimator;
     private boolean isTitleShown = true;
-    private int mViewIndex = 1;
+    //private int mViewIndex = 1;
+    private CustomViewPager mPager;
+    private CustomViewAdapter mAdapter;
     public MyDailyBread mDailyBread;
+    private View mRootView;
 
+    private class CustomViewAdapter extends FragmentStatePagerAdapter {
+        CMain mCMain;
+        MyDailyBread mDailyBread;
+        public CustomViewAdapter(FragmentManager fm, CMain cmain) {
+            super(fm);
+            mCMain=cmain;
+            mDailyBread=cmain.mDailyBread;
+        }
+
+        @Override
+        public Fragment getItem(int position) {
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(mDailyBread.getValidFrDate().getTimeInMillis());
+            calendar.add(Calendar.DAY_OF_MONTH, position);
+            return DailyFragment.getInstance(CMain.this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+        }
+        @Override
+        public int getCount() {
+            return (int) mCMain.mDailyBread.getNbrOfValidDays();
+        }
+    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         AxTools.init(CMain.this);
-        scaleDensity(getApplicationContext());
+//        scaleDensity(getApplicationContext());
         MyUtil.initMyUtil(this);
         MyUtil.log(TAG, "StartApp3..............");
 
@@ -179,9 +188,29 @@ public class CMain extends MyActivity {
 //		
         setContentView(R.layout.activity_cmain);
 
+        mRootView = (View) findViewById(R.id.xmlRoot);
+        mRootView.setOnTouchListener(mViewOnTouch);
+
+        AxImageView clickLeftView = (AxImageView) findViewById(R.id.xmlMainClickLeft);
+        clickLeftView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                delayedHide();
+                gotoPrevDay();
+            }
+        });
+        AxImageView clickRightView = (AxImageView) findViewById(R.id.xmlMainClickRight);
+        clickRightView.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                delayedHide();
+                gotoNextDay();
+            }
+        });
+
         mDisplayDay = Calendar.getInstance();
-//		mContentsView = findViewById(R.id.xmlMainContents);
-        mViewAnimator = (ViewAnimator) findViewById(R.id.xmlMainContents);
+//        mViewAnimator = (ViewAnimator) findViewById(R.id.xmlMainContents);
+
         mControlsView = findViewById(R.id.xmlMainControls);
         mLeftRightPanel = findViewById(R.id.xmlMainClickPanel);
         mTitleView = findViewById(R.id.xmlMainTitle);
@@ -194,10 +223,63 @@ public class CMain extends MyActivity {
 
         CWidgetNormal.broadcastMe(CMain.this);
 
+        mPager = (CustomViewPager) findViewById(R.id.pager);
+        mAdapter = new CustomViewAdapter(getSupportFragmentManager(), CMain.this);
+        mPager.setAdapter(mAdapter);
+        mPager.callBack = new CustomViewPager.CallBack() {
+            @Override
+            public void clicked(MotionEvent motionEvent) {
+                //onClickItem(motionEvent);
+                if (DEBUG) MyUtil.log(TAG, "onClicked");
+                setControlsVisibility(!isTitleShown);
+                //mRootView.performClick();
+            }
+        };
+        mPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            boolean lastPageChange = false;
+            boolean fistPageChange = false;
+            @Override
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels){
+                int lastIdx = mAdapter.getCount() - 1;
+                if (lastPageChange && position == lastIdx){
+                    Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
+                } else if (fistPageChange && position==0){
+                    Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
+                }
+            }
+            @Override
+            public void onPageSelected(int i) {
+                mDisplayDay = (Calendar) mDailyBread.getValidFrDate().clone();
+                mDisplayDay.add(Calendar.DAY_OF_MONTH, i);
+                Log.i(TAG, "onPageSelected day=" + mDisplayDay.get(Calendar.DAY_OF_MONTH));
+                onRefreshPage(mDisplayDay, false);
+                Log.i(TAG, "onPageSelected day=" + mDisplayDay.get(Calendar.DAY_OF_MONTH));
+            }
+            @Override
+            public void onPageScrollStateChanged(int state) {
+                int lastIdx = mAdapter.getCount() - 1;
+                int curItem = mPager.getCurrentItem();
+                if(curItem==lastIdx && state==ViewPager.SCROLL_STATE_DRAGGING)   lastPageChange = true;
+                else lastPageChange = false;
+                if(curItem==0 && state==ViewPager.SCROLL_STATE_DRAGGING)   fistPageChange = true;
+                else fistPageChange = false;
+                if (state==ViewPager.SCROLL_STATE_IDLE) {
+                    mPager.isScrolling = false;
+                } else {
+                    mPager.isScrolling = true;
+                }
+            }
+        });
+
         MyUtil.log(TAG, "StartApp3..............End");
 
+        AxTools.runFollow(new Runnable() {
+            @Override
+            public void run() {
+                onClickToday(CMain.this);
+            }
+        });
     }
-
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void setControlsVisibility(boolean isVisible) {
         if (isTitleShown == isVisible) {
@@ -248,7 +330,7 @@ public class CMain extends MyActivity {
         mLeftRightPanel.setVisibility(isVisible ? View.VISIBLE : View.GONE);
         if (isVisible) {
             // Schedule a hide().
-            delayedHide(AUTO_HIDE_DELAY_MILLIS);
+            delayedHide();
         }
     }
 
@@ -363,7 +445,7 @@ public class CMain extends MyActivity {
         });
 
         AxTextView mainBtnBible = (AxTextView) findViewById(R.id.mainBtnBible);
-        if (CMain.IS_2016_OR_LATER) {
+        if (CMain.is_2016DayShown()) {
             mainBtnBible.setText(R.string.main_support);
         } else {
             mainBtnBible.setText(R.string.main_bible);
@@ -440,7 +522,7 @@ public class CMain extends MyActivity {
     View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
         @Override
         public boolean onTouch(View view, MotionEvent motionEvent) {
-            delayedHide(AUTO_HIDE_DELAY_MILLIS);
+            delayedHide();
             return false;
         }
     };
@@ -458,7 +540,12 @@ public class CMain extends MyActivity {
      * Schedules a call to hide() in [delay] milliseconds, canceling any
      * previously scheduled calls.
      */
-    private void delayedHide(int delayMillis) {
+    public void delayedHide() {
+        int delayMillis = AUTO_HIDE_DELAY_MILLIS;
+        mHideHandler.removeCallbacks(mHideRunnable);
+        mHideHandler.postDelayed(mHideRunnable, delayMillis);
+    }
+    public void delayedHide(int delayMillis) {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
@@ -587,7 +674,9 @@ public class CMain extends MyActivity {
         }
         Intent share = new Intent(Intent.ACTION_SEND);
         share.setType("image/jpeg");
-        share.putExtra(android.content.Intent.EXTRA_SUBJECT, "全年好日曆經文分享");
+        share.putExtra(android.content.Intent.EXTRA_SUBJECT, "「" +
+                (IS_2016_VERSION ?context.getString(R.string.app_name_2016):context.getString(R.string.app_name)) +
+                "」經文分享");
         share.putExtra(android.content.Intent.EXTRA_STREAM, uri);
         startActivity(Intent.createChooser(share, "分享圖像"));
 
@@ -603,11 +692,14 @@ public class CMain extends MyActivity {
         int curDay = mDisplayDay.get(Calendar.DAY_OF_MONTH);
         ContentValues cv = mDailyBread.getContentValues(curYear, curMonth, curDay);
         final String verse = cv.getAsString(MyDailyBread.wGoldText).replace("#", " ") +
-                "[" + cv.getAsString(MyDailyBread.wGoldVerse) + "；和合本修訂版]";
+                "[" + cv.getAsString(MyDailyBread.wGoldVerse) +
+                (is_2016DayShown()?";和合本]":"；和合本修訂版]");
         MyUtil.trackClick(context, "Share", "M");
         Intent intent = new Intent(android.content.Intent.ACTION_SEND);
         intent.setType("text/plain");
-        intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "全年好日曆經文分享");//getResources().getString(R.string.app_name)
+        intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "「" +
+                (IS_2016_VERSION ?context.getString(R.string.app_name_2016):context.getString(R.string.app_name)) +
+                "」經文分享");//getResources().getString(R.string.app_name)
         intent.putExtra(android.content.Intent.EXTRA_TEXT, verse);
         startActivity(Intent.createChooser(intent, getResources().getString(R.string.app_name)));
     }
@@ -839,7 +931,7 @@ public class CMain extends MyActivity {
             verse = Integer.valueOf(bcv.substring(secondDigitStartPos, digitEndPos));
         }
         Object[] eabcv;
-        if (CMain.IS_2016_OR_LATER) {
+        if (CMain.is_2016DayShown()) {
             eabcv = new Object[]{
                     "tc ",
                     bookAbbrev,
@@ -877,6 +969,7 @@ public class CMain extends MyActivity {
                         if (isWithinRange(newDate)) {
                             mDisplayDay.setTimeInMillis(newTime);
                         }
+                        onRefreshPage(mDisplayDay,false);
                     }
                 }
                 overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
@@ -901,11 +994,11 @@ public class CMain extends MyActivity {
 
     }
 
-    @Override
-    public void onStop() {
-        super.onStop();
-        cleanAnimation();
-    }
+//    @Override
+//    public void onStop() {
+//        super.onStop();
+//        cleanAnimation();
+//    }
 
     // For testing only since we want broadcast onReceive event app stopped
 //	static private MyBroadcast mBroadcast; 
@@ -917,8 +1010,8 @@ public class CMain extends MyActivity {
 //			registerReceiver(mBroadcast, new IntentFilter());
 //		}
         MyUtil.log(TAG, "onResume");
-        onRefreshPage(mViewIndex);
-        MyUtil.log(TAG, "onResumeAfterOnRefreshPage");
+//        onClickToday(this);
+//        MyUtil.log(TAG, "onResumeAfterOnRefreshPage");
         String defaultCountry = MyUtil.getPrefStr(MyUtil.PREF_COUNTRY, "");
         if (TextUtils.isEmpty(defaultCountry)) {
             handler = new Handler();
@@ -949,29 +1042,29 @@ public class CMain extends MyActivity {
             }, 1000);
         }
     }
+//
+//    @Override
+//    protected void onPause() {
+//        super.onPause();
+////		if (android.os.Build.VERSION.SDK_INT < 11) {
+////			if (mBroadcast!=null){
+////				unregisterReceiver(mBroadcast);
+////			}
+////		}
+//    }
 
-    @Override
-    protected void onPause() {
-        super.onPause();
-//		if (android.os.Build.VERSION.SDK_INT < 11) {
-//			if (mBroadcast!=null){
-//				unregisterReceiver(mBroadcast);
-//			}
-//		}
-    }
+//    private void cleanAnimation() {
+//        mViewAnimator.setInAnimation(null);
+//        mViewAnimator.setOutAnimation(null);
+//    }
 
-    private void cleanAnimation() {
-        mViewAnimator.setInAnimation(null);
-        mViewAnimator.setOutAnimation(null);
-    }
-
-    private int getID(int nbr, String extension) {
-        int resultVal = getResources().getIdentifier("xmlPage" + nbr + extension, "id", CMain.this.getPackageName());
-        if (resultVal == 0) {
-            MyUtil.logError(TAG, "Error on:" + "xmlPage" + nbr + extension);
-        }
-        return resultVal;
-    }
+//    private int getID(int nbr, String extension) {
+//        int resultVal = getResources().getIdentifier("xmlPage" + nbr + extension, "id", CMain.this.getPackageName());
+//        if (resultVal == 0) {
+//            MyUtil.logError(TAG, "Error on:" + "xmlPage" + nbr + extension);
+//        }
+//        return resultVal;
+//    }
 
     //	private void onRefresh(){
 //		//Toast.makeText(getApplicationContext(), "View:"+mViewIndex+" "+MyUtil.sdfYYYYMMDD.format(mDisplayDay.getTime()), Toast.LENGTH_SHORT).show();
@@ -983,715 +1076,76 @@ public class CMain extends MyActivity {
 //			mViewIndex=1;
 //		}
 //	}
-    private void gotoPrevDay() {
-        if (mDisplayDay.compareTo(mDailyBread.getValidFrDate()) <= 0) {
+    public void gotoPrevDay() {
+        if (mPager.isScrolling) return;
+        int result = MyDailyBread.calendarDaysBetween(mDailyBread.getValidFrDate(),mDisplayDay);
+        Log.i(TAG, "gotoPrevDay day="+mDisplayDay.get(Calendar.DAY_OF_MONTH)+" ("+result+")");
+        if (result <= 0) {
             Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
         } else {
             mDisplayDay.add(Calendar.DAY_OF_MONTH, -1);
-            mViewIndex = mViewIndex == 1 ? 2 : 1;
-            onRefreshPage(mViewIndex);
-            MyGestureListener.flingInFromRight(getApplicationContext(), mViewAnimator);
+//            mViewIndex = mViewIndex == 1 ? 2 : 1;
+//            onRefreshPage(mViewIndex);
+            onRefreshPage(mDisplayDay, true);
+//            MyGestureListener.flingInFromRight(getApplicationContext(), mViewAnimator);
         }
     }
 
-    private void gotoPriorMonth() {
+    public void gotoPriorMonth() {
+        if (mPager.isScrolling) return;
         Calendar newCalendar = Calendar.getInstance();
         newCalendar.setTimeInMillis(mDisplayDay.getTimeInMillis());
         newCalendar.add(Calendar.MONTH, -1);
-        if (newCalendar.compareTo(mDailyBread.getValidFrDate()) <= 0) {
+        int result = MyDailyBread.calendarDaysBetween(mDailyBread.getValidFrDate(),newCalendar);
+        if (result<= 0) {
             Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
         } else {
             mDisplayDay.setTimeInMillis(newCalendar.getTimeInMillis());
-            mViewIndex = mViewIndex == 1 ? 2 : 1;
-            onRefreshPage(mViewIndex);
-            MyGestureListener.flingInFromRight(getApplicationContext(), mViewAnimator);
+//            mViewIndex = mViewIndex == 1 ? 2 : 1;
+//            onRefreshPage(mViewIndex);
+            onRefreshPage(mDisplayDay, false);
+//            MyGestureListener.flingInFromRight(getApplicationContext(), mViewAnimator);
         }
     }
 
-    private void gotoNextDay() {
-        if (mDisplayDay.compareTo(mDailyBread.getValidToDate()) >= 0) {
+    public void gotoNextDay() {
+        if (mPager.isScrolling) return;
+        int result = MyDailyBread.calendarDaysBetween(mDisplayDay, mDailyBread.getValidToDate());
+        if (result <= 0) {
             Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
         } else {
             mDisplayDay.add(Calendar.DAY_OF_MONTH, +1);
-            mViewIndex = mViewIndex == 1 ? 2 : 1;
-            onRefreshPage(mViewIndex);
-            MyGestureListener.flingInFromLeft(getApplicationContext(), mViewAnimator);
+//            mViewIndex = mViewIndex == 1 ? 2 : 1;
+//            onRefreshPage(mViewIndex);
+            onRefreshPage(mDisplayDay, true);
+            //MyGestureListener.flingInFromLeft(getApplicationContext(), mViewAnimator);
         }
     }
 
-    private void gotoNextMonth() {
+    public  void gotoNextMonth() {
+        if (mPager.isScrolling) return;
         Calendar newCalendar = Calendar.getInstance();
         newCalendar.setTimeInMillis(mDisplayDay.getTimeInMillis());
         newCalendar.add(Calendar.MONTH, +1);
-        if (newCalendar.compareTo(mDailyBread.getValidToDate()) >= 0) {
+        int result = MyDailyBread.calendarDaysBetween(newCalendar, mDailyBread.getValidToDate());
+        if (result <= 0) {
             Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
         } else {
             mDisplayDay.setTimeInMillis(newCalendar.getTimeInMillis());
-            mViewIndex = mViewIndex == 1 ? 2 : 1;
-            onRefreshPage(mViewIndex);
-            MyGestureListener.flingInFromLeft(getApplicationContext(), mViewAnimator);
+//            mViewIndex = mViewIndex == 1 ? 2 : 1;
+//            onRefreshPage(mViewIndex);
+            onRefreshPage(mDisplayDay, false);
+//            MyGestureListener.flingInFromLeft(getApplicationContext(), mViewAnimator);
         }
     }
-
-//    private int getFontSizeUponSize(TextView textView, float portion, String theText, int maxLines, float textRatioOfTextView){
-//        String textLines[] = theText.split("#");
-//        // Middle Ratio 20:11:7 (Not yet rendering, cannot calculate other size)
-//        int statusBarHeight = 0;
-//        int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-//        if(resourceId>0){
-//            statusBarHeight = getResources().getDimensionPixelSize(resourceId);
-//        }
-//        int textUsableHeight = (int) ((MyUtil.heightPixels(CMain.this) - statusBarHeight) * portion * 0.8);
-//        //int maxLinesForGoldText = 3;
-//        if(textLines.length>maxLines){//Relocate characters automatically (But, should be smaller size to occupy)
-//            if (maxLines==3) {
-//                theText = theText.replace("#", "");
-//                final int charPerLines = (int) Math.ceil(theText.length() / maxLines);
-//                theText = theText.substring(0, charPerLines) + "#" +
-//                        theText.substring(charPerLines, charPerLines + charPerLines) + "#" +
-//                        theText.substring(charPerLines + charPerLines);
-//                textLines = theText.split("#");
-//            } else if (maxLines==4){
-//                    theText = theText.replace("#", "");
-//                    final int charPerLines = (int) Math.ceil(theText.length() / maxLines);
-//                    theText = theText.substring(0, charPerLines) + "#" +
-//                            theText.substring(charPerLines, charPerLines + charPerLines) + "#" +
-//                            theText.substring(charPerLines + charPerLines, charPerLines + charPerLines + charPerLines) + "#" +
-//                            theText.substring(charPerLines + charPerLines + charPerLines);
-//                    textLines = theText.split("#");
-//            }
-//        }
-//        int maxChars = 0;
-//        for(int i = 0;i<textLines.length;i++){
-//            maxChars = Math.max(maxChars, textLines[i].length());
-//        }
-//        //int newBigFontSize = getFontSizeByMaxCharacters(textView, maxChars);
-//        RelativeLayout.LayoutParams lpGold = (RelativeLayout.LayoutParams) textView.getLayoutParams();
-//        int usableWidth = (int) Math.floor((MyDailyBread.mAppWidth -
-//                dp2px(page1.getPaddingLeft()) - dp2px(page1.getPaddingRight()) -
-//                dp2px(lpGold.leftMargin) - dp2px(lpGold.rightMargin) -
-//                dp2px(textView.getPaddingLeft()) - dp2px(textView.getPaddingRight())));
-//        int maxFontSizeUponUsableWidth = (int) (usableWidth / maxChars);
-//        int usableHeight = (int) (textUsableHeight * textRatioOfTextView); //0.9 for smaller
-//        int maxFontSizeUponUsableHeight = (int) (usableHeight / maxLines);
-//        return Math.min(maxFontSizeUponUsableHeight, maxFontSizeUponUsableWidth);
-//    }
-    public int getDesiredWidth(TextView textView){
-        RelativeLayout.LayoutParams textViewParams = (RelativeLayout.LayoutParams) textView.getLayoutParams();
-        int usableWidth = (int) Math.floor((MyDailyBread.mAppWidth -
-                dp2px(page1.getPaddingLeft()) - dp2px(page1.getPaddingRight()) -
-                dp2px(textViewParams.leftMargin) - dp2px(textViewParams.rightMargin) -
-                dp2px(textView.getPaddingLeft()) - dp2px(textView.getPaddingRight())));
-        return usableWidth;
-    }
-//    public void correctWidth(TextView textView){
-//        int desiredWidth = getDesiredWidth(textView);
-//        Paint paint = new Paint();
-//        Rect bounds = new Rect();
-//
-//        paint.setTypeface(textView.getTypeface());
-//        float textSize = textView.getTextSize();
-//        paint.setTextSize(textSize);
-//        String text = textView.getText().toString();
-//        paint.getTextBounds(text, 0, text.length(), bounds);
-//        while (bounds.width() > desiredWidth){
-//            textSize--;
-//            paint.setTextSize(textSize);
-//            paint.getTextBounds(text, 0, text.length(), bounds);
-//        }
-//        textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, textSize);
-//    }
-	private void onRefreshPage(int nbr){
-		if (mDisplayDay.compareTo(mDailyBread.getValidToDate())>0){
-			mDisplayDay.setTimeInMillis(mDailyBread.getValidToDate().getTimeInMillis());
-		} else if (mDisplayDay.compareTo(mDailyBread.getValidFrDate())<0 ){
-			mDisplayDay.setTimeInMillis(mDailyBread.getValidFrDate().getTimeInMillis());	
-		}
-		int curYear = mDisplayDay.get(Calendar.YEAR);
-		int curMonth = mDisplayDay.get(Calendar.MONTH);
-		int curDay = mDisplayDay.get(Calendar.DAY_OF_MONTH);
-
-		final MyCalendarLunar lunar = new MyCalendarLunar(mDisplayDay);
-		final Calendar monthEndDate = (Calendar) mDisplayDay.clone();
-
-		String holiday = MyHoliday.getHolidayRemark(mDisplayDay.getTime());
-		final boolean isHoliday = ((!holiday.equals("")) & !holiday.startsWith("#")) || mDisplayDay.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY;
-		if (holiday.startsWith("#")){
-			holiday=holiday.substring(1);
-		}
-		int textColor = getResources().getColor(isHoliday?R.color.holiday:R.color.weekday);
-		
-		int nbrOfDaysTo30 = 30-lunar.getDay(); // Chinese Day
-		monthEndDate.add(Calendar.DAY_OF_MONTH, nbrOfDaysTo30);
-		final MyCalendarLunar monthEndLunar = new MyCalendarLunar(monthEndDate);
-		boolean isBigMonth = (monthEndLunar.getDay()==30)?true:false;
-
-		TextView screenTypeView = (TextView) findViewById(getID(nbr, "ScreenType"));
-		mScreenType="";
-		if (screenTypeView!=null){
-			mScreenType= screenTypeView.getTag().toString();
-			if (!DEBUG) screenTypeView.setText("");
-		}		
-		
-//		MyUtil.log(TAG, "Set On Touch "+MyUtil.sdfYYYYMMDDHHMM.format(Calendar.getInstance().getTime()));
-//		final View view = (View) findViewById(R.id.xmlMainContents);
-//		view.setOnTouchListener(mViewOnTouch);
-		// Assign Touch Listener
-		page1 = (LinearLayout) findViewById(R.id.xmlPage1);
-		page2 = (LinearLayout) findViewById(R.id.xmlPage2);
-		if (nbr==1) {
-			page1.setOnTouchListener(mViewOnTouch);
-			page2.setOnTouchListener(null);
-		} else {
-			page1.setOnTouchListener(null);
-			page2.setOnTouchListener(mViewOnTouch);
-		}
-		
-		AxImageView clickLeftView = (AxImageView) findViewById(R.id.xmlMainClickLeft);
-		clickLeftView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                delayedHide(AUTO_HIDE_DELAY_MILLIS);
-                gotoPrevDay();
-            }
-        });
-		AxImageView clickRightView = (AxImageView) findViewById(R.id.xmlMainClickRight);
-		clickRightView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                delayedHide(AUTO_HIDE_DELAY_MILLIS);
-                gotoNextDay();
-            }
-        });
-
-		final int maxCharacters=7;
-		final TextView pageHoliday1 = (TextView) findViewById(getID(nbr, "Holiday1"));
-		final TextView pageHoliday2 = (TextView) findViewById(getID(nbr, "Holiday2"));
-		if (holiday.equals("")){
-			pageHoliday1.setVisibility(View.GONE);
-			pageHoliday2.setVisibility(View.GONE);
-		} else {
-			pageHoliday1.setVisibility(View.VISIBLE);
-			// Split Empty String will cause 1st one be empty; So we remove 1st and add back		
-			String str [] = holiday.substring(1).split(""); 
-			str[0] = holiday.substring(0,1);
-			//ok now.
-			int remarkLength = Math.min(maxCharacters*2,str.length);
-			int prefixlength = Math.min(maxCharacters, str.length);
-			String holidayRemark="";
-			for (int i=0;i<prefixlength;i++){
-				holidayRemark+=str[i]+(i==(prefixlength-1)?"":"\n");
-			}
-			pageHoliday1.setLines(prefixlength);
-			pageHoliday1.setText(holidayRemark);
-			pageHoliday1.setTextColor(textColor);		
-			if (remarkLength>maxCharacters){
-				pageHoliday2.setVisibility(View.VISIBLE);
-				if (remarkLength==maxCharacters+1){// Just one more character; Move last one to next line
-					holidayRemark="";
-					for (int i=0;i<prefixlength-1;i++){
-						holidayRemark+=str[i]+(i==(prefixlength-2)?"":"\n");
-					}
-					pageHoliday1.setLines(prefixlength-1);
-					pageHoliday1.setText(holidayRemark);
-					holidayRemark="";
-					for (int i=maxCharacters-1;i<remarkLength;i++){
-						holidayRemark+=str[i]+(i==(remarkLength-1)?"":"\n");
-					}
-					pageHoliday2.setLines(2);
-				} else {			
-					holidayRemark="";
-					for (int i=maxCharacters;i<remarkLength;i++){
-						holidayRemark+=str[i]+(i==(remarkLength-1)?"":"\n");
-					}
-					pageHoliday2.setLines(remarkLength-prefixlength);
-				}
-				pageHoliday2.setText(holidayRemark);
-				pageHoliday2.setTextColor(textColor);				
-			} else {
-				pageHoliday2.setVisibility(View.GONE);
-			}
-		}
-		
-		
-		final TextView pageEngYear = (TextView) findViewById(getID(nbr, "EngYear"));
-		pageEngYear.setText(String.valueOf(curYear));
-		pageEngYear.setTextColor(textColor);
-
-/*********************************************
-    DAY OF MONTH
- *********************************************/
-        final TextView pageChiLunarMonth = (TextView) findViewById(getID(nbr, "ChiLunarMonth"));
-        pageChiLunarMonth.setText(lunar.toChineseMM()+(isBigMonth?"大":"小"));
-        pageChiLunarMonth.setTextColor(textColor);
-
-        final TextView pageChiMonthName = (TextView) findViewById(getID(nbr, "ChiMonthName"));
-        pageChiMonthName.setText(CHI_MONTHS[mDisplayDay.get(Calendar.MONTH)]+"月");
-        pageChiMonthName.setTextColor(textColor);
-
-        final TextView pageEngMonthName = (TextView) findViewById(getID(nbr, "EngMonthName"));
-        pageEngMonthName.setText(MyUtil.sdfEngMMMM.format(mDisplayDay.getTime()));
-        pageEngMonthName.setTextColor(textColor);
-
-        final TextView pageDayView = (TextView) findViewById(getID(nbr, "Day"));
-        pageDayView.setText(String.valueOf(curDay));
-        pageDayView.setTextColor(textColor);
-
-        if (IS_2016_OR_LATER) {// Assume top (EngMonthName) + Bottom (WeekDay) is 3 times of EngMonthName
-            LinearLayout.LayoutParams monthParams=(LinearLayout.LayoutParams) pageChiMonthName.getLayoutParams();
-            float heightOfTopLine = Math.max(pageEngMonthName.getTextSize(),pageChiMonthName.getTextSize()+monthParams.topMargin+monthParams.bottomMargin);
-            float heightOfWeekDayLine = (pageChiLunarMonth.getTextSize()*2)+heightOfTopLine;
-            float daySpaceInPixel = (getAppHeight() * 20 / 38);
-            daySpaceInPixel = daySpaceInPixel - (heightOfWeekDayLine * 1.15f);
-            float dayRatioOfScreen = daySpaceInPixel / MyDailyBread.mAppHeight;
-            int dayFontSize = autoSetTextViewFontSize(null,pageDayView, dayRatioOfScreen, 1, 1, 0.85f, 2);
-            pageDayView.setTextSize(TypedValue.COMPLEX_UNIT_PX, dayFontSize);
+    private void onRefreshPage(Calendar calendar, boolean smooth) {
+        int position = Math.abs(MyDailyBread.calendarDaysBetween(calendar, mDailyBread.getValidFrDate()));
+        if (mPager.getCurrentItem()!=position) {
+            mPager.setCurrentItem(position, smooth);
         }
-
-		final TextView pageWeekDay = (TextView) findViewById(getID(nbr, "WeekDay"));
-//		String weekDayStr = MyUtil.sdfChiEEEE.format(mDisplayDay.getTime());
-//		if (weekDayStr.length()<=2) {
-//			weekDayStr = "";
-//		} else {
-//			weekDayStr = weekDayStr + " "; 
-//		}
-//		pageWeekDay.setText(weekDayStr+
-//							MyUtil.sdfEEE.format(mDisplayDay.getTime()).toUpperCase());//sdfEngEEEE
-		int theDay = mDisplayDay.get(Calendar.DAY_OF_WEEK);
-		switch (theDay){
-		case Calendar.SUNDAY: pageWeekDay.setText("星期日 SUN"); break;
-		case Calendar.MONDAY: pageWeekDay.setText("星期一 MON"); break;
-		case Calendar.TUESDAY: pageWeekDay.setText("星期二 TUE"); break;
-		case Calendar.WEDNESDAY: pageWeekDay.setText("星期三 WED"); break;
-		case Calendar.THURSDAY: pageWeekDay.setText("星期四 THU"); break;
-		case Calendar.FRIDAY: pageWeekDay.setText("星期五 FRI"); break;
-		case Calendar.SATURDAY: pageWeekDay.setText("星期六 SAT"); break;		
-		}		
-
-//		pageWeekDay.setBackgroundResource(isHoliday?R.drawable.round_corner_holiday:R.drawable.round_corner_weekday);
-//		BitmapDrawable result = MyUtil.scaleDrawable(getResources().getDrawable(R.drawable.green_weekday_2015), pageWeekDay.getWidth());
-//		pageWeekDay.setBackgroundDrawable(result);
-		final ImageView pageWeekImage = (ImageView) findViewById(getID(nbr, "WeekImage"));
-        if (IS_2016_OR_LATER) {
-            pageWeekImage.setImageResource(isHoliday ? R.drawable.red_weekday_2016 : R.drawable.green_weekday_2016);
-            //pageWeekDay.setTextColor(textColor);
-        } else {
-            pageWeekImage.setImageResource(isHoliday ? R.drawable.red_weekday_2015 : R.drawable.green_weekday_2015);
-        }
-        pageWeekDay.setTextColor(getResources().getColor(R.color.white));
-
-		final TextView pageChiLunarDay = (TextView) findViewById(getID(nbr, "ChiLunarDay"));
-		pageChiLunarDay.setText(lunar.toChineseDD()+"日");
-		pageChiLunarDay.setTextColor(textColor);
-		
-		final TextView pageChiLunarYear = (TextView) findViewById(getID(nbr, "ChiLunarYear"));
-		pageChiLunarYear.setText(lunar.toChineseYY()+"年");
-		pageChiLunarYear.setTextColor(textColor);
-		
-		final String solarTerm=MyCalendarLunar.solar.getSolarTerm(mDisplayDay);
-		
-		final TextView pageChiLeftYear = (TextView) findViewById(getID(nbr, "ChiLeftYear"));
-		pageChiLeftYear.setText(lunar.toChineseYY()+"年");
-		pageChiLeftYear.setTextColor(textColor);
-		
-		final TextView pageChiLeftWeather = (TextView) findViewById(getID(nbr, "ChiLeftWeather"));
-		pageChiLeftWeather.setText(solarTerm);
-		pageChiLeftWeather.setTextColor(textColor);
-		
-		if (solarTerm.equals("")){
-			pageChiLeftWeather.setVisibility(View.GONE);
-			pageChiLeftYear.setVisibility(View.GONE);
-			pageChiLunarYear.setVisibility(View.VISIBLE);
-		} else {
-			pageChiLeftWeather.setVisibility(View.VISIBLE);
-			pageChiLeftYear.setVisibility(View.VISIBLE);
-			pageChiLunarYear.setVisibility(View.GONE);			
-		}
-        final ImageView pageImageFrameUpper = (ImageView) findViewById(getID(nbr, "ImageFrameUpper"));
-        final ImageView pageImageFrameLower = (ImageView) findViewById(getID(nbr, "ImageFrameLower"));
-        final ImageView pageImageFrame = (ImageView) findViewById(getID(nbr, "ImageFrame"));
-		if (IS_2016_OR_LATER) {
-//            pageImageFrameUpper.setImageDrawable(getResources().getDrawable(isHoliday ? R.drawable.red_frame_2016_upper : R.drawable.green_frame_2016_upper));
-//            pageImageFrameLower.setImageDrawable(getResources().getDrawable(isHoliday ? R.drawable.red_frame_2016_lower : R.drawable.green_frame_2016_lower));
-//            pageImageFrameUpper.setVisibility(View.VISIBLE);
-//            pageImageFrameLower.setVisibility(View.VISIBLE);
-//            pageImageFrame.setVisibility(View.GONE);
-            //if (AxTools.getScreenWidth()>=650){
-                pageImageFrame.setImageDrawable(getResources().getDrawable(isHoliday?R.drawable.red_frame_2016:R.drawable.green_frame_2016));
-            //} else {
-            //    pageImageFrame.setImageDrawable(getResources().getDrawable(isHoliday?R.drawable.red_frame_2016:R.drawable.green_frame_2016_26));
-            //}
-            pageImageFrameUpper.setVisibility(View.GONE);
-            pageImageFrameLower.setVisibility(View.GONE);
-            pageImageFrame.setVisibility(View.VISIBLE);
-        } else {
-            pageImageFrame.setImageDrawable(getResources().getDrawable(isHoliday?R.drawable.red_frame_2015:R.drawable.green_frame_2015));
-            pageImageFrameUpper.setVisibility(View.GONE);
-            pageImageFrameLower.setVisibility(View.GONE);
-            pageImageFrame.setVisibility(View.VISIBLE);
-        }
-
-        final ImageView pageImageIcon = (ImageView) findViewById(getID(nbr, "ImageIcon"));
-        if (CMain.IS_2016_OR_LATER) {
-            pageImageIcon.setImageDrawable(getResources().getDrawable(isHoliday ? R.drawable.red_icon_2016 : R.drawable.green_icon_2016));
-        } else {
-            pageImageIcon.setScaleType(ImageView.ScaleType.FIT_XY);
-            if (curYear >= 2016) {
-                pageImageIcon.setImageDrawable(null);
-            } else {
-                pageImageIcon.setImageDrawable(getResources().getDrawable(isHoliday ? R.drawable.red_icon_2015 : R.drawable.green_icon_2015));
-            }
-        }
-
-		// get ContentValues from dailyBread file
-		ContentValues cv = mDailyBread.getContentValues(curYear, curMonth, curDay);
-
-/****************************************************************************************
- *  GOLD TEXT 金句
- ************************************************************************************/
-		
-		final TextView pageGoldText = (TextView) findViewById(getID(nbr, "GoldText"));
-        final TextView pageGoldVerse = (TextView) findViewById(getID(nbr, "GoldVerse"));
-
-        Calendar calendar = Calendar.getInstance();
-        if (IS_2016_OR_LATER) {
-            if (calendar.get(Calendar.YEAR) == curYear &&
-                    calendar.get(Calendar.MONTH) == curMonth &&
-                    calendar.get(Calendar.DAY_OF_MONTH) == curDay) {
-                YoYo.with(Techniques.Bounce).duration(1000).playOn(pageGoldText);
-            }
-        }
-
-        String goldText = cv.getAsString(MyDailyBread.wGoldText);
-        final String goldLines [] = goldText.split("#");
-        int charPerLines=0;
-        for (int i=0;i<goldLines.length;i++){
-            charPerLines=Math.max(charPerLines, goldLines[i].length());
-        }
-        pageGoldText.setTextColor(textColor);
-		int goldFontSize;
-        int goldTextFontSize=0;
-		if (MyDailyBread.mCurrentYear>=2015){
-            if (IS_2016_OR_LATER){
-//                goldFontSize = getFontSizeByMaxCharacters(pageGoldText, 22);//Gold Text not more than 20; 26 should be small enough
-//                goldTextFontSize=getFontSizeUponSize(pageGoldText, (float) 11 / 38, theText, 3, (float) 0.5);
-//                pageGoldText.setTextSize(TypedValue.COMPLEX_UNIT_PX, goldTextFontSize);
-            } else {
-                // 2015.09.16 To protect small device overflow, we don't allow 4 lines
-                if (charPerLines >= 22 && goldLines.length == 3) {//Relocate characters automatically (But, should be smaller size to occupy)
-                    goldText = goldText.replace("#", "");
-                    charPerLines = (int) Math.ceil(goldText.length() / 4);
-                    goldText = goldText.substring(0, charPerLines) + "#" +
-                            goldText.substring(charPerLines, charPerLines + charPerLines) + "#" +
-                            goldText.substring(charPerLines + charPerLines, charPerLines + charPerLines + charPerLines) + "#" +
-                            goldText.substring(charPerLines + charPerLines + charPerLines);
-                    if (DEBUG) {
-                        Log.e(TAG, "OldText=" + cv.getAsString(MyDailyBread.wGoldText));
-                        Log.e(TAG, "NewText=" + goldText);
-                    }
-                    if (mScreenType.equalsIgnoreCase(SMALL_LAYOUT)) {
-                        goldFontSize = getFontSizeByText(pageGoldText, goldText) - dp2px(2);
-                    } else {
-                        goldFontSize = getFontSizeByText(pageGoldText, goldText);
-                    }
-                } else {
-                    goldFontSize = getFontSizeByText(pageGoldText, goldText);
-                }
-                pageGoldText.setTextSize(TypedValue.COMPLEX_UNIT_PX,goldFontSize);
-            }
-		} else {
-			goldFontSize = getGoldFontSize(pageGoldText,cv.getAsString(MyDailyBread.wGoldSize));
-			if (mScreenType.equalsIgnoreCase(SMALL_LAYOUT)){
-				pageGoldText.setTextSize(TypedValue.COMPLEX_UNIT_PX, goldFontSize-dp2px(3));
-			} else {
-				pageGoldText.setTextSize(TypedValue.COMPLEX_UNIT_PX,goldFontSize);
-			}
-		}
-        pageGoldText.setText(goldText.replace("#", "\n"));
-        if (IS_2016_OR_LATER){
-            //(3 lines for text; 1 for verse;1 for top & bottom i.e. 3/5 = around 0.6)
-            if (mScreenType.equalsIgnoreCase(SMALL_LAYOUT)){//Higher ratio to small screen
-                goldTextFontSize = autoSetTextViewFontSize(goldLines,pageGoldText,(float) 11 / 38, 3, goldLines.length, 0.65f,charPerLines);
-            } else {
-                goldTextFontSize = autoSetTextViewFontSize(goldLines,pageGoldText, (float) 11 / 38, 3, goldLines.length, 0.6f, charPerLines);
-            }
-            pageGoldText.setTextSize(TypedValue.COMPLEX_UNIT_PX, goldTextFontSize);
-            pageGoldText.invalidate();
-        }
-
-        String goldAlign = cv.getAsString(MyDailyBread.wGoldAlign);
-        if (curYear<=2012 || curYear>=2016){
-            goldAlign="C";
-        }
-        if (goldAlign.equalsIgnoreCase("L")){
-            pageGoldText.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-        } else if (goldAlign.equalsIgnoreCase("C")){
-            pageGoldText.setGravity(Gravity.CENTER | Gravity.CENTER_VERTICAL);
-        } else {
-            pageGoldText.setGravity(Gravity.CENTER | Gravity.CENTER_VERTICAL);
-        }
-
-/****************************************************************************************
- *  GOLD VERSE TEXT 金句經文出處
- ************************************************************************************/
-
-		pageGoldVerse.setText(cv.getAsString(MyDailyBread.wGoldVerse)+(curYear>=2016?"":"；和合本修訂版"));
-		pageGoldVerse.setTextColor(textColor);
-		// From HKBS, size change to less than Gold
-        if (IS_2016_OR_LATER) {
-            int goldVerseFontSize=getFontSizeByMaxCharacters(pageGoldText, 22);
-            pageGoldVerse.setTextSize(TypedValue.COMPLEX_UNIT_PX, Math.min(goldVerseFontSize,(int)(goldTextFontSize*0.8)));
-        } else {
-            if (MyDailyBread.mCurrentYear >= 2015 & charPerLines > 20) {
-                // If size is too small, just a little bit different
-                pageGoldVerse.setTextSize(TypedValue.COMPLEX_UNIT_PX, goldFontSize - dp2px(1));
-            } else {
-                if (mScreenType.equalsIgnoreCase(SMALL_LAYOUT)) {
-                    pageGoldVerse.setTextSize(TypedValue.COMPLEX_UNIT_PX, goldFontSize - dp2px(6));
-                } else if (mScreenType.equalsIgnoreCase(SW600_LAYOUT)) {
-                    int suggestSize = (int) pageChiLunarMonth.getTextSize();
-                    suggestSize = Math.min(suggestSize, (int) (goldFontSize * 0.8)); // Use dp2px too less
-                    pageGoldVerse.setTextSize(TypedValue.COMPLEX_UNIT_PX, suggestSize);
-                } else {
-                    pageGoldVerse.setTextSize(TypedValue.COMPLEX_UNIT_PX, goldFontSize - dp2px(6));
-                }
-            }
-        }
-        if (curYear>=2010){
-            pageGoldVerse.setGravity(Gravity.CENTER_HORIZONTAL);
-        }
-        if (curYear>=2015){
-            if (mScreenType.equalsIgnoreCase(STD_LAYOUT)) {
-                RelativeLayout.LayoutParams goldVerseLP = (RelativeLayout.LayoutParams) pageGoldVerse.getLayoutParams();
-                if (IS_2016_OR_LATER) {
-                    goldVerseLP.setMargins(goldVerseLP.leftMargin, goldVerseLP.topMargin, goldVerseLP.rightMargin, dp2px(16));
-                } else {
-                    goldVerseLP.setMargins(goldVerseLP.leftMargin, goldVerseLP.topMargin, goldVerseLP.rightMargin, dp2px(22));
-                }
-                pageGoldVerse.setLayoutParams(goldVerseLP);
-            }
-        }
-        mGoldVerse = cv.getAsString(MyDailyBread.wGoldVerse);
-
-/****************************************************************************************
- *  WISDOM (心靈雞湯）: pageBigText (1st line smaller); (SIZE IS SMALLER THAN GOLD TEXT)
- ************************************************************************************/
-
-		final TextView pageWisdomText = (TextView) findViewById(getID(nbr, "BigText"));
-        pageWisdomText.setTextColor(textColor);
-
-		// Any Heading ":"
-		String colonText = ":"; // English Style colon
-		String wisdomText = cv.getAsString(MyDailyBread.wBigText);
-		int colonPos=0;
-		int englishColonPos = wisdomText.indexOf(":");
-		int chineseColonPos = wisdomText.indexOf("：");
-		if (englishColonPos<0){
-			if (chineseColonPos>=0){
-				colonPos = chineseColonPos;
-			}  else {
-				colonPos = -1;
-			}
-		} else {
-			if (chineseColonPos>=0){
-				colonPos = Math.min(englishColonPos, chineseColonPos);
-			} else {
-				colonPos = englishColonPos;
-			}			
-		}
-        int wisdomTextSize=0;
-        String wisdomLines [] = wisdomText.split("#");
-        int maxWisdomChars=0;
-        for (int i=0;i<wisdomLines.length;i++){
-            maxWisdomChars=Math.max(maxWisdomChars,wisdomLines[0].length());
-        }
-        if (IS_2016_OR_LATER){// One Line change 2 or 3 lines upon length
-            if (wisdomLines.length==1){
-                if (wisdomLines [0].length()>=15) { // Change only for >15 characters
-                    if (wisdomLines[0].length() <= 20) {
-                        wisdomText = wisdomText.substring(0, 10) + "#" + wisdomText.substring(10);
-                    } else if (wisdomLines[0].length() < 30) {
-                        wisdomText = wisdomText.substring(0, 10) + "#" + wisdomText.substring(10,20)+"#"+wisdomText.substring(20);
-                    }
-                }
-            }
-            //wisdomTextSize=getFontSizeUponSize(pageWisdomText, (float) 7 / 38, wisdomText, 4,(float) 0.8);
-        }
-        if (colonPos>=0){
-			wisdomText= "<small>"+wisdomText.substring(0, colonPos+1)+"</small>"+wisdomText.substring(colonPos+1).replace("#", "<br>");
-			wisdomText=wisdomText+"<br>";
-			pageWisdomText.setText(Html.fromHtml(wisdomText));
-		} else {
-			pageWisdomText.setText(wisdomText.replace("#", "\n"));
-		}
-
-        if (IS_2016_OR_LATER) {
-            int wisdomTextFontSize;
-            if (mScreenType.equalsIgnoreCase(SMALL_LAYOUT)){// Provide more space ...
-                float textRatio;
-                if (TextUtils.isEmpty(cv.getAsString(MyDailyBread.wSmallText))){
-                    textRatio=0.95f;
-                } else {
-                    textRatio=0.8f;
-                }
-                wisdomTextFontSize = autoSetTextViewFontSize(wisdomLines,pageWisdomText,(float) 7 / 38, 4, wisdomLines.length, textRatio, maxWisdomChars);
-                pageWisdomText.setTextSize(TypedValue.COMPLEX_UNIT_PX, Math.min(wisdomTextFontSize,(int)(goldTextFontSize*0.95f)));
-            } else {
-                wisdomTextFontSize = autoSetTextViewFontSize(wisdomLines,pageWisdomText,(float) 7 / 38, 4, wisdomLines.length, 0.8f, maxWisdomChars);
-                pageWisdomText.setTextSize(TypedValue.COMPLEX_UNIT_PX, Math.min(wisdomTextFontSize,(int)(goldTextFontSize*0.8f)));
-            }
-        } else {
-            if (MyDailyBread.mCurrentYear >= 2015 & charPerLines > 20) {
-                // If size is too small, just a little bit different
-                if (mScreenType.equalsIgnoreCase(SW600_LAYOUT) || mScreenType.equalsIgnoreCase(SMALL_LAYOUT)) {
-                    wisdomTextSize = (int) pageChiLunarMonth.getTextSize();
-                } else {
-                    wisdomTextSize = (int) (goldFontSize - dp2px(2));
-                }
-            } else {
-                if (mScreenType.equalsIgnoreCase(SW600_LAYOUT) || mScreenType.equalsIgnoreCase(SMALL_LAYOUT)) {
-                    wisdomTextSize = (int) pageChiLunarMonth.getTextSize();
-                } else {
-                    wisdomTextSize = (int) (goldFontSize - dp2px(4));
-                }
-            }
-            pageWisdomText.setTextSize(TypedValue.COMPLEX_UNIT_PX, wisdomTextSize);
-        }
-        RelativeLayout.LayoutParams bigTextLP = (RelativeLayout.LayoutParams) pageWisdomText.getLayoutParams();
-        if (curYear>=2016) {
-            pageWisdomText.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
-            int margin=Math.min(bigTextLP.leftMargin,bigTextLP.rightMargin);
-            bigTextLP.setMargins(margin,bigTextLP.topMargin,margin,bigTextLP.bottomMargin);
-            pageWisdomText.setLayoutParams(bigTextLP);
-        } else {
-            pageWisdomText.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-        }
-        if (DEBUG) {
-            Log.w(TAG, "Device="+getString(R.string.deviceType)+" screenType=" + mScreenType + " Hint TextSize=" + wisdomTextSize + " " + pageWisdomText.getHeight()+" "+curYear+"-"+(curMonth+1)+"-"+curDay);
-        }
-/***********************************************************************************
- * 最後一行字 : pageHintText (SIZE IS STANDARD)
- ************************************************************************************/
-        final TextView pageHintText = (TextView) findViewById(getID(nbr, "BigHint"));
-        pageHintText.setText(cv.getAsString(MyDailyBread.wSmallText));
-        pageHintText.setTextColor(textColor);
-		int hintSize;// = getBigFontSize(pageWisdomText,"S");
-        float referenceSize=0;
-        if (IS_2016_OR_LATER) {
-            referenceSize = pageGoldVerse.getTextSize();
-        } else {
-            referenceSize = pageWisdomText.getTextSize();
-        }
-        if (mScreenType.equalsIgnoreCase(SMALL_LAYOUT)) {
-            hintSize = (int) (referenceSize - dp2px(2));
-        } else if (mScreenType.equalsIgnoreCase(STD_LAYOUT)) {
-            hintSize = (int) (referenceSize - dp2px(3));
-        } else {
-            hintSize = (int) (referenceSize - dp2px(4));
-        }
-		pageHintText.setTextSize(TypedValue.COMPLEX_UNIT_PX, hintSize);//DC: 2013.12.12
-	}
-	private int getFontSizeByText(TextView textView, String str){
-		String textLines [] = str.split("#");
-		int maxChars=0;
-		for (int i=0;i<textLines.length;i++){
-			maxChars = Math.max(maxChars, textLines[i].length());
-		}
-//            Rect bounds = new Rect();
-//            String text = new String(new char[maxChars]).replace("\0", "M");
-//            Paint paint = textView.getPaint();
-//            paint.getTextBounds(text, 0, text.length(), bounds);
-//            int textHeight = bounds.bottom + bounds.height();
-
-        // Control characters not too big; Value bigger Letter Smaller
-        int fontSize;
-            if (mScreenType.equalsIgnoreCase(SMALL_LAYOUT)) {
-                maxChars = maxChars < 16 ? 16 : maxChars;
-            } else if (mScreenType.equalsIgnoreCase(SW600_LAYOUT)) {
-                maxChars = maxChars < 17 ? 17 : maxChars;// 17 change to 19 since 小米Note cannot display
-            } else {
-                maxChars = maxChars < 18 ? 18 : maxChars;
-            }
-            fontSize = getFontSizeByMaxCharacters(textView, maxChars);
-		textView.setTextSize(TypedValue.COMPLEX_UNIT_PX, fontSize);
-		return fontSize; 
-	}
-	private int getFontSizeByMaxCharacters(TextView textView, int maxCharacters){
-		RelativeLayout.LayoutParams lpGold = (RelativeLayout.LayoutParams) textView.getLayoutParams();
-		int fontSize = (int) Math.floor((MyDailyBread.mAppWidth - 
-					 dp2px(page1.getPaddingLeft()) - dp2px(page1.getPaddingRight()) - 
-			       	 dp2px(lpGold.leftMargin) - dp2px(lpGold.rightMargin) - 
-			       	 dp2px(textView.getPaddingLeft()) - dp2px(textView.getPaddingRight())) 
-			       	 /
-			       	maxCharacters);
-		// Only Note has problem
-		if (android.os.Build.MODEL.equalsIgnoreCase("MID") && MyUtil.heightPixels(CMain.this)==1232 && MyUtil.widthPixels(CMain.this)==800){
-			fontSize = (int) Math.floor(fontSize * 0.9); 
-		}
-		if (DEBUG) MyUtil.log(TAG,    		
-    			"Chars:"+maxCharacters+
-    			" WIDTH:"+ MyDailyBread.mAppWidth+
-    			","+dp2px(lpGold.leftMargin)+
-    			","+dp2px(lpGold.rightMargin)+    			
-    			","+fontSize);
-    	return fontSize;
-	}
-	private int getGoldFontSize(TextView textView, String size){
-			if (size.equalsIgnoreCase("L")){
-				if (MyDailyBread.mGoldSizeL==0){
-					MyDailyBread.mGoldSizeL = getFontSizeByMaxCharacters(textView,MyDailyBread.mMaxGold_L_characters);
-				}
-				return MyDailyBread.mGoldSizeL;
-		} else if (size.equalsIgnoreCase("M")){
-			if (MyDailyBread.mGoldSizeM==0){
-				MyDailyBread.mGoldSizeM = getFontSizeByMaxCharacters(textView,MyDailyBread.mMaxGold_M_characters);
-			}
-			return MyDailyBread.mGoldSizeM;		
-		} else {
-			if (MyDailyBread.mGoldSizeS==0){
-				MyDailyBread.mGoldSizeS = getFontSizeByMaxCharacters(textView,MyDailyBread.mMaxGold_S_characters);
-			}
-			return MyDailyBread.mGoldSizeS;
-		}	
-	}
-	private int getBigFontSize(TextView textView, String size){
-		if (MyDailyBread.mHintSizeL==0){
-			MyDailyBread.mHintSizeL = getFontSizeByMaxCharacters(textView,MyDailyBread.mMaxHint_L_characters);
-		}
-		if (MyDailyBread.mHintSizeS==0){
-			MyDailyBread.mHintSizeS = getFontSizeByMaxCharacters(textView,MyDailyBread.mMaxHint_S_characters);
-		}
-		if (size.equalsIgnoreCase("L")){			
-			return MyDailyBread.mHintSizeL;	
-		} else if (size.equalsIgnoreCase("S")){			
-			return MyDailyBread.mHintSizeS;
-		} else {
-			return (MyDailyBread.mHintSizeS+MyDailyBread.mHintSizeL) / 2;
-		}
-	}
-	public static int dp2px(float dpValue) {
-		//int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
-		return (int) (dpValue * _scaleDensity + 0.5f);
-	}
-    public static double diagnol(Context context){
-    	final WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-    	final DisplayMetrics dm = new DisplayMetrics();
-        wm.getDefaultDisplay().getMetrics(dm);
-    	final float heightInches = dm.heightPixels /dm.ydpi;
-        final float widthInches = dm.widthPixels /dm.xdpi;
-        return Math.sqrt((heightInches*heightInches)+(widthInches*widthInches));
-    }
-	public static float scaleDensity(Context context){
-    	if (_scaleDensity==0){
-	    	final WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-	    	final DisplayMetrics dm = new DisplayMetrics();
-	        wm.getDefaultDisplay().getMetrics(dm);
-	        _scaleDensity = dm.scaledDensity;
-    	} 
-    	return _scaleDensity;
     }
 	private void onClickViewBible(Context context){
-        if (CMain.IS_2016_OR_LATER){
+        if (CMain.is_2016DayShown()){
             MyUtil.trackClick(context, "Support", "M");
             Intent intent = new Intent(context, SupportActivity.class);
             startActivityForResult(intent, MyUtil.REQUEST_SUPPORT);
@@ -1735,7 +1189,7 @@ public class CMain extends MyActivity {
 		});				
 	}
 	private void onExitGoodCalendar(Context context){
-		Toast.makeText(context, "你將會離開「全年好日曆」並進入其他網站或程式 !", Toast.LENGTH_SHORT).show();
+		Toast.makeText(context, "你將會離開「"+(CMain.IS_2016_VERSION?context.getString(R.string.app_name_2016):context.getString(R.string.app_name))+"」並進入其他網站或程式 !", Toast.LENGTH_SHORT).show();
 	}
 	private void onViewHKBSBible(Context context){		
 		MyUtil.trackClick(context, "BibleHKBS", "M");
@@ -1821,18 +1275,19 @@ public class CMain extends MyActivity {
 		Calendar newDate = Calendar.getInstance();
 		if (isWithinRange(newDate)){
 			String newDateStr = MyUtil.sdfYYYYMMDD.format(newDate.getTime());
-			String displayStr = MyUtil.sdfYYYYMMDD.format(mDisplayDay.getTime());			
-			int slideDirection = newDateStr.compareTo(displayStr);
-			if (slideDirection!=0){
+//			String displayStr = MyUtil.sdfYYYYMMDD.format(mDisplayDay.getTime());
+//			int slideDirection = newDateStr.compareTo(displayStr);
+//			if (slideDirection!=0){
 				mDisplayDay.setTimeInMillis(newDate.getTimeInMillis());
-				mViewIndex=mViewIndex==1?2:1;
-				onRefreshPage(mViewIndex);
-				if (slideDirection>0){				
-					MyGestureListener.flingInFromLeft(getApplicationContext(), mViewAnimator);
-				} else if (slideDirection<0){
-					MyGestureListener.flingInFromRight(getApplicationContext(), mViewAnimator);
-				}
-			}
+//				mViewIndex=mViewIndex==1?2:1;
+//				onRefreshPage(mViewIndex);
+                onRefreshPage(mDisplayDay,false);
+//				if (slideDirection>0){
+//					MyGestureListener.flingInFromLeft(getApplicationContext(), mViewAnimator);
+//				} else if (slideDirection<0){
+//					MyGestureListener.flingInFromRight(getApplicationContext(), mViewAnimator);
+//				}
+//			}
 			Toast.makeText(context,newDateStr, Toast.LENGTH_SHORT).show();			 
 		}
 	}
@@ -1918,122 +1373,6 @@ public class CMain extends MyActivity {
 //        paint.setTextSize(10);
 //        paint.setTextSize(Math.max(Math.min((boxWidth/paint.measureText(text))*10, max), min));
 //    }
-    private Paint textPaint = new TextPaint();
-    private Rect textBounds = new Rect();
-    private int statusBarHeight=0;
-    private int getAppHeight(){
-        if (statusBarHeight==0) {
-            int resourceId = getResources().getIdentifier("status_bar_height", "dimen", "android");
-            if (resourceId > 0) {
-                statusBarHeight = getResources().getDimensionPixelSize(resourceId);
-            }
-        }
-        return MyUtil.heightPixels(CMain.this) - statusBarHeight;
-    }
-    /*
-    * @param fullScreenRatio  The ratio that textView occupy on screen
-    * @param textRatio  The ratio that text occupy on textView
-     */
-    public int autoSetTextViewFontSize(String lines[], TextView textView, float fullScreenRatio, int maxLines, int nbrOfLines, float textRatio, int maxChars){
-        int maxHeight = (int) (getAppHeight() * fullScreenRatio * textRatio);
-        // Either 3 lines (Gold) or 4 lines (Wisdom)
-        if (maxLines==3) {
-            switch (nbrOfLines) {
-                case 1:
-                    maxHeight = maxHeight * 2 / maxLines;
-                    break;
-                case 2:
-                    if (mScreenType.equalsIgnoreCase(SMALL_LAYOUT)) {//Give more space since screen is small
-                        maxHeight = (int) (maxHeight * maxLines / maxLines);
-                    } else {
-                        maxHeight = (int) (maxHeight * 2.5 / maxLines);
-                    }
-                    break;
-                default:
-                    //maxHeight = maxHeight * maxLines / maxLines;
-                    break;
-            }
-        } else if (maxLines==4){//Wisdom 4 Lines
-            switch (nbrOfLines) {
-                case 1:
-                    maxHeight = maxHeight * 2 / maxLines; // Display One Row with Two row space
-                    break;
-                case 2:
-                    maxHeight = maxHeight * 3  / maxLines; // Display Two Row with Three row space
-                    break;
-                case 3:
-                    if (mScreenType.equalsIgnoreCase(SMALL_LAYOUT)) {//Give more space since screen is small
-                        maxHeight = (int) (maxHeight * 4 / maxLines);
-                    } else {
-                        maxHeight = (int) (maxHeight * 3.5 / maxLines);
-                    }
-                    break;
-                default:
-                    //maxHeight = (int) (maxHeight * 4  / maxLines);
-                    break;
-            }
-        }
-        int maxWidth = getDesiredWidth(textView);
-        //int textSize = nbrOfLines==1?(int)(maxWidth/2):200;// inital text size
-        //int textSize = nbrOfLines==1?maxHeight:200;
-        //Log.e(TAG,"curDay="+mDisplayDay.get(Calendar.DAY_OF_MONTH));
-        int textSize = maxHeight;
-        String text = textView.getText().toString();
-        textPaint=textView.getPaint();
-        boolean isDigit=TextUtils.isDigitsOnly(text);
-        while (getHeightOfMultiLineText(text, textSize, maxWidth, nbrOfLines, isDigit) >= maxHeight) {
-            textSize--;
-        }
-        //Log.e(TAG,"After check by Height Font Size ="+textSize);
-        if (textSize*maxChars > maxWidth ) {
-            textSize = (int) (Math.floor(maxWidth / maxChars));
-//            if (lines==null){
-//                textPaint.setTextSize(textSize);
-//                textPaint.getTextBounds(text, 0, text.length(), textBounds);
-//                while (textBounds.width()>=maxWidth){
-//                    textSize--;
-//                    textPaint.setTextSize(textSize);
-//                    textPaint.getTextBounds(text, 0, text.length(), textBounds);
-//                }
-//            } else {
-//                for (int i=0;i<lines.length;i++){
-//                    text = lines[i]+"M";
-//                    textPaint.setTextSize(textSize);
-//                    textPaint.getTextBounds(text, 0, text.length(), textBounds);
-//                    while (textBounds.width()>=maxWidth){
-//                        textSize--;
-//                        textPaint.setTextSize(textSize);
-//                        textPaint.getTextBounds(text, 0, text.length(), textBounds);
-//                    }
-//                }
-            }
-        if (!(mScreenType.equalsIgnoreCase(SMALL_LAYOUT) && maxLines==4)) {//Screen so small, not reduct siz
-            textSize--;
-        }
-        //Log.e(TAG,"After check by Width Font Size ="+textSize);
-//        }
-        return textSize;
-    }
-    private int getHeightOfMultiLineText(String text, int textSize, int maxWidth, int nbrOfLines, boolean isDigit) {
-        textPaint.setTextSize(textSize);
-//        int index = 0;
-//        int lineCount = 0;
-//        while (index < text.length()) {
-//            index += textPaint.breakText(text, index, text.length(), true, maxWidth, null);
-//            lineCount++;
-//        }
-        int lineCount=nbrOfLines+1;
-//      int nbrOfCharText=Math.min(2, text.length());
-//      textPaint.getTextBounds(text.substring(0,nbrOfCharText), 0, nbrOfCharText, textBounds);
-        textPaint.getTextBounds("Yy", 0, 2, textBounds);
-        double lineSpacing;
-        if (isDigit) {
-            Paint.FontMetrics fontMetrics = textPaint.getFontMetrics();
-            return (int) (textBounds.height()-fontMetrics.descent);
-        } else {
-            // obtain space between lines
-            lineSpacing = Math.max(0, ((lineCount - 1) * textBounds.height() * 0.25));
-            return (int) Math.floor(lineSpacing + lineCount * textBounds.height());
-        }
-    }
+
+
 }

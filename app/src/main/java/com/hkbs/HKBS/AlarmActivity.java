@@ -25,7 +25,7 @@ public class AlarmActivity extends MyActivity {
 		requestWindowFeature(Window.FEATURE_NO_TITLE);
 		setContentView(R.layout.activity_alarm);
 //		try {
-        if (CMain.IS_2016_OR_LATER){
+        if (CMain.is_2016DayShown()){
             ((ImageView) findViewById(R.id.imageView1)).setImageResource(R.drawable.alarm_2016);
             ((ImageView) findViewById(R.id.imageView2)).setImageResource(R.drawable.bkg_2_2016);
         } else {

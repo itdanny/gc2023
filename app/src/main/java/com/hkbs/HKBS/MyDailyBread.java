@@ -88,7 +88,7 @@ public class MyDailyBread {
 	
 //	static public MyDailyBread getInstance(Activity act){
 //		final Context context = act.getBaseContext();
-	static public MyDailyBread getInstance(Context context){			
+	static public MyDailyBread getInstance(Context context){
 		// Step 1: Default Font Size (before init myDailyBread class) 
 //	    mGoldSizeL = context.getResources().getDimensionPixelOffset(R.dimen.text_gold_size_l);
 //	    mGoldSizeM = context.getResources().getDimensionPixelOffset(R.dimen.text_gold_size_m);
@@ -109,11 +109,46 @@ public class MyDailyBread {
 	private void setValidRange(){
 		if (IS_CURRENT_YEAR_ONLY){
 			validFrDate = Calendar.getInstance();
-			validFrDate.set(mCurrentYear-1,  0, 1, 23, 59, 59); // 1-1
+			//validFrDate.set(mCurrentYear-1,  0, 1, 23, 59, 59); // 1-1
+            validFrDate.set(mCurrentYear-1,  0, 1, 0, 0, 0); // 1-1
 			validToDate = Calendar.getInstance();
 			validToDate.set(mCurrentYear, 11, 31, 0, 0, 0); // 2016-12-21
 		}
 	}
+    public long getNbrOfValidDays(){
+        setValidRange();
+        return Math.abs(calendarDaysBetween(validFrDate,validToDate))+1;
+    }
+    public static int calendarDaysBetween(Calendar startCal, Calendar endCal) {
+        // Create copies so we don't update the original calendars.
+
+        Calendar start = Calendar.getInstance();
+        start.setTimeZone(startCal.getTimeZone());
+        start.setTimeInMillis(startCal.getTimeInMillis());
+
+        Calendar end = Calendar.getInstance();
+        end.setTimeZone(endCal.getTimeZone());
+        end.setTimeInMillis(endCal.getTimeInMillis());
+
+        // Set the copies to be at midnight, but keep the day information.
+
+        start.set(Calendar.HOUR_OF_DAY, 0);
+        start.set(Calendar.MINUTE, 0);
+        start.set(Calendar.SECOND, 0);
+        start.set(Calendar.MILLISECOND, 0);
+
+        end.set(Calendar.HOUR_OF_DAY, 0);
+        end.set(Calendar.MINUTE, 0);
+        end.set(Calendar.SECOND, 0);
+        end.set(Calendar.MILLISECOND, 0);
+
+        // At this point, each calendar is set to midnight on
+        // their respective days. Now use TimeUnit.MILLISECONDS to
+        // compute the number of full days between the two of them.
+//        return (int) TimeUnit.MILLISECONDS.toDays(
+//                Math.abs(end.getTimeInMillis() - start.getTimeInMillis()));
+        return (int) ((end.getTimeInMillis() - start.getTimeInMillis()) / (24*60*60*1000));
+    }
 	public Calendar getValidFrDate(){
 		setValidRange();
 		return validFrDate;
