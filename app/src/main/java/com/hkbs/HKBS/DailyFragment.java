@@ -63,8 +63,14 @@ public class DailyFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
         mRootView = (ViewGroup) inflater.inflate(R.layout.activity_page1, container, false);
-        updateScreen();
+        onRefreshScreen();
         return mRootView;
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+        onRefreshScreen();
     }
     private int mTextColor;
     private boolean mIsHoliday;
@@ -108,7 +114,8 @@ public class DailyFragment extends Fragment {
     private Rect textBounds = new Rect();
     private int statusBarHeight=0;
     
-    private void updateScreen(){
+    public void onRefreshScreen(){
+        if (mRootView==null) return;
         mScreenTypeView = (TextView) mRootView.findViewById(R.id.xmlPage1ScreenType);
         // Row 1
         mEngYear = (TextView) mRootView.findViewById(R.id.xmlPage1EngYear);
@@ -250,7 +257,7 @@ public class DailyFragment extends Fragment {
             case Calendar.SATURDAY: mWeekDay.setText("星期六 SAT"); break;
         }
 
-        if (CMain.is_2016DayShown()) {
+        if (mCurYear>=2016) {
             mWeekDayImage.setImageResource(mIsHoliday ? R.drawable.red_weekday_2016 : R.drawable.green_weekday_2016);            
         } else {
             mWeekDayImage.setImageResource(mIsHoliday ? R.drawable.red_weekday_2015 : R.drawable.green_weekday_2015);
@@ -284,29 +291,22 @@ public class DailyFragment extends Fragment {
 //        final ImageView pageImageFrameUpper = (ImageView) findViewById(getID(nbr, "ImageFrameUpper"));
 //        final ImageView pageImageFrameLower = (ImageView) findViewById(getID(nbr, "ImageFrameLower"));
         
-        if (CMain.is_2016DayShown()) {
-//            pageImageFrameUpper.setImageDrawable(getResources().getDrawable(isHoliday ? R.drawable.red_frame_2016_upper : R.drawable.green_frame_2016_upper));
-//            pageImageFrameLower.setImageDrawable(getResources().getDrawable(isHoliday ? R.drawable.red_frame_2016_lower : R.drawable.green_frame_2016_lower));
-//            pageImageFrameUpper.setVisibility(View.VISIBLE);
-//            pageImageFrameLower.setVisibility(View.VISIBLE);
-//            pageImageFrame.setVisibility(View.GONE);
-            //if (AxTools.getScreenWidth()>=650){
-            mGoldFrame.setImageDrawable(getResources().getDrawable(mIsHoliday?R.drawable.red_frame_2016:R.drawable.green_frame_2016));
-            //} else {
-            //    pageImageFrame.setImageDrawable(getResources().getDrawable(isHoliday?R.drawable.red_frame_2016:R.drawable.green_frame_2016_26));
-            //}
-//            pageImageFrameUpper.setVisibility(View.GONE);
-//            pageImageFrameLower.setVisibility(View.GONE);
-            mGoldFrame.setVisibility(View.VISIBLE);
-        } else {
-            mGoldFrame.setImageDrawable(getResources().getDrawable(mIsHoliday?R.drawable.red_frame_2015:R.drawable.green_frame_2015));
-//            pageImageFrameUpper.setVisibility(View.GONE);
-//            pageImageFrameLower.setVisibility(View.GONE);
-            mGoldFrame.setVisibility(View.VISIBLE);
-        }
+
 
     }
     private void setRow4GoldText(){
+        if (mCurYear>=2016) {
+            mGoldFrame.setImageDrawable(getResources().getDrawable(mIsHoliday?R.drawable.red_frame_2016:R.drawable.green_frame_2016));
+            mGoldFrame.setVisibility(View.VISIBLE);
+        } else {
+            mGoldFrame.setImageDrawable(getResources().getDrawable(mIsHoliday?R.drawable.red_frame_2015:R.drawable.green_frame_2015));
+            mGoldFrame.setVisibility(View.VISIBLE);
+        }
+
+        /***************************************************************
+            GOLD TEXT
+         ***************************************************************/
+
         Calendar calendar = Calendar.getInstance();
         if (CMain.IS_2016_VERSION) {
             if (calendar.get(Calendar.YEAR) == mCurYear &&
@@ -385,12 +385,11 @@ public class DailyFragment extends Fragment {
             mGoldTextView.setGravity(Gravity.CENTER | Gravity.CENTER_VERTICAL);
         }
 
-/****************************************************************************************
- *  GOLD VERSE TEXT 金句經文出處
- ************************************************************************************/
+        /****************************************************************************************
+         *  GOLD VERSE TEXT 金句經文出處
+         ************************************************************************************/
 
         mGoldVerseView.setText(mContentValues.getAsString(MyDailyBread.wGoldVerse) + (mCurYear >= 2016 ? "" : "；和合本修訂版"));
-        mCMain.mGoldVerse = mGoldVerseView.getText().toString();
         mGoldVerseView.setTextColor(mTextColor);
         // From HKBS, size change to less than Gold
         if (CMain.IS_2016_VERSION) {
@@ -429,7 +428,7 @@ public class DailyFragment extends Fragment {
         }
     }
     private void setRow5Wisdom(){
-        if (CMain.is_2016DayShown()) {
+        if (mCurYear>=2016) {
             mWisdomIcon.setImageDrawable(getResources().getDrawable(mIsHoliday ? R.drawable.red_icon_2016 : R.drawable.green_icon_2016));
         } else {
             mWisdomIcon.setScaleType(ImageView.ScaleType.FIT_XY);

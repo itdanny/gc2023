@@ -77,7 +77,6 @@ public class CMain extends MyActivity {
 //    static public int mCalendarYear = 2015;
 //    static private float _scaleDensity = 0;
     static private Calendar mDisplayDay;
-    static public String mGoldVerse;
     //	private View mContentsView;
     private View mControlsView;
     private View mLeftRightPanel;
@@ -608,12 +607,22 @@ public class CMain extends MyActivity {
         saveScreenShot();
         popSelectTextImage(context, shareListener);
     }
-
-    private void copyText(Context context) {
+    private ContentValues getContentValues(){
         int curYear = mDisplayDay.get(Calendar.YEAR);
         int curMonth = mDisplayDay.get(Calendar.MONTH);
         int curDay = mDisplayDay.get(Calendar.DAY_OF_MONTH);
         ContentValues cv = mDailyBread.getContentValues(curYear, curMonth, curDay);
+        return cv;
+    }
+    private String getContentValueGoldVerse(){
+        int curYear = mDisplayDay.get(Calendar.YEAR);
+        int curMonth = mDisplayDay.get(Calendar.MONTH);
+        int curDay = mDisplayDay.get(Calendar.DAY_OF_MONTH);
+        ContentValues cv = mDailyBread.getContentValues(curYear, curMonth, curDay);
+        return cv.getAsString(MyDailyBread.wGoldVerse) + (curYear >= 2016 ? "" : "；和合本修訂版");
+    }
+    private void copyText(Context context) {
+        ContentValues cv = getContentValues();
         final String verse = cv.getAsString(MyDailyBread.wGoldText).replace("#", " ") +
                 "[" + cv.getAsString(MyDailyBread.wGoldVerse) + " RCUV]";
         MyClipboardManager mgr = new MyClipboardManager();
@@ -1011,7 +1020,10 @@ public class CMain extends MyActivity {
 //		}
         MyUtil.log(TAG, "onResume");
 //        onClickToday(this);
-//        MyUtil.log(TAG, "onResumeAfterOnRefreshPage");
+        //MyUtil.log(TAG, "onResumeAfterOnRefreshPage "+mPager.getCurrentItem());
+        DailyFragment dailyFragment = (DailyFragment) mAdapter.getItem(mPager.getCurrentItem());
+        dailyFragment.onRefreshScreen();
+        mAdapter.notifyDataSetChanged();
         String defaultCountry = MyUtil.getPrefStr(MyUtil.PREF_COUNTRY, "");
         if (TextUtils.isEmpty(defaultCountry)) {
             handler = new Handler();
@@ -1193,7 +1205,7 @@ public class CMain extends MyActivity {
 	}
 	private void onViewHKBSBible(Context context){		
 		MyUtil.trackClick(context, "BibleHKBS", "M");
-		final Object eabcv[] = getEBCV(mGoldVerse);
+		final Object eabcv[] = getEBCV(getContentValueGoldVerse());
 		//final String prefix = "http://rcuv.hkbs.org.hk/bible_list.php?dowhat=&version=RCUV&bible=";
 		final String prefix = "http://rcuv.hkbs.org.hk/RCUV_1/";
 //		final String chapter = "&chapter=";
@@ -1213,7 +1225,7 @@ public class CMain extends MyActivity {
 		if (intent != null){
 			MyUtil.trackClick(context, "BibleApp", "M");
 			//intent.setComponent(new ComponentName("org.arkist.cnote","org.arkist.cnote.WebActivity"));
-			final Object eabcv[] = getEBCV(mGoldVerse);
+            final Object eabcv[] = getEBCV(getContentValueGoldVerse());
 			final String finalEabcv = (String) eabcv[0]+ (String) eabcv[1]+" "+eabcv[3]+":"+eabcv[4]; 
 			MyUtil.log(TAG, "bcv:"+finalEabcv);
 			intent.setComponent(new ComponentName("org.arkist.cnote","org.arkist.cnote.KnockActivity"));

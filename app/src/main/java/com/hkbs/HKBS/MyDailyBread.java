@@ -112,7 +112,11 @@ public class MyDailyBread {
 			//validFrDate.set(mCurrentYear-1,  0, 1, 23, 59, 59); // 1-1
             validFrDate.set(mCurrentYear-1,  0, 1, 0, 0, 0); // 1-1
 			validToDate = Calendar.getInstance();
-			validToDate.set(mCurrentYear, 11, 31, 0, 0, 0); // 2016-12-21
+            if (CMain.IS_2016_VERSION) {
+                validToDate.set(2016, 0, 2, 0, 0, 0); // Custom; May be by season
+            } else {
+                validToDate.set(mCurrentYear, 11, 31, 0, 0, 0); // 2016-12-21
+            }
 		}
 	}
     public long getNbrOfValidDays(){
