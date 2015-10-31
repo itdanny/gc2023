@@ -107,14 +107,23 @@ public class MyDailyBread {
 	    return myDailyBread;
 	}
 	private void setValidRange(){
-		if (IS_CURRENT_YEAR_ONLY){
-			validFrDate = Calendar.getInstance();
-			//validFrDate.set(mCurrentYear-1,  0, 1, 23, 59, 59); // 1-1
-            validFrDate.set(mCurrentYear-1,  0, 1, 0, 0, 0); // 1-1
-			validToDate = Calendar.getInstance();
+        validFrDate = Calendar.getInstance();
+        //validFrDate.set(mCurrentYear-1,  0, 1, 23, 59, 59); // 1-1
+        validToDate = Calendar.getInstance();
+		if (IS_CURRENT_YEAR_ONLY) {
             if (CMain.IS_2016_VERSION) {
-                validToDate.set(2016, 5, 6, 0, 0, 0); // Custom; May be by season
+                validFrDate.set(2014, 0, 1, 0, 0, 0); // 1-1
+                validToDate.set(2016, 5, 11, 0, 0, 0); // Custom; May be by season
             } else {
+                validFrDate.set(mCurrentYear-1,  0, 1, 0, 0, 0); // 1-1
+                validToDate.set(mCurrentYear, 11, 31, 0, 0, 0); // 2016-12-21
+            }
+        } else {
+            if (CMain.IS_2016_VERSION) {
+                validFrDate.set(2011, 9, 1, 0, 0, 0); // 1-1
+                validToDate.set(2016, 5, 7, 0, 0, 0); // Custom; May be by season
+            } else {
+                validFrDate.set(mCurrentYear-1,  0, 1, 0, 0, 0); // 1-1
                 validToDate.set(mCurrentYear, 11, 31, 0, 0, 0); // 2016-12-21
             }
 		}
@@ -243,8 +252,14 @@ public class MyDailyBread {
                         lastMonth = cv.getAsInteger(wGMonth) - 1;
                         lastDay = cv.getAsInteger(wGDay);
                         if (IS_CURRENT_YEAR_ONLY) {
-                            if (lastYear < mCurrentYear - 1) {
-                                validLine = false;
+                            if (CMain.IS_2016_VERSION) {
+                                if (lastYear < 2014) {
+                                    validLine = false;
+                                }
+                            } else {
+                                if (lastYear < mCurrentYear - 1) {
+                                    validLine = false;
+                                }
                             }
                         }
                     }
@@ -290,7 +305,7 @@ public class MyDailyBread {
 				    	// Check Value
 				    	if (IS_CHECK_VALID_VERSE){
 				    		if (CMain.getEBCV(cv.getAsString(wGoldVerse))==null){
-				    			MyUtil.logError(TAG, newDate.get(Calendar.YEAR)+"-"+newDate.get(Calendar.MONTH)+"-"+newDate.get(Calendar.DAY_OF_MONTH));
+				    			MyUtil.logError(TAG, newDate.get(Calendar.YEAR)+"-"+(newDate.get(Calendar.MONTH)+1)+"-"+newDate.get(Calendar.DAY_OF_MONTH));
 				    		}
 				    	}
 				    	if (IS_CHECK_FIELD_VALUES){

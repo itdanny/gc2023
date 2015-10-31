@@ -116,6 +116,12 @@ public class DailyFragment extends Fragment {
     
     public void onRefreshScreen(){
         if (mRootView==null) return;
+        mContentValues = mCMain.mDailyBread.getContentValues(mCurYear, mCurMonth, mCurDay);// get ContentValues from dailyBread file
+        if (mContentValues==null) {
+            Log.e(TAG, "Contens not found ("+mCurYear+","+mCurMonth+","+mCurDay+")");
+            return;
+        }
+
         mScreenTypeView = (TextView) mRootView.findViewById(R.id.xmlPage1ScreenType);
         // Row 1
         mEngYear = (TextView) mRootView.findViewById(R.id.xmlPage1EngYear);
@@ -151,11 +157,10 @@ public class DailyFragment extends Fragment {
         }
         mHolidayText = MyHoliday.getHolidayRemark(mCalendar.getTime());
         mIsHoliday = ((!mHolidayText.equals("")) & !mHolidayText.startsWith("#")) || mCalendar.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY;
-        if (mHolidayText.startsWith("#")){
-            mHolidayText=mHolidayText.substring(1);
+        if (mHolidayText.startsWith("#")) {
+            mHolidayText = mHolidayText.substring(1);
         }
         mTextColor = getResources().getColor(mIsHoliday ? R.color.holiday : R.color.weekday);        
-        mContentValues = mCMain.mDailyBread.getContentValues(mCurYear, mCurMonth, mCurDay);// get ContentValues from dailyBread file
 
         setRow1YearAndMonth();
         setRow2Day();
@@ -444,8 +449,10 @@ public class DailyFragment extends Fragment {
         // Any Heading ":"
         String colonText = ":"; // English Style colon
         String wisdomText = mContentValues.getAsString(MyDailyBread.wBigText);
-        int colonPos=0;
-        if (!wisdomText.startsWith("#")) {
+        int colonPos=-1;
+        if (wisdomText.startsWith("#")) {
+            wisdomText = wisdomText.substring(1);
+        } else {
             int englishColonPos = wisdomText.indexOf(":");
             int chineseColonPos = wisdomText.indexOf("：");
             if (englishColonPos < 0) {

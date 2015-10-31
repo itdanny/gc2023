@@ -1,8 +1,8 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hkbs.HKBS"
-    android:versionCode="30"
-    android:versionName="3.27" >
+    android:versionCode="31"
+    android:versionName="3.28" >
 
     <uses-sdk
         android:minSdkVersion="8"
@@ -22,12 +22,12 @@
         android:hardwareAccelerated="false"
         android:allowBackup="true"
         android:icon="@drawable/ic_launcher"
-        android:label="@string/app_name_2016"
+        android:label="@string/app_name"
         android:theme="@style/AppTheme" > <!-- @android:style/Theme.DeviceDefault -->
         <activity
             android:name=".SplashScreen"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:label="@string/app_name_2016"
+            android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/SplashscreenTheme" >
             <intent-filter>

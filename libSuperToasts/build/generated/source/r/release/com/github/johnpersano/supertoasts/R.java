@@ -95,7 +95,7 @@ public final class R {
         public static int supertoast=0x7f030009;
     }
     public static final class string {
-        public static int app_name=0x7f070000;
+        public static int app_name_2015=0x7f070000;
     }
     public static final class style {
         /** 

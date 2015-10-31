@@ -8,8 +8,8 @@ android {
         applicationId "com.hkbs.HKBS"
         minSdkVersion 8
         targetSdkVersion 21
-        versionCode 30
-        versionName "3.27"
+        versionCode 31
+        versionName "3.28"
     }
     buildTypes {
         release {
@@ -20,10 +20,11 @@ android {
 }
 
 dependencies {
-    compile fileTree(dir: 'libs', include: ['*.jar'])
+    compile fileTree(include: ['*.jar'], dir: 'libs')
     compile project(':libArkist')
     compile 'com.android.support:support-v4:21.0.3'
     compile files('libs/nineoldandroids-2.4.0.jar')
+    compile files('libs/jsoup-1.8.3.jar')
 }
 /*all*.exclude group: 'com.android.support', module: 'support-v4'*/
 configurations {

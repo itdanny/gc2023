@@ -2,6 +2,7 @@ package com.hkbs.HKBS;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
+import android.app.Dialog;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.ContentUris;
@@ -9,11 +10,14 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageInfo;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.net.Uri;
+import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -43,6 +47,8 @@ import org.arkist.share.AxAlarm;
 import org.arkist.share.AxImageView;
 import org.arkist.share.AxTextView;
 import org.arkist.share.AxTools;
+import org.json.JSONObject;
+import org.jsoup.Jsoup;
 
 import java.io.File;
 import java.io.OutputStream;
@@ -237,15 +243,17 @@ public class CMain extends MyActivity {
         mPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
             boolean lastPageChange = false;
             boolean fistPageChange = false;
+
             @Override
-            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels){
+            public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 int lastIdx = mAdapter.getCount() - 1;
-                if (lastPageChange && position == lastIdx){
+                if (lastPageChange && position == lastIdx) {
                     Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
-                } else if (fistPageChange && position==0){
+                } else if (fistPageChange && position == 0) {
                     Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
                 }
             }
+
             @Override
             public void onPageSelected(int i) {
                 mDisplayDay = (Calendar) mDailyBread.getValidFrDate().clone();
@@ -254,15 +262,17 @@ public class CMain extends MyActivity {
                 onRefreshPage(mDisplayDay, false);
                 Log.i(TAG, "onPageSelected day=" + mDisplayDay.get(Calendar.DAY_OF_MONTH));
             }
+
             @Override
             public void onPageScrollStateChanged(int state) {
                 int lastIdx = mAdapter.getCount() - 1;
                 int curItem = mPager.getCurrentItem();
-                if(curItem==lastIdx && state==ViewPager.SCROLL_STATE_DRAGGING)   lastPageChange = true;
+                if (curItem == lastIdx && state == ViewPager.SCROLL_STATE_DRAGGING)
+                    lastPageChange = true;
                 else lastPageChange = false;
-                if(curItem==0 && state==ViewPager.SCROLL_STATE_DRAGGING)   fistPageChange = true;
+                if (curItem == 0 && state == ViewPager.SCROLL_STATE_DRAGGING) fistPageChange = true;
                 else fistPageChange = false;
-                if (state==ViewPager.SCROLL_STATE_IDLE) {
+                if (state == ViewPager.SCROLL_STATE_IDLE) {
                     mPager.isScrolling = false;
                 } else {
                     mPager.isScrolling = true;
@@ -278,6 +288,9 @@ public class CMain extends MyActivity {
                 onClickToday(CMain.this);
             }
         });
+
+        checkUpdateVersion();
+
     }
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void setControlsVisibility(boolean isVisible) {
@@ -687,7 +700,7 @@ public class CMain extends MyActivity {
         Intent share = new Intent(Intent.ACTION_SEND);
         share.setType("image/jpeg");
         share.putExtra(android.content.Intent.EXTRA_SUBJECT, "「" +
-                (IS_2016_VERSION ?context.getString(R.string.app_name_2016):context.getString(R.string.app_name)) +
+                (IS_2016_VERSION ?context.getString(R.string.app_name):context.getString(R.string.app_name_2015)) +
                 "」經文分享");
         share.putExtra(android.content.Intent.EXTRA_STREAM, uri);
         startActivity(Intent.createChooser(share, "分享圖像"));
@@ -710,10 +723,10 @@ public class CMain extends MyActivity {
         Intent intent = new Intent(android.content.Intent.ACTION_SEND);
         intent.setType("text/plain");
         intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "「" +
-                (IS_2016_VERSION ?context.getString(R.string.app_name_2016):context.getString(R.string.app_name)) +
+                (IS_2016_VERSION ?context.getString(R.string.app_name):context.getString(R.string.app_name_2015)) +
                 "」經文分享");//getResources().getString(R.string.app_name)
         intent.putExtra(android.content.Intent.EXTRA_TEXT, verse);
-        startActivity(Intent.createChooser(intent, getResources().getString(R.string.app_name)));
+        startActivity(Intent.createChooser(intent, getResources().getString(R.string.app_name_2015)));
     }
 
     static final public String[] BOOKS_ENG = new String[]{
@@ -866,7 +879,7 @@ public class CMain extends MyActivity {
             {"59", "雅各書", "雅"},
             {"60", "彼得前書", "彼前"},
             {"61", "彼得後書", "彼後"},
-            {"62", "約翰一書", "約一"},
+            {"62", "約翰一書", "約一"}, //約翰壹書4章18節
             {"62", "約翰二書", "約二"},
             {"62", "約翰三書", "約三"},
             {"65", "猶大書", "猶"},
@@ -884,9 +897,12 @@ public class CMain extends MyActivity {
         }
         int bookNbr = 0;
         String bookName = bcv.substring(0, digitFirstPos).trim();
-        bookName.replace("一", "壹");
-        bookName.replace("二", "貳");
-        bookName.replace("三", "參");
+//        bookName.replace("一", "壹");
+//        bookName.replace("二", "貳");
+//        bookName.replace("三", "參");
+        bookName=bookName.replace("壹","一");//約翰壹書4章18節
+        bookName=bookName.replace("貳","二");
+        bookName=bookName.replace("參","三");
         String bookAbbrev = "";
         for (int i = 0; i < BOOKS_CHT.length; i++) {
             if (bookName.equalsIgnoreCase(BOOKS_CHT[i][1])) {
@@ -896,7 +912,7 @@ public class CMain extends MyActivity {
             }
         }
         if (bookAbbrev.equalsIgnoreCase("")) {
-            MyUtil.logError(TAG, "Cannot find:" + bookName);
+            MyUtil.logError(TAG, "Cannot find:" + bcv.substring(0, digitFirstPos).trim()+"("+bookName+")");
             return null;
         }
         int digitStopPos = 0;
@@ -1205,7 +1221,7 @@ public class CMain extends MyActivity {
 		});				
 	}
 	private void onExitGoodCalendar(Context context){
-		Toast.makeText(context, "你將會離開「"+(CMain.IS_2016_VERSION?context.getString(R.string.app_name_2016):context.getString(R.string.app_name))+"」並進入其他網站或程式 !", Toast.LENGTH_SHORT).show();
+		Toast.makeText(context, "你將會離開「"+(CMain.IS_2016_VERSION?context.getString(R.string.app_name):context.getString(R.string.app_name_2015))+"」並進入其他網站或程式 !", Toast.LENGTH_SHORT).show();
 	}
 	private void onViewHKBSBible(Context context){		
 		MyUtil.trackClick(context, "BibleHKBS", "M");
@@ -1390,5 +1406,102 @@ public class CMain extends MyActivity {
 //        paint.setTextSize(Math.max(Math.min((boxWidth/paint.measureText(text))*10, max), min));
 //    }
 
+    private void checkUpdateVersion(){
+        getCurrentVersion();
+    }
+    String currentVersion="", latestVersion="";
+    Dialog dialog;
+    private void getCurrentVersion(){
+        PackageManager pm = this.getPackageManager();
+        PackageInfo pInfo = null;
+        try {
+            pInfo =  pm.getPackageInfo(this.getPackageName(),0);
 
+        } catch (PackageManager.NameNotFoundException e1) {
+            // TODO Auto-generated catch block
+            e1.printStackTrace();
+        }
+        currentVersion = pInfo.versionName;
+        new GetLatestVersion().execute();
+
+    }
+
+    private class GetLatestVersion extends AsyncTask<String, String, JSONObject> {
+        //private ProgressDialog progressDialog;
+        @Override
+        protected void onPreExecute() {
+            super.onPreExecute();
+        }
+        @Override
+        protected JSONObject doInBackground(String... params) {
+            try {
+//It retrieves the latest version by scraping the content of current version from play store at runtime
+                String playUrl = "https://play.google.com/store/apps/details?id=" + getPackageName();
+                org.jsoup.nodes.Document doc = Jsoup.connect(playUrl).get();
+                latestVersion = doc.getElementsByAttributeValue("itemprop","softwareVersion").first().text();
+            }catch (Exception e){
+                latestVersion ="";
+                e.printStackTrace();
+            }
+            return new JSONObject();
+        }
+
+        @Override
+        protected void onPostExecute(JSONObject jsonObject) {
+            float latestNbr=0;
+            try {
+                latestNbr = Float.valueOf(latestVersion);
+            } catch (Exception e){
+                //
+            }
+            float currentNbr=0;
+            try {
+                currentNbr = Float.valueOf(currentVersion);
+            } catch (Exception e){
+                //
+            }
+
+            Log.e(TAG, "Version latest=" + latestNbr + " current=" + currentNbr);
+            if (latestNbr > currentNbr) {// Normal is latestNbr>currentNbr .. do update
+                boolean askBefore=AxTools.getPrefBoolean("AskUpdate"+latestVersion,false);
+                Log.e(TAG, "Find updated version ");
+                if (!askBefore) {
+                    showUpdateDialog();
+                }
+            } else {
+                Log.e(TAG,"No updated version ");
+            }
+//            else {
+//                background.start();
+//            }
+            super.onPostExecute(jsonObject);
+        }
+    }
+
+    private void showUpdateDialog(){
+        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+        builder.setTitle("找到新的更新");
+        builder.setPositiveButton("更新", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                try {
+                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse
+                            ("market://details?id=" + CMain.this.getPackageName())));
+                } catch (Exception e){
+                    Toast.makeText(CMain.this,"找不到Google Play下載新的程式。", Toast.LENGTH_SHORT).show();
+                    Log.e(TAG,"Request update app but GooglePlay not find");
+                }
+                dialog.dismiss();
+            }
+        });
+        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                //background.start();
+                AxTools.setPrefBoolean("AskUpdate"+latestVersion,true);
+            }
+        });
+        builder.setCancelable(false);
+        dialog = builder.show();
+    }
 }
