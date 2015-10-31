@@ -285,6 +285,9 @@ public class CMain extends MyActivity {
             return;
         }
         if (this.isFinishing()) return;
+
+        onCreateSetButtons();
+
         if (mControlsView == null) mControlsView = findViewById(R.id.xmlMainControls);
         if (mTitleView == null) mTitleView = findViewById(R.id.xmlMainTitle);
         int mControlsHeight = 0;
@@ -977,6 +980,12 @@ public class CMain extends MyActivity {
                         newDate.setTimeInMillis(newTime);
                         if (isWithinRange(newDate)) {
                             mDisplayDay.setTimeInMillis(newTime);
+                        } else {
+                            if (newDate.compareTo(mDailyBread.getValidToDate()) > 0) {
+                                mDisplayDay.setTimeInMillis(mDailyBread.getValidToDate().getTimeInMillis());
+                            } else if (newDate.compareTo(mDailyBread.getValidFrDate()) < 0){
+                                mDisplayDay.setTimeInMillis(mDailyBread.getValidFrDate().getTimeInMillis());
+                            }
                         }
                         onRefreshPage(mDisplayDay,false);
                     }
@@ -1111,13 +1120,10 @@ public class CMain extends MyActivity {
         int result = MyDailyBread.calendarDaysBetween(mDailyBread.getValidFrDate(),newCalendar);
         if (result<= 0) {
             Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
-        } else {
-            mDisplayDay.setTimeInMillis(newCalendar.getTimeInMillis());
-//            mViewIndex = mViewIndex == 1 ? 2 : 1;
-//            onRefreshPage(mViewIndex);
-            onRefreshPage(mDisplayDay, false);
-//            MyGestureListener.flingInFromRight(getApplicationContext(), mViewAnimator);
+            newCalendar.setTimeInMillis(mDailyBread.getValidFrDate().getTimeInMillis());
         }
+        mDisplayDay.setTimeInMillis(newCalendar.getTimeInMillis());
+        onRefreshPage(mDisplayDay, false);
     }
 
     public void gotoNextDay() {
@@ -1142,13 +1148,11 @@ public class CMain extends MyActivity {
         int result = MyDailyBread.calendarDaysBetween(newCalendar, mDailyBread.getValidToDate());
         if (result <= 0) {
             Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
-        } else {
-            mDisplayDay.setTimeInMillis(newCalendar.getTimeInMillis());
-//            mViewIndex = mViewIndex == 1 ? 2 : 1;
-//            onRefreshPage(mViewIndex);
-            onRefreshPage(mDisplayDay, false);
-//            MyGestureListener.flingInFromLeft(getApplicationContext(), mViewAnimator);
+            newCalendar.setTimeInMillis(mDailyBread.getValidToDate().getTimeInMillis());
         }
+        mDisplayDay.setTimeInMillis(newCalendar.getTimeInMillis());
+        onRefreshPage(mDisplayDay, false);
+
     }
     private void onRefreshPage(Calendar calendar, boolean smooth) {
         int position = Math.abs(MyDailyBread.calendarDaysBetween(calendar, mDailyBread.getValidFrDate()));

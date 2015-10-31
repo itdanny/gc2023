@@ -305,28 +305,23 @@ public class CWidgetBase extends AppWidgetProvider {
         }
 		// get ContentValues from dailyBread file
 		ContentValues cv = mDailyBread.getContentValues(curYear, curMonth, curDay);
-
-		// GOLD TEXT
+/**********************************************************
+ GOLD TEXT
+ *********************************************************
+ */
 		recRef.views.setTextViewText(getID(context, nbr, "GoldVerse"),cv.getAsString(MyDailyBread.wGoldVerse)+(curYear>=2016?";和合本]":"；和合本修訂版]"));
 		recRef.views.setTextColor(getID(context, nbr, "GoldVerse"), textColor);
 		
 		String mGoldText;
-//        if (getClassName().equalsIgnoreCase(CWidgetMiddle.class.getName()) ||
-//            getClassName().equalsIgnoreCase(CWidgetLarge.class.getName()) ||
-//            getClassName().equalsIgnoreCase(CWidgetNormal.class.getName())){
-            mGoldText = cv.getAsString(MyDailyBread.wGoldText).replace("#", "\n");
-            mGoldText = mGoldText.substring(0, mGoldText.length());
-//        } else {
-//            mGoldText = cv.getAsString(MyDailyBread.wGoldText).replace("#", " ");
-//            if (mGoldText.length() >= 12) {
-//                mGoldText = mGoldText.substring(0, 12) + "...\n(按此觀看更多)";
-//            } else {
-//                mGoldText = mGoldText.substring(0, mGoldText.length());
-//            }
-//        }
+        mGoldText = cv.getAsString(MyDailyBread.wGoldText).replace("#", "\n");
+        mGoldText = mGoldText.substring(0, mGoldText.length());
 		recRef.views.setTextViewText(getID(context, nbr, "GoldText"), mGoldText);
 		recRef.views.setTextColor(getID(context, nbr, "GoldText"), textColor);
-		
+
+/**********************************************************
+ WISDOM TEXT
+ *********************************************************
+ */
 		recRef.views.setTextViewText(getID(context, nbr, "BigText"), cv.getAsString(MyDailyBread.wBigText).replace("#", "\n"));
 		recRef.views.setTextColor(getID(context, nbr, "BigText"), textColor);
 		

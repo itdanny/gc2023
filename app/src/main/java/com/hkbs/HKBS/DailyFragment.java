@@ -445,19 +445,21 @@ public class DailyFragment extends Fragment {
         String colonText = ":"; // English Style colon
         String wisdomText = mContentValues.getAsString(MyDailyBread.wBigText);
         int colonPos=0;
-        int englishColonPos = wisdomText.indexOf(":");
-        int chineseColonPos = wisdomText.indexOf("：");
-        if (englishColonPos<0){
-            if (chineseColonPos>=0){
-                colonPos = chineseColonPos;
-            }  else {
-                colonPos = -1;
-            }
-        } else {
-            if (chineseColonPos>=0){
-                colonPos = Math.min(englishColonPos, chineseColonPos);
+        if (!wisdomText.startsWith("#")) {
+            int englishColonPos = wisdomText.indexOf(":");
+            int chineseColonPos = wisdomText.indexOf("：");
+            if (englishColonPos < 0) {
+                if (chineseColonPos >= 0) {
+                    colonPos = chineseColonPos;
+                } else {
+                    colonPos = -1;
+                }
             } else {
-                colonPos = englishColonPos;
+                if (chineseColonPos >= 0) {
+                    colonPos = Math.min(englishColonPos, chineseColonPos);
+                } else {
+                    colonPos = englishColonPos;
+                }
             }
         }
         String wisdomLines [] = wisdomText.split("#");

@@ -23,12 +23,12 @@ import java.util.Set;
 public class MyDailyBread {
     static public int mCurrentYear=2015;//Valid Range will be from last SEPT
 	static private boolean IS_CURRENT_YEAR_ONLY = true;
-	static private boolean IS_CHECK_FUTURE_CHARS_ONLY = false;// PLEASE SET IT TO [[[false]]] for release
-	static private boolean IS_CHECK_VALID_VERSE = true;
+	static private boolean IS_CHECK_FUTURE_CHARS_ONLY = false && CMain.DEBUG;// PLEASE SET IT TO [[[false]]] for release
+	static private boolean IS_CHECK_VALID_VERSE = true && CMain.DEBUG;
 	static private boolean IS_CHECK_FIELD_VALUES = true; // MUST CHECK; DONOT SET TO false
     static private boolean IS_SHOW_DETAILS_IF_BIG_SIZE_LINES_4 = true;
 	
-	final static private boolean DEBUG=true;
+	final static private boolean DEBUG=true && CMain.DEBUG;
 	final static private String TAG = MyDailyBread.class.getSimpleName();
 	
 	static private MyDailyBread myDailyBread;
@@ -113,7 +113,7 @@ public class MyDailyBread {
             validFrDate.set(mCurrentYear-1,  0, 1, 0, 0, 0); // 1-1
 			validToDate = Calendar.getInstance();
             if (CMain.IS_2016_VERSION) {
-                validToDate.set(2016, 0, 2, 0, 0, 0); // Custom; May be by season
+                validToDate.set(2016, 5, 6, 0, 0, 0); // Custom; May be by season
             } else {
                 validToDate.set(mCurrentYear, 11, 31, 0, 0, 0); // 2016-12-21
             }
