@@ -134,14 +134,14 @@
                 android:orientation="horizontal" >
 
                 <org.arkist.share.AxTextView
-                    android:id="@+id/mainBtnPlan"
+                    android:id="@+id/mainBtnRow2Col1"
                     style="@style/MenuStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     android:gravity="center"
-                    android:text="@string/main_others"
+                    android:text="@string/main_arkist"
                     android:textSize="@dimen/small_menu_font_size"/>
 
                 <org.arkist.share.AxTextView

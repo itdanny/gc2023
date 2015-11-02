@@ -250,7 +250,7 @@ public class DailyFragment extends Fragment {
         final int maxHolyDaysChars=9;
         mHolyDay1View.setTextColor(mTextColor);
         mHolyDay2View.setTextColor(mTextColor);
-        if (MyUtil.getPrefInt(MyUtil.PREF_HOLY_DAY,0)==0 || mHolyDayText.equals("")){
+        if (MyUtil.getPrefInt(MyUtil.PREF_HOLY_DAY,0)<=0 || mHolyDayText.equals("")){
             mHolyDay1View.setVisibility(View.GONE);
             mHolyDay2View.setVisibility(View.GONE);
         } else {

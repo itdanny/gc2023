@@ -307,13 +307,27 @@ public class CMain extends MyActivity {
         int mTitleHeight = 0;
         int mShortAnimTime = 0;
         isTitleShown = isVisible;
-        AxTextView mainBtnPlan = (AxTextView) findViewById(R.id.mainBtnPlan);
-        if (mainBtnPlan != null) {
-            Intent intent = CMain.this.getPackageManager().getLaunchIntentForPackage("org.arkist.cnote");
-            if (intent != null) { // Exist
-                mainBtnPlan.setText("聖經行事曆");
+
+        if (CMain.is_2016DayShown()) {
+            AxTextView mainBtnPlan = (AxTextView) findViewById(R.id.mainBtnBible);
+            mainBtnPlan.setText(R.string.main_bible);
+            if (mainBtnPlan != null) {
+                Intent intent = CMain.this.getPackageManager().getLaunchIntentForPackage("org.arkist.cnote");
+                if (intent != null) { // Exist
+                    mainBtnPlan.setText("聖經行事曆");
+                }
+            }
+        } else {
+            AxTextView mainBtnPlan = (AxTextView) findViewById(R.id.mainBtnRow2Col1);
+            mainBtnPlan.setText(R.string.main_bible);
+            if (mainBtnPlan != null) {
+                Intent intent = CMain.this.getPackageManager().getLaunchIntentForPackage("org.arkist.cnote");
+                if (intent != null) { // Exist
+                    mainBtnPlan.setText("聖經行事曆");
+                }
             }
         }
+
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             // If the ViewPropertyAnimator API is available
             // (Honeycomb MR2 and later), use it to animate the
@@ -450,28 +464,46 @@ public class CMain extends MyActivity {
             }
         });
 
-        AxTextView mainBtnPlan = (AxTextView) findViewById(R.id.mainBtnPlan);
+        AxTextView mainBtnPlan = (AxTextView) findViewById(R.id.mainBtnRow2Col1);
         //mainBtnPlan.setOnTouchListener(mDelayHideTouchListener);
-        mainBtnPlan.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClickViewOthers(CMain.this);
-            }
-        });
+        if (CMain.is_2016DayShown()){
+            mainBtnPlan.setText(R.string.main_support);
+            mainBtnPlan.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onClickViewSupport(CMain.this);
+                }
+            });
+        } else {
+            mainBtnPlan.setText(R.string.main_arkist);
+            mainBtnPlan.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onClickViewArkistBible(CMain.this);
+                }
+            });
+        }
+
 
         AxTextView mainBtnBible = (AxTextView) findViewById(R.id.mainBtnBible);
         if (CMain.is_2016DayShown()) {
-            mainBtnBible.setText(R.string.main_support);
+            mainBtnBible.setText(R.string.main_arkist);
+            mainBtnBible.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onClickViewArkistBible(CMain.this);
+                }
+            });
         } else {
             mainBtnBible.setText(R.string.main_bible);
+            mainBtnBible.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onClickViewBible(CMain.this);
+                }
+            });
         }
-        //mainBtnBible.setOnTouchListener(mDelayHideTouchListener);
-        mainBtnBible.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClickViewBible(CMain.this);
-            }
-        });
+
 
         AxTextView mainBtnShare = (AxTextView) findViewById(R.id.mainBtnShare);
         //mainBtnShare.setOnTouchListener(mDelayHideTouchListener);
@@ -1046,9 +1078,7 @@ public class CMain extends MyActivity {
         MyUtil.log(TAG, "onResume");
 //        onClickToday(this);
         //MyUtil.log(TAG, "onResumeAfterOnRefreshPage "+mPager.getCurrentItem());
-        DailyFragment dailyFragment = (DailyFragment) mAdapter.getItem(mPager.getCurrentItem());
-        dailyFragment.onRefreshScreen();
-        mAdapter.notifyDataSetChanged();
+
         String defaultCountry = MyUtil.getPrefStr(MyUtil.PREF_COUNTRY, "");
         if (TextUtils.isEmpty(defaultCountry)) {
             handler = new Handler();
@@ -1058,6 +1088,7 @@ public class CMain extends MyActivity {
                     AlertDialog.Builder alertBuilder = new AlertDialog.Builder(CMain.this);
                     CharSequence items[] = {"台灣", "香港", "其他"};
                     alertBuilder.setTitle("請選擇日曆地區：");
+                    // If cancel, then others;
                     alertBuilder.setItems(items, new DialogInterface.OnClickListener() {
                         @Override
                         public void onClick(DialogInterface dialog, int which) {
@@ -1072,6 +1103,52 @@ public class CMain extends MyActivity {
                                     MyUtil.setPrefStr(MyUtil.PREF_COUNTRY, "CN");
                                     break;
                             }
+                            //DailyFragment dailyFragment = (DailyFragment) mAdapter.getItem(mPager.getCurrentItem());
+                            //dailyFragment.onRefreshScreen();
+                            //mAdapter.notifyDataSetChanged();
+                            mPager.setAdapter(null);
+                            mPager.setAdapter(mAdapter);
+                            onClickToday(CMain.this);
+                            askHolyDay();
+                        }
+                    });
+                    alertBuilder.show();
+                }
+            }, 1000);
+        }
+        DailyFragment dailyFragment = (DailyFragment) mAdapter.getItem(mPager.getCurrentItem());
+        dailyFragment.onRefreshScreen();
+        mAdapter.notifyDataSetChanged();
+    }
+    private void askHolyDay(){
+        int showHolyDay = MyUtil.getPrefInt(MyUtil.PREF_HOLY_DAY, -1);
+        if (showHolyDay == -1) {
+            handler = new Handler();
+            handler.postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(CMain.this);
+                    CharSequence items[] = {"關閉", "開啟"};
+                    alertBuilder.setTitle("顯示教會年曆：");
+                    alertBuilder.setItems(items, new DialogInterface.OnClickListener() {
+                        @Override
+                        public void onClick(DialogInterface dialog, int which) {
+                            switch (which) {
+                                case 0:
+                                    MyUtil.setPrefInt(MyUtil.PREF_HOLY_DAY, 0);
+                                    break;
+                                case 1:
+                                    MyUtil.setPrefInt(MyUtil.PREF_HOLY_DAY, 1);
+                                    break;
+                                default:
+                                    break;
+                            }
+//                            DailyFragment dailyFragment = (DailyFragment) mAdapter.getItem(mPager.getCurrentItem());
+//                            dailyFragment.onRefreshScreen();
+//                            mAdapter.notifyDataSetChanged();
+                            mPager.setAdapter(null);
+                            mPager.setAdapter(mAdapter);
+                            onClickToday(CMain.this);
                         }
                     });
                     alertBuilder.show();
@@ -1176,14 +1253,14 @@ public class CMain extends MyActivity {
             mPager.setCurrentItem(position, smooth);
         }
     }
+    private void onClickViewSupport(Context context){
+        MyUtil.trackClick(context, "Support", "M");
+        Intent intent = new Intent(context, SupportActivity.class);
+        startActivityForResult(intent, MyUtil.REQUEST_SUPPORT);
+        overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
+        return;
+    }
 	private void onClickViewBible(Context context){
-        if (CMain.is_2016DayShown()){
-            MyUtil.trackClick(context, "Support", "M");
-            Intent intent = new Intent(context, SupportActivity.class);
-            startActivityForResult(intent, MyUtil.REQUEST_SUPPORT);
-            overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
-            return;
-        }
 		boolean isShownAdBanner = AxTools.getPrefBoolean("pref_showBanner", false);
 		//isShownAdBanner=false;
 		if (isShownAdBanner){
@@ -1273,7 +1350,7 @@ public class CMain extends MyActivity {
 			}
 		}
 	}
-	private void onClickViewOthers(Context context){
+	private void onClickViewArkistBible(Context context){
 		onViewArkistBible(context);
 	}
 //	private void onClickViewILoveTheBible(Context context){
