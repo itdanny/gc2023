@@ -63,6 +63,31 @@
         </LinearLayout>
 
         <TextView
+            android:id="@+id/xmlPage1HolyDay1"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentLeft="true"
+            android:layout_centerVertical="true"
+            android:layout_marginLeft="6dp"
+            android:inputType="none"
+            android:lines="9"
+            android:text="童\n貞\n女\n馬\n利\n亞\n聞\n報\n日"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
+            android:id="@+id/xmlPage1HolyDay2"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_centerVertical="true"
+            android:layout_toRightOf="@id/xmlPage1HolyDay1"
+            android:inputType="none"
+            android:lines="9"
+            android:text="聖\n提\n摩\n太\n與\n聖\n提\n多\n日"
+            android:textSize="16sp"
+            android:textStyle="bold" />
+
+        <TextView
             android:id="@+id/xmlPage1Holiday1"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"

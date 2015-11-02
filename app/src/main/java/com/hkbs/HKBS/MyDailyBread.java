@@ -112,8 +112,8 @@ public class MyDailyBread {
         validToDate = Calendar.getInstance();
 		if (IS_CURRENT_YEAR_ONLY) {
             if (CMain.IS_2016_VERSION) {
-                validFrDate.set(2014, 0, 1, 0, 0, 0); // 1-1
-                validToDate.set(2016, 5, 11, 0, 0, 0); // Custom; May be by season
+                validFrDate.set(2015, 0, 1, 0, 0, 0); // 1-1
+                validToDate.set(2016, 5, 30, 0, 0, 0); // Custom; May be by season
             } else {
                 validFrDate.set(mCurrentYear-1,  0, 1, 0, 0, 0); // 1-1
                 validToDate.set(mCurrentYear, 11, 31, 0, 0, 0); // 2016-12-21
@@ -121,7 +121,7 @@ public class MyDailyBread {
         } else {
             if (CMain.IS_2016_VERSION) {
                 validFrDate.set(2011, 9, 1, 0, 0, 0); // 1-1
-                validToDate.set(2016, 5, 7, 0, 0, 0); // Custom; May be by season
+                validToDate.set(2016, 5, 30, 0, 0, 0); // Custom; May be by season
             } else {
                 validFrDate.set(mCurrentYear-1,  0, 1, 0, 0, 0); // 1-1
                 validToDate.set(mCurrentYear, 11, 31, 0, 0, 0); // 2016-12-21

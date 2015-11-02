@@ -208,7 +208,21 @@
                 android:text="日曆地區"
                 android:textStyle="bold"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
-            <RelativeLayout 
+            <TextView
+                android:id="@+id/xmlSupportHK_Holiday_term"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:gravity="center"
+                android:paddingLeft="18dp"
+                android:paddingRight="18dp"
+                android:text="@string/hk_holiday_term"
+                android:textAppearance="?android:attr/textAppearanceSmall" />
+            <!--
+                http://www.labour.gov.hk/tc/news/latest_holidays2016.htm
+            -->
+            <RelativeLayout
+                android:layout_marginTop="5dp"
                 android:layout_height="wrap_content"
                 android:layout_width="match_parent">
                 <Button 
@@ -231,8 +245,40 @@
                 	android:layout_width="wrap_content"
                 	android:layout_toRightOf="@id/xmlSupportHongKong"
                 	android:text="其他"/>
-            </RelativeLayout>        
-             <TextView
+            </RelativeLayout>
+
+            <TextView
+                android:id="@+id/xmlSupportHolyDayTitle"
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="25dp"
+                android:gravity="center"
+                android:paddingLeft="18dp"
+                android:paddingRight="18dp"
+                android:text="教會年曆"
+                android:textStyle="bold"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+
+            <LinearLayout
+                android:id="@+id/xmlSupportHolyDayButtons"
+                android:orientation="horizontal"
+                android:layout_gravity="center_horizontal"
+                android:layout_height="wrap_content"
+                android:layout_width="wrap_content">
+                <Button
+                    android:id="@+id/xmlSupportHolyDayOn"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="開啟"/>
+                <Button
+                    android:id="@+id/xmlSupportHolyDayOff"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="關閉"/>
+            </LinearLayout>
+
+            <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
                 android:layout_gravity="center"

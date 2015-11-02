@@ -5,6 +5,7 @@ import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.text.method.LinkMovementMethod;
 import android.util.DisplayMetrics;
 import android.view.Display;
 import android.view.View;
@@ -24,6 +25,8 @@ public class SupportActivity extends MyActivity implements OnClickListener {
 	private Button btnTaiWan;
 	private Button btnHongKong;
 	private Button btnOther;
+    private Button btnHolyDayOn;
+    private Button btnHolyDayOff;
 	
 	public SupportActivity() {
 		
@@ -59,26 +62,23 @@ public class SupportActivity extends MyActivity implements OnClickListener {
 		
 		btnHongKong = (Button) findViewById(R.id.xmlSupportHongKong);
 		btnHongKong.setOnClickListener(this);
-		
-		
+
+        ((TextView) findViewById(R.id.xmlSupportHK_Holiday_term)).setMovementMethod(LinkMovementMethod.getInstance());
+
 		btnOther = (Button) findViewById(R.id.xmlSupportOther);
 		btnOther.setOnClickListener(this);
-		
-		setCountryColor();
-		
+
+        setCountryColor();
+
+        btnHolyDayOn = (Button) findViewById(R.id.xmlSupportHolyDayOn);
+        btnHolyDayOn.setOnClickListener(this);
+
+        btnHolyDayOff = (Button) findViewById(R.id.xmlSupportHolyDayOff);
+        btnHolyDayOff.setOnClickListener(this);
+
+        setHolyDayColor();
+
 		TextView tvVersion = (TextView) findViewById(R.id.xmlSupportVersion);
-
-
-//        setRealDeviceSizeInPixels();
-//        DisplayMetrics dm = new DisplayMetrics();
-//        if (Build.VERSION.SDK_INT >=17) {
-//            getWindowManager().getDefaultDisplay().getRealMetrics(dm);
-//        } else {
-//            getWindowManager().getDefaultDisplay().getMetrics(dm);
-//        }
-//        double x = Math.pow(mWidthPixels/dm.xdpi,2);
-//        double y = Math.pow(mHeightPixels/dm.ydpi,2);
-//        double screenInches = Math.sqrt(x + y);
 
 		tvVersion.setText(getAppInfo());
 
@@ -146,6 +146,23 @@ public class SupportActivity extends MyActivity implements OnClickListener {
             }
         }
     }
+    private void setHolyDayColor(){
+        if (CMain.IS_2016_VERSION) {
+            findViewById(R.id.xmlSupportHolyDayTitle).setVisibility(View.VISIBLE);
+            findViewById(R.id.xmlSupportHolyDayButtons).setVisibility(View.VISIBLE);
+        } else {
+            findViewById(R.id.xmlSupportHolyDayTitle).setVisibility(View.GONE);
+            findViewById(R.id.xmlSupportHolyDayButtons).setVisibility(View.GONE);
+        }
+        int showHolyDay = MyUtil.getPrefInt(MyUtil.PREF_HOLY_DAY,0);
+        if (showHolyDay==0){
+            btnHolyDayOn.setTextColor(getResources().getColor(R.color.white));
+            btnHolyDayOff.setTextColor(getResources().getColor(R.color.black));
+        } else {
+            btnHolyDayOn.setTextColor(getResources().getColor(R.color.black));
+            btnHolyDayOff.setTextColor(getResources().getColor(R.color.white));
+        }
+    }
 	private void setCountryColor(){
 		btnTaiWan.setTextColor(getResources().getColor(R.color.white));
 		btnHongKong.setTextColor(getResources().getColor(R.color.white));
@@ -182,6 +199,14 @@ public class SupportActivity extends MyActivity implements OnClickListener {
 			MyUtil.setPrefStr(MyUtil.PREF_COUNTRY, "CN");
 			setCountryColor();
 			break;
+        case R.id.xmlSupportHolyDayOn:
+            MyUtil.setPrefInt(MyUtil.PREF_HOLY_DAY, 1);
+            setHolyDayColor();
+            break;
+        case R.id.xmlSupportHolyDayOff:
+            MyUtil.setPrefInt(MyUtil.PREF_HOLY_DAY, 0);
+            setHolyDayColor();
+            break;
 		}
 		
 	}

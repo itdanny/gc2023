@@ -1,5 +1,6 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="hk_holiday_term">*<a href="http://www.labour.gov.hk/tc/news/latest_holidays2016.htm">香港法定假期</a></string>
     <string name="deviceType">v</string>
     <string name="layoutType">v</string><!--If there is layout, should have this declaration -->
 	<string name="about_hkbs">1950年成立，是聯合聖經公會（UBS）全球147家聖經公會成員之一。一直秉承「讓每一個人能以可負擔的價錢，獲得一本讀得明白的聖經」為宗旨，承擔中文聖經翻譯、出版、分發到社會各階層，並推廣聖經的使命。多年來出版及發行《和合本》、《廣東話聖經》、《呂振中譯本》、《現代中文譯本》、《新標點和合本》等聖經版本。2010年出版《和合本修訂版》新舊約全書，承傳《和合本》聖經近一個世紀對全球華人教會的祝福。</string>

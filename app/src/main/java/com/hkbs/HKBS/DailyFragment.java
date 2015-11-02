@@ -84,7 +84,10 @@ public class DailyFragment extends Fragment {
     private TextView mBigDay;
     private TextView mHoliday1View;
     private TextView mHoliday2View;
+    private TextView mHolyDay1View;
+    private TextView mHolyDay2View;
     private String mHolidayText;
+    private String mHolyDayText;
 // Row 3
     private TextView mChiLeftWeather;
     private TextView mChiLeftYear;
@@ -130,6 +133,8 @@ public class DailyFragment extends Fragment {
         mBigDay = (TextView) mRootView.findViewById(R.id.xmlPage1Day);
         mHoliday1View = (TextView) mRootView.findViewById(R.id.xmlPage1Holiday1);
         mHoliday2View = (TextView) mRootView.findViewById(R.id.xmlPage1Holiday2);
+        mHolyDay1View = (TextView) mRootView.findViewById(R.id.xmlPage1HolyDay1);
+        mHolyDay2View = (TextView) mRootView.findViewById(R.id.xmlPage1HolyDay2);
         // Row 3
         mWeekDay = (TextView) mRootView.findViewById(R.id.xmlPage1WeekDay);
         mWeekDayImage = (ImageView) mRootView.findViewById(R.id.xmlPage1WeekImage);
@@ -156,6 +161,8 @@ public class DailyFragment extends Fragment {
             if (!DEBUG) mScreenTypeView.setText("");
         }
         mHolidayText = MyHoliday.getHolidayRemark(mCalendar.getTime());
+        mHolyDayText = MyHoliday.getHolyDayText(mCalendar.getTime());
+
         mIsHoliday = ((!mHolidayText.equals("")) & !mHolidayText.startsWith("#")) || mCalendar.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY;
         if (mHolidayText.startsWith("#")) {
             mHolidayText = mHolidayText.substring(1);
@@ -237,6 +244,49 @@ public class DailyFragment extends Fragment {
                 mHoliday2View.setTextColor(mTextColor);
             } else {
                 mHoliday2View.setVisibility(View.GONE);
+            }
+        }
+
+        final int maxHolyDaysChars=9;
+        mHolyDay1View.setTextColor(mTextColor);
+        mHolyDay2View.setTextColor(mTextColor);
+        if (MyUtil.getPrefInt(MyUtil.PREF_HOLY_DAY,0)==0 || mHolyDayText.equals("")){
+            mHolyDay1View.setVisibility(View.GONE);
+            mHolyDay2View.setVisibility(View.GONE);
+        } else {
+            String holyDayLines [] = new String[]{"",""};
+            int splitIndex=mHolyDayText.indexOf("#");
+            if (splitIndex>=0){
+                for (int i=0;i<splitIndex;i++){
+                    holyDayLines[0]=holyDayLines[0]+mHolyDayText.substring(i,i+1)+"\n";
+                }
+                for (int i=splitIndex+1;i<mHolyDayText.length();i++){
+                    holyDayLines[1]=holyDayLines[1]+mHolyDayText.substring(i,i+1)+"\n";
+                }
+            } else {
+                holyDayLines = new String[]{"",""};
+                if (mHolyDayText.length()>maxHolyDaysChars){
+                    for (int i=0;i<maxHolyDaysChars;i++){
+                        holyDayLines[0]=holyDayLines[0]+mHolyDayText.substring(i,i+1)+"\n";
+                    }
+                    for (int i=maxHolyDaysChars;i<mHolyDayText.length();i++){
+                        holyDayLines[1]=holyDayLines[1]+mHolyDayText.substring(i,i+1)+"\n";
+                    }
+                } else {
+                    for (int i=0;i<mHolyDayText.length();i++){
+                        holyDayLines[0]=holyDayLines[0]+mHolyDayText.substring(i,i+1)+"\n";
+                    }
+                }
+            }
+            mHolyDay1View.setLines(holyDayLines[0].length()/2);
+            mHolyDay1View.setText(holyDayLines[0]);
+            mHolyDay1View.setVisibility(View.VISIBLE);
+            if (holyDayLines[1].equalsIgnoreCase("")){
+                mHolyDay2View.setVisibility(View.GONE);
+            } else {
+                mHolyDay2View.setVisibility(View.VISIBLE);
+                mHolyDay2View.setLines(holyDayLines[1].length()/2);
+                mHolyDay2View.setText(holyDayLines[1]);
             }
         }
     }

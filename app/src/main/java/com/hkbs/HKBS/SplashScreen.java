@@ -6,8 +6,6 @@ import android.os.Bundle;
 import android.os.Handler;
 import android.widget.ImageView;
 
-import java.util.Calendar;
-
 public class SplashScreen extends Activity {
  
     // Splash screen timer
@@ -20,13 +18,14 @@ public class SplashScreen extends Activity {
         setContentView(R.layout.activity_splash);
         ImageView imageView = (ImageView) findViewById(R.id.imgLogo);
 
-        Calendar calendar = Calendar.getInstance();
-        if (calendar.get(Calendar.YEAR)>=2016) {
+        if (CMain.IS_2016_VERSION) {
+//            Calendar calendar = Calendar.getInstance();
+//            if (calendar.get(Calendar.YEAR)>=2016) {
             imageView.setImageResource(R.drawable.splash_640_960_2106);
-        } else{
+            } else{
             imageView.setImageResource(R.drawable.splash_640_960);
+//            }
         }
- 
         new Handler().postDelayed(new Runnable() {
  
             /*
