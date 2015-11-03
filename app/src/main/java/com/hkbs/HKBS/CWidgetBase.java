@@ -8,6 +8,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
 import android.net.Uri;
+import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
@@ -157,22 +158,19 @@ public class CWidgetBase extends AppWidgetProvider {
 		String holiday = MyHoliday.getHolidayRemark(mDisplayDay.getTime());
 		final boolean isHoliday = (!holiday.equals("") && !holiday.startsWith("#")) || mDisplayDay.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY;
 		int textColor = recRef.context.getResources().getColor(isHoliday?R.color.holiday:R.color.weekday);
-		
 		if (holiday.startsWith("#")){
 			holiday=holiday.substring(1);
 		}
-		
 		int nbrOfDaysTo30 = 30-lunar.getDay(); // Chinese Day
 		monthEndDate.add(Calendar.DAY_OF_MONTH, nbrOfDaysTo30);
 		final MyCalendarLunar monthEndLunar = new MyCalendarLunar(monthEndDate);
 		boolean isBigMonth = (monthEndLunar.getDay()==30)?true:false;
-		
-		// Assign Date Related TextView		
-		recRef.views.setTextViewText(getID(context, nbr, "Day"), String.valueOf(curDay));
-		recRef.views.setTextColor(getID(context, nbr, "Day"), textColor);
 
-		final int maxCharacters=7;
-		if (holiday.equals("")){
+        /***********************************************************************
+         *  HOLIDAY
+         ************************************************************************/
+        final int holidayMaxChars=7;
+		if (TextUtils.isEmpty(holiday)){
 			recRef.views.setViewVisibility(getID(context, nbr, "Holiday1"), View.GONE);
 			recRef.views.setViewVisibility(getID(context, nbr, "Holiday2"), View.GONE);		
 		} else {
@@ -181,8 +179,8 @@ public class CWidgetBase extends AppWidgetProvider {
 			String str [] = holiday.substring(1).split(""); 
 			str[0] = holiday.substring(0,1);
 			//ok now.
-			int remarkLength = Math.min(maxCharacters*2,str.length);
-			int prefixlength = Math.min(maxCharacters, str.length);
+			int remarkLength = Math.min(holidayMaxChars*2,str.length);
+			int prefixlength = Math.min(holidayMaxChars, str.length);
 			String holidayRemark="";
 			for (int i=0;i<prefixlength;i++){
 				holidayRemark+=str[i]+(i==(prefixlength-1)?"":"\n");
@@ -190,10 +188,10 @@ public class CWidgetBase extends AppWidgetProvider {
 			//pageHoliday1.setLines(prefixlength);
 			recRef.views.setTextViewText(getID(context, nbr, "Holiday1"), holidayRemark);
 			recRef.views.setTextColor(getID(context, nbr, "Holiday1"), textColor);
-			if (remarkLength>maxCharacters){
+			if (remarkLength>holidayMaxChars){
 				recRef.views.setViewVisibility(getID(context, nbr, "Holiday2"), View.VISIBLE);
 				holidayRemark="";
-				for (int i=maxCharacters;i<remarkLength;i++){
+				for (int i=holidayMaxChars;i<remarkLength;i++){
 					holidayRemark+=str[i]+(i==(remarkLength-1)?"":"\n");
 				}
 				//pageHoliday2.setLines(remarkLength-prefixlength);
@@ -203,8 +201,39 @@ public class CWidgetBase extends AppWidgetProvider {
 				recRef.views.setViewVisibility(getID(context, nbr, "Holiday2"), View.GONE);				
 			}
 		}
-		
-		recRef.views.setTextViewText(getID(context, nbr, "EngYear"), String.valueOf(curYear));
+        /***********************************************************************
+         *  HOLY DAY
+         ************************************************************************/
+        if (MyUtil.getPrefInt(MyUtil.PREF_HOLY_DAY,-1)<=0) {
+            recRef.views.setViewVisibility(getID(context, nbr, "HolyDay1"), View.GONE);
+            recRef.views.setViewVisibility(getID(context, nbr, "HolyDay2"), View.GONE);
+        } else {
+            String holyDay = MyHoliday.getHolyDayText(mDisplayDay.getTime());
+            if (TextUtils.isEmpty(holyDay)) {
+                recRef.views.setViewVisibility(getID(context, nbr, "HolyDay1"), View.GONE);
+                recRef.views.setViewVisibility(getID(context, nbr, "HolyDay2"), View.GONE);
+            } else {
+                recRef.views.setViewVisibility(getID(context, nbr, "HolyDay1"), View.VISIBLE);
+                recRef.views.setTextColor(getID(context, nbr, "HolyDay1"), textColor);
+                String holyDayLines[] = DailyFragment.getHolyDay2Lines(holyDay);
+                recRef.views.setTextViewText(getID(context, nbr, "HolyDay1"), holyDayLines[0]);
+                if (TextUtils.isEmpty(holyDayLines[1])) {
+                    recRef.views.setViewVisibility(getID(context, nbr, "HolyDay2"), View.GONE);
+                } else {
+                    recRef.views.setViewVisibility(getID(context, nbr, "HolyDay2"), View.VISIBLE);
+                    recRef.views.setTextColor(getID(context, nbr, "HolyDay2"), textColor);
+                    recRef.views.setTextViewText(getID(context, nbr, "HolyDay2"), holyDayLines[1]);
+                }
+            }
+        }
+        /***********************************************************************
+         *  DAY
+         ************************************************************************/
+        recRef.views.setTextViewText(getID(context, nbr, "Day"), String.valueOf(curDay));
+        recRef.views.setTextColor(getID(context, nbr, "Day"), textColor);
+
+
+        recRef.views.setTextViewText(getID(context, nbr, "EngYear"), String.valueOf(curYear));
 		recRef.views.setTextColor(getID(context, nbr, "EngYear"), textColor);
 		
 		recRef.views.setTextViewText(getID(context, nbr, "EngMonthName"), MyUtil.sdfEngMMMM.format(mDisplayDay.getTime()));
@@ -309,7 +338,7 @@ public class CWidgetBase extends AppWidgetProvider {
  GOLD TEXT
  *********************************************************
  */
-		recRef.views.setTextViewText(getID(context, nbr, "GoldVerse"),cv.getAsString(MyDailyBread.wGoldVerse)+(curYear>=2016?";和合本]":"；和合本修訂版]"));
+		recRef.views.setTextViewText(getID(context, nbr, "GoldVerse"),cv.getAsString(MyDailyBread.wGoldVerse)+(curYear>=2016?";和合本":"；和合本修訂版"));
 		recRef.views.setTextColor(getID(context, nbr, "GoldVerse"), textColor);
 		
 		String mGoldText;
@@ -332,6 +361,10 @@ public class CWidgetBase extends AppWidgetProvider {
 		recRef.views.setViewVisibility(R.id.xmlWidgetLoading, View.GONE);
 		recRef.views.setViewVisibility(R.id.xmlPage1, View.VISIBLE);
 
+/**********************************************************
+ DEBUG ONLY - SHOW LAYOUT SIZE
+ *********************************************************
+ */
         if (DEBUG){
             String appVersionName = "?";
             try {

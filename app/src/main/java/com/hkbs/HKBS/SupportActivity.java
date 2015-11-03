@@ -208,7 +208,6 @@ public class SupportActivity extends MyActivity implements OnClickListener {
             setHolyDayColor();
             break;
 		}
-		
+        CWidgetBase.broadcastMe(SupportActivity.this);
 	}
-	
 }

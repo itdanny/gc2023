@@ -164,7 +164,9 @@
             <RelativeLayout
                 android:layout_width="0dp"
                 android:layout_height="match_parent"
-                android:layout_gravity="center"                
+                android:layout_centerVertical="true"
+                android:gravity="center_vertical"
+                android:layout_gravity="center_vertical"
                 android:layout_weight="5" >
 
                 <ImageView
@@ -173,8 +175,7 @@
                     android:layout_height="wrap_content"
                     android:layout_centerVertical="true"
                     android:adjustViewBounds="true"
-                    android:scaleType="fitXY"
-                    android:src="@drawable/green_weekday_2015" />
+                    android:scaleType="fitXY" />
  
                 <TextView
                     android:id="@+id/xmlPage1WeekDay"

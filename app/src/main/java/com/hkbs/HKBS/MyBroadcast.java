@@ -11,7 +11,6 @@ import android.content.Context;
 import android.content.Intent;
 import android.content.IntentFilter;
 import android.content.res.Resources;
-import android.net.Uri;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
@@ -106,6 +105,7 @@ public class MyBroadcast extends BroadcastReceiver {
         updateAllWidgetByClass(context, CWidgetXLarge.class);
         updateAllWidgetByClass(context, CWidgetLarge.class);
         updateAllWidgetByClass(context, CWidgetSmall.class);
+        updateAllWidgetByClass(context, CWidgetMiddle.class);
         updateAllWidgetByClass(context, CWidgetBase.class);
 	}
     static private void updateAllWidgetByClass(Context context, Class widgetClass){
@@ -118,15 +118,20 @@ public class MyBroadcast extends BroadcastReceiver {
         } else if (widgets.length!=0){
             MyUtil.log(TAG, "updateAllWidget "+widgetClass.getSimpleName()+" "+widgets.length);
             for (int i = 0; i < widgets.length; i++) {
-                Intent intent = new Intent();
+//                Intent intent = new Intent();
+//                intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
+//                intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgets[i]);
+//                intent.putExtra(AppWidgetManager.EXTRA_CUSTOM_EXTRAS, REQUEST_WIDGET);
+//                intent.putExtra(AppWidgetManager.EXTRA_CUSTOM_INFO, "");
+//                intent.setData(Uri.withAppendedPath(Uri.parse(URI_SCHEME + "://widget/" + REQUEST_WIDGET + "/"), String.valueOf(widgets[i])));
+//                context.sendBroadcast(intent);
+                //2015.11.03
+                Intent intent = new Intent(context,widgetClass);
                 intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
-                //intent.setData(ContentUris.withAppendedId(Uri.EMPTY, buttonID));
-                intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, widgets[i]);
-                intent.putExtra(AppWidgetManager.EXTRA_CUSTOM_EXTRAS, REQUEST_WIDGET);
-                intent.putExtra(AppWidgetManager.EXTRA_CUSTOM_INFO, "");
-                // below statment should be different on every call so that it won't reuse and can't broadcase wrong variables
-                //intentCounter++;
-                intent.setData(Uri.withAppendedPath(Uri.parse(URI_SCHEME + "://widget/" + REQUEST_WIDGET + "/"), String.valueOf(widgets[i])));
+                // Use an array and EXTRA_APPWIDGET_IDS instead of AppWidgetManager.EXTRA_APPWIDGET_ID,
+                // since it seems the onUpdate() is only fired on that:
+                int[] ids = {widgets[i]};
+                intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_IDS, ids);
                 context.sendBroadcast(intent);
             }
         }

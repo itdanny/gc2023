@@ -246,49 +246,56 @@ public class DailyFragment extends Fragment {
                 mHoliday2View.setVisibility(View.GONE);
             }
         }
+/***********************************************************************
+ *  HOLY DAY
+ ************************************************************************/
 
-        final int maxHolyDaysChars=9;
         mHolyDay1View.setTextColor(mTextColor);
         mHolyDay2View.setTextColor(mTextColor);
         if (MyUtil.getPrefInt(MyUtil.PREF_HOLY_DAY,0)<=0 || mHolyDayText.equals("")){
             mHolyDay1View.setVisibility(View.GONE);
             mHolyDay2View.setVisibility(View.GONE);
         } else {
-            String holyDayLines [] = new String[]{"",""};
-            int splitIndex=mHolyDayText.indexOf("#");
-            if (splitIndex>=0){
-                for (int i=0;i<splitIndex;i++){
-                    holyDayLines[0]=holyDayLines[0]+mHolyDayText.substring(i,i+1)+"\n";
-                }
-                for (int i=splitIndex+1;i<mHolyDayText.length();i++){
-                    holyDayLines[1]=holyDayLines[1]+mHolyDayText.substring(i,i+1)+"\n";
-                }
-            } else {
-                holyDayLines = new String[]{"",""};
-                if (mHolyDayText.length()>maxHolyDaysChars){
-                    for (int i=0;i<maxHolyDaysChars;i++){
-                        holyDayLines[0]=holyDayLines[0]+mHolyDayText.substring(i,i+1)+"\n";
-                    }
-                    for (int i=maxHolyDaysChars;i<mHolyDayText.length();i++){
-                        holyDayLines[1]=holyDayLines[1]+mHolyDayText.substring(i,i+1)+"\n";
-                    }
-                } else {
-                    for (int i=0;i<mHolyDayText.length();i++){
-                        holyDayLines[0]=holyDayLines[0]+mHolyDayText.substring(i,i+1)+"\n";
-                    }
-                }
-            }
-            mHolyDay1View.setLines(holyDayLines[0].length()/2);
+            String holyDayLines [] = DailyFragment.getHolyDay2Lines(mHolyDayText);
+            mHolyDay1View.setLines(holyDayLines[0].length());
             mHolyDay1View.setText(holyDayLines[0]);
             mHolyDay1View.setVisibility(View.VISIBLE);
             if (holyDayLines[1].equalsIgnoreCase("")){
                 mHolyDay2View.setVisibility(View.GONE);
             } else {
                 mHolyDay2View.setVisibility(View.VISIBLE);
-                mHolyDay2View.setLines(holyDayLines[1].length()/2);
+                mHolyDay2View.setLines(holyDayLines[1].length());
                 mHolyDay2View.setText(holyDayLines[1]);
             }
         }
+    }
+    static public String [] getHolyDay2Lines(String holyDayText){
+        final int maxHolyDaysChars=9;
+        String holyDayLines [] = new String[]{"",""};
+        int splitIndex=holyDayText.indexOf("#");
+        if (splitIndex>=0){
+            for (int i=0;i<splitIndex;i++){
+                holyDayLines[0]=holyDayLines[0]+holyDayText.substring(i,i+1)+(i==splitIndex-1?"":"\n");
+            }
+            for (int i=splitIndex+1;i<holyDayText.length();i++){
+                holyDayLines[1]=holyDayLines[1]+holyDayText.substring(i,i+1)+(i==holyDayText.length()-1?"":"\n");
+            }
+        } else {
+            holyDayLines = new String[]{"",""};
+            if (holyDayText.length()>maxHolyDaysChars){
+                for (int i=0;i<maxHolyDaysChars;i++){
+                    holyDayLines[0]=holyDayLines[0]+holyDayText.substring(i,i+1)+(i==maxHolyDaysChars-1?"":"\n");
+                }
+                for (int i=maxHolyDaysChars;i<holyDayText.length();i++){
+                    holyDayLines[1]=holyDayLines[1]+holyDayText.substring(i,i+1)+(i==holyDayText.length()-1?"":"\n");
+                }
+            } else {
+                for (int i=0;i<holyDayText.length();i++){
+                    holyDayLines[0]=holyDayLines[0]+holyDayText.substring(i,i+1)+(i==holyDayText.length()-1?"":"\n");
+                }
+            }
+        }
+        return holyDayLines;
     }
     private void setRow3ChineseYearMonthAndWeekday(){
         // Prepare data
@@ -350,7 +357,12 @@ public class DailyFragment extends Fragment {
 
     }
     private void setRow4GoldText(){
-        if (mCurYear>=2016) {
+        /***************************************************************
+         GOLD FRAME
+         ***************************************************************/
+
+        //if (mCurYear>=2016) {
+        if (CMain.IS_2016_VERSION){
             mGoldFrame.setImageDrawable(getResources().getDrawable(mIsHoliday?R.drawable.red_frame_2016:R.drawable.green_frame_2016));
             mGoldFrame.setVisibility(View.VISIBLE);
         } else {
@@ -483,7 +495,12 @@ public class DailyFragment extends Fragment {
         }
     }
     private void setRow5Wisdom(){
-        if (mCurYear>=2016) {
+        /****************************************************************************************
+         *  WISDOM FRAME
+         ************************************************************************************/
+
+        //if (mCurYear>=2016) {
+        if (CMain.IS_2016_VERSION){
             mWisdomIcon.setImageDrawable(getResources().getDrawable(mIsHoliday ? R.drawable.red_icon_2016 : R.drawable.green_icon_2016));
         } else {
             mWisdomIcon.setScaleType(ImageView.ScaleType.FIT_XY);
@@ -493,6 +510,10 @@ public class DailyFragment extends Fragment {
                 mWisdomIcon.setImageDrawable(getResources().getDrawable(mIsHoliday ? R.drawable.red_icon_2015 : R.drawable.green_icon_2015));
             }
         }
+
+        /****************************************************************************************
+         *  WISDOM TEXT
+         ************************************************************************************/
 
         mWisdomTextView.setTextColor(mTextColor);
 

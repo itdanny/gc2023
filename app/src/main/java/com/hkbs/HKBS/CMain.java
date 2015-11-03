@@ -226,7 +226,7 @@ public class CMain extends MyActivity {
         AxAlarm.setDailyAlarm(CMain.this, AxAlarm.MODE.SET_DEFAULT, 9, 0);
         AxAlarm.setDailyOnDateChange(CMain.this);
 
-        CWidgetNormal.broadcastMe(CMain.this);
+        CWidgetBase.broadcastMe(CMain.this);
 
         mPager = (CustomViewPager) findViewById(R.id.pager);
         mAdapter = new CustomViewAdapter(getSupportFragmentManager(), CMain.this);
@@ -308,25 +308,7 @@ public class CMain extends MyActivity {
         int mShortAnimTime = 0;
         isTitleShown = isVisible;
 
-        if (CMain.is_2016DayShown()) {
-            AxTextView mainBtnPlan = (AxTextView) findViewById(R.id.mainBtnBible);
-            mainBtnPlan.setText(R.string.main_bible);
-            if (mainBtnPlan != null) {
-                Intent intent = CMain.this.getPackageManager().getLaunchIntentForPackage("org.arkist.cnote");
-                if (intent != null) { // Exist
-                    mainBtnPlan.setText("聖經行事曆");
-                }
-            }
-        } else {
-            AxTextView mainBtnPlan = (AxTextView) findViewById(R.id.mainBtnRow2Col1);
-            mainBtnPlan.setText(R.string.main_bible);
-            if (mainBtnPlan != null) {
-                Intent intent = CMain.this.getPackageManager().getLaunchIntentForPackage("org.arkist.cnote");
-                if (intent != null) { // Exist
-                    mainBtnPlan.setText("聖經行事曆");
-                }
-            }
-        }
+
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             // If the ViewPropertyAnimator API is available
@@ -464,9 +446,32 @@ public class CMain extends MyActivity {
             }
         });
 
+        AxTextView mainBtnBible = (AxTextView) findViewById(R.id.mainBtnBible);
+        mainBtnBible.setText(R.string.main_bible);
+        if (CMain.is_2016DayShown()) {
+//            if (mainBtnBible != null) {
+//                Intent intent = CMain.this.getPackageManager().getLaunchIntentForPackage("org.arkist.cnote");
+//                if (intent != null) { // Exist
+//                    mainBtnBible.setText("聖經行事曆");
+//                }
+//            }
+            mainBtnBible.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onClickViewArkistBible(CMain.this);
+                }
+            });
+        } else {
+            mainBtnBible.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onClickViewHkbsBible(CMain.this);
+                }
+            });
+        }
+
         AxTextView mainBtnPlan = (AxTextView) findViewById(R.id.mainBtnRow2Col1);
-        //mainBtnPlan.setOnTouchListener(mDelayHideTouchListener);
-        if (CMain.is_2016DayShown()){
+        if (CMain.is_2016DayShown()) {
             mainBtnPlan.setText(R.string.main_support);
             mainBtnPlan.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -482,26 +487,12 @@ public class CMain extends MyActivity {
                     onClickViewArkistBible(CMain.this);
                 }
             });
-        }
-
-
-        AxTextView mainBtnBible = (AxTextView) findViewById(R.id.mainBtnBible);
-        if (CMain.is_2016DayShown()) {
-            mainBtnBible.setText(R.string.main_arkist);
-            mainBtnBible.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onClickViewArkistBible(CMain.this);
+            if (mainBtnPlan != null) {
+                Intent intent = CMain.this.getPackageManager().getLaunchIntentForPackage("org.arkist.cnote");
+                if (intent != null) { // Exist
+                    mainBtnPlan.setText("聖經行事曆");
                 }
-            });
-        } else {
-            mainBtnBible.setText(R.string.main_bible);
-            mainBtnBible.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onClickViewBible(CMain.this);
-                }
-            });
+            }
         }
 
 
@@ -1260,7 +1251,7 @@ public class CMain extends MyActivity {
         overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
         return;
     }
-	private void onClickViewBible(Context context){
+	private void onClickViewHkbsBible(Context context){
 		boolean isShownAdBanner = AxTools.getPrefBoolean("pref_showBanner", false);
 		//isShownAdBanner=false;
 		if (isShownAdBanner){

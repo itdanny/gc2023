@@ -55,7 +55,7 @@
                     android:layout_weight="3"
                     android:gravity="center"
                     android:inputType="none"
-                    android:textSize="18sp"
+                    android:textSize="@dimen/vs_eng_month_font"
                     android:textStyle="bold" />
 
                 <!-- android:text="一月" -->
@@ -76,9 +76,27 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:inputType="none"
-                android:textSize="72sp"
+                android:textSize="@dimen/vs_day_font"
                 android:textStyle="bold" />
-
+            <TextView
+                android:id="@+id/xmlPage1HolyDay1"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_alignParentLeft="true"
+                android:layout_centerVertical="true"
+                android:layout_marginLeft="4dp"
+                android:inputType="none"
+                android:textSize="@dimen/vs_holiday_font"
+                android:textStyle="bold" />
+            <TextView
+                android:id="@+id/xmlPage1HolyDay2"
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:layout_centerVertical="true"
+                android:layout_toRightOf="@id/xmlPage1HolyDay1"
+                android:inputType="none"
+                android:textSize="@dimen/vs_holiday_font"
+                android:textStyle="bold" />
             <TextView
                 android:id="@+id/xmlPage1Holiday1"
                 android:layout_width="wrap_content"
@@ -87,8 +105,7 @@
                 android:layout_centerVertical="true"
                 android:layout_marginRight="4dp"
                 android:inputType="none"
-                android:lines="7"
-                android:textSize="8sp"
+                android:textSize="@dimen/vs_holiday_font"
                 android:textStyle="bold" />
             <!-- android:text="香\n港\n特\n別\n行\n政\n區" -->
 
@@ -99,8 +116,7 @@
                 android:layout_centerVertical="true"
                 android:layout_toLeftOf="@id/xmlPage1Holiday1"
                 android:inputType="none"
-                android:lines="7"
-                android:textSize="8sp"
+                android:textSize="@dimen/vs_holiday_font"
                 android:textStyle="bold" />
             <!-- android:text="成\n立\n紀\n念\n日\n翌\n日" -->
 
@@ -164,8 +180,7 @@
                         android:layout_height="wrap_content"
                         android:layout_centerVertical="true"
                         android:adjustViewBounds="true"
-                        android:scaleType="fitXY"
-                        android:src="@drawable/green_weekday_2015" />
+                        android:scaleType="fitXY" />
 
                     <!-- android:text="星期二 TUE" -->
                     <TextView
