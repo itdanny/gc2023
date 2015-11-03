@@ -80,7 +80,6 @@
             android:layout_centerVertical="true"
             android:layout_marginLeft="6dp"
             android:inputType="none"
-            android:lines="9"
             android:text="童\n貞\n女\n馬\n利\n亞\n聞\n報\n日"
             android:textSize="12sp"
             android:textStyle="bold" />
@@ -92,7 +91,6 @@
             android:layout_centerVertical="true"
             android:layout_toRightOf="@id/xmlPage1HolyDay1"
             android:inputType="none"
-            android:lines="9"
             android:text="聖\n提\n摩\n太\n與\n聖\n提\n多\n日"
             android:textSize="12sp"
             android:textStyle="bold" />
@@ -105,7 +103,6 @@
             android:layout_centerVertical="true"
             android:layout_marginRight="8dp"
             android:inputType="none"
-            android:lines="7"
             android:text="香\n港\n特\n別\n行\n政\n區"
             android:textSize="12sp"
             android:textStyle="bold"/>
@@ -117,7 +114,6 @@
             android:layout_centerVertical="true"
             android:layout_toLeftOf="@id/xmlPage1Holiday1"
             android:inputType="none"
-            android:lines="7"
             android:text="成\n立\n紀\n念\n日\n翌\n日"
             android:textSize="12sp"
             android:textStyle="bold"/>

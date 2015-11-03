@@ -74,6 +74,7 @@ public class CMain extends MyActivity {
     }
 //    final static private boolean IS_2015_OR_LATER = true;
     final static public boolean DEBUG = true;
+    final static public boolean DEBUG_LAYOUT = false;
 
     final static private String TAG = CMain.class.getSimpleName();
 

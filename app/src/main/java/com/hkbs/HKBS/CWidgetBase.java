@@ -365,7 +365,7 @@ public class CWidgetBase extends AppWidgetProvider {
  DEBUG ONLY - SHOW LAYOUT SIZE
  *********************************************************
  */
-        if (DEBUG){
+        if (CMain.DEBUG_LAYOUT){
             String appVersionName = "?";
             try {
                 appVersionName = context.getPackageManager().getPackageInfo(context.getPackageName(),0).versionName;

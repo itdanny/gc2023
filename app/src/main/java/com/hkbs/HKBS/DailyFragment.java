@@ -257,14 +257,12 @@ public class DailyFragment extends Fragment {
             mHolyDay2View.setVisibility(View.GONE);
         } else {
             String holyDayLines [] = DailyFragment.getHolyDay2Lines(mHolyDayText);
-            mHolyDay1View.setLines(holyDayLines[0].length());
             mHolyDay1View.setText(holyDayLines[0]);
             mHolyDay1View.setVisibility(View.VISIBLE);
             if (holyDayLines[1].equalsIgnoreCase("")){
                 mHolyDay2View.setVisibility(View.GONE);
             } else {
                 mHolyDay2View.setVisibility(View.VISIBLE);
-                mHolyDay2View.setLines(holyDayLines[1].length());
                 mHolyDay2View.setText(holyDayLines[1]);
             }
         }
