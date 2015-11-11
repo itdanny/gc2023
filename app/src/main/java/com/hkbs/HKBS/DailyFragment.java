@@ -296,6 +296,14 @@ public class DailyFragment extends Fragment {
         return holyDayLines;
     }
     private void setRow3ChineseYearMonthAndWeekday(){
+        //if (CMain.IS_2016_VERSION) {
+        if (mCurYear>=2016) {
+            mWeekDayImage.setImageResource(mIsHoliday ? R.drawable.red_weekday_2016 : R.drawable.green_weekday_2016);
+        } else {
+            mWeekDayImage.setImageResource(mIsHoliday ? R.drawable.red_weekday_2015 : R.drawable.green_weekday_2015);
+        }
+        mWeekDay.setTextColor(getResources().getColor(R.color.white));
+
         // Prepare data
         final Calendar monthEndDate = (Calendar) mCalendar.clone();
         int nbrOfDaysTo30 = 30-mLunar.getDay(); // Chinese Day
@@ -316,13 +324,6 @@ public class DailyFragment extends Fragment {
             case Calendar.FRIDAY: mWeekDay.setText("星期五 FRI"); break;
             case Calendar.SATURDAY: mWeekDay.setText("星期六 SAT"); break;
         }
-
-        if (mCurYear>=2016) {
-            mWeekDayImage.setImageResource(mIsHoliday ? R.drawable.red_weekday_2016 : R.drawable.green_weekday_2016);            
-        } else {
-            mWeekDayImage.setImageResource(mIsHoliday ? R.drawable.red_weekday_2015 : R.drawable.green_weekday_2015);
-        }
-        mWeekDay.setTextColor(getResources().getColor(R.color.white));
 
         mChiLunarDay.setText(mLunar.toChineseDD() + "日");
         mChiLunarDay.setTextColor(mTextColor);
@@ -359,13 +360,20 @@ public class DailyFragment extends Fragment {
          GOLD FRAME
          ***************************************************************/
 
-        //if (mCurYear>=2016) {
-        if (CMain.IS_2016_VERSION){
+        //if (CMain.IS_2016_VERSION){
+        if (mCurYear>=2016) {
             mGoldFrame.setImageDrawable(getResources().getDrawable(mIsHoliday?R.drawable.red_frame_2016:R.drawable.green_frame_2016));
             mGoldFrame.setVisibility(View.VISIBLE);
         } else {
+            ImageView upperFrame = (ImageView) mRootView.findViewById(R.id.xmlPage1ImageFrameUpper);
+            ImageView lowerFrame = (ImageView) mRootView.findViewById(R.id.xmlPage1ImageFrameLower);
             mGoldFrame.setImageDrawable(getResources().getDrawable(mIsHoliday?R.drawable.red_frame_2015:R.drawable.green_frame_2015));
-            mGoldFrame.setVisibility(View.VISIBLE);
+
+            mGoldFrame.setVisibility(View.GONE);
+            upperFrame.setImageDrawable(getResources().getDrawable(mIsHoliday ? R.drawable.red_frame_2015_upper : R.drawable.green_frame_2015_upper));
+            lowerFrame.setImageDrawable(getResources().getDrawable(mIsHoliday ? R.drawable.red_frame_2015_upper : R.drawable.green_frame_2015_upper));
+            upperFrame.setVisibility(View.VISIBLE);
+            lowerFrame.setVisibility(View.VISIBLE);
         }
 
         /***************************************************************
@@ -387,6 +395,9 @@ public class DailyFragment extends Fragment {
         for (int i=0;i<goldLines.length;i++){
             mMaxCharsPerGoldLine =Math.max(mMaxCharsPerGoldLine, goldLines[i].length());
         }
+        // 2015.11.06 Min ; At least <X> characters; Make it not too large;
+        // 2015.11.10 Min (12)-Max(21);
+        mMaxCharsPerGoldLine = Math.max(12,mMaxCharsPerGoldLine);
         mGoldTextView.setTextColor(mTextColor);
         int goldFontSize;
         if (MyDailyBread.mCurrentYear>=2015){
@@ -428,10 +439,16 @@ public class DailyFragment extends Fragment {
         mGoldTextView.setText(goldText.replace("#", "\n"));
         if (CMain.IS_2016_VERSION){
             //(3 lines for text; 1 for verse;1 for top & bottom i.e. 3/5 = around 0.6)
+//            if (mScrType.equalsIgnoreCase(SMALL_LAYOUT)){//Higher ratio to small screen
+//                mGoldTextFontSize = setViewFontBySize(goldLines, mGoldTextView, (float) 11 / 38, 3, goldLines.length, 0.65f, mMaxCharsPerGoldLine);
+//            } else {
+//                mGoldTextFontSize = setViewFontBySize(goldLines, mGoldTextView, (float) 11 / 38, 3, goldLines.length, 0.6f, mMaxCharsPerGoldLine);
+//            }
+            //(4 lines for text; 1 for verse;1 for top & bottom i.e. 4/6 = around 0.66)
             if (mScrType.equalsIgnoreCase(SMALL_LAYOUT)){//Higher ratio to small screen
-                mGoldTextFontSize = setViewFontBySize(goldLines, mGoldTextView, (float) 11 / 38, 3, goldLines.length, 0.65f, mMaxCharsPerGoldLine);
+                mGoldTextFontSize = setViewFontBySize(goldLines, mGoldTextView, (float) 11 / 38, 4, goldLines.length, 0.7f, mMaxCharsPerGoldLine);
             } else {
-                mGoldTextFontSize = setViewFontBySize(goldLines, mGoldTextView, (float) 11 / 38, 3, goldLines.length, 0.6f, mMaxCharsPerGoldLine);
+                mGoldTextFontSize = setViewFontBySize(goldLines, mGoldTextView, (float) 11 / 38, 4, goldLines.length, 0.66f, mMaxCharsPerGoldLine);
             }
             mGoldTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mGoldTextFontSize);
         } else {
@@ -458,8 +475,12 @@ public class DailyFragment extends Fragment {
         mGoldVerseView.setTextColor(mTextColor);
         // From HKBS, size change to less than Gold
         if (CMain.IS_2016_VERSION) {
-            mGoldVerseFontSize=getFontSizeByMaxCharacters(mGoldTextView, 22);
-            mGoldVerseView.setTextSize(TypedValue.COMPLEX_UNIT_PX, Math.min(mGoldVerseFontSize,(int)(mGoldTextFontSize*0.8)));
+            mGoldVerseFontSize=getFontSizeByMaxCharacters(mGoldTextView, 22);// Max. 22 per line; 4 lines
+//            if (mScrType.equalsIgnoreCase(SMALL_LAYOUT)) {
+//                mGoldVerseView.setTextSize(TypedValue.COMPLEX_UNIT_PX, Math.min(mGoldVerseFontSize,(int)(mGoldTextFontSize*0.7)));
+//            } else {
+                mGoldVerseView.setTextSize(TypedValue.COMPLEX_UNIT_PX, Math.min(mGoldVerseFontSize, (int) (mGoldTextFontSize * 0.8)));
+//            }
         } else {
             if (MyDailyBread.mCurrentYear >= 2015 & mMaxCharsPerGoldLine > 20) {
                 // If size is too small, just a little bit different
@@ -478,18 +499,28 @@ public class DailyFragment extends Fragment {
             mGoldVerseFontSize=(int) mGoldVerseView.getTextSize();
         }
         if (mCurYear>=2010){
-            mGoldVerseView.setGravity(Gravity.CENTER_HORIZONTAL);
+            mGoldVerseView.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
         }
         if (mCurYear>=2015){
+            RelativeLayout.LayoutParams goldVerseLP = (RelativeLayout.LayoutParams) mGoldVerseView.getLayoutParams();
             if (mScrType.equalsIgnoreCase(STD_LAYOUT)) {
-                RelativeLayout.LayoutParams goldVerseLP = (RelativeLayout.LayoutParams) mGoldVerseView.getLayoutParams();
                 if (CMain.IS_2016_VERSION) {
-                    goldVerseLP.setMargins(goldVerseLP.leftMargin, goldVerseLP.topMargin, goldVerseLP.rightMargin, AxTools.dp2px(16));
+                    if (mCurYear>=2016) {
+                        goldVerseLP.setMargins(goldVerseLP.leftMargin, goldVerseLP.topMargin, goldVerseLP.rightMargin, AxTools.dp2px(8));
+                    } else {
+                        goldVerseLP.setMargins(goldVerseLP.leftMargin, goldVerseLP.topMargin, goldVerseLP.rightMargin, AxTools.dp2px(16));
+                    }
                 } else {
                     goldVerseLP.setMargins(goldVerseLP.leftMargin, goldVerseLP.topMargin, goldVerseLP.rightMargin, AxTools.dp2px(22));
                 }
                 mGoldVerseView.setLayoutParams(goldVerseLP);
+            } else {
+                if (CMain.IS_2016_VERSION && mCurYear>=2016) {
+                    goldVerseLP.setMargins(goldVerseLP.leftMargin, goldVerseLP.topMargin, goldVerseLP.rightMargin, AxTools.dp2px(8));
+                    mGoldVerseView.setLayoutParams(goldVerseLP);
+                }
             }
+
         }
     }
     private void setRow5Wisdom(){
@@ -497,8 +528,9 @@ public class DailyFragment extends Fragment {
          *  WISDOM FRAME
          ************************************************************************************/
 
-        //if (mCurYear>=2016) {
-        if (CMain.IS_2016_VERSION){
+
+        //if (CMain.IS_2016_VERSION){
+        if (mCurYear>=2016) {
             mWisdomIcon.setImageDrawable(getResources().getDrawable(mIsHoliday ? R.drawable.red_icon_2016 : R.drawable.green_icon_2016));
         } else {
             mWisdomIcon.setScaleType(ImageView.ScaleType.FIT_XY);
@@ -541,8 +573,9 @@ public class DailyFragment extends Fragment {
         String wisdomLines [] = wisdomText.split("#");
         int maxWisdomChars=0;
         for (int i=0;i<wisdomLines.length;i++){
-            maxWisdomChars=Math.max(maxWisdomChars,wisdomLines[0].length());
+            maxWisdomChars=Math.max(maxWisdomChars,wisdomLines[i].length());
         }
+        maxWisdomChars=Math.max(16,maxWisdomChars);
         if (CMain.IS_2016_VERSION){// One Line change 2 or 3 lines upon length
             if (wisdomLines.length==1){
                 if (wisdomLines [0].length()>=15) { // Change only for >15 characters
@@ -574,11 +607,18 @@ public class DailyFragment extends Fragment {
                 mWisdomTextFontSize = setViewFontBySize(wisdomLines, mWisdomTextView, (float) 7 / 38, 4, wisdomLines.length, textRatio, maxWisdomChars);
                 mWisdomTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, Math.min(mWisdomTextFontSize,(int)(mGoldTextFontSize*0.95f)));
             } else {
-                mWisdomTextFontSize = setViewFontBySize(wisdomLines, mWisdomTextView, (float) 7 / 38, 4, wisdomLines.length, 0.8f, maxWisdomChars);
+                // 5 lines for all text lines; Space for Wisdom text is 4/5 = 0.8; Give some space for bottom margin
+//                if (TextUtils.isEmpty(mContentValues.getAsString(MyDailyBread.wSmallText))) {
+//                    mWisdomTextFontSize = setViewFontBySize(wisdomLines, mWisdomTextView, (float) 7 / 38, 4, wisdomLines.length, 0.8f, maxWisdomChars);
+//                } else {
+                    mWisdomTextFontSize = setViewFontBySize(wisdomLines, mWisdomTextView, (float) 7 / 38, 4, wisdomLines.length, 0.75f, maxWisdomChars);
+//                }
                 if (mMaxCharsPerGoldLine > 15){// Too small, nearly same size is ok
-                    mWisdomTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, Math.min(mWisdomTextFontSize,(int)(mGoldTextFontSize*0.95f)));
+                    mWisdomTextFontSize=Math.min(mWisdomTextFontSize,(int) Math.floor(mGoldTextFontSize*0.95f));
+                    mWisdomTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mWisdomTextFontSize);
                 } else {
-                    mWisdomTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, Math.min(mWisdomTextFontSize, (int) (mGoldTextFontSize * 0.8f)));
+                    mWisdomTextFontSize=Math.min(mWisdomTextFontSize, (int) Math.floor (mGoldTextFontSize * 0.8f));
+                    mWisdomTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mWisdomTextFontSize);
                 }
             }
         } else {
@@ -598,37 +638,51 @@ public class DailyFragment extends Fragment {
             }
             mWisdomTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mWisdomTextFontSize);
         }
-        RelativeLayout.LayoutParams bigTextLP = (RelativeLayout.LayoutParams) mWisdomTextView.getLayoutParams();
+//        RelativeLayout.LayoutParams bigTextLP = (RelativeLayout.LayoutParams) mWisdomTextView.getLayoutParams();
         if (mCurYear>=2016) {
-            mWisdomTextView.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
-            int margin=Math.min(bigTextLP.leftMargin,bigTextLP.rightMargin);
-            bigTextLP.setMargins(margin,bigTextLP.topMargin,margin,bigTextLP.bottomMargin);
-            mWisdomTextView.setLayoutParams(bigTextLP);
+//            if (wisdomLines.length>=4){
+//                mWisdomTextView.setGravity(Gravity.LEFT | Gravity.TOP);
+//            } else {
+                mWisdomTextView.setGravity(Gravity.LEFT | Gravity.TOP);
+//            }
+            //mWisdomTextView.setGravity(Gravity.TOP | Gravity.CENTER_HORIZONTAL);
+//            int margin=Math.min(bigTextLP.leftMargin,bigTextLP.rightMargin);
+//            bigTextLP.setMargins(margin,bigTextLP.topMargin,margin,bigTextLP.bottomMargin);
+//            mWisdomTextView.setLayoutParams(bigTextLP);
         } else {
             mWisdomTextView.setGravity(Gravity.LEFT | Gravity.CENTER_VERTICAL);
-        }
-        if (DEBUG) {
-            Log.w(TAG, "Device="+getString(R.string.deviceType)+" screenType=" + mScrType + " Hint TextSize=" + mWisdomTextFontSize + " " + mWisdomTextView.getHeight()+" "+mCurYear+"-"+(mCurMonth+1)+"-"+mCurDay);
         }
 /***********************************************************************************
  * 最後一行字 : pageHintText (SIZE IS STANDARD)
  ************************************************************************************/
-        mWisdomVerseView.setText(mContentValues.getAsString(MyDailyBread.wSmallText));
-        mWisdomVerseView.setTextColor(mTextColor);
-        float referenceSize=0;// = getBigFontSize(pageWisdomText,"S");
-        if (CMain.IS_2016_VERSION) {
-            referenceSize = mWisdomVerseView.getTextSize();
+        String wisdomVerseText=mContentValues.getAsString(MyDailyBread.wSmallText);
+        if (TextUtils.isEmpty(wisdomVerseText)){
+            mWisdomVerseView.setVisibility(View.GONE);
         } else {
-            referenceSize = mWisdomTextView.getTextSize();
+            mWisdomVerseView.setVisibility(View.VISIBLE);
+            String wisdomVerseLines [] = wisdomVerseText.split("#");
+            int maxWisdomVerseChars=0;
+            for (int i=0;i<wisdomVerseLines.length;i++){
+                maxWisdomVerseChars=Math.max(maxWisdomVerseChars,wisdomVerseLines[i].length());
+            }
+            wisdomVerseText=wisdomVerseText.replace("#","\n");
+            mWisdomVerseView.setText(wisdomVerseText);
+            mWisdomVerseView.setTextColor(mTextColor);
+            float referenceSize=0;// = getBigFontSize(pageWisdomText,"S");
+            if (CMain.IS_2016_VERSION) {
+                referenceSize = mWisdomTextFontSize;//mWisdomVerseView.getTextSize();
+            } else {
+                referenceSize = mWisdomTextView.getTextSize();
+            }
+            //mWisdomVerseFontSize = (int) (referenceSize - AxTools.dp2px(2));
+            mWisdomVerseFontSize = (int) (referenceSize*0.8f);
+            int wisdomVerseWidth=getDesiredWidth(mWisdomVerseView);
+            mWisdomVerseFontSize = Math.min(mWisdomVerseFontSize, (int) Math.floor(wisdomVerseWidth / maxWisdomVerseChars));
+            mWisdomVerseView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mWisdomVerseFontSize);//DC: 2013.12.12
+            if (DEBUG) {
+                Log.w(TAG, "Device="+getString(R.string.deviceType)+" screen=" + mScrType + " WisdomFontSize=" + mWisdomTextFontSize + " v="+mWisdomVerseFontSize + " height="+mWisdomTextView.getHeight()+" "+mCurYear+"-"+(mCurMonth+1)+"-"+mCurDay);
+            }
         }
-        if (mScrType.equalsIgnoreCase(SMALL_LAYOUT)) {
-            mWisdomVerseFontSize = (int) (referenceSize - AxTools.dp2px(2));
-        } else if (mScrType.equalsIgnoreCase(STD_LAYOUT)) {
-            mWisdomVerseFontSize = (int) (referenceSize - AxTools.dp2px(3));
-        } else {
-            mWisdomVerseFontSize = (int) (referenceSize - AxTools.dp2px(4));
-        }
-        mWisdomVerseView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mWisdomVerseFontSize);//DC: 2013.12.12
     }
     
     private int getAppHeight(){
@@ -645,19 +699,22 @@ public class DailyFragment extends Fragment {
     * @param textRatio  The ratio that text occupy on textView
      */
     public int setViewFontBySize(String lines[], TextView textView, float fullScreenRatio, int maxLines, int nbrOfLines, float textRatio, int maxChars){
-        int maxHeight = (int) (getAppHeight() * fullScreenRatio * textRatio);
+        int maxAllLinesHeight = (int) (getAppHeight() * fullScreenRatio * textRatio);
         // Either 3 lines (Gold) or 4 lines (Wisdom)
         if (maxLines==3) {
             switch (nbrOfLines) {
                 case 1:
-                    maxHeight = maxHeight * 2 / maxLines;
+                    maxAllLinesHeight = maxAllLinesHeight * 2 / maxLines;
                     break;
                 case 2:
                     if (mScrType.equalsIgnoreCase(SMALL_LAYOUT)) {//Give more space since screen is small
-                        maxHeight = (int) (maxHeight * maxLines / maxLines);
+                        maxAllLinesHeight = (int) (maxAllLinesHeight * maxLines / maxLines);
                     } else {
-                        maxHeight = (int) (maxHeight * 2.5 / maxLines);
+                        maxAllLinesHeight = (int) (maxAllLinesHeight * 2.5 / maxLines);
                     }
+                    break;
+                case 3:
+                    maxAllLinesHeight = maxAllLinesHeight * 3 / maxLines;
                     break;
                 default:
                     //maxHeight = maxHeight * maxLines / maxLines;
@@ -666,65 +723,53 @@ public class DailyFragment extends Fragment {
         } else if (maxLines==4){//Wisdom 4 Lines
             switch (nbrOfLines) {
                 case 1:
-                    maxHeight = maxHeight * 2 / maxLines; // Display One Row with Two row space
+                    maxAllLinesHeight = maxAllLinesHeight * 2 / maxLines; // Display One Row with Two row space
                     break;
                 case 2:
-                    maxHeight = maxHeight * 3  / maxLines; // Display Two Row with Three row space
+                    maxAllLinesHeight = maxAllLinesHeight * 3  / maxLines; // Display Two Row with Three row space
                     break;
                 case 3:
                     if (mScrType.equalsIgnoreCase(SMALL_LAYOUT)) {//Give more space since screen is small
-                        maxHeight = (int) (maxHeight * 4 / maxLines);
+                        maxAllLinesHeight = (int) (maxAllLinesHeight * 4 / maxLines);
                     } else {
-                        maxHeight = (int) (maxHeight * 3.5 / maxLines);
+                        maxAllLinesHeight = (int) (maxAllLinesHeight * 3.5 / maxLines);
                     }
                     break;
+                case 4:
+                    maxAllLinesHeight = (int) (maxAllLinesHeight * 4  / maxLines);
+                    break;
                 default:
-                    //maxHeight = (int) (maxHeight * 4  / maxLines);
                     break;
             }
         }
         int maxWidth = getDesiredWidth(textView);
         //int textSize = nbrOfLines==1?(int)(maxWidth/2):200;// inital text size
         //int textSize = nbrOfLines==1?maxHeight:200;
-        //Log.e(TAG,"curDay="+mDisplayDay.get(Calendar.DAY_OF_MONTH));
-        int textSize = maxHeight;
+        int textSize = (int) (maxAllLinesHeight / nbrOfLines);// First test figures
         String text = textView.getText().toString();
+        textView.setLineSpacing(0,1.0f);
         textPaint=textView.getPaint();
         boolean isDigit=TextUtils.isDigitsOnly(text);
-        while (getHeightOfMultiLineText(text, textSize, maxWidth, nbrOfLines, isDigit) >= maxHeight) {
+        while (getHeightOfMultiLineText(lines, textSize, maxWidth, nbrOfLines, isDigit) >= maxAllLinesHeight) {
             textSize--;
         }
-        //Log.e(TAG,"After check by Height Font Size ="+textSize);
+        if (DEBUG) {
+            Log.d(TAG, "Before fontSize=" + maxAllLinesHeight + " after=" + textSize + " lines=" + nbrOfLines + " width=" + maxWidth + " maxChars=" + maxChars + " maxAllLinesHeight=" + maxAllLinesHeight + " text=" + text);
+        }
         if (textSize*maxChars > maxWidth ) {
-            textSize = (int) (Math.floor(maxWidth / maxChars));
-//            if (lines==null){
-//                textPaint.setTextSize(textSize);
-//                textPaint.getTextBounds(text, 0, text.length(), textBounds);
-//                while (textBounds.width()>=maxWidth){
-//                    textSize--;
-//                    textPaint.setTextSize(textSize);
-//                    textPaint.getTextBounds(text, 0, text.length(), textBounds);
-//                }
-//            } else {
-//                for (int i=0;i<lines.length;i++){
-//                    text = lines[i]+"M";
-//                    textPaint.setTextSize(textSize);
-//                    textPaint.getTextBounds(text, 0, text.length(), textBounds);
-//                    while (textBounds.width()>=maxWidth){
-//                        textSize--;
-//                        textPaint.setTextSize(textSize);
-//                        textPaint.getTextBounds(text, 0, text.length(), textBounds);
-//                    }
-//                }
+            int sizeByWidth = (int) (Math.floor(maxWidth / maxChars));
+            int sizeByHeight = (int) Math.floor(Math.min(textSize, maxAllLinesHeight / nbrOfLines));
+            if (DEBUG) {
+                Log.e(TAG, "Too large use width/maxChars=" + textSize + " byWidth=" +sizeByWidth+" byHeight"+sizeByHeight);
+            }
+            textSize = Math.min(sizeByHeight, sizeByWidth);
         }
         if (!(mScrType.equalsIgnoreCase(SMALL_LAYOUT) && maxLines==4)) {//Screen so small, not reduct siz
             textSize--;
         }
-        //Log.e(TAG,"After check by Width Font Size ="+textSize);
-//        }
         return textSize;
     }
-    private int getHeightOfMultiLineText(String text, int textSize, int maxWidth, int nbrOfLines, boolean isDigit) {
+    private int getHeightOfMultiLineText(String lines [], int textSize, int maxWidth, int nbrOfLines, boolean isDigit) {
         textPaint.setTextSize(textSize);
 //        int index = 0;
 //        int lineCount = 0;
@@ -735,15 +780,22 @@ public class DailyFragment extends Fragment {
         int lineCount=nbrOfLines+1;
 //      int nbrOfCharText=Math.min(2, text.length());
 //      textPaint.getTextBounds(text.substring(0,nbrOfCharText), 0, nbrOfCharText, textBounds);
-        textPaint.getTextBounds("Yy", 0, 2, textBounds);
-        double lineSpacing;
-        if (isDigit) {
+        int textBoundsHeight=0;
+        if (lines==null || isDigit){
+            textPaint.getTextBounds("Yy", 0, 2, textBounds);
             Paint.FontMetrics fontMetrics = textPaint.getFontMetrics();
             return (int) (textBounds.height()-fontMetrics.descent);
         } else {
-            // obtain space between lines
-            lineSpacing = Math.max(0, ((lineCount - 1) * textBounds.height() * 0.25));
-            return (int) Math.floor(lineSpacing + lineCount * textBounds.height());
+            double lineSpacing;
+            textPaint.getTextBounds("測試", 0, 2, textBounds);
+            textBoundsHeight = textBounds.height() * nbrOfLines;
+//            Log.d(TAG,"textBoundsHeight="+textBoundsHeight+" fontSpacing="+textPaint.getFontSpacing());
+//            lineSpacing = Math.max(0, ((lineCount - 1) * textPaint.getFontSpacing()));
+//            return (int) Math.floor(lineSpacing + textBoundsHeight);
+            // 2015.11.11
+            // Already use setLineSacing(0,1.1f) before;
+            // Another 0.25 is from http://stackoverflow.com/questions/16082359/how-to-auto-adjust-text-size-on-a-multi-line-textview-according-to-the-view-max
+            return (int)(textBoundsHeight * 1.25f );
         }
     }
     private int getFontSizeByText(TextView textView, String str){

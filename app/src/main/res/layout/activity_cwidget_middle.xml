@@ -26,10 +26,10 @@
         android:orientation="vertical"
         android:padding="2dp" >
 
-        <RelativeLayout
-            android:layout_width="match_parent"
+        <RelativeLayout android:layout_weight="2.3"
+                        android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="2.5" >
+            >
 
             <LinearLayout
                 android:layout_width="match_parent"
@@ -78,7 +78,7 @@
                 android:layout_height="wrap_content"
                 android:layout_centerInParent="true"
                 android:inputType="none"
-                android:textSize="135sp"
+                android:textSize="108sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -224,11 +224,10 @@
             </LinearLayout>
         </RelativeLayout>
 
-        <RelativeLayout
+        <RelativeLayout android:layout_weight="1.2"
             android:id="@+id/xmlPage1Middle"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1"
             android:paddingTop="5dp" >
 
             <ImageView
@@ -251,7 +250,7 @@
                 android:visibility="gone"
                 android:scaleType="fitCenter"
                 android:layout_alignParentTop="true"
-                android:src="@drawable/green_frame_2016_upper" />
+                android:src="@drawable/green_frame_2015_upper" />
             <ImageView
                 android:id="@+id/xmlPage1ImageFrameLower"
                 android:layout_width="fill_parent"
@@ -262,7 +261,7 @@
                 android:paddingRight="2dp"
                 android:scaleType="fitCenter"
                 android:layout_alignParentBottom="true"
-                android:src="@drawable/green_frame_2016_lower" />
+                android:src="@drawable/green_frame_2015_upper" />
 
             <!--
             android:text="金句金句金句金句金句金句金句金句金句金句金\n金句2\n金句3\n金句4"
@@ -273,11 +272,11 @@
                 android:layout_width="fill_parent"
                 android:layout_height="fill_parent"
                 android:layout_above="@+id/xmlPage1GoldVerse"
-                android:layout_marginLeft="12dp"
-                android:layout_marginRight="12dp"
+                android:layout_marginLeft="6dp"
+                android:layout_marginRight="6dp"
                 android:layout_marginTop="@dimen/std_c_image_top"
                 android:gravity="center"
-                android:maxLines="3"
+                android:maxLines="4"
                 android:ellipsize="end"
                 android:textSize="11sp" />
 
@@ -295,10 +294,10 @@
                 android:textSize="8sp" />
         </RelativeLayout>
 
-        <RelativeLayout
+        <RelativeLayout android:layout_weight="1"
             android:layout_width="match_parent"
             android:layout_height="0dp"
-            android:layout_weight="1" >
+             >
 
             <ImageView
                 android:id="@+id/xmlPage1ImageIcon"
@@ -319,11 +318,11 @@
                 android:layout_height="match_parent"
                 android:layout_above="@+id/xmlPage1BigHint"
                 android:layout_alignParentTop="true"
-                android:layout_marginRight="20dp"
+                android:layout_marginRight="10dp"
                 android:layout_marginLeft="10dp"
-                android:layout_marginTop="6dp"
-                android:gravity="center_horizontal"
-                android:textSize="12sp" />
+                android:layout_marginTop="4dp"
+                style="@style/wisdomText"
+                android:textSize="11sp" />
 
             <!-- android:text="Hint …………………." -->
             <TextView

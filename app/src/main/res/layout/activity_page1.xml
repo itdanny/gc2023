@@ -5,10 +5,10 @@
     android:orientation="vertical"
     android:padding="2dp" >
 
-    <RelativeLayout
+    <RelativeLayout android:layout_weight="20"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="20" >
+         >
 
 		<TextView
 		    android:id="@+id/xmlPage1ScreenType"
@@ -239,11 +239,11 @@
 
     </RelativeLayout>
 
-    <RelativeLayout
+    <RelativeLayout android:layout_weight="11"
         android:id="@+id/xmlPage1Middle"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="11"
+
         android:paddingTop="5dp" >
 
         <ImageView
@@ -256,28 +256,28 @@
             android:scaleType="fitXY"
             android:visibility="gone"
             android:src="@drawable/green_frame_2015" />
-        <!--<ImageView-->
-            <!--android:id="@+id/xmlPage1ImageFrameUpper"-->
-            <!--android:layout_width="fill_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:adjustViewBounds="true"-->
-            <!--android:paddingLeft="2dp"-->
-            <!--android:paddingRight="2dp"-->
-            <!--android:visibility="gone"-->
-            <!--android:scaleType="fitCenter"-->
-            <!--android:layout_alignParentTop="true"-->
-            <!--android:src="@drawable/green_frame_2016_upper" />-->
-        <!--<ImageView-->
-            <!--android:id="@+id/xmlPage1ImageFrameLower"-->
-            <!--android:layout_width="fill_parent"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:adjustViewBounds="true"-->
-            <!--android:paddingLeft="2dp"-->
-            <!--android:paddingRight="2dp"-->
-            <!--android:visibility="gone"-->
-            <!--android:scaleType="fitCenter"-->
-            <!--android:layout_alignParentBottom="true"-->
-            <!--android:src="@drawable/green_frame_2016_lower" />-->
+        <ImageView
+            android:id="@+id/xmlPage1ImageFrameUpper"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
+            android:visibility="gone"
+            android:scaleType="fitCenter"
+            android:layout_alignParentTop="true"
+            android:src="@drawable/green_frame_2015_upper" />
+        <ImageView
+            android:id="@+id/xmlPage1ImageFrameLower"
+            android:layout_width="fill_parent"
+            android:layout_height="wrap_content"
+            android:adjustViewBounds="true"
+            android:paddingLeft="2dp"
+            android:paddingRight="2dp"
+            android:visibility="gone"
+            android:scaleType="fitCenter"
+            android:layout_alignParentBottom="true"
+            android:src="@drawable/green_frame_2015_upper" />
 
         <!--
         android:text="金句金句金句金句金句金句金句金句金句\n金句2\n金句3\n金句4"
@@ -310,10 +310,10 @@
             android:textSize="12sp" />
     </RelativeLayout>
 
-    <RelativeLayout
+    <RelativeLayout android:layout_weight="7"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="7" >
+         >
 
         <ImageView
             android:id="@+id/xmlPage1ImageIcon"
@@ -332,7 +332,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_marginLeft="30dp"
+            android:layout_marginLeft="@dimen/std_wisdom_left_margin"
             android:layout_marginRight="@dimen/std_wisdom_right_margin"
             android:layout_marginTop="0dp"
             android:gravity="left|top"

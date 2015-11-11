@@ -3,7 +3,7 @@
     <dimen name="vs_width">152dp</dimen>
     <dimen name="vs_height">194dp</dimen>
     <dimen name="vs_holiday_font">6sp</dimen>
-    <dimen name="vs_day_font">64sp</dimen>
+    <dimen name="vs_day_font">48sp</dimen>
     <dimen name="vs_eng_month_font">14sp</dimen>
 
     <dimen name="vn_width">216dp</dimen>
@@ -38,7 +38,6 @@
     <!-- Widget Stored in Layout-large -->
     <dimen name="ln_width">324dp</dimen>
     <dimen name="ln_height">432dp</dimen>
-    <dimen name="ln_wisdom_right_margin">5dp</dimen>
     <dimen name="ln_holiday_font">14sp</dimen>
 
     <dimen name="lx_width">504dp</dimen>
@@ -78,13 +77,16 @@
 	 <dimen name="std_p_image_top">2dp</dimen>
      <dimen name="std_p_image_bottom">16dp</dimen> <!-- Now control by code -->
      <dimen name="std_gold_left_right">5dp</dimen>
-     <dimen name="std_wisdom_right_margin">5dp</dimen>
+     <dimen name="std_wisdom_left_margin">15dp</dimen>
+     <dimen name="std_wisdom_right_margin">10dp</dimen>
 	 <dimen name="std_lunar_font_size">15sp</dimen>
 	 <!-- Samsung Tablet -->
 	 <dimen name="big_c_image_top">0dp</dimen>
 	 <dimen name="big_c_image_bottom">12dp</dimen>
 	 <dimen name="big_p_image_top">15dp</dimen>	 
-	 <dimen name="big_p_image_bottom">47dp</dimen>
+	 <dimen name="big_p_image_bottom">24dp</dimen>
+    <dimen name="big_wisdom_left_margin">5dp</dimen>
+    <dimen name="big_wisdom_right_margin">30dp</dimen>
 	 
 	 <dimen name="big_lunar_font_size">28sp</dimen>
 	 
@@ -93,11 +95,12 @@
      <dimen name="small_day_font_size">100sp</dimen>
      <dimen name="small_weekday_font_size">14sp</dimen>
      <dimen name="small_gold_left_right">5dp</dimen>
+     <dimen name="small_wisdom_left_margin">5dp</dimen>
      <dimen name="small_wisdom_right_margin">5dp</dimen>
      <dimen name="small_c_image_top">5dp</dimen>
 	 <dimen name="small_c_image_bottom">4dp</dimen>
 	 <dimen name="small_p_image_top">2dp</dimen>	 
-	 <dimen name="small_p_image_bottom">4dp</dimen>
+	 <dimen name="small_p_image_bottom">8dp</dimen>
      <dimen name="small_p_image_right">5dp</dimen>
 	 
 	 <dimen name="small_lunar_font_size">12sp</dimen>

@@ -251,7 +251,7 @@
                 android:visibility="gone"
                 android:scaleType="fitCenter"
                 android:layout_alignParentTop="true"
-                android:src="@drawable/green_frame_2016_upper" />
+                android:src="@drawable/green_frame_2015_upper" />
             <ImageView
                 android:id="@+id/xmlPage1ImageFrameLower"
                 android:layout_width="fill_parent"
@@ -262,7 +262,7 @@
                 android:visibility="gone"
                 android:scaleType="fitCenter"
                 android:layout_alignParentBottom="true"
-                android:src="@drawable/green_frame_2016_lower" />
+                android:src="@drawable/green_frame_2015_upper" />
 
             <!-- android:text="金句金句金句金句金句金句金句金句金句金句金\n金句2\n金句3\n金句4" -->
             <TextView
@@ -315,10 +315,10 @@
                 android:layout_above="@+id/xmlPage1BigHint"
                 android:layout_alignParentTop="true"
                 android:layout_marginLeft="10dp"
-                android:layout_marginRight="20dp"
+                android:layout_marginRight="10dp"
                 android:layout_marginTop="6dp"
-                android:gravity="center_horizontal"
-                android:textSize="16sp" /><!-- left|top -->
+                style="@style/wisdomText"
+                android:textSize="14sp" /><!-- left|top -->
 
 			<!-- android:text="Hint …………………." -->
             <TextView

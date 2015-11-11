@@ -6,10 +6,10 @@
     android:orientation="vertical"
     android:padding="2dp">
 
-    <RelativeLayout
+    <RelativeLayout android:layout_weight="20"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="20">
+        >
 
         <TextView
             android:id="@+id/xmlPage1ScreenType"
@@ -219,11 +219,11 @@
         </LinearLayout>
     </RelativeLayout>
 
-    <RelativeLayout
+    <RelativeLayout android:layout_weight="11"
         android:id="@+id/xmlPage1Middle"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="11"
+
         android:paddingTop="1dp">
 
         <ImageView
@@ -246,7 +246,7 @@
             android:paddingLeft="2dp"
             android:paddingRight="2dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/green_frame_2016_upper"
+            android:src="@drawable/green_frame_2015_upper"
             android:visibility="gone"/>
 
         <ImageView
@@ -258,7 +258,7 @@
             android:paddingLeft="2dp"
             android:paddingRight="2dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/green_frame_2016_lower"
+            android:src="@drawable/green_frame_2015_upper"
             android:visibility="gone"/>
 
         <TextView
@@ -287,11 +287,9 @@
             android:textSize="8sp"/>
     </RelativeLayout>
 
-    <RelativeLayout
+    <RelativeLayout android:layout_weight="7"
         android:layout_width="match_parent"
-        android:layout_height="0dp"
-        android:layout_weight="7"
-        >
+        android:layout_height="0dp">
 
         <ImageView
             android:id="@+id/xmlPage1ImageIcon"
@@ -311,7 +309,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_marginLeft="10dp"
+            android:layout_marginLeft="@dimen/small_wisdom_left_margin"
             android:layout_marginRight="@dimen/small_wisdom_right_margin"
             android:gravity="left|top"
             android:text="小知識\n1234567890123456789012\n小知識\n小知識\n"

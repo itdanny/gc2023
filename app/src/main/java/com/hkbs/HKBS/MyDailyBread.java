@@ -22,11 +22,14 @@ import java.util.Set;
 
 public class MyDailyBread {
     static public int mCurrentYear=2015;//Valid Range will be from last SEPT
-	static private boolean IS_CURRENT_YEAR_ONLY = true;
+    static public boolean IS_TEST_2016_STANDARD = true && CMain.DEBUG;
+    static public boolean IS_TEST_2016_HOLIDAY = false && IS_TEST_2016_STANDARD && CMain.DEBUG;
+    static public boolean IS_TEST_2016_YEAR = false && IS_TEST_2016_STANDARD && CMain.DEBUG;
+	static private boolean IS_CURRENT_YEAR_ONLY = false;
 	static private boolean IS_CHECK_FUTURE_CHARS_ONLY = false && CMain.DEBUG;// PLEASE SET IT TO [[[false]]] for release
 	static private boolean IS_CHECK_VALID_VERSE = true && CMain.DEBUG;
-	static private boolean IS_CHECK_FIELD_VALUES = true; // MUST CHECK; DONOT SET TO false
-    static private boolean IS_SHOW_DETAILS_IF_BIG_SIZE_LINES_4 = true;
+	static private boolean IS_CHECK_FIELD_VALUES = false;
+    static private boolean IS_CHECK_IF_LESS_THAN_4_LINES = false;
 	
 	final static private boolean DEBUG=true && CMain.DEBUG;
 	final static private String TAG = MyDailyBread.class.getSimpleName();
@@ -107,26 +110,28 @@ public class MyDailyBread {
 	    return myDailyBread;
 	}
 	private void setValidRange(){
-        validFrDate = Calendar.getInstance();
-        //validFrDate.set(mCurrentYear-1,  0, 1, 23, 59, 59); // 1-1
-        validToDate = Calendar.getInstance();
-		if (IS_CURRENT_YEAR_ONLY) {
-            if (CMain.IS_2016_VERSION) {
-                validFrDate.set(2015, 0, 1, 0, 0, 0); // 1-1
-                validToDate.set(2016, 5, 30, 0, 0, 0); // Custom; May be by season
+        if (validFrDate==null || validToDate==null) {
+            validFrDate = Calendar.getInstance();
+            //validFrDate.set(mCurrentYear-1,  0, 1, 23, 59, 59); // 1-1
+            validToDate = Calendar.getInstance();
+            if (IS_CURRENT_YEAR_ONLY) {
+                if (CMain.IS_2016_VERSION) {
+                    validFrDate.set(2015, 0, 1, 0, 0, 0); // 1-1
+                    validToDate.set(2016, 5, 30, 0, 0, 0); // Custom; May be by season
+                } else {
+                    validFrDate.set(mCurrentYear - 1, 0, 1, 0, 0, 0); // 1-1
+                    validToDate.set(mCurrentYear, 11, 31, 0, 0, 0); // 2016-12-21
+                }
             } else {
-                validFrDate.set(mCurrentYear-1,  0, 1, 0, 0, 0); // 1-1
-                validToDate.set(mCurrentYear, 11, 31, 0, 0, 0); // 2016-12-21
+                if (CMain.IS_2016_VERSION) {
+                    validFrDate.set(2011, 9, 1, 0, 0, 0); // 1-1
+                    validToDate.set(2016, 5, 30, 0, 0, 0); // Custom; May be by season
+                } else {
+                    validFrDate.set(mCurrentYear - 1, 0, 1, 0, 0, 0); // 1-1
+                    validToDate.set(mCurrentYear, 11, 31, 0, 0, 0); // 2016-12-21
+                }
             }
-        } else {
-            if (CMain.IS_2016_VERSION) {
-                validFrDate.set(2011, 9, 1, 0, 0, 0); // 1-1
-                validToDate.set(2016, 5, 30, 0, 0, 0); // Custom; May be by season
-            } else {
-                validFrDate.set(mCurrentYear-1,  0, 1, 0, 0, 0); // 1-1
-                validToDate.set(mCurrentYear, 11, 31, 0, 0, 0); // 2016-12-21
-            }
-		}
+        }
 	}
     public long getNbrOfValidDays(){
         setValidRange();
@@ -202,9 +207,13 @@ public class MyDailyBread {
     		String maxGold_S_str="";
     		String maxHint_L_str="";
     		String maxHint_S_str="";
-    		int lastYear=0;
+            int lastYear=0;
     		int lastMonth=0;
     		int lastDay=0;
+            Calendar newDate = Calendar.getInstance();
+            newDate.set(Calendar.HOUR_OF_DAY, 0);
+            newDate.set(Calendar.MINUTE, 0);
+            newDate.set(Calendar.SECOND, 0);
 		    // 1st Line Header
 		    if (line!=null){
 		    	String [] titles = line.split(",");
@@ -230,6 +239,7 @@ public class MyDailyBread {
 			    while (line != null) {
 			    	line.replace("\"", "");
 			    	String [] fields = line.split(",");
+                    // Check Valid Line
                     boolean validLine=true;
                     if (fields.length!=titles.length){
                         validLine=false;
@@ -264,11 +274,60 @@ public class MyDailyBread {
                         }
                     }
 			    	if (validLine){
+                        String strGoldText = cv.getAsString(wGoldText);
+                        String strWisdomText = cv.getAsString(wBigText);
+                        String strGoldVerse = cv.getAsString(wGoldVerse);
+                        String strWisdomVerse = cv.getAsString(wSmallText);
+                        if (IS_TEST_2016_STANDARD){
+                            if (today.get(Calendar.YEAR)==lastYear &&
+                                    today.get(Calendar.MONTH)==lastMonth &&
+                                    today.get(Calendar.DAY_OF_MONTH)==lastDay){
+                                // 21 chars
+                                strGoldVerse = "測試測試測試測試測試.";
+                            // Gold Text 4 lines (21 chars)
+                                     strGoldText = "金句測試測試測試測試測試測試測試測試測試.#" +
+                                            "測試測試測試測試測試測試測試測試測試測試.#" +
+                                            "測試測試測試測試測試測試測試測試測試測試.#" +
+                                            "測試測試測試測試測試測試測試測試測試測試.";
+                            // Gold Text 2 lines (14 chars)
+//                            strGoldText =   "金句測試測試測試測試測試測試#" +
+//                                            "測試測試測試測試測試測試測試";
+//                           3 lines (21 chars)
+//                                    strGoldText = "金句測試測試測試測試測試測試測試測試測試.#" +
+//                                            "測試測試測試測試測試測試測試測試測試測試.#" +
+//                                            "測試測試測試測試測試測試測試測試測試測試.";
+//                           2 lines (13 chars)
+//                                    strGoldText = "金句測試測試測試測試測試.#" +
+//                                                  "測試測試測試測試測試測試.";
+//                           1 Lines (4 chars)
+//                                    strGoldText =   "金句測試";
+
+                                // Wisdom 4 lines (14 chars)
+                                strWisdomText = "雞湯測試測試測試測試測試測試#"+
+                                                "測試測試測試測試測試測試測試#"+
+                                                "測試測試測試測試測試測試測試#"+
+                                                "測試測試測試測試測試測試測試";
+                                // Wisdom 4 lines (21 chars)
+//                                strWisdomText = "雞湯測試測試測試測試測試測試測試測試測試.#"+
+//                                        "測試測試測試測試測試測試測試測試測試測試.#"+
+//                                        "測試測試測試測試測試測試測試測試測試測試.#"+
+//                                        "測試測試測試測試測試測試測試測試測試測試.";
+                                // Wisdom 2 lines (21 chars)
+//                                strWisdomVerse = "測試測試測試測試測試測試測試測試測試測試測."+
+//                                        "測試測試測試測試測試測試測試測試測試測試測.";
+                                strWisdomVerse = "測試測試測試測試測試測試測試測試測試測試.";
+                                cv.put(wGoldText, strGoldText);
+                                cv.put(wGoldVerse, strGoldVerse);
+                                cv.put(wBigText, strWisdomText);
+                                cv.put(wSmallText, strWisdomVerse);
+                            }
+                        }
+                        // Now set contents
                         mValueList.add(mValueList.size(), cv);
-				    	mMap.put(getDayString(lastYear,lastMonth,lastDay), counter);
-				    	counter++;
+                        final String mapDayString =getDayString(lastYear, lastMonth, lastDay);
+				    	mMap.put(mapDayString, counter);
+                        counter++;
 				    	// Assign From/To Date				    	
-				    	final Calendar newDate = Calendar.getInstance(); 
 				    	newDate.set(Calendar.YEAR, lastYear);
 				    	newDate.set(Calendar.MONTH, lastMonth);
 				    	newDate.set(Calendar.DAY_OF_MONTH, lastDay);
@@ -305,7 +364,7 @@ public class MyDailyBread {
 				    	// Check Value
 				    	if (IS_CHECK_VALID_VERSE){
 				    		if (CMain.getEBCV(cv.getAsString(wGoldVerse))==null){
-				    			MyUtil.logError(TAG, newDate.get(Calendar.YEAR)+"-"+(newDate.get(Calendar.MONTH)+1)+"-"+newDate.get(Calendar.DAY_OF_MONTH));
+				    			MyUtil.logError(TAG, "!!!!! "+newDate.get(Calendar.YEAR)+"-"+(newDate.get(Calendar.MONTH)+1)+"-"+newDate.get(Calendar.DAY_OF_MONTH)+" !!!!");
 				    		}
 				    	}
 				    	if (IS_CHECK_FIELD_VALUES){
@@ -326,12 +385,18 @@ public class MyDailyBread {
 				    			cvBigSize.put(cv.getAsString(wBigSize), "");
 				    		}				    		
 				    	}
-				    	String [] goldLines = cv.getAsString(wGoldText).split("#");
-                        String [] hintLines = cv.getAsString(wBigText).split("#");
-                        if (IS_SHOW_DETAILS_IF_BIG_SIZE_LINES_4){
-                            final String theText=cv.getAsString(wGoldText);
-                            if (goldLines.length>=4) {
-                                Log.e(TAG, "<TooBig> lines=" + goldLines.length + " chars=" + theText.replace("#", "").length() + " at " + getDayString(lastYear, lastMonth, lastDay) + " " + theText);
+
+                        String [] goldLines = strGoldText.split("#");
+                        String [] hintLines;
+                        if (strWisdomText.startsWith("#")){
+                            hintLines = strWisdomText.substring(1).split("#");
+                        } else {
+                            hintLines = strWisdomText.split("#");
+                        }
+
+                        if (IS_CHECK_IF_LESS_THAN_4_LINES || goldLines.length>4){
+                            if (goldLines.length>4) {
+                                Log.e(TAG, "<TooBig> lines=" + goldLines.length + " chars=" + strGoldText.replace("#", "").length() + " at " + getDayString(lastYear, lastMonth, lastDay) + " " + strGoldText);
                             }
                             if (cv.getAsString(wGoldSize).equalsIgnoreCase("L")){
                                 mGold_L_NbrOfRecords[goldLines.length]++;
@@ -468,12 +533,12 @@ public class MyDailyBread {
                 MyUtil.logError(TAG, "HintSize S minChar:" + mMinHint_S_characters + " " + minHint_S_date);
 
 
-            if (IS_SHOW_DETAILS_IF_BIG_SIZE_LINES_4) {
-                for (int i = 0; i < mGold_L_NbrOfRecords.length; i++) {
-                    if (i > 3) {
-                        MyUtil.logError(TAG, "*** Line = " + i + " *** [Big size may overflow in small device");
+            if (IS_CHECK_IF_LESS_THAN_4_LINES) {
+                for (int i = 1; i < mGold_L_NbrOfRecords.length; i++) {
+                    if (i > 4) {
+                        MyUtil.logError(TAG, "*** Below has " + i + " line(s) *** [Big size may overflow in small device");
                     } else {
-                        MyUtil.logError(TAG, "*** Line = " + i + " ***");
+                        MyUtil.logError(TAG, "*** Below has " + i + " line(s) ***");
                     }
                     MyUtil.logError(TAG, "Gold L NbrOfRecords=" + mGold_L_NbrOfRecords[i] + " date=" + mGold_L_LastDate[i]);
                     MyUtil.logError(TAG, "Gold M NbrOfRecords=" + mGold_M_NbrOfRecords[i] + " date=" + mGold_M_LastDate[i]);
@@ -481,6 +546,13 @@ public class MyDailyBread {
                     MyUtil.logError(TAG, "Hint L NbrOfRecords=" + mHint_L_NbrOfRecords[i] + " date=" + mHint_L_LastDate[i]);
                     MyUtil.logError(TAG, "Hint S NbrOfRecords=" + mHint_S_NbrOfRecords[i] + " date=" + mHint_S_LastDate[i]);
                 }
+            } else {
+                MyUtil.logError(TAG, "*** Below has 5 line(s) *** [Big size may overflow in small device");
+                MyUtil.logError(TAG, "Gold L NbrOfRecords=" + mGold_L_NbrOfRecords[4] + " date=" + mGold_L_LastDate[4]);
+                MyUtil.logError(TAG, "Gold M NbrOfRecords=" + mGold_M_NbrOfRecords[4] + " date=" + mGold_M_LastDate[4]);
+                MyUtil.logError(TAG, "Gold S NbrOfRecords=" + mGold_S_NbrOfRecords[4] + " date=" + mGold_S_LastDate[4]);
+                MyUtil.logError(TAG, "Hint L NbrOfRecords=" + mHint_L_NbrOfRecords[4] + " date=" + mHint_L_LastDate[4]);
+                MyUtil.logError(TAG, "Hint S NbrOfRecords=" + mHint_S_NbrOfRecords[4] + " date=" + mHint_S_LastDate[4]);
             }
 		    	/*
 		    	 * 2013.09.08

@@ -170,6 +170,7 @@ public class CWidgetBase extends AppWidgetProvider {
          *  HOLIDAY
          ************************************************************************/
         final int holidayMaxChars=7;
+        recRef.views.setViewVisibility(R.id.xmlPage1, View.VISIBLE);
 		if (TextUtils.isEmpty(holiday)){
 			recRef.views.setViewVisibility(getID(context, nbr, "Holiday1"), View.GONE);
 			recRef.views.setViewVisibility(getID(context, nbr, "Holiday2"), View.GONE);		
@@ -291,36 +292,40 @@ public class CWidgetBase extends AppWidgetProvider {
 		}
         float layoutWidthInPixels=0;
 		if (CMain.IS_2016_VERSION) {
-//            recRef.views.setImageViewResource(getID(context, nbr, "ImageFrameUpper"), isHoliday ? R.drawable.red_frame_2016_upper : R.drawable.green_frame_2016_upper);
-//            recRef.views.setImageViewResource(getID(context, nbr, "ImageFrameLower"), isHoliday ? R.drawable.red_frame_2016_lower : R.drawable.green_frame_2016_lower);
-//            recRef.views.setViewVisibility(getID(context, nbr, "ImageFrameUpper"), View.VISIBLE);
-//            recRef.views.setViewVisibility(getID(context, nbr, "ImageFrameLower"), View.VISIBLE);
-//            recRef.views.setViewVisibility(getID(context, nbr, "ImageFrame"), View.GONE);
-            String dimenIdStr = context.getString(R.string.layoutType)+getClassTag()+"_width";
-            //Log.e(TAG,"package name="+context.getPackageName());
-            int dimenId = context.getResources().getIdentifier(dimenIdStr, "dimen",context.getPackageName());// "com.hkbs.HKBS"
+            if (curYear>=2016  || MyDailyBread.IS_TEST_2016_YEAR) {
+                String dimenIdStr = context.getString(R.string.layoutType) + getClassTag() + "_width";
+                //Log.e(TAG,"package name="+context.getPackageName());
+                int dimenId = context.getResources().getIdentifier(dimenIdStr, "dimen", context.getPackageName());// "com.hkbs.HKBS"
 
-            try {
-                layoutWidthInPixels = context.getResources().getDimension(dimenId);
-            } catch (Exception e1){
                 try {
-                    dimenIdStr = "v"+getClassTag()+"_width";
-                    dimenId = context.getResources().getIdentifier(dimenIdStr, "dimen",context.getPackageName());// "com.hkbs.HKBS"
                     layoutWidthInPixels = context.getResources().getDimension(dimenId);
-                } catch (Exception e2) {
-                    Log.e(TAG,"Cannot find dimen resource = "+dimenId+" "+dimenIdStr);
+                } catch (Exception e1) {
+                    try {
+                        dimenIdStr = "v" + getClassTag() + "_width";
+                        dimenId = context.getResources().getIdentifier(dimenIdStr, "dimen", context.getPackageName());// "com.hkbs.HKBS"
+                        layoutWidthInPixels = context.getResources().getDimension(dimenId);
+                    } catch (Exception e2) {
+                        Log.e(TAG, "Cannot find dimen resource = " + dimenId + " " + dimenIdStr);
+                    }
                 }
-            }
-            // For Widget only since some layout is very small
-            // Scale down image caused image quality bad
-            if (layoutWidthInPixels<650) {
-                recRef.views.setImageViewResource(getID(context, nbr, "ImageFrame"), isHoliday ? R.drawable.red_frame_2016_26 : R.drawable.green_frame_2016_26);
+                // For Widget only since some layout is very small
+                // Scale down image caused image quality bad
+                if (layoutWidthInPixels < 650) {
+                    recRef.views.setImageViewResource(getID(context, nbr, "ImageFrame"), isHoliday || MyDailyBread.IS_TEST_2016_HOLIDAY ? R.drawable.red_frame_2016_26 : R.drawable.green_frame_2016_26);
+                } else {
+                    recRef.views.setImageViewResource(getID(context, nbr, "ImageFrame"), isHoliday || MyDailyBread.IS_TEST_2016_HOLIDAY ? R.drawable.red_frame_2016 : R.drawable.green_frame_2016);
+                }
+                recRef.views.setViewVisibility(getID(context, nbr, "ImageFrameUpper"), View.GONE);
+                recRef.views.setViewVisibility(getID(context, nbr, "ImageFrameLower"), View.GONE);
+                recRef.views.setViewVisibility(getID(context, nbr, "ImageFrame"), View.VISIBLE);
             } else {
-                recRef.views.setImageViewResource(getID(context, nbr, "ImageFrame"), isHoliday ? R.drawable.red_frame_2016 : R.drawable.green_frame_2016);
+                recRef.views.setImageViewResource(getID(context, nbr, "ImageFrameUpper"), isHoliday ? R.drawable.red_frame_2015_upper : R.drawable.green_frame_2015_upper);
+                recRef.views.setImageViewResource(getID(context, nbr, "ImageFrameLower"), isHoliday ? R.drawable.red_frame_2015_upper : R.drawable.green_frame_2015_upper);
+                recRef.views.setViewVisibility(getID(context, nbr, "ImageFrameUpper"), View.VISIBLE);
+                recRef.views.setViewVisibility(getID(context, nbr, "ImageFrameLower"), View.VISIBLE);
+                recRef.views.setViewVisibility(getID(context, nbr, "ImageFrame"), View.GONE);
+
             }
-            recRef.views.setViewVisibility(getID(context, nbr, "ImageFrameUpper"), View.GONE);
-            recRef.views.setViewVisibility(getID(context, nbr, "ImageFrameLower"), View.GONE);
-            recRef.views.setViewVisibility(getID(context, nbr, "ImageFrame"), View.VISIBLE);
         } else {
             recRef.views.setImageViewResource(getID(context, nbr, "ImageFrame"), isHoliday ? R.drawable.red_frame_2015 : R.drawable.green_frame_2015);
             recRef.views.setViewVisibility(getID(context, nbr, "ImageFrameUpper"), View.GONE);
@@ -338,7 +343,7 @@ public class CWidgetBase extends AppWidgetProvider {
  GOLD TEXT
  *********************************************************
  */
-		recRef.views.setTextViewText(getID(context, nbr, "GoldVerse"),cv.getAsString(MyDailyBread.wGoldVerse)+(curYear>=2016?";和合本":"；和合本修訂版"));
+		recRef.views.setTextViewText(getID(context, nbr, "GoldVerse"), cv.getAsString(MyDailyBread.wGoldVerse) + (curYear >= 2016 ? ";和合本" : "；和合本修訂版"));
 		recRef.views.setTextColor(getID(context, nbr, "GoldVerse"), textColor);
 		
 		String mGoldText;
@@ -346,6 +351,10 @@ public class CWidgetBase extends AppWidgetProvider {
         mGoldText = mGoldText.substring(0, mGoldText.length());
 		recRef.views.setTextViewText(getID(context, nbr, "GoldText"), mGoldText);
 		recRef.views.setTextColor(getID(context, nbr, "GoldText"), textColor);
+
+        if (cv.getAsString(MyDailyBread.wGoldText).split("#").length>=4){
+            recRef.views.setViewVisibility(getID(context, nbr, "GoldVerse"), View.GONE);
+        }
 
 /**********************************************************
  WISDOM TEXT
@@ -356,8 +365,8 @@ public class CWidgetBase extends AppWidgetProvider {
 		
 		recRef.views.setTextViewText(getID(context, nbr, "BigHint"), cv.getAsString(MyDailyBread.wSmallText));
 		recRef.views.setTextColor(getID(context, nbr, "BigHint"), textColor);
-		
-		// All completed ..... show
+
+        // All completed ..... show
 		recRef.views.setViewVisibility(R.id.xmlWidgetLoading, View.GONE);
 		recRef.views.setViewVisibility(R.id.xmlPage1, View.VISIBLE);
 
@@ -380,6 +389,7 @@ public class CWidgetBase extends AppWidgetProvider {
         } else {
             recRef.views.setViewVisibility(R.id.xmlWidgetVersion, View.GONE);
         }
+        MyUtil.log(getLayoutTag(), "widget.onRefresh.Finish");
 	}
 	private int getID(Context context, int nbr, String extension){
 		int resultVal = context.getResources().getIdentifier("xmlPage"+nbr+extension, "id",context.getPackageName());

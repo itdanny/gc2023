@@ -5,10 +5,10 @@
               android:orientation="vertical"
               android:padding="2dp">
 
-    <RelativeLayout
+    <RelativeLayout android:layout_weight="20"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="2"
+
         >
 
         <TextView
@@ -220,11 +220,11 @@
         </LinearLayout>
     </RelativeLayout>
 
-    <RelativeLayout
+    <RelativeLayout android:layout_weight="11"
         android:id="@+id/xmlPage1Middle"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="1.1"
+
         android:paddingTop="5dp">
 
         <ImageView
@@ -247,7 +247,7 @@
             android:paddingLeft="2dp"
             android:paddingRight="2dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/green_frame_2016_upper"
+            android:src="@drawable/green_frame_2015_upper"
             android:visibility="gone"/>
 
         <ImageView
@@ -259,7 +259,7 @@
             android:paddingLeft="2dp"
             android:paddingRight="2dp"
             android:scaleType="fitCenter"
-            android:src="@drawable/green_frame_2016_lower"
+            android:src="@drawable/green_frame_2015_upper"
             android:visibility="gone"/>
 
         <TextView
@@ -288,10 +288,10 @@
             android:textSize="28sp"/>
     </RelativeLayout>
 
-    <RelativeLayout
+    <RelativeLayout android:layout_weight="7"
         android:layout_width="match_parent"
         android:layout_height="0dp"
-        android:layout_weight="0.7">
+        >
 
         <ImageView
             android:id="@+id/xmlPage1ImageIcon"
@@ -305,18 +305,19 @@
             android:src="@drawable/green_icon_2015"
             android:visibility="visible"/>
 
+        <!--android:layout_marginBottom="10dp"-->
+        <!-- Change right margin is ignored; control by program -->
         <TextView
             android:id="@+id/xmlPage1BigText"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
-            android:layout_marginBottom="10dp"
-            android:layout_marginLeft="50dp"
-            android:layout_marginRight="@dimen/ln_wisdom_right_margin"
-            android:layout_marginTop="4dp"
+            android:layout_marginLeft="@dimen/big_wisdom_left_margin"
+            android:layout_marginRight="@dimen/big_wisdom_right_margin"
+            android:layout_marginTop="2dp"
             android:gravity="left|top"
             android:text="小知識\n1234567890123456789012\n小知識\n小知識\n"
-            android:textSize="38sp"/>
+            android:textSize="32sp"/>
 
         <TextView
             android:id="@+id/xmlPage1BigHint"

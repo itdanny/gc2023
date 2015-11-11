@@ -62,15 +62,15 @@ import java.util.Calendar;
  */
 public class CMain extends MyActivity {
     final static public boolean IS_2016_VERSION = true;
-    final static public boolean is_2016DayShown(){
-        if (mDisplayDay==null){
+    final static public boolean is_2016DayShown() {
+        if (mDisplayDay == null) {
             Calendar calendar = Calendar.getInstance();
-            return calendar.get(Calendar.YEAR)>=2016;
+            return calendar.get(Calendar.YEAR) >= 2016;
         }
         int curYear = mDisplayDay.get(Calendar.YEAR);
 //        Calendar calendar = Calendar.getInstance();
 //        return calendar.get(Calendar.YEAR)>=2016;
-        return curYear>=2016;
+        return curYear >= 2016;
     }
 //    final static private boolean IS_2015_OR_LATER = true;
     final static public boolean DEBUG = true;
