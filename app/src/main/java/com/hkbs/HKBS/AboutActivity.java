@@ -23,8 +23,9 @@ public class AboutActivity extends MyActivity {
 		setContentView(R.layout.activity_about);
 		
 		if (CMain.IS_2016_VERSION){
-            ((TextView) findViewById(R.id.xmlAboutCopyright)).setText(Html.fromHtml(getString(R.string.about_copyright2016)));
-            ((TextView) findViewById(R.id.aboutAppRule)).setText(Html.fromHtml(getString(R.string.app_rule2016)));
+            findViewById(R.id.xmlAboutCopyright).setVisibility(View.GONE);
+            //((TextView) findViewById(R.id.xmlAboutCopyright)).setText(Html.fromHtml(getString(R.string.about_copyright2016)));
+            //((TextView) findViewById(R.id.aboutAppRule)).setText(Html.fromHtml(getString(R.string.app_rule2016)));
         } else {
             ((TextView) findViewById(R.id.xmlAboutCopyright)).setText(R.string.about_copyright2015);
             ((TextView) findViewById(R.id.aboutAppRule)).setText(Html.fromHtml(getString(R.string.app_rule2015)));

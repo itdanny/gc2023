@@ -140,7 +140,7 @@
                 android:orientation="horizontal" >
 
                 <org.arkist.share.AxTextView
-                    android:id="@+id/mainBtnRow2Col1"
+                    android:id="@+id/mainBtnOfflineBible"
                     style="@style/MenuStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
@@ -152,7 +152,7 @@
                     android:textColor="@color/white" />
 
                 <org.arkist.share.AxTextView
-                    android:id="@+id/mainBtnBible"
+                    android:id="@+id/mainBtnOnlineBible"
                     style="@style/MenuStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"

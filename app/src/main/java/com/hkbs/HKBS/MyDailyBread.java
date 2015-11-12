@@ -22,7 +22,7 @@ import java.util.Set;
 
 public class MyDailyBread {
     static public int mCurrentYear=2015;//Valid Range will be from last SEPT
-    static public boolean IS_TEST_2016_STANDARD = true && CMain.DEBUG;
+    static public boolean IS_TEST_2016_STANDARD = false && CMain.DEBUG;
     static public boolean IS_TEST_2016_HOLIDAY = false && IS_TEST_2016_STANDARD && CMain.DEBUG;
     static public boolean IS_TEST_2016_YEAR = false && IS_TEST_2016_STANDARD && CMain.DEBUG;
 	static private boolean IS_CURRENT_YEAR_ONLY = false;
@@ -237,7 +237,7 @@ public class MyDailyBread {
 		    		cvBigSize = new ContentValues();
 		    	}
 			    while (line != null) {
-			    	line.replace("\"", "");
+			    	line=line.replace("\"", "");
 			    	String [] fields = line.split(",");
                     // Check Valid Line
                     boolean validLine=true;
@@ -283,7 +283,7 @@ public class MyDailyBread {
                                     today.get(Calendar.MONTH)==lastMonth &&
                                     today.get(Calendar.DAY_OF_MONTH)==lastDay){
                                 // 21 chars
-                                strGoldVerse = "測試測試測試測試測試.";
+                                strGoldVerse = "帖撒羅尼迦前書2章3節";
                             // Gold Text 4 lines (21 chars)
                                      strGoldText = "金句測試測試測試測試測試測試測試測試測試.#" +
                                             "測試測試測試測試測試測試測試測試測試測試.#" +
@@ -594,9 +594,8 @@ public class MyDailyBread {
 	   MyUtil.log("#", "ContentValue["+str+"]"+vals.size());
 	   while(itr.hasNext()){
 	        Map.Entry<String, String> me = (Map.Entry<String, String>) itr.next(); 
-	        String key = me.getKey().toString();
 	        Object value =  me.getValue();
-	        MyUtil.log(TAG,"Key["+key+"] values["  + (String)(value == null?null:value.toString())+"]");
+	        MyUtil.log(TAG,"Key["+me.getKey().toString()+"] values["  + (String)(value == null?null:value.toString())+"]");
 	   }
 	}
 	public ContentValues getContentValues(int year, int month, int day){

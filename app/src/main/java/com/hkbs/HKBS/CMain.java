@@ -62,7 +62,7 @@ import java.util.Calendar;
  */
 public class CMain extends MyActivity {
     final static public boolean IS_2016_VERSION = true;
-    final static public boolean is_2016DayShown() {
+    static public boolean is_2016DayShown() {
         if (mDisplayDay == null) {
             Calendar calendar = Calendar.getInstance();
             return calendar.get(Calendar.YEAR) >= 2016;
@@ -194,7 +194,7 @@ public class CMain extends MyActivity {
 //		
         setContentView(R.layout.activity_cmain);
 
-        mRootView = (View) findViewById(R.id.xmlRoot);
+        mRootView = findViewById(R.id.xmlRoot);
         mRootView.setOnTouchListener(mViewOnTouch);
 
         AxImageView clickLeftView = (AxImageView) findViewById(R.id.xmlMainClickLeft);
@@ -447,45 +447,53 @@ public class CMain extends MyActivity {
             }
         });
 
-        AxTextView mainBtnBible = (AxTextView) findViewById(R.id.mainBtnBible);
-        mainBtnBible.setText(R.string.main_bible);
-        if (CMain.is_2016DayShown()) {
-//            if (mainBtnBible != null) {
-//                Intent intent = CMain.this.getPackageManager().getLaunchIntentForPackage("org.arkist.cnote");
-//                if (intent != null) { // Exist
-//                    mainBtnBible.setText("聖經行事曆");
-//                }
-//            }
-            mainBtnBible.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onClickViewArkistBible(CMain.this);
-                }
-            });
-        } else {
-            mainBtnBible.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onClickViewHkbsBible(CMain.this);
-                }
-            });
-        }
+        AxTextView btnOnLineBible = (AxTextView) findViewById(R.id.mainBtnOnlineBible);
+        //btnOnLineBible.setText(R.string.main_bible);
+        btnOnLineBible.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickOnLineBible(CMain.this);
+            }
+        });
 
-        AxTextView mainBtnPlan = (AxTextView) findViewById(R.id.mainBtnRow2Col1);
-        if (CMain.is_2016DayShown()) {
-            mainBtnPlan.setText(R.string.main_support);
-            mainBtnPlan.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onClickViewSupport(CMain.this);
-                }
-            });
-        } else {
+
+//        if (CMain.is_2016DayShown()) {
+////            if (mainBtnBible != null) {
+////                Intent intent = CMain.this.getPackageManager().getLaunchIntentForPackage("org.arkist.cnote");
+////                if (intent != null) { // Exist
+////                    mainBtnBible.setText("聖經行事曆");
+////                }
+////            }
+//            btnOnLineBible.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    onClickOfflineBible(CMain.this);
+//                }
+//            });
+//        } else {
+//            btnOnLineBible.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    onClickViewHkbsBible(CMain.this);
+//                }
+//            });
+//        }
+
+        AxTextView mainBtnPlan = (AxTextView) findViewById(R.id.mainBtnOfflineBible);
+//        if (CMain.is_2016DayShown()) {
+//            mainBtnPlan.setText(R.string.main_support);
+//            mainBtnPlan.setOnClickListener(new View.OnClickListener() {
+//                @Override
+//                public void onClick(View v) {
+//                    onClickViewSupport(CMain.this);
+//                }
+//            });
+//        } else {
             mainBtnPlan.setText(R.string.main_arkist);
             mainBtnPlan.setOnClickListener(new View.OnClickListener() {
                 @Override
                 public void onClick(View v) {
-                    onClickViewArkistBible(CMain.this);
+                    onClickOfflineBible(CMain.this);
                 }
             });
             if (mainBtnPlan != null) {
@@ -494,7 +502,7 @@ public class CMain extends MyActivity {
                     mainBtnPlan.setText("聖經行事曆");
                 }
             }
-        }
+//        }
 
 
         AxTextView mainBtnShare = (AxTextView) findViewById(R.id.mainBtnShare);
@@ -1000,7 +1008,7 @@ public class CMain extends MyActivity {
                     Integer.valueOf(verse)
             };
         }
-        ;
+
         //String finalBCV = bookAbbrev+" "+chapter+":"+verse;
         return eabcv;//"tr "+finalBCV;
         //return "rc 創 5:2";
@@ -1184,8 +1192,8 @@ public class CMain extends MyActivity {
 //	}
     public void gotoPrevDay() {
         if (mPager.isScrolling) return;
-        int result = MyDailyBread.calendarDaysBetween(mDailyBread.getValidFrDate(),mDisplayDay);
-        Log.i(TAG, "gotoPrevDay day="+mDisplayDay.get(Calendar.DAY_OF_MONTH)+" ("+result+")");
+        int result = MyDailyBread.calendarDaysBetween(mDailyBread.getValidFrDate(), mDisplayDay);
+        Log.i(TAG, "gotoPrevDay day=" + mDisplayDay.get(Calendar.DAY_OF_MONTH) + " (" + result + ")");
         if (result <= 0) {
             Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
         } else {
@@ -1252,6 +1260,30 @@ public class CMain extends MyActivity {
         overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
         return;
     }
+    private void onClickOnLineBible(Context context){
+        MyUtil.trackClick(context, "BibleOnLine", "M");
+        final Object eabcv[] = getEBCV(getContentValueGoldVerse());
+        //final String prefix = "http://rcuv.hkbs.org.hk/bible_list.php?dowhat=&version=RCUV&bible=";
+        //final String prefix = "http://rcuv.hkbs.org.hk/RCUV_1/";
+        String prefix;
+        if (CMain.is_2016DayShown()){
+            prefix = "http://arkist.org/MyBibleMap/_php/getReadBibleUrl.php?editionNbr=2&";
+        } else {
+            prefix = "http://arkist.org/MyBibleMap/_php/getReadBibleUrl.php?editionNbr=1&";
+        }
+//		final String chapter = "&chapter=";
+//		final String suffix = "&section=0";
+        final int bookNbr = (Integer) eabcv[2];
+        final int chapterNbr = (Integer) eabcv[3];
+        final int verseNbr = (Integer) eabcv[4];
+//		final String url = prefix+BOOKS_ENG[bookNbr-1]+chapter+chapterNbr+suffix;
+//      final String url = prefix+BOOKS_ENG[bookNbr-1]+"/"+chapterNbr+":"+verseNbr;
+        final String url = prefix+"bookNbr="+bookNbr+"&chapterNbr="+chapterNbr+"&verseNbr="+verseNbr;
+        Intent intent = new Intent(Intent.ACTION_VIEW);
+        intent.setData(Uri.parse(url));
+        //onExitGoodCalendar(context);
+        startActivity(intent);
+    }
 	private void onClickViewHkbsBible(Context context){
 		boolean isShownAdBanner = AxTools.getPrefBoolean("pref_showBanner", false);
 		//isShownAdBanner=false;
@@ -1309,41 +1341,38 @@ public class CMain extends MyActivity {
 		onExitGoodCalendar(context);
 		startActivity(intent);
 	}
-	private void onViewArkistBible(Context context){
-		Intent intent = context.getPackageManager().getLaunchIntentForPackage("org.arkist.cnote");
-		if (intent != null){
-			MyUtil.trackClick(context, "BibleApp", "M");
-			//intent.setComponent(new ComponentName("org.arkist.cnote","org.arkist.cnote.WebActivity"));
+	private void onClickOfflineBible(Context context){
+        Intent intent = context.getPackageManager().getLaunchIntentForPackage("org.arkist.cnote");
+        if (intent != null){
+            MyUtil.trackClick(context, "BibleApp", "M");
+            //intent.setComponent(new ComponentName("org.arkist.cnote","org.arkist.cnote.WebActivity"));
             final Object eabcv[] = getEBCV(getContentValueGoldVerse());
-			final String finalEabcv = (String) eabcv[0]+ (String) eabcv[1]+" "+eabcv[3]+":"+eabcv[4]; 
-			MyUtil.log(TAG, "bcv:"+finalEabcv);
-			intent.setComponent(new ComponentName("org.arkist.cnote","org.arkist.cnote.KnockActivity"));
-			intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-			intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK); // Disable bring existing task to foreground; Should used with New_Task
-			intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // A New Task
-			intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-			intent.setData(ContentUris.withAppendedId(Uri.EMPTY, CALL_FROM_EXTERNAL_APP)); 
-			intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, CALL_FROM_EXTERNAL_APP);
-			intent.putExtra(AppWidgetManager.EXTRA_CUSTOM_EXTRAS, CALL_FROM_EXTERNAL_APP);		
-			intent.putExtra(AppWidgetManager.EXTRA_CUSTOM_INFO, finalEabcv);
-			onExitGoodCalendar(context);
-			context.startActivity(intent);
-		} else {
-			try {
-				MyUtil.trackClick(context, "BiblePlayStore", "M");
-				Toast.makeText(getApplicationContext(), "找尋閱讀聖經App", Toast.LENGTH_SHORT).show();
-				Intent downloadIntent = new Intent(Intent.ACTION_VIEW);
-				downloadIntent.setData(Uri.parse("market://details?id=org.arkist.cnote"));
-				onExitGoodCalendar(context);
-				startActivity(downloadIntent);
-			} catch (Exception e){
-				MyUtil.trackClick(context, "BiblePlayStoreError", "M");
-				Toast.makeText(getApplicationContext(), "找尋不到此機閱讀聖經App版本", Toast.LENGTH_SHORT).show();
-			}
-		}
-	}
-	private void onClickViewArkistBible(Context context){
-		onViewArkistBible(context);
+            final String finalEabcv = (String) eabcv[0]+ (String) eabcv[1]+" "+eabcv[3]+":"+eabcv[4];
+            MyUtil.log(TAG, "bcv:"+finalEabcv);
+            intent.setComponent(new ComponentName("org.arkist.cnote","org.arkist.cnote.KnockActivity"));
+            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+            intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK); // Disable bring existing task to foreground; Should used with New_Task
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // A New Task
+            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+            intent.setData(ContentUris.withAppendedId(Uri.EMPTY, CALL_FROM_EXTERNAL_APP));
+            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, CALL_FROM_EXTERNAL_APP);
+            intent.putExtra(AppWidgetManager.EXTRA_CUSTOM_EXTRAS, CALL_FROM_EXTERNAL_APP);
+            intent.putExtra(AppWidgetManager.EXTRA_CUSTOM_INFO, finalEabcv);
+            //onExitGoodCalendar(context);
+            context.startActivity(intent);
+        } else {
+            try {
+                MyUtil.trackClick(context, "BiblePlayStore", "M");
+                Toast.makeText(getApplicationContext(), "找尋閱讀聖經App", Toast.LENGTH_SHORT).show();
+                Intent downloadIntent = new Intent(Intent.ACTION_VIEW);
+                downloadIntent.setData(Uri.parse("market://details?id=org.arkist.cnote"));
+                //onExitGoodCalendar(context);
+                startActivity(downloadIntent);
+            } catch (Exception e){
+                MyUtil.trackClick(context, "BiblePlayStoreError", "M");
+                Toast.makeText(getApplicationContext(), "找尋不到此機閱讀聖經App版本", Toast.LENGTH_SHORT).show();
+            }
+        }
 	}
 //	private void onClickViewILoveTheBible(Context context){
 //		Intent intent = context.getPackageManager().getLaunchIntentForPackage("hk.org.hkbs.ilovethebible");
