@@ -2,7 +2,6 @@ package com.hkbs.HKBS;
 
 import android.annotation.TargetApi;
 import android.app.AlertDialog;
-import android.app.Dialog;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
 import android.content.ContentUris;
@@ -10,14 +9,11 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageInfo;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.net.Uri;
-import android.os.AsyncTask;
 import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
@@ -34,6 +30,7 @@ import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.ImageView;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
@@ -45,10 +42,7 @@ import com.hkbs.HKBS.util.SystemUiHider;
 
 import org.arkist.share.AxAlarm;
 import org.arkist.share.AxImageView;
-import org.arkist.share.AxTextView;
 import org.arkist.share.AxTools;
-import org.json.JSONObject;
-import org.jsoup.Jsoup;
 
 import java.io.File;
 import java.io.OutputStream;
@@ -73,7 +67,7 @@ public class CMain extends MyActivity {
         return curYear >= 2016;
     }
 //    final static private boolean IS_2015_OR_LATER = true;
-    final static public boolean DEBUG = true;
+    final static public boolean DEBUG = false;
     final static public boolean DEBUG_LAYOUT = false;
 
     final static private String TAG = CMain.class.getSimpleName();
@@ -179,12 +173,13 @@ public class CMain extends MyActivity {
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+        Log.e(TAG,"*** Start "+getPackageName()+" ***");
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         AxTools.init(CMain.this);
 //        scaleDensity(getApplicationContext());
         MyUtil.initMyUtil(this);
-        MyUtil.log(TAG, "StartApp3..............");
+        if (DEBUG) MyUtil.log(TAG, "StartApp3..............");
 
 //		final ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
 //		final List<RunningTaskInfo> recentTasks = activityManager.getRunningTasks(Integer.MAX_VALUE);
@@ -259,9 +254,9 @@ public class CMain extends MyActivity {
             public void onPageSelected(int i) {
                 mDisplayDay = (Calendar) mDailyBread.getValidFrDate().clone();
                 mDisplayDay.add(Calendar.DAY_OF_MONTH, i);
-                Log.i(TAG, "onPageSelected day=" + mDisplayDay.get(Calendar.DAY_OF_MONTH));
+                if (DEBUG) Log.i(TAG, "onPageSelected day=" + mDisplayDay.get(Calendar.DAY_OF_MONTH));
                 onRefreshPage(mDisplayDay, false);
-                Log.i(TAG, "onPageSelected day=" + mDisplayDay.get(Calendar.DAY_OF_MONTH));
+                if (DEBUG) Log.i(TAG, "onPageSelected day=" + mDisplayDay.get(Calendar.DAY_OF_MONTH));
             }
 
             @Override
@@ -281,7 +276,7 @@ public class CMain extends MyActivity {
             }
         });
 
-        MyUtil.log(TAG, "StartApp3..............End");
+        if (DEBUG) MyUtil.log(TAG, "StartApp3..............End");
 
         AxTools.runFollow(new Runnable() {
             @Override
@@ -290,7 +285,7 @@ public class CMain extends MyActivity {
             }
         });
 
-        checkUpdateVersion();
+        //checkUpdateVersion();
 
     }
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
@@ -308,8 +303,6 @@ public class CMain extends MyActivity {
         int mTitleHeight = 0;
         int mShortAnimTime = 0;
         isTitleShown = isVisible;
-
-
 
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
             // If the ViewPropertyAnimator API is available
@@ -438,8 +431,7 @@ public class CMain extends MyActivity {
         // Upon interacting with UI controls, delay any scheduled hide()
         // operations to prevent the jarring behavior of controls going away
         // while interacting with the UI.
-        AxTextView mainBtnCal = (AxTextView) findViewById(R.id.mainBtnCalendar);
-        //mainBtnCal.setOnTouchListener(mDelayHideTouchListener);
+        Button mainBtnCal = (Button) findViewById(R.id.mainBtnCalendar);
         mainBtnCal.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -447,48 +439,26 @@ public class CMain extends MyActivity {
             }
         });
 
-        AxTextView btnOnLineBible = (AxTextView) findViewById(R.id.mainBtnOnlineBible);
-        //btnOnLineBible.setText(R.string.main_bible);
-        btnOnLineBible.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClickOnLineBible(CMain.this);
-            }
-        });
+        Button btnOnLineBible = (Button) findViewById(R.id.mainBtnOnlineBible);
+        if (CMain.is_2016DayShown()){
+            btnOnLineBible.setText(R.string.main_support);
+            btnOnLineBible.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onClickSupport(CMain.this);
+                }
+            });
+        } else {
+            btnOnLineBible.setText(R.string.main_bible);
+            btnOnLineBible.setOnClickListener(new View.OnClickListener() {
+                @Override
+                public void onClick(View v) {
+                    onClickOnLineBible(CMain.this);
+                }
+            });
+        }
 
-
-//        if (CMain.is_2016DayShown()) {
-////            if (mainBtnBible != null) {
-////                Intent intent = CMain.this.getPackageManager().getLaunchIntentForPackage("org.arkist.cnote");
-////                if (intent != null) { // Exist
-////                    mainBtnBible.setText("聖經行事曆");
-////                }
-////            }
-//            btnOnLineBible.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    onClickOfflineBible(CMain.this);
-//                }
-//            });
-//        } else {
-//            btnOnLineBible.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    onClickViewHkbsBible(CMain.this);
-//                }
-//            });
-//        }
-
-        AxTextView mainBtnPlan = (AxTextView) findViewById(R.id.mainBtnOfflineBible);
-//        if (CMain.is_2016DayShown()) {
-//            mainBtnPlan.setText(R.string.main_support);
-//            mainBtnPlan.setOnClickListener(new View.OnClickListener() {
-//                @Override
-//                public void onClick(View v) {
-//                    onClickViewSupport(CMain.this);
-//                }
-//            });
-//        } else {
+        Button mainBtnPlan = (Button) findViewById(R.id.mainBtnOfflineBible);
             mainBtnPlan.setText(R.string.main_arkist);
             mainBtnPlan.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -502,11 +472,8 @@ public class CMain extends MyActivity {
                     mainBtnPlan.setText("聖經行事曆");
                 }
             }
-//        }
 
-
-        AxTextView mainBtnShare = (AxTextView) findViewById(R.id.mainBtnShare);
-        //mainBtnShare.setOnTouchListener(mDelayHideTouchListener);
+        Button mainBtnShare = (Button) findViewById(R.id.mainBtnShare);
         mainBtnShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -514,7 +481,7 @@ public class CMain extends MyActivity {
             }
         });
 
-        AxTextView mainBtnAlarm = (AxTextView) findViewById(R.id.mainBtnAlarm);
+        Button mainBtnAlarm = (Button) findViewById(R.id.mainBtnAlarm);
         //mainBtnAlarm.setOnTouchListener(mDelayHideTouchListener);
         mainBtnAlarm.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -523,7 +490,7 @@ public class CMain extends MyActivity {
             }
         });
 
-        AxTextView mainBtnAbout = (AxTextView) findViewById(R.id.mainBtnAbout);
+        Button mainBtnAbout = (Button) findViewById(R.id.mainBtnAbout);
         //mainBtnAbout.setOnTouchListener(mDelayHideTouchListener);
         mainBtnAbout.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -532,7 +499,7 @@ public class CMain extends MyActivity {
             }
         });
 
-        AxTextView mainBtnCopy = (AxTextView) findViewById(R.id.mainBtnCopy);
+        Button mainBtnCopy = (Button) findViewById(R.id.mainBtnCopy);
         //mainBtnSupport.setOnTouchListener(mDelayHideTouchListener);
         mainBtnCopy.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -541,7 +508,7 @@ public class CMain extends MyActivity {
             }
         });
 
-        AxTextView mainBtnToday = (AxTextView) findViewById(R.id.mainBtnToday);
+        Button mainBtnToday = (Button) findViewById(R.id.mainBtnToday);
         //mainBtnToday.setOnTouchListener(mDelayHideTouchListener);
         mainBtnToday.setOnClickListener(new View.OnClickListener() {
             @Override
@@ -1075,7 +1042,7 @@ public class CMain extends MyActivity {
 //			mBroadcast = new MyBroadcast();
 //			registerReceiver(mBroadcast, new IntentFilter());
 //		}
-        MyUtil.log(TAG, "onResume");
+        if (DEBUG) MyUtil.log(TAG, "onResume");
 //        onClickToday(this);
         //MyUtil.log(TAG, "onResumeAfterOnRefreshPage "+mPager.getCurrentItem());
 
@@ -1115,6 +1082,8 @@ public class CMain extends MyActivity {
                     alertBuilder.show();
                 }
             }, 1000);
+        } else {
+            askHolyDay();
         }
         DailyFragment dailyFragment = (DailyFragment) mAdapter.getItem(mPager.getCurrentItem());
         dailyFragment.onRefreshScreen();
@@ -1149,11 +1118,43 @@ public class CMain extends MyActivity {
                             mPager.setAdapter(null);
                             mPager.setAdapter(mAdapter);
                             onClickToday(CMain.this);
+                            askNotHKBS();
                         }
                     });
                     alertBuilder.show();
                 }
             }, 1000);
+        } else {
+            askNotHKBS();
+        }
+    }
+    private void askNotHKBS(){
+//        PackageManager pm = this.getPackageManager();
+//        PackageInfo pInfo = null;
+//        try {
+//            pInfo =  pm.getPackageInfo(this.getPackageName(),0);
+//        } catch (PackageManager.NameNotFoundException e1) {
+//            e1.printStackTrace();
+//        }
+        Calendar calendar = Calendar.getInstance();
+        if (calendar.get(Calendar.YEAR)<=2015) {
+            int showNotHkbs = MyUtil.getPrefInt(MyUtil.PREF_NOT_HKBS, -1);
+            if (showNotHkbs == -1) {
+                MyUtil.setPrefInt(MyUtil.PREF_NOT_HKBS, 0);
+                AlertDialog.Builder alertBuilder = new AlertDialog.Builder(CMain.this);
+                alertBuilder.setCancelable(false);
+                alertBuilder.setTitle("2016年版提示:");
+                alertBuilder.setMessage("2016年版金句使用公眾領域傳統和合本版權。" +
+                        "2015年前金句由香港聖經公會提供並使用和合本修訂版。蒙香港聖經公會允許使用。詳情可看「關於我們」。\n" +
+                        "如有任何查詢，歡迎電郵給我們info@arkist.org");
+                alertBuilder.setPositiveButton("繼續", new DialogInterface.OnClickListener() {
+                    @Override
+                    public void onClick(DialogInterface dialog, int which) {
+                        dialog.dismiss();
+                    }
+                });
+                alertBuilder.show();
+            }
         }
     }
 //
@@ -1504,102 +1505,99 @@ public class CMain extends MyActivity {
 //        paint.setTextSize(Math.max(Math.min((boxWidth/paint.measureText(text))*10, max), min));
 //    }
 
-    private void checkUpdateVersion(){
-        getCurrentVersion();
-    }
-    String currentVersion="", latestVersion="";
-    Dialog dialog;
-    private void getCurrentVersion(){
-        PackageManager pm = this.getPackageManager();
-        PackageInfo pInfo = null;
-        try {
-            pInfo =  pm.getPackageInfo(this.getPackageName(),0);
-
-        } catch (PackageManager.NameNotFoundException e1) {
-            // TODO Auto-generated catch block
-            e1.printStackTrace();
-        }
-        currentVersion = pInfo.versionName;
-        new GetLatestVersion().execute();
-
-    }
-
-    private class GetLatestVersion extends AsyncTask<String, String, JSONObject> {
-        //private ProgressDialog progressDialog;
-        @Override
-        protected void onPreExecute() {
-            super.onPreExecute();
-        }
-        @Override
-        protected JSONObject doInBackground(String... params) {
-            try {
-//It retrieves the latest version by scraping the content of current version from play store at runtime
-                String playUrl = "https://play.google.com/store/apps/details?id=" + getPackageName();
-                org.jsoup.nodes.Document doc = Jsoup.connect(playUrl).get();
-                latestVersion = doc.getElementsByAttributeValue("itemprop","softwareVersion").first().text();
-            }catch (Exception e){
-                latestVersion ="";
-                e.printStackTrace();
-            }
-            return new JSONObject();
-        }
-
-        @Override
-        protected void onPostExecute(JSONObject jsonObject) {
-            float latestNbr=0;
-            try {
-                latestNbr = Float.valueOf(latestVersion);
-            } catch (Exception e){
-                //
-            }
-            float currentNbr=0;
-            try {
-                currentNbr = Float.valueOf(currentVersion);
-            } catch (Exception e){
-                //
-            }
-
-            Log.e(TAG, "Version latest=" + latestNbr + " current=" + currentNbr);
-            if (latestNbr > currentNbr) {// Normal is latestNbr>currentNbr .. do update
-                boolean askBefore=AxTools.getPrefBoolean("AskUpdate"+latestVersion,false);
-                Log.e(TAG, "Find updated version ");
-                if (!askBefore) {
-                    showUpdateDialog();
-                }
-            } else {
-                Log.e(TAG,"No updated version ");
-            }
-//            else {
-//                background.start();
+//    private void checkUpdateVersion(){
+//        getCurrentVersion();
+//    }
+//    String currentVersion="", latestVersion="";
+//    Dialog dialog;
+//    private void getCurrentVersion(){
+//        PackageManager pm = this.getPackageManager();
+//        PackageInfo pInfo = null;
+//        try {
+//            pInfo =  pm.getPackageInfo(this.getPackageName(),0);
+//
+//        } catch (PackageManager.NameNotFoundException e1) {
+//            e1.printStackTrace();
+//        }
+//        currentVersion = pInfo.versionName;
+//        new GetLatestVersion().execute();
+//
+//    }
+//
+//    private class GetLatestVersion extends AsyncTask<String, String, JSONObject> {
+//        //private ProgressDialog progressDialog;
+//        @Override
+//        protected void onPreExecute() {
+//            super.onPreExecute();
+//        }
+//        @Override
+//        protected JSONObject doInBackground(String... params) {
+//            try {
+////It retrieves the latest version by scraping the content of current version from play store at runtime
+//                String playUrl = "https://play.google.com/store/apps/details?id=" + getPackageName();
+//                org.jsoup.nodes.Document doc = Jsoup.connect(playUrl).get();
+//                latestVersion = doc.getElementsByAttributeValue("itemprop","softwareVersion").first().text();
+//            }catch (Exception e){
+//                latestVersion ="";
+//                e.printStackTrace();
 //            }
-            super.onPostExecute(jsonObject);
-        }
-    }
+//            return new JSONObject();
+//        }
+//
+//        @Override
+//        protected void onPostExecute(JSONObject jsonObject) {
+//            // May be 3.3.1 Vs 3.4
+//            Log.e(TAG, "Version latest=" + latestVersion + " current=" + currentVersion);
+//            float latestNbr=0;
+//            try {
+//                latestNbr = Float.valueOf(latestVersion);
+//            } catch (Exception e){
+//                //
+//            }
+//            float currentNbr=0;
+//            try {
+//                currentNbr = Float.valueOf(currentVersion);
+//            } catch (Exception e){
+//                //
+//            }
+//
+//            if (latestNbr > currentNbr) {// Normal is latestNbr>currentNbr .. do update
+//                boolean askBefore=AxTools.getPrefBoolean("AskUpdate"+latestVersion,false);
+//                Log.e(TAG, "Find updated version "+currentNbr);
+//                if (!askBefore) {
+//                    showUpdateDialog();
+//                }
+//            } else {
+//                Log.e(TAG,"No updated version ");
+//            }
+//            super.onPostExecute(jsonObject);
+//        }
+//    }
 
-    private void showUpdateDialog(){
-        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("找到新的更新");
-        builder.setPositiveButton("更新", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                try {
-                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse
-                            ("market://details?id=" + CMain.this.getPackageName())));
-                } catch (Exception e){
-                    Toast.makeText(CMain.this,"找不到Google Play下載新的程式。", Toast.LENGTH_SHORT).show();
-                    Log.e(TAG,"Request update app but GooglePlay not find");
-                }
-                dialog.dismiss();
-            }
-        });
-        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
-            @Override
-            public void onClick(DialogInterface dialog, int which) {
-                //background.start();
-                AxTools.setPrefBoolean("AskUpdate"+latestVersion,true);
-            }
-        });
-        builder.setCancelable(false);
-        dialog = builder.show();
-    }
+//    private void showUpdateDialog(){
+//        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
+//        builder.setTitle("找到新的更新");
+//        builder.setPositiveButton("更新", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                try {
+//                    startActivity(new Intent(Intent.ACTION_VIEW, Uri.parse
+//                            ("market://details?id=" + CMain.this.getPackageName())));
+//                } catch (Exception e){
+//                    Toast.makeText(CMain.this,"找不到Google Play下載新的程式。", Toast.LENGTH_SHORT).show();
+//                    Log.e(TAG,"Request update app but GooglePlay not find");
+//                }
+//                dialog.dismiss();
+//            }
+//        });
+//        builder.setNegativeButton("取消", new DialogInterface.OnClickListener() {
+//            @Override
+//            public void onClick(DialogInterface dialog, int which) {
+//                //background.start();
+//                AxTools.setPrefBoolean("AskUpdate"+latestVersion,true);
+//            }
+//        });
+//        builder.setCancelable(false);
+//        dialog = builder.show();
+//    }
 }

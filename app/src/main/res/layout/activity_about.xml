@@ -104,6 +104,8 @@
                 android:gravity="left|top"
                 android:paddingLeft="5dp"
                 android:paddingRight="5dp"
+                android:autoLink="web"
+                android:linksClickable="true"
                 android:text="@string/app_rule2015"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
         </LinearLayout>

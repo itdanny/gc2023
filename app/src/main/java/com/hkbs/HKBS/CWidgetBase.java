@@ -127,14 +127,18 @@ public class CWidgetBase extends AppWidgetProvider {
 		MyUtil.initMyUtil(recRef.context);
 		MyDailyBread mDailyBread = MyDailyBread.getInstance(recRef.context);
 		Intent intent = new Intent(recRef.context, CMain.class);
-		PendingIntent pendingIntent = PendingIntent.getActivity(recRef.context, 
+		final PendingIntent pendingIntent = PendingIntent.getActivity(recRef.context,
         		0, intent, PendingIntent.FLAG_UPDATE_CURRENT);//PendingIntent.FLAG_UPDATE_CURRENT
-		recRef.views.setOnClickPendingIntent(R.id.xmlPage1Middle, pendingIntent);
+        if (pendingIntent!=null) {
+            recRef.views.setOnClickPendingIntent(R.id.xmlPage1Middle, pendingIntent);
+        }
 
         Intent broadcastIntent=new Intent(recRef.context, JustBroadcast.class);
-        PendingIntent broadcastPendingIntent = PendingIntent.getActivity(recRef.context,
+        final PendingIntent broadcastPendingIntent = PendingIntent.getActivity(recRef.context,
                 0, broadcastIntent, PendingIntent.FLAG_UPDATE_CURRENT);//PendingIntent.FLAG_UPDATE_CURRENT
-        recRef.views.setOnClickPendingIntent(R.id.xmlPage1, broadcastPendingIntent);
+        if (broadcastPendingIntent!=null) {
+            recRef.views.setOnClickPendingIntent(R.id.xmlPage1, broadcastPendingIntent);
+        }
         //recRef.views.setOnClickPendingIntent(R.id.xmlPage2, broadcastPendingIntent);
 		
 		int nbr = 1;
@@ -447,7 +451,7 @@ public class CWidgetBase extends AppWidgetProvider {
 	// All Activities can have receiver but we centrallized all receive in MyBroadcast and use Filter to control.
 	// This app won't answer call individually
 	static public void broadcastMe(Context context){
-		MyUtil.log(TAG, "broadcastme.");
+		if (DEBUG) MyUtil.log(TAG, "broadcastme.");
 		Intent intent=new Intent(context,MyBroadcast.class);
 		intent.setAction("com.hkbs.HKBS.WidgetUpdate");
 		//intent.setData(ContentUris.withAppendedId(Uri.EMPTY, buttonID));

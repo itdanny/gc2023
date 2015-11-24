@@ -285,7 +285,7 @@
                 android:gravity="right|bottom"
                 android:layout_marginLeft="12dp"
                 android:layout_marginRight="12dp"
-                android:layout_marginBottom="0dp"
+                android:layout_marginBottom="5dp"
                 android:textSize="3sp" />
         </RelativeLayout>
         <RelativeLayout android:layout_weight="1.1"

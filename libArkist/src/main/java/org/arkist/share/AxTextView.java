@@ -52,11 +52,13 @@ public class AxTextView extends TextView {
 		TEXT_SAME,
 		TEXT_GREEN,
 		TEXT_GRAY,
+        TEXT_BLUE,
 		
 		BLUR_MASK,
 		BLUR_SAME,
 		BLUR_GREEN,
-		BLUR_GRAY
+		BLUR_GRAY,
+        BLUR_BLUE
 		}; // MyTextView.Style.values()[i]
 		
 //	@Override
@@ -147,6 +149,8 @@ public class AxTextView extends TextView {
 					pressedColor=Color.parseColor("#59fa4b");
 				} else if (mStyle==Style.TEXT_GRAY){
 					pressedColor=Color.parseColor("#919191");
+                } else if (mStyle==Style.TEXT_BLUE){
+                    pressedColor=Color.parseColor("#06cbfc");
 				} else {
 					anyPressedColor=false;
 				}
@@ -159,6 +163,8 @@ public class AxTextView extends TextView {
 					blurColor=Color.parseColor("#59fa4b");
 				} else if (mStyle==Style.BLUR_GRAY){
 					blurColor=Color.parseColor("#919191");
+                } else if (mStyle==Style.BLUR_BLUE){
+                    blurColor=Color.parseColor("#06cbfc");
 				} else {
 					anyBlurColor=false;
 				}

@@ -322,7 +322,7 @@
                 android:layout_marginLeft="10dp"
                 android:layout_marginTop="6dp"
                 style="@style/wisdomText"
-                android:textSize="10sp" />
+                android:textSize="9sp" />
 
             <!-- android:text="Hint …………………." -->
             <TextView

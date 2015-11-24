@@ -396,7 +396,7 @@ public class MyDailyBread {
 
                         if (IS_CHECK_IF_LESS_THAN_4_LINES || goldLines.length>4){
                             if (goldLines.length>4) {
-                                Log.e(TAG, "<TooBig> lines=" + goldLines.length + " chars=" + strGoldText.replace("#", "").length() + " at " + getDayString(lastYear, lastMonth, lastDay) + " " + strGoldText);
+                                if (DEBUG) Log.e(TAG, "<TooBig> lines=" + goldLines.length + " chars=" + strGoldText.replace("#", "").length() + " at " + getDayString(lastYear, lastMonth, lastDay) + " " + strGoldText);
                             }
                             if (cv.getAsString(wGoldSize).equalsIgnoreCase("L")){
                                 mGold_L_NbrOfRecords[goldLines.length]++;
@@ -519,7 +519,7 @@ public class MyDailyBread {
 		    	printContentValues(wBigAlign, cvBigAlign);// L,S,C ... S for ???
 		    	printContentValues(wBigSize, cvBigSize);// L,S (Large, Small)
 		    }
-
+            if (DEBUG) {
                 MyUtil.logError(TAG, "Remember to clear space !" + (IS_CHECK_FUTURE_CHARS_ONLY ? "<Check Furture Only>" : "<Check All>"));
                 MyUtil.logError(TAG, "GoldSize L maxChar:" + mMaxGold_L_characters + " " + maxGold_L_date + " " + maxGold_L_str);
                 MyUtil.logError(TAG, "GoldSize M maxChar:" + mMaxGold_M_characters + " " + maxGold_M_date + " " + maxGold_M_str);
@@ -531,29 +531,29 @@ public class MyDailyBread {
                 MyUtil.logError(TAG, "GoldSize S minChar:" + mMinGold_S_characters + " " + minGold_S_date);
                 MyUtil.logError(TAG, "HintSize L minChar:" + mMinHint_L_characters + " " + minHint_L_date);
                 MyUtil.logError(TAG, "HintSize S minChar:" + mMinHint_S_characters + " " + minHint_S_date);
-
-
-            if (IS_CHECK_IF_LESS_THAN_4_LINES) {
-                for (int i = 1; i < mGold_L_NbrOfRecords.length; i++) {
-                    if (i > 4) {
-                        MyUtil.logError(TAG, "*** Below has " + i + " line(s) *** [Big size may overflow in small device");
-                    } else {
-                        MyUtil.logError(TAG, "*** Below has " + i + " line(s) ***");
+                if (IS_CHECK_IF_LESS_THAN_4_LINES) {
+                    for (int i = 1; i < mGold_L_NbrOfRecords.length; i++) {
+                        if (i > 4) {
+                            MyUtil.logError(TAG, "*** Below has " + i + " line(s) *** [Big size may overflow in small device");
+                        } else {
+                            MyUtil.logError(TAG, "*** Below has " + i + " line(s) ***");
+                        }
+                        MyUtil.logError(TAG, "Gold L NbrOfRecords=" + mGold_L_NbrOfRecords[i] + " date=" + mGold_L_LastDate[i]);
+                        MyUtil.logError(TAG, "Gold M NbrOfRecords=" + mGold_M_NbrOfRecords[i] + " date=" + mGold_M_LastDate[i]);
+                        MyUtil.logError(TAG, "Gold S NbrOfRecords=" + mGold_S_NbrOfRecords[i] + " date=" + mGold_S_LastDate[i]);
+                        MyUtil.logError(TAG, "Hint L NbrOfRecords=" + mHint_L_NbrOfRecords[i] + " date=" + mHint_L_LastDate[i]);
+                        MyUtil.logError(TAG, "Hint S NbrOfRecords=" + mHint_S_NbrOfRecords[i] + " date=" + mHint_S_LastDate[i]);
                     }
-                    MyUtil.logError(TAG, "Gold L NbrOfRecords=" + mGold_L_NbrOfRecords[i] + " date=" + mGold_L_LastDate[i]);
-                    MyUtil.logError(TAG, "Gold M NbrOfRecords=" + mGold_M_NbrOfRecords[i] + " date=" + mGold_M_LastDate[i]);
-                    MyUtil.logError(TAG, "Gold S NbrOfRecords=" + mGold_S_NbrOfRecords[i] + " date=" + mGold_S_LastDate[i]);
-                    MyUtil.logError(TAG, "Hint L NbrOfRecords=" + mHint_L_NbrOfRecords[i] + " date=" + mHint_L_LastDate[i]);
-                    MyUtil.logError(TAG, "Hint S NbrOfRecords=" + mHint_S_NbrOfRecords[i] + " date=" + mHint_S_LastDate[i]);
+                } else {
+                    MyUtil.logError(TAG, "*** Below has 5 line(s) *** [Big size may overflow in small device");
+                    MyUtil.logError(TAG, "Gold L NbrOfRecords=" + mGold_L_NbrOfRecords[4] + " date=" + mGold_L_LastDate[4]);
+                    MyUtil.logError(TAG, "Gold M NbrOfRecords=" + mGold_M_NbrOfRecords[4] + " date=" + mGold_M_LastDate[4]);
+                    MyUtil.logError(TAG, "Gold S NbrOfRecords=" + mGold_S_NbrOfRecords[4] + " date=" + mGold_S_LastDate[4]);
+                    MyUtil.logError(TAG, "Hint L NbrOfRecords=" + mHint_L_NbrOfRecords[4] + " date=" + mHint_L_LastDate[4]);
+                    MyUtil.logError(TAG, "Hint S NbrOfRecords=" + mHint_S_NbrOfRecords[4] + " date=" + mHint_S_LastDate[4]);
                 }
-            } else {
-                MyUtil.logError(TAG, "*** Below has 5 line(s) *** [Big size may overflow in small device");
-                MyUtil.logError(TAG, "Gold L NbrOfRecords=" + mGold_L_NbrOfRecords[4] + " date=" + mGold_L_LastDate[4]);
-                MyUtil.logError(TAG, "Gold M NbrOfRecords=" + mGold_M_NbrOfRecords[4] + " date=" + mGold_M_LastDate[4]);
-                MyUtil.logError(TAG, "Gold S NbrOfRecords=" + mGold_S_NbrOfRecords[4] + " date=" + mGold_S_LastDate[4]);
-                MyUtil.logError(TAG, "Hint L NbrOfRecords=" + mHint_L_NbrOfRecords[4] + " date=" + mHint_L_LastDate[4]);
-                MyUtil.logError(TAG, "Hint S NbrOfRecords=" + mHint_S_NbrOfRecords[4] + " date=" + mHint_S_LastDate[4]);
             }
+
 		    	/*
 		    	 * 2013.09.08
 		    	 * 2013.06.05

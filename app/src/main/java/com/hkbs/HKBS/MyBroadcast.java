@@ -21,6 +21,7 @@ import org.arkist.share.AxAlarm;
 import java.util.Calendar;
 
 public class MyBroadcast extends BroadcastReceiver {
+    final static private boolean DEBUG=true && CMain.DEBUG;
     final static private String TAG = MyBroadcast.class.getSimpleName();
     final static public String URI_SCHEME = "CalendarWidget";
     static public boolean screenIsOn=true;
@@ -44,10 +45,10 @@ public class MyBroadcast extends BroadcastReceiver {
 	@Override
 	public void onReceive(Context context, Intent intent) {
 		if (intent==null) {
-			MyUtil.logError(TAG, "onReceive....null");
+			if (DEBUG) MyUtil.logError(TAG, "onReceive....null");
 			return;
 		}
-		MyUtil.log(TAG, "Broadcast.onReceive....");
+        if (DEBUG) MyUtil.log(TAG, "Broadcast.onReceive....");
 		String intentAction = intent.getAction();
 		if (intentAction!=null){
 			if (intentAction.equals(Intent.ACTION_SCREEN_OFF)) {
@@ -66,13 +67,13 @@ public class MyBroadcast extends BroadcastReceiver {
 						intentAction.equals(Intent.ACTION_PACKAGE_REMOVED)){
 				setReceiverOff(context);			
 			} else if (intentAction.equals(AxAlarm.MANIFEST_ACTION_DATE_CHANGE)){
-				Log.i(TAG, "Action Alarm DateChange");
+				if (DEBUG) Log.i(TAG, "Action Alarm DateChange");
 				//MyBroadcast.updateAllWidget(context);
 			} else if (intentAction.equals(AxAlarm.MANIFEST_ACTION_ALARM)){
-				Log.i(TAG, "Action Alarm Alarm");
+                if (DEBUG) Log.i(TAG, "Action Alarm Alarm");
 				doDailyGoldSentence(context);
 			} else {
-				Log.i(TAG, "Others..."+intentAction);
+                if (DEBUG) Log.i(TAG, "Others..."+intentAction);
 				int requestCode = intent.getIntExtra(AxAlarm.EXTRA_BROADCAST_CODE, -1);
 //				if (requestCode==AxAlarm.BROADTCAST_REQUEST_CODE){
 //					doDailyGoldSentence(context);
@@ -112,11 +113,11 @@ public class MyBroadcast extends BroadcastReceiver {
         AppWidgetManager widgetMgr = AppWidgetManager.getInstance(context);
         int [] widgets = widgetMgr.getAppWidgetIds(new ComponentName(context,widgetClass));
         if (widgets==null) {
-            MyUtil.log(TAG, "updateAllWidget "+widgetClass.getSimpleName()+" NULL");
+            if (DEBUG) MyUtil.log(TAG, "updateAllWidget "+widgetClass.getSimpleName()+" NULL");
         } else if (widgets.length==0){
-            MyUtil.log(TAG, "updateAllWidget "+widgetClass.getSimpleName()+" 0");
+            if (DEBUG) MyUtil.log(TAG, "updateAllWidget "+widgetClass.getSimpleName()+" 0");
         } else if (widgets.length!=0){
-            MyUtil.log(TAG, "updateAllWidget "+widgetClass.getSimpleName()+" "+widgets.length);
+            if (DEBUG) MyUtil.log(TAG, "updateAllWidget "+widgetClass.getSimpleName()+" "+widgets.length);
             for (int i = 0; i < widgets.length; i++) {
 //                Intent intent = new Intent();
 //                intent.setAction(AppWidgetManager.ACTION_APPWIDGET_UPDATE);
@@ -163,10 +164,10 @@ public class MyBroadcast extends BroadcastReceiver {
 			todayMsg = todayMsg.replace("#", "\n")+" ["+cv.getAsString(MyDailyBread.wGoldVerse)+"]";
 			todayMsg = "金句提醒:"+todayMsg;
 		}
-	    sendNotification(context, 
-	    		todayMsg,	    		
-	    		NOTIFICATION_ID_TODAY_VERSE,NOTIFICATION_ID_TODAY_VERSE);	    	
-		System.out.println("Daily Reminder:Complete");
+	    sendNotification(context,
+                todayMsg,
+                NOTIFICATION_ID_TODAY_VERSE, NOTIFICATION_ID_TODAY_VERSE);
+        if (DEBUG) System.out.println("Daily Reminder:Complete");
 	}
 	static private void sendNotification(Context context, String message,int notificationID, int notificationNbr){
 		//if (android.os.Build.VERSION.SDK_INT >= 11) {
@@ -193,23 +194,21 @@ public class MyBroadcast extends BroadcastReceiver {
 		}
 		newIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 		
-		PendingIntent contentIntent = PendingIntent.getActivity(context, 
-				notificationNbr, 
-				newIntent,
-				(notificationID==NOTIFICATION_ID_TODAY_VERSE)?PendingIntent.FLAG_UPDATE_CURRENT:0);
-		
-		NotificationCompat.Builder builder =  
-	            new NotificationCompat.Builder(context)  
-	            .setSmallIcon(R.drawable.ic_launcher)  
-	            .setContentTitle("["+pAppName+"]")  
-	            .setContentText(message);  
-//		builder.setAutoCancel((notificationID==NOTIFICATION_ID_TODAY_VERSE)?true:false);
-//		builder.setAutoCancel((notificationID==NOTIFICATION_ID_TODAY_VERSE)?false:true);
-		builder.setAutoCancel(false);
-		builder.setContentIntent(contentIntent);  
-	    
-	    // Add as notification  
-	    NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);  
-	    manager.notify(notificationNbr, builder.build());	    
+		PendingIntent contentIntent = PendingIntent.getActivity(context,
+                notificationNbr,
+                newIntent,
+                (notificationID == NOTIFICATION_ID_TODAY_VERSE) ? PendingIntent.FLAG_UPDATE_CURRENT : 0);
+		if (contentIntent!=null) {
+            NotificationCompat.Builder builder =
+                    new NotificationCompat.Builder(context)
+                            .setSmallIcon(R.drawable.ic_launcher)
+                            .setContentTitle("[" + pAppName + "]")
+                            .setContentText(message);
+            builder.setAutoCancel(false);
+            builder.setContentIntent(contentIntent);
+           // Add as notification
+            NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+            manager.notify(notificationNbr, builder.build());
+        }
 	}
 }

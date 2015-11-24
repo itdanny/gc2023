@@ -1,7 +1,10 @@
 package com.hkbs.HKBS;
 
+import android.content.Intent;
 import android.os.Bundle;
+import android.view.View;
 import android.view.Window;
+import android.widget.Button;
 import android.widget.CheckBox;
 import android.widget.ImageView;
 import android.widget.TimePicker;
@@ -52,6 +55,23 @@ public class AlarmActivity extends MyActivity {
 		} else {
 			cb.setChecked(false);
 		}
+
+        Button textView1 = (Button) findViewById(R.id.xmlAlarmOtherSetting);
+//        TextView textView1 = (TextView) findViewById(R.id.xmlAlarmOtherSetting);
+//        String str = "其他設定";
+//        SpannableString content = new SpannableString(str);
+//        content.setSpan(new UnderlineSpan(), 0, str.length(), 0);
+//        textView1.setText(content);
+//        textView1.setTextColor(getResources().getColor(R.color.blue));
+        textView1.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                Intent intent = new Intent(AlarmActivity.this, SupportActivity.class);
+                //startActivityForResult(intent, MyUtil.REQUEST_SUPPORT);
+                AlarmActivity.this.startActivity(intent);
+                overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
+            }
+        });
 	}
 	@Override
 	public void onPause(){

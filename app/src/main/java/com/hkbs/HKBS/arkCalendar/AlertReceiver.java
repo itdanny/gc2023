@@ -303,12 +303,13 @@ public class AlertReceiver extends BroadcastReceiver {
 
         }
         if (doPopup) {
-            notificationBuilder.setFullScreenIntent(createAlertActivityIntent(context), true);
+            PendingIntent pendingIntent= createAlertActivityIntent(context);
+            if (pendingIntent!=null) {
+                notificationBuilder.setFullScreenIntent(pendingIntent, true);
+            }
         }
-
         // Turn off timestamp.
         notificationBuilder.setWhen(0);
-
         // Setting to a higher priority will encourage notification manager to expand the
         // notification.
         if (highPriority) {
@@ -801,8 +802,8 @@ public class AlertReceiver extends BroadcastReceiver {
         Notification notification = new Notification(R.drawable.ic_launcher,null,System.currentTimeMillis());
 //        notification.setLatestEventInfo(context,title,helperString,
 //				                PendingIntent.getActivity(context, 0, clickIntent, PendingIntent.FLAG_CANCEL_CURRENT));
-        notification.setLatestEventInfo(context,title,helperString,
-                PendingIntent.getActivity(context, 0, clickIntent, 0));
+        final PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, clickIntent, 0);
+        notification.setLatestEventInfo(context,title,helperString, pendingIntent);
         notification.deleteIntent = PendingIntent.getBroadcast(context, 0, deleteIntent, 0);
         notification.flags |= Notification.FLAG_AUTO_CANCEL;
         notification.flags |= Notification.FLAG_SHOW_LIGHTS;

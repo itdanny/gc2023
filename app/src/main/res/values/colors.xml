@@ -26,4 +26,8 @@
 	<color name="calendarOnBkg">#ffffff</color>
  	<color name="calendarTitleBkg">#cccccc</color>
  	<color name="calendarTodayBkg">#FCF8D6</color>
+
+    <color name="styleGreen">#59fa4b</color>
+    <color name="styleGray">#919191</color>
+    <color name="styleBlue">#06cbfc</color>
 </resources>

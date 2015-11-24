@@ -1,14 +1,14 @@
 package org.arkist.share;
 
-import java.text.SimpleDateFormat;
-import java.util.Calendar;
-import java.util.Locale;
-
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
 import android.util.Log;
+
+import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Locale;
 
 public class AxAlarm {
 	public AxAlarm() {
@@ -23,7 +23,8 @@ public class AxAlarm {
 	final static private int REQUEST_CODE_ALARM = 11;
 	final static private int REQUEST_CODE_DATE_CHANGE = 12;
 //	final static private int REQUEST_CODE_NOTIFY_1 = 21;
-	
+
+    final static private boolean DEBUG = false;
 	final static private String TAG = AxAlarm.class.getSimpleName(); 
 	final static private long MILLSECOND_IN_DAYS = 24*60*60*1000;
 	final static private SimpleDateFormat sdfYYYYMMDDHHMM = new SimpleDateFormat("yyyy-MM-dd HH:mm",Locale.US);
@@ -41,14 +42,14 @@ public class AxAlarm {
 	    Calendar cal = hhmm2Calendar(0,0);
 	    am.cancel(pi);
 	    am.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), MILLSECOND_IN_DAYS, pi);
-	    Log.i(TAG, "Alarm.dateChange at "+sdfYYYYMMDDHHMM.format(cal.getTime()));
+	    if (DEBUG) Log.i(TAG, "Alarm.dateChange at "+sdfYYYYMMDDHHMM.format(cal.getTime()));
 	}
 	/*
 	 * No need specify the broadcast class i.e.
 	 * Intent intent = new Intent(context, MyBroadcast.class);
 	 */	
 	static public PendingIntent getPendingIntent(Context context, int requestCode){
-		Log.i(TAG, "Set:"+MANIFEST_ACTION+String.valueOf(requestCode));
+        if (DEBUG) Log.i(TAG, "Set:"+MANIFEST_ACTION+String.valueOf(requestCode));
 		Intent intent = new Intent();
     	intent.setAction(MANIFEST_ACTION+String.valueOf(requestCode));    	
     	PendingIntent pendingIntent = PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_CANCEL_CURRENT);
@@ -91,7 +92,7 @@ public class AxAlarm {
 		//-- for Good Calendar --
 		AlarmManager am = (AlarmManager) c.getSystemService(Context.ALARM_SERVICE);
 	    am.cancel(getPendingIntent(c, MANIFEST_ACTION_ALARM, REQUEST_CODE_ALARM));
-	    Log.i(TAG, "Alarm.Cancel");
+	    if (DEBUG) Log.i(TAG, "Alarm.Cancel");
 	}
 	static private MODE gc_setAlarm(Context context, MODE mode, int setHour, int setMinute){
 		//-- for Good Calendar --
@@ -143,7 +144,7 @@ public class AxAlarm {
 //	    time.hour = hour;
 //	    time.minute = minute;
 //	    startCal.set(time.year, time.month, time.monthDay, time.hour, time.minute, 0);
-		Log.i(TAG, "Alarm.Set to "+sdfYYYYMMDDHHMM.format(cal.getTime())+" on "+sdfYYYYMMDDHHMM.format(Calendar.getInstance().getTime()));
+		if (DEBUG) Log.i(TAG, "Alarm.Set to "+sdfYYYYMMDDHHMM.format(cal.getTime())+" on "+sdfYYYYMMDDHHMM.format(Calendar.getInstance().getTime()));
 	}
 	static public void alarmOff(Context c, int requestCode) {
 		alarmOff(c, getPendingIntent(c, requestCode));

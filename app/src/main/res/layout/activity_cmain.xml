@@ -85,52 +85,48 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal" >
 
-                <org.arkist.share.AxTextView
+                <Button
                     android:id="@+id/mainBtnAbout"
-                    style="@style/MenuStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="@string/main_about"
-                    android:textAppearance="@android:style/TextAppearance.Small"
+                    android:textSize="12dp"
                     android:textColor="@color/white" />
 
-                <org.arkist.share.AxTextView
+                <Button
                     android:id="@+id/mainBtnAlarm"
-                    style="@style/MenuStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="@string/main_alarm"
-                    android:textAppearance="@android:style/TextAppearance.Small"
+                    android:textSize="12dp"
                     android:textColor="@color/white" />
 
-                <org.arkist.share.AxTextView
+                <Button
                     android:id="@+id/mainBtnCalendar"
-                    style="@style/MenuStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="@string/main_calendar"
-                    android:textAppearance="@android:style/TextAppearance.Small"
+                    android:textSize="12dp"
                     android:textColor="@color/white" />
 
-                <org.arkist.share.AxTextView
+                <Button
                     android:id="@+id/mainBtnShare"
-                    style="@style/MenuStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="@string/main_share"
-                    android:textAppearance="@android:style/TextAppearance.Small"
+                    android:textSize="12dp"
                     android:textColor="@color/white" />
             </LinearLayout>
 
@@ -139,52 +135,48 @@
                 android:layout_height="wrap_content"
                 android:orientation="horizontal" >
 
-                <org.arkist.share.AxTextView
+                <Button
                     android:id="@+id/mainBtnOfflineBible"
-                    style="@style/MenuStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="@string/main_arkist"
-                    android:textAppearance="@android:style/TextAppearance.Small"
+                    android:textSize="12dp"
                     android:textColor="@color/white" />
 
-                <org.arkist.share.AxTextView
+                <Button
                     android:id="@+id/mainBtnOnlineBible"
-                    style="@style/MenuStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="@string/main_bible"
-                    android:textAppearance="@android:style/TextAppearance.Small"
+                    android:textSize="12dp"
                     android:textColor="@color/white" />
 
-                <org.arkist.share.AxTextView
+                <Button
                     android:id="@+id/mainBtnToday"
-                    style="@style/MenuStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="@string/main_today"
-                    android:textAppearance="@android:style/TextAppearance.Small"
+                    android:textSize="12dp"
                     android:textColor="@color/white" />
 
-                <org.arkist.share.AxTextView
+                <Button
                     android:id="@+id/mainBtnCopy"
-                    style="@style/MenuStyle"
                     android:layout_width="0dp"
                     android:layout_height="wrap_content"
                     android:layout_gravity="center"
                     android:layout_weight="1"
                     android:gravity="center"
                     android:text="@string/main_copy"
-                    android:textAppearance="@android:style/TextAppearance.Small"
+                    android:textSize="12dp"
                     android:textColor="@color/white" />
             </LinearLayout>
 

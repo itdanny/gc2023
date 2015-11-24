@@ -14,6 +14,7 @@ import android.view.Window;
 import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
+import android.widget.Toast;
 
 import com.hkbs.HKBS.arkUtil.MyUtil;
 
@@ -180,12 +181,20 @@ public class SupportActivity extends MyActivity implements OnClickListener {
 	public void onClick(View v) {
 		switch (v.getId()) {
             case R.id.supportGetSupport:
-            Intent intent = new Intent(Intent.ACTION_SENDTO);
-            intent.setData(Uri.parse("mailto:"));
-            intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"info@arkist.org"});
-                intent.putExtra(Intent.EXTRA_SUBJECT, "「全年金句日曆」查詢");
-            intent.putExtra(Intent.EXTRA_TEXT, "\n以下是正使用裝置資料:\n"+getAppInfo()+"\n");
-            startActivity(Intent.createChooser(intent, "電郵 經..."));
+                if (android.os.Build.VERSION.SDK_INT<15) {
+                    Toast.makeText(SupportActivity.this, "如有任何問題，請電郵到 info@arkirg.org。謝謝。", Toast.LENGTH_LONG).show();
+                } else {
+                    try {
+                        Intent intent = new Intent(Intent.ACTION_SENDTO);
+                        intent.setData(Uri.parse("mailto:"));
+                        intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"info@arkist.org"});
+                        intent.putExtra(Intent.EXTRA_SUBJECT, "「全年金句日曆」查詢");
+                        intent.putExtra(Intent.EXTRA_TEXT, "\n以下是正使用裝置資料:\n" + getAppInfo() + "\n");
+                        startActivity(Intent.createChooser(intent, "電郵 經..."));
+                    } catch (Exception e) {
+                        Toast.makeText(SupportActivity.this, "如有任何問題，請電郵到 info@arkirg.org。謝謝。", Toast.LENGTH_LONG).show();
+                    }
+                }
             break;
 		case R.id.xmlSupportTaiWan:
 			MyUtil.setPrefStr(MyUtil.PREF_COUNTRY, "TW");
