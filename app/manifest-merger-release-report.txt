@@ -15,10 +15,12 @@ ADDED from AndroidManifest.xml:2:1
 		INJECTED from AndroidManifest.xml:0:0
 uses-sdk
 ADDED from AndroidManifest.xml:5:5
+MERGED from com.android.support:support-v4:22.1.1:20:5
 MERGED from GC2016:libArkist:unspecified:7:5
 MERGED from GC2016:libFancyCoverFlow:unspecified:23:5
 MERGED from GC2016:libSuperToasts:unspecified:7:5
-MERGED from com.android.support:support-v4:21.0.3:15:5
+MERGED from GC2016:libFancyCoverFlow:unspecified:23:5
+MERGED from GC2016:libSuperToasts:unspecified:7:5
 	android:targetSdkVersion
 		ADDED from AndroidManifest.xml:7:9
 		INJECTED from AndroidManifest.xml:0:0
@@ -53,10 +55,12 @@ ADDED from AndroidManifest.xml:15:5
 		ADDED from AndroidManifest.xml:15:22
 application
 ADDED from AndroidManifest.xml:19:5
+MERGED from com.android.support:support-v4:22.1.1:22:5
 MERGED from GC2016:libArkist:unspecified:11:5
 MERGED from GC2016:libFancyCoverFlow:unspecified:27:5
 MERGED from GC2016:libSuperToasts:unspecified:11:5
-MERGED from com.android.support:support-v4:21.0.3:16:5
+MERGED from GC2016:libFancyCoverFlow:unspecified:27:5
+MERGED from GC2016:libSuperToasts:unspecified:11:5
 	android:label
 		ADDED from AndroidManifest.xml:24:9
 	android:hardwareAccelerated

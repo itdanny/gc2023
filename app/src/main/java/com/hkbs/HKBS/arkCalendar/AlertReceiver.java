@@ -798,15 +798,36 @@ public class AlertReceiver extends BroadcastReceiver {
         } else {
             helperString = location;
         }
-        
-        Notification notification = new Notification(R.drawable.ic_launcher,null,System.currentTimeMillis());
-//        notification.setLatestEventInfo(context,title,helperString,
-//				                PendingIntent.getActivity(context, 0, clickIntent, PendingIntent.FLAG_CANCEL_CURRENT));
-        final PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, clickIntent, 0);
-        notification.setLatestEventInfo(context,title,helperString, pendingIntent);
-        notification.deleteIntent = PendingIntent.getBroadcast(context, 0, deleteIntent, 0);
-        notification.flags |= Notification.FLAG_AUTO_CANCEL;
-        notification.flags |= Notification.FLAG_SHOW_LIGHTS;
+
+
+
+//        Notification notification = new Notification(R.drawable.ic_launcher,null,System.currentTimeMillis());
+////        notification.setLatestEventInfo(context,title,helperString,
+////				                PendingIntent.getActivity(context, 0, clickIntent, PendingIntent.FLAG_CANCEL_CURRENT));
+//        final PendingIntent pendingIntent = PendingIntent.getActivity(context, 0, clickIntent, 0);
+//        notification.setLatestEventInfo(context,title,helperString, pendingIntent);
+//        notification.deleteIntent = PendingIntent.getBroadcast(context, 0, deleteIntent, 0);
+//        notification.flags |= Notification.FLAG_AUTO_CANCEL;
+//        notification.flags |= Notification.FLAG_SHOW_LIGHTS;
+
+        // DC 2015.12.06 Change Compiler caused error so change it to below
+
+        PendingIntent pendingIntent = PendingIntent.getActivity(context, 1, clickIntent, 0);
+        Notification.Builder builder = new Notification.Builder(context);
+
+        builder.setAutoCancel(false);
+        //builder.setTicker("this is ticker text");
+        builder.setContentTitle(title);
+        builder.setContentText(helperString);
+        builder.setSmallIcon(R.drawable.ic_launcher);
+        builder.setContentIntent(pendingIntent);
+        builder.setOngoing(true);
+        //builder.setSubText("This is subtext...");   //API level 16
+        builder.setNumber(100);
+        builder.build();
+
+        Notification notification = builder.getNotification();
+
         return notification;
     }
 }
