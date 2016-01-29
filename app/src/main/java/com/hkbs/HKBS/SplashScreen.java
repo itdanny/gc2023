@@ -19,12 +19,9 @@ public class SplashScreen extends Activity {
         ImageView imageView = (ImageView) findViewById(R.id.imgLogo);
 
         if (CMain.IS_2016_VERSION) {
-//            Calendar calendar = Calendar.getInstance();
-//            if (calendar.get(Calendar.YEAR)>=2016) {
             imageView.setImageResource(R.drawable.splash_640_960_2106);
             } else{
             imageView.setImageResource(R.drawable.splash_640_960);
-//            }
         }
         new Handler().postDelayed(new Runnable() {
  

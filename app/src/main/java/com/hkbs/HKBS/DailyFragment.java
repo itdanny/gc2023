@@ -1,6 +1,7 @@
 package com.hkbs.HKBS;
 
 import android.content.ContentValues;
+import android.content.Context;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -24,6 +25,7 @@ import com.daimajia.androidanimations.library.YoYo;
 import com.hkbs.HKBS.arkCalendar.MyCalendarLunar;
 import com.hkbs.HKBS.arkUtil.MyUtil;
 
+import org.arkist.share.AxDebug;
 import org.arkist.share.AxTools;
 
 import java.util.Calendar;
@@ -34,44 +36,18 @@ import java.util.Calendar;
 public class DailyFragment extends Fragment {
     final static private String TAG = DailyFragment.class.getSimpleName();
     final static private boolean DEBUG = true && CMain.DEBUG;
-
     final static private String CHI_MONTHS[] = {"一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二"};
     final static private String STD_LAYOUT = "standard";
     final static private String SMALL_LAYOUT = "small";
     final static private String SW600_LAYOUT = "sw600dp";
 
-    private CMain mCMain;
     private ViewGroup mRootView;
-    private int mCurYear;
-    private int mCurMonth;//Zero_base
-    private int mCurDay;
+    private int mThisPageYear;
+    private int mThisPageZeroBasedMonth;//Zero_base
+    private int mThisPageDay;
     private Calendar mCalendar;
     private MyCalendarLunar mLunar;
 
-    static public DailyFragment getInstance(CMain cmain, int year, int month, int day){
-        DailyFragment dailyFragment = new DailyFragment();
-        dailyFragment.mCMain = cmain;
-        dailyFragment.mCurYear = year;
-        dailyFragment.mCurMonth = month;
-        dailyFragment.mCurDay = day;
-        dailyFragment.mCalendar = Calendar.getInstance();
-        dailyFragment.mCalendar.set(year, month, day, 0, 0, 0);
-        dailyFragment.mLunar = new MyCalendarLunar(dailyFragment.mCalendar);
-        return dailyFragment;
-    }
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
-                             Bundle savedInstanceState) {
-        mRootView = (ViewGroup) inflater.inflate(R.layout.activity_page1, container, false);
-        onRefreshScreen();
-        return mRootView;
-    }
-
-    @Override
-    public void onResume() {
-        super.onResume();
-        onRefreshScreen();
-    }
     private int mTextColor;
     private boolean mIsHoliday;
     private String mScrType;
@@ -116,15 +92,74 @@ public class DailyFragment extends Fragment {
     private Paint textPaint = new TextPaint();
     private Rect textBounds = new Rect();
     private int statusBarHeight=0;
-    
-    public void onRefreshScreen(){
+    static public DailyFragment getInstance(int year, int month, int day){
+        DailyFragment dailyFragment = new DailyFragment();
+        dailyFragment.mThisPageYear = year;
+        dailyFragment.mThisPageZeroBasedMonth = month;
+        dailyFragment.mThisPageDay = day;
+        dailyFragment.mCalendar = Calendar.getInstance();
+        dailyFragment.mCalendar.set(year, month, day, 0, 0, 0);
+        dailyFragment.mLunar = new MyCalendarLunar(dailyFragment.mCalendar);
+        return dailyFragment;
+    }
+    protected void onRefreshSettings(int year, int month, int day){
+        mThisPageYear = year;
+        mThisPageZeroBasedMonth = month;
+        mThisPageDay = day;
+        mCalendar = Calendar.getInstance();
+        mCalendar.set(year, month, day, 0, 0, 0);
+        mLunar = new MyCalendarLunar(mCalendar);
+        onRefreshScreen();
+    }
+    private Context getLocalContext(){
+        if (mRootView!=null) return mRootView.getContext();
+        return getActivity();
+    }
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+                             Bundle savedInstanceState) {
+        mRootView = (ViewGroup) inflater.inflate(R.layout.activity_page1, container, false);
+        // Crash on 4.3.1
+//        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
+//            if (Build.VERSION.SDK_INT == Build.VERSION_CODES.JELLY_BEAN_MR2 ||
+//                    Build.VERSION.SDK_INT == Build.VERSION_CODES.KITKAT) {
+//                if (DEBUG) AxDebug.debug(this+" sdk="+Build.VERSION.SDK_INT);
+//                mRootView.setLayerType(View.LAYER_TYPE_HARDWARE, null);
+//            }
+//        }
+//        onRefreshScreen();
+        return mRootView;
+    }
+    @Override
+    public void onResume() {
+        super.onResume();
+        onRefreshScreen();
+    }
+    public void onRefreshScreen() {
+        if (DEBUG) AxDebug.debug(this);
+//        if (getActivity()!=null){
+//            getActivity().runOnUiThread(new Runnable() {
+//                @Override
+//                public void run() {
+//                    onRefreshScreenOnUIThread();
+//                }
+//            });
+//        }
+//    }
+//    synchronized private void onRefreshScreenOnUIThread(){
         if (mRootView==null) return;
-        mContentValues = mCMain.mDailyBread.getContentValues(mCurYear, mCurMonth, mCurDay);// get ContentValues from dailyBread file
-        if (mContentValues==null) {
-            Log.e(TAG, "Contens not found ("+mCurYear+","+mCurMonth+","+mCurDay+")");
+        try {
+            mContentValues = new ContentValues(CMain.mDailyBread.getContentValues(mThisPageYear, mThisPageZeroBasedMonth, mThisPageDay));// get ContentValues from dailyBread file
+        } catch (Exception e){
+            mRootView.setVisibility(View.INVISIBLE);
+            AxTools.toast(AxTools.MsgType.ERROR, getActivity(),"找資料時出現問題 ("+ mThisPageYear +","+ mThisPageZeroBasedMonth +","+ mThisPageDay +") "+e.getMessage());
             return;
         }
-
+        if (mContentValues==null) {
+            mRootView.setVisibility(View.INVISIBLE);
+            AxTools.toast(AxTools.MsgType.ERROR,getActivity(),"找不到指定日期內容 ("+ mThisPageYear +","+ mThisPageZeroBasedMonth +","+ mThisPageDay +")");
+            return;
+        }
         mScreenTypeView = (TextView) mRootView.findViewById(R.id.xmlPage1ScreenType);
         // Row 1
         mEngYear = (TextView) mRootView.findViewById(R.id.xmlPage1EngYear);
@@ -153,11 +188,11 @@ public class DailyFragment extends Fragment {
         mWisdomTextView = (TextView) mRootView.findViewById(R.id.xmlPage1BigText);
         mWisdomVerseView = (TextView) mRootView.findViewById(R.id.xmlPage1BigHint);
         
-        //mWisdomTextView.setText("Date="+mCurYear+" "+mCurMonth+" "+mCurDay);
+        //mWisdomTextView.setText("Date="+mThisPageYear+" "+mThisPageZeroBasedMonth+" "+mThisPageDay);
         mScrType="";
         if (mScreenTypeView!=null){
             mScrType=mScreenTypeView.getTag().toString();
-            mCMain.mScreenType=mScrType; 
+            CMain.mScreenType=mScrType;
             if (!DEBUG) mScreenTypeView.setText("");
         }
         mHolidayText = MyHoliday.getHolidayRemark(mCalendar.getTime());
@@ -174,10 +209,10 @@ public class DailyFragment extends Fragment {
         setRow3ChineseYearMonthAndWeekday();
         setRow4GoldText();
         setRow5Wisdom();
-
+        AxDebug.info(this, "Refresh Completed ("+(mThisPageZeroBasedMonth+1)+"."+mThisPageDay+")");
     }
     private void setRow1YearAndMonth(){
-        mEngYear.setText(String.valueOf(mCurYear));
+        mEngYear.setText(String.valueOf(mThisPageYear));
         mEngYear.setTextColor(mTextColor);
 
         mEngMonthName.setText(MyUtil.sdfEngMMMM.format(mCalendar.getTime()));
@@ -187,7 +222,7 @@ public class DailyFragment extends Fragment {
         mChiMonthName.setTextColor(mTextColor);
     }
     private void setRow2Day(){
-        mBigDay.setText(String.valueOf(mCurDay));
+        mBigDay.setText(String.valueOf(mThisPageDay));
         mBigDay.setTextColor(mTextColor);
         if (CMain.IS_2016_VERSION) {
             LinearLayout.LayoutParams monthParams = (LinearLayout.LayoutParams) mChiMonthName.getLayoutParams();
@@ -297,7 +332,7 @@ public class DailyFragment extends Fragment {
     }
     private void setRow3ChineseYearMonthAndWeekday(){
         //if (CMain.IS_2016_VERSION) {
-        if (mCurYear>=2016) {
+        if (mThisPageYear >=2016) {
             mWeekDayImage.setImageResource(mIsHoliday ? R.drawable.red_weekday_2016 : R.drawable.green_weekday_2016);
         } else {
             mWeekDayImage.setImageResource(mIsHoliday ? R.drawable.red_weekday_2015 : R.drawable.green_weekday_2015);
@@ -351,8 +386,6 @@ public class DailyFragment extends Fragment {
         
 //        final ImageView pageImageFrameUpper = (ImageView) findViewById(getID(nbr, "ImageFrameUpper"));
 //        final ImageView pageImageFrameLower = (ImageView) findViewById(getID(nbr, "ImageFrameLower"));
-        
-
 
     }
     private void setRow4GoldText(){
@@ -361,7 +394,7 @@ public class DailyFragment extends Fragment {
          ***************************************************************/
 
         //if (CMain.IS_2016_VERSION){
-        if (mCurYear>=2016) {
+        if (mThisPageYear >=2016) {
             mGoldFrame.setImageDrawable(getResources().getDrawable(mIsHoliday?R.drawable.red_frame_2016:R.drawable.green_frame_2016));
             mGoldFrame.setVisibility(View.VISIBLE);
         } else {
@@ -382,9 +415,9 @@ public class DailyFragment extends Fragment {
 
         Calendar calendar = Calendar.getInstance();
         if (CMain.IS_2016_VERSION) {
-            if (calendar.get(Calendar.YEAR) == mCurYear &&
-                    calendar.get(Calendar.MONTH) == mCurMonth &&
-                    calendar.get(Calendar.DAY_OF_MONTH) == mCurDay) {
+            if (calendar.get(Calendar.YEAR) == mThisPageYear &&
+                    calendar.get(Calendar.MONTH) == mThisPageZeroBasedMonth &&
+                    calendar.get(Calendar.DAY_OF_MONTH) == mThisPageDay) {
                 YoYo.with(Techniques.Bounce).duration(1000).playOn(mGoldTextView);
             }
         }
@@ -456,7 +489,7 @@ public class DailyFragment extends Fragment {
         }
 
         String goldAlign = mContentValues.getAsString(MyDailyBread.wGoldAlign);
-        if (mCurYear<=2012 || mCurYear>=2016){
+        if (mThisPageYear <=2012 || mThisPageYear >=2016){
             goldAlign="C";
         }
         if (goldAlign.equalsIgnoreCase("L")){
@@ -471,7 +504,7 @@ public class DailyFragment extends Fragment {
          *  GOLD VERSE TEXT 金句經文出處
          ************************************************************************************/
 
-        mGoldVerseView.setText(mContentValues.getAsString(MyDailyBread.wGoldVerse) + (mCurYear >= 2016 ? "" : "；和合本修訂版"));
+        mGoldVerseView.setText(mContentValues.getAsString(MyDailyBread.wGoldVerse) + (mThisPageYear >= 2016 ? "" : "；和合本修訂版"));
         mGoldVerseView.setTextColor(mTextColor);
         // From HKBS, size change to less than Gold
         if (CMain.IS_2016_VERSION) {
@@ -498,14 +531,14 @@ public class DailyFragment extends Fragment {
             }
             mGoldVerseFontSize=(int) mGoldVerseView.getTextSize();
         }
-        if (mCurYear>=2010){
+        if (mThisPageYear >=2010){
             mGoldVerseView.setGravity(Gravity.BOTTOM | Gravity.CENTER_HORIZONTAL);
         }
-        if (mCurYear>=2015){
+        if (mThisPageYear >=2015){
             RelativeLayout.LayoutParams goldVerseLP = (RelativeLayout.LayoutParams) mGoldVerseView.getLayoutParams();
             if (mScrType.equalsIgnoreCase(STD_LAYOUT)) {
                 if (CMain.IS_2016_VERSION) {
-                    if (mCurYear>=2016) {
+                    if (mThisPageYear >=2016) {
                         goldVerseLP.setMargins(goldVerseLP.leftMargin, goldVerseLP.topMargin, goldVerseLP.rightMargin, AxTools.dp2px(8));
                     } else {
                         goldVerseLP.setMargins(goldVerseLP.leftMargin, goldVerseLP.topMargin, goldVerseLP.rightMargin, AxTools.dp2px(16));
@@ -515,7 +548,7 @@ public class DailyFragment extends Fragment {
                 }
                 mGoldVerseView.setLayoutParams(goldVerseLP);
             } else {
-                if (CMain.IS_2016_VERSION && mCurYear>=2016) {
+                if (CMain.IS_2016_VERSION && mThisPageYear >=2016) {
                     goldVerseLP.setMargins(goldVerseLP.leftMargin, goldVerseLP.topMargin, goldVerseLP.rightMargin, AxTools.dp2px(8));
                     mGoldVerseView.setLayoutParams(goldVerseLP);
                 }
@@ -530,11 +563,11 @@ public class DailyFragment extends Fragment {
 
 
         //if (CMain.IS_2016_VERSION){
-        if (mCurYear>=2016) {
+        if (mThisPageYear >=2016) {
             mWisdomIcon.setImageDrawable(getResources().getDrawable(mIsHoliday ? R.drawable.red_icon_2016 : R.drawable.green_icon_2016));
         } else {
             mWisdomIcon.setScaleType(ImageView.ScaleType.FIT_XY);
-            if (mCurYear >= 2016) {
+            if (mThisPageYear >= 2016) {
                 mWisdomIcon.setImageDrawable(null);
             } else {
                 mWisdomIcon.setImageDrawable(getResources().getDrawable(mIsHoliday ? R.drawable.red_icon_2015 : R.drawable.green_icon_2015));
@@ -639,7 +672,7 @@ public class DailyFragment extends Fragment {
             mWisdomTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mWisdomTextFontSize);
         }
 //        RelativeLayout.LayoutParams bigTextLP = (RelativeLayout.LayoutParams) mWisdomTextView.getLayoutParams();
-        if (mCurYear>=2016) {
+        if (mThisPageYear >=2016) {
 //            if (wisdomLines.length>=4){
 //                mWisdomTextView.setGravity(Gravity.LEFT | Gravity.TOP);
 //            } else {
@@ -680,7 +713,7 @@ public class DailyFragment extends Fragment {
             mWisdomVerseFontSize = Math.min(mWisdomVerseFontSize, (int) Math.floor(wisdomVerseWidth / maxWisdomVerseChars));
             mWisdomVerseView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mWisdomVerseFontSize);//DC: 2013.12.12
             if (DEBUG) {
-                Log.w(TAG, "Device="+getString(R.string.deviceType)+" screen=" + mScrType + " WisdomFontSize=" + mWisdomTextFontSize + " v="+mWisdomVerseFontSize + " height="+mWisdomTextView.getHeight()+" "+mCurYear+"-"+(mCurMonth+1)+"-"+mCurDay);
+                Log.w(TAG, "Device="+getString(R.string.deviceType)+" screen=" + mScrType + " WisdomFontSize=" + mWisdomTextFontSize + " v="+mWisdomVerseFontSize + " height="+mWisdomTextView.getHeight()+" "+ mThisPageYear +"-"+(mThisPageZeroBasedMonth +1)+"-"+ mThisPageDay);
             }
         }
     }
@@ -692,7 +725,7 @@ public class DailyFragment extends Fragment {
                 statusBarHeight = getResources().getDimensionPixelSize(resourceId);
             }
         }
-        return MyUtil.heightPixels(mCMain) - statusBarHeight;
+        return MyUtil.heightPixels(getLocalContext()) - statusBarHeight;
     }
     /*
     * @param fullScreenRatio  The ratio that textView occupy on screen
@@ -832,7 +865,7 @@ private int getFontSizeByMaxCharacters(TextView textView, int maxCharacters){
             /
             maxCharacters);
     // Only Note has problem
-    if (android.os.Build.MODEL.equalsIgnoreCase("MID") && MyUtil.heightPixels(mCMain)==1232 && MyUtil.widthPixels(mCMain)==800){
+    if (android.os.Build.MODEL.equalsIgnoreCase("MID") && MyUtil.heightPixels(getLocalContext())==1232 && MyUtil.widthPixels(getLocalContext())==800){
         fontSize = (int) Math.floor(fontSize * 0.9);
     }
     if (DEBUG) MyUtil.log(TAG,

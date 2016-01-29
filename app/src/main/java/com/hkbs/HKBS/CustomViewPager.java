@@ -3,7 +3,6 @@ package com.hkbs.HKBS;
 import android.content.Context;
 import android.support.v4.view.ViewPager;
 import android.util.AttributeSet;
-import android.util.Log;
 import android.view.MotionEvent;
 
 public class CustomViewPager extends ViewPager{
@@ -37,7 +36,7 @@ public class CustomViewPager extends ViewPager{
             lastX = ev.getX();
             lastY = ev.getY();
         } else if (ev.getAction()==MotionEvent.ACTION_UP){
-            Log.i("#", " anyCallBack="+(callBack==null?"No":"Yes"));
+            //Log.i("#", " anyCallBack="+(callBack==null?"No":"Yes"));
             if (Math.abs(lastX-ev.getX())<=10 && Math.abs(lastY-ev.getY())<=10 && callBack!=null) {
                 callBack.clicked(ev);
                 return true;

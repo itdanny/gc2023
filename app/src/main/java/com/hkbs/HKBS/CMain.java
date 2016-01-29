@@ -74,6 +74,7 @@ public class CMain extends MyActivity {
 
     final static private int CALL_FROM_EXTERNAL_APP = -999;
     private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
+    static public MyDailyBread mDailyBread;
 
 //    static public int mCalendarYear = 2015;
 //    static private float _scaleDensity = 0;
@@ -84,12 +85,21 @@ public class CMain extends MyActivity {
     private View mTitleView;
     static public String mScreenType = "";
 
+    //private ViewAnimator mViewAnimator;
+    private boolean isTitleShown = true;
+    //private int mViewIndex = 1;
+    private CustomViewPager mPager;
+    private CustomViewAdapter mAdapter;
+
+    private View mRootView;
+
 //    private LinearLayout page1;
 //    private LinearLayout page2;
     private Handler handler;
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
+        if (mPager==null || mPager.isScrolling) return false;
         switch (keyCode) {
             case KeyEvent.KEYCODE_W:
             case KeyEvent.KEYCODE_DPAD_UP:
@@ -142,40 +152,39 @@ public class CMain extends MyActivity {
         }
     };
 
-    //private ViewAnimator mViewAnimator;
-    private boolean isTitleShown = true;
-    //private int mViewIndex = 1;
-    private CustomViewPager mPager;
-    private CustomViewAdapter mAdapter;
-    public MyDailyBread mDailyBread;
-    private View mRootView;
-
     private class CustomViewAdapter extends FragmentStatePagerAdapter {
-        CMain mCMain;
-        MyDailyBread mDailyBread;
-        public CustomViewAdapter(FragmentManager fm, CMain cmain) {
+        Calendar mCalendar;
+        long mStartTime;
+        DailyFragment dailyFragments[] = new DailyFragment[3];
+        public CustomViewAdapter(FragmentManager fm) {
             super(fm);
-            mCMain=cmain;
-            mDailyBread=cmain.mDailyBread;
+            mCalendar = Calendar.getInstance();
+            mStartTime = CMain.mDailyBread.getValidFrDate().getTimeInMillis();
         }
-
         @Override
         public Fragment getItem(int position) {
-            Calendar calendar = Calendar.getInstance();
-            calendar.setTimeInMillis(mDailyBread.getValidFrDate().getTimeInMillis());
-            calendar.add(Calendar.DAY_OF_MONTH, position);
-            return DailyFragment.getInstance(CMain.this, calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+            mCalendar.setTimeInMillis(mStartTime);
+            mCalendar.add(Calendar.DAY_OF_MONTH, position);
+            //return DailyFragment.getInstance(mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH), mCalendar.get(Calendar.DAY_OF_MONTH));
+            final int targetPosition = position % 3;
+            if (dailyFragments[targetPosition]==null){
+                return DailyFragment.getInstance(mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH), mCalendar.get(Calendar.DAY_OF_MONTH));
+            } else {
+                dailyFragments[targetPosition].onRefreshSettings(mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH), mCalendar.get(Calendar.DAY_OF_MONTH));
+                return dailyFragments[targetPosition];
+            }
         }
         @Override
         public int getCount() {
-            return (int) mCMain.mDailyBread.getNbrOfValidDays();
+            return (int) CMain.mDailyBread.getNbrOfValidDays();
         }
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-        Log.e(TAG,"*** Start "+getPackageName()+" ***");
+        Log.e(TAG, "*** Start " + getPackageName()+" ***");
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
+        mDailyBread = MyDailyBread.getInstance(CMain.this);
         AxTools.init(CMain.this);
 //        scaleDensity(getApplicationContext());
         MyUtil.initMyUtil(this);
@@ -215,7 +224,6 @@ public class CMain extends MyActivity {
         mControlsView = findViewById(R.id.xmlMainControls);
         mLeftRightPanel = findViewById(R.id.xmlMainClickPanel);
         mTitleView = findViewById(R.id.xmlMainTitle);
-        mDailyBread = MyDailyBread.getInstance(CMain.this);
 
         onCreateSetButtons();
 
@@ -225,7 +233,7 @@ public class CMain extends MyActivity {
         CWidgetBase.broadcastMe(CMain.this);
 
         mPager = (CustomViewPager) findViewById(R.id.pager);
-        mAdapter = new CustomViewAdapter(getSupportFragmentManager(), CMain.this);
+        mAdapter = new CustomViewAdapter(getSupportFragmentManager());
         mPager.setAdapter(mAdapter);
         mPager.callBack = new CustomViewPager.CallBack() {
             @Override
@@ -254,9 +262,9 @@ public class CMain extends MyActivity {
             public void onPageSelected(int i) {
                 mDisplayDay = (Calendar) mDailyBread.getValidFrDate().clone();
                 mDisplayDay.add(Calendar.DAY_OF_MONTH, i);
-                if (DEBUG) Log.i(TAG, "onPageSelected day=" + mDisplayDay.get(Calendar.DAY_OF_MONTH));
+                if (DEBUG) Log.i(TAG, "onPageSelected day=" + mDisplayDay.get(Calendar.DAY_OF_MONTH)+ " beg");
                 onRefreshPage(mDisplayDay, false);
-                if (DEBUG) Log.i(TAG, "onPageSelected day=" + mDisplayDay.get(Calendar.DAY_OF_MONTH));
+                if (DEBUG) Log.i(TAG, "onPageSelected day=" + mDisplayDay.get(Calendar.DAY_OF_MONTH)+ " end");
             }
 
             @Override
@@ -1085,9 +1093,14 @@ public class CMain extends MyActivity {
         } else {
             askHolyDay();
         }
-        DailyFragment dailyFragment = (DailyFragment) mAdapter.getItem(mPager.getCurrentItem());
-        dailyFragment.onRefreshScreen();
-        mAdapter.notifyDataSetChanged();
+        AxTools.runLater(500, new Runnable() {
+            @Override
+            public void run() {
+                DailyFragment dailyFragment = (DailyFragment) mAdapter.getItem(mPager.getCurrentItem());
+                dailyFragment.onRefreshScreen();
+                mAdapter.notifyDataSetChanged();
+            }
+        });
     }
     private void askHolyDay(){
         int showHolyDay = MyUtil.getPrefInt(MyUtil.PREF_HOLY_DAY, -1);

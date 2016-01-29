@@ -180,10 +180,11 @@ public class MyDailyBread {
 		readFileFromAsset();
 	}
 	private void readFileFromAsset(){
-		try {
+        BufferedReader bReader=null;
+        try {
 			Calendar today = Calendar.getInstance();
-			final InputStreamReader iReader = new InputStreamReader(mContext.getAssets().open("dailyBread.csv"), "UTF-8"); 
-			final BufferedReader bReader = new BufferedReader(iReader); 
+            final InputStreamReader iReader = new InputStreamReader(mContext.getAssets().open("dailyBread.csv"), "UTF-8");
+			bReader = new BufferedReader(iReader);
 		    // do reading, usually loop until end of file reading 
 		    String line = bReader.readLine();
 		    ContentValues cvGoldFrame=null; 
@@ -509,7 +510,7 @@ public class MyDailyBread {
 			    	
 			    }
 			}
-		    bReader.close();
+
 		    if (DEBUG) MyUtil.log(TAG, getDayString(validFrDate)+" "+getDayString(validToDate));
 		    //Toast.makeText(mContext, "資料庫顯示範圍:"+getDayString(validFrDate)+" 至 "+getDayString(validToDate), Toast.LENGTH_LONG).show();
 		    if (IS_CHECK_FIELD_VALUES){
@@ -575,9 +576,17 @@ public class MyDailyBread {
 //		    	MyUtil.log(TAG,"HintSize L px:"+mHintSizeL);// 26 chars 2014-04-15
 //		    	MyUtil.log(TAG,"HintSize S px:"+mHintSizeS);// 24 chars 2014-05-08		    	
 		    
-		} catch (IOException e) {
+		} catch (IOException e1) {
 		    //log the exception
-		}
+		} finally {
+            if (bReader!=null) {
+                try {
+                    bReader.close();
+                } catch (Exception e2) {
+                    Log.e(TAG, e2.getMessage());
+                }
+            }
+        }
 	}
 	static public String getDayString(int year, int month, int day){
 		return year+"-"+(month+1)+"-"+day;
