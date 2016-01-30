@@ -8,8 +8,8 @@ android {
         applicationId "com.hkbs.HKBS"
         minSdkVersion 8
         targetSdkVersion 23
-        versionCode 36
-        versionName "3.6"
+        versionCode 37
+        versionName "3.7"
     }
     buildTypes {
         release {
