@@ -1,5 +1,15 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <string name="PermissionReason">程式將會要求允許\n\n(儲存位置)儲存相片資料</string>
+    <string name="permissionRequest">請按「%1$s」設定「允許」程式使用「%2$s」功能</string>
+    <string name="permissionCalendar">日曆</string>
+    <string name="permissionStorage">儲存</string>
+    <string name="permissionLocation">地點</string>
+    <string name="permissionCamera">相機</string>
+    <string name="permissionContact">聯絡</string>
+    <string name="BtnOk">確定</string>
+    <string name="BtnCancel">取消</string>
+
     <string name="hk_holiday_term">*<a href="http://www.labour.gov.hk/tc/news/latest_holidays2016.htm">香港法定假期</a></string>
     <string name="deviceType">v</string>
     <string name="layoutType">v</string><!--If there is layout, should have this declaration -->

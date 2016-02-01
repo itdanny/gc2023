@@ -37,6 +37,7 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hkbs.HKBS.arkUtil.MyGestureListener;
+import com.hkbs.HKBS.arkUtil.MyPermission;
 import com.hkbs.HKBS.arkUtil.MyUtil;
 import com.hkbs.HKBS.util.SystemUiHider;
 
@@ -96,6 +97,27 @@ public class CMain extends MyActivity {
 //    private LinearLayout page1;
 //    private LinearLayout page2;
     private Handler handler;
+    @Override
+    public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
+        if (!MyPermission.getInstance().onRequestPermissionsResult(
+                requestCode,
+                permissions,
+                grantResults,
+                new MyPermission.Callback() {
+                    @Override
+                    public void onRequestResult(int requestCode, boolean success) {
+                        switch (requestCode){
+                            case MyPermission.REQUEST_ACCESS_STORAGE:
+                                if (success) {
+                                    onClickShare(CMain.this, true);
+                                }
+                                break;
+                        }
+                    }
+                })){
+            super.onRequestPermissionsResult(requestCode, permissions, grantResults);
+        }
+    }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
@@ -485,7 +507,7 @@ public class CMain extends MyActivity {
         mainBtnShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onClickShare(CMain.this);
+                onClickShare(CMain.this,false);
             }
         });
 
@@ -626,7 +648,13 @@ public class CMain extends MyActivity {
         copyText(context);
     }
 
-    private void onClickShare(Context context) {
+    private void onClickShare(Context context, boolean suppressRequestPermission) {
+        if (!MyPermission.getInstance().checkPermission(
+                CMain.this,
+                MyPermission.REQUEST_ACCESS_STORAGE,
+                suppressRequestPermission)){
+            return;
+        }
         saveScreenShot();
         popSelectTextImage(context, shareListener);
     }
