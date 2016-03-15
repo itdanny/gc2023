@@ -1,5 +1,17 @@
 package com.hkbs.HKBS.arkCalendar;
 
+import android.annotation.SuppressLint;
+import android.content.ContentUris;
+import android.content.ContentValues;
+import android.content.Context;
+import android.database.Cursor;
+import android.net.Uri;
+import android.provider.CalendarContract;
+
+import com.hkbs.HKBS.CalendarAdapter;
+import com.hkbs.HKBS.MyHoliday;
+import com.hkbs.HKBS.arkUtil.MyUtil;
+
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
@@ -8,18 +20,6 @@ import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
-
-import com.hkbs.HKBS.CalendarAdapter;
-import com.hkbs.HKBS.MyHoliday;
-import com.hkbs.HKBS.arkUtil.MyUtil;
-
-import android.annotation.SuppressLint;
-import android.content.ContentUris;
-import android.content.ContentValues;
-import android.content.Context;
-import android.database.Cursor;
-import android.net.Uri;
-import android.provider.*;
 
 @SuppressLint("InlinedApi")
 public class MyCalendar {
@@ -265,21 +265,21 @@ public class MyCalendar {
 	 * 
 	 * 
 	 */	
-	public static String getUtcDate(Calendar date){
-		return MyUtil.utcYMD.format(date.getTime())+" "+MyUtil.sdfEEE.format(date.getTime());
-	}
-	public static String getUtcTime(Calendar date){
-		return MyUtil.utcHM.format(date.getTime());
-	}
-	public static String getLocalDate(Calendar date){
-		return MyUtil.sdfYYYYMMDD.format(date.getTime())+" "+MyUtil.sdfEEE.format(date.getTime());
-	}
-	public static String getLocalTime(Calendar date){
-		return MyUtil.sdfHHMM.format(date.getTime());
-	}
-	public static long getUTCinMillis(Calendar date){
-		return date.getTimeInMillis()+date.getTimeZone().getOffset(date.getTimeInMillis());
-	}
+//	public static String getUtcDate(Calendar date){
+//		return MyUtil.utcYMD.format(date.getTime())+" "+MyUtil.sdfEEE.format(date.getTime());
+//	}
+//	public static String getUtcTime(Calendar date){
+//		return MyUtil.utcHM.format(date.getTime());
+//	}
+//	public static String getLocalDate(Calendar date){
+//		return MyUtil.sdfYYYYMMDD.format(date.getTime())+" "+MyUtil.sdfEEE.format(date.getTime());
+//	}
+//	public static String getLocalTime(Calendar date){
+//		return MyUtil.sdfHHMM.format(date.getTime());
+//	}
+//	public static long getUTCinMillis(Calendar date){
+//		return date.getTimeInMillis()+date.getTimeZone().getOffset(date.getTimeInMillis());
+//	}
 	public static String day2RuleString(int day) {
         switch (day) {
         case Calendar.SUNDAY:	return "SU";
@@ -326,9 +326,9 @@ public class MyCalendar {
 		public long getMinInMillsec(){return mCalendarMinInMillsec;}
 		public long getMaxInMillsec(){return mCalendarMaxInMillsec;}
 		public String toYYYYMMDD(){return MyUtil.sdfYYYYMMDD.format(this.mCalendar.getTime());}
-		public String toYMDHM(){return MyUtil.sdfYYYYMMDDHHMM.format(this.mCalendar.getTime());}
-		public String toYMDHM_MIN(){return MyUtil.sdfYYYYMMDD.format(this.mCalendar.getTime())+" 00:00";}
-		public String toYMDHM_MAX(){return MyUtil.sdfYYYYMMDD.format(this.mCalendar.getTime())+" 23:59";}
+//		public String toYMDHM(){return MyUtil.sdfYYYYMMDDHHMM.format(this.mCalendar.getTime());}
+//		public String toYMDHM_MIN(){return MyUtil.sdfYYYYMMDD.format(this.mCalendar.getTime())+" 00:00";}
+//		public String toYMDHM_MAX(){return MyUtil.sdfYYYYMMDD.format(this.mCalendar.getTime())+" 23:59";}
 	}
 	static public Calendar getLastMonthEndDay(Calendar cal){
 		Calendar lastMth = (Calendar) cal.clone();

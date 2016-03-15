@@ -8,17 +8,21 @@ import android.view.WindowManager;
 
 import com.hkbs.HKBS.arkUtil.MyUtil;
 
+import org.arkist.share.AxDebug;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
+import java.util.TimeZone;
 
 public class MyDailyBread {
     static public int mCurrentYear=2015;//Valid Range will be from last SEPT
@@ -117,55 +121,209 @@ public class MyDailyBread {
             if (IS_CURRENT_YEAR_ONLY) {
                 if (CMain.IS_2016_VERSION) {
                     validFrDate.set(2015, 0, 1, 0, 0, 0); // 1-1
-                    validToDate.set(2016, 5, 30, 0, 0, 0); // Custom; May be by season
+                    validToDate.set(2016, 5, 30, 23, 59, 59); // Custom; May be by season
                 } else {
                     validFrDate.set(mCurrentYear - 1, 0, 1, 0, 0, 0); // 1-1
-                    validToDate.set(mCurrentYear, 11, 31, 0, 0, 0); // 2016-12-21
+                    validToDate.set(mCurrentYear, 11, 31, 23, 59, 59); // 2016-12-21
                 }
             } else {
                 if (CMain.IS_2016_VERSION) {
-                    validFrDate.set(2011, 9, 1, 0, 0, 0); // 1-1
-                    validToDate.set(2016, 5, 30, 0, 0, 0); // Custom; May be by season
+                    //validFrDate.set(2011, 9, 1, 0, 0, 0); // 1-1
+                    validFrDate.set(2015, 0, 1, 0, 0, 0); // 1-1
+                    validToDate.set(2016, 5, 30, 23, 59, 59); // Custom; May be by season
                 } else {
                     validFrDate.set(mCurrentYear - 1, 0, 1, 0, 0, 0); // 1-1
-                    validToDate.set(mCurrentYear, 11, 31, 0, 0, 0); // 2016-12-21
+                    validToDate.set(mCurrentYear, 11, 31, 23, 59, 59); // 2016-12-21
                 }
             }
         }
+        Calendar curCalendar = Calendar.getInstance();
+        validFrDate.setTimeZone(curCalendar.getTimeZone());
+        validToDate.setTimeZone(curCalendar.getTimeZone());
 	}
-    public long getNbrOfValidDays(){
+
+
+//    public static int date2index(Calendar startCal, Calendar endCal) {
+//        // Create copies so we don't update the original calendars.
+//
+//        Calendar start = Calendar.getInstance();
+//        start.setTimeZone(startCal.getTimeZone());
+//        start.setTimeInMillis(startCal.getTimeInMillis());
+//
+//        Calendar end = Calendar.getInstance();
+//        end.setTimeZone(endCal.getTimeZone());
+//        end.setTimeInMillis(endCal.getTimeInMillis());
+//
+//        if (DEBUG) AxDebug.debug(TAG, getDayHourString(start));
+//        if (DEBUG) AxDebug.debug(TAG, getDayHourString(end));
+//        // Set the copies to be at midnight, but keep the day information.
+//
+////        start.set(Calendar.HOUR_OF_DAY, 0);
+////        start.set(Calendar.MINUTE, 0);
+////        start.set(Calendar.SECOND, 0);
+////        start.set(Calendar.MILLISECOND, 0);
+////
+////        end.set(Calendar.HOUR_OF_DAY, 0);
+////        end.set(Calendar.MINUTE, 0);
+////        end.set(Calendar.SECOND, 0);
+////        end.set(Calendar.MILLISECOND, 0);
+//
+//        // At this point, each calendar is set to midnight on
+//        // their respective days. Now use TimeUnit.MILLISECONDS to
+//        // compute the number of full days between the two of them.
+////        return (int) TimeUnit.MILLISECONDS.toDays(
+////                Math.abs(end.getTimeInMillis() - start.getTimeInMillis()));
+//        float nbrOfDays=((end.getTimeInMillis() - start.getTimeInMillis()) / (24*60*60*1000));
+//        int resultVal = (int) nbrOfDays;
+//        if (DEBUG) AxDebug.debug(TAG,"nbrOfDays="+nbrOfDays+"("+resultVal);
+//        return resultVal;
+//    }
+    public long getNbrOfValidDays(Context context){
         setValidRange();
-        return Math.abs(calendarDaysBetween(validFrDate,validToDate))+1;
+        return date2index(context, validToDate)+1;//Include last day
     }
-    public static int calendarDaysBetween(Calendar startCal, Calendar endCal) {
-        // Create copies so we don't update the original calendars.
+    public static Calendar index2date(Context context, int i){
+        //i = 1;
+        Calendar startCal = (Calendar) MyDailyBread.getInstance(context).getValidFrDate().clone();
+        startCal.set(Calendar.HOUR_OF_DAY, 12);
+        startCal.set(Calendar.MINUTE, 0);
+        startCal.set(Calendar.SECOND, 0);
+        startCal.set(Calendar.MILLISECOND, 0);
+        startCal = getSignedAddInDays(startCal,i);
+//        startCal.add(Calendar.DAY_OF_YEAR,i);
+//        int nbrOfDaysInYear = startCal.getActualMaximum(Calendar.DAY_OF_YEAR);
+//        if (i <= nbrOfDaysInYear){
+//            startCal.add(Calendar.DAY_OF_YEAR, i);
+//        } else {
+//            int daysRemains=i;
+//            while (daysRemains>=nbrOfDaysInYear){
+//                startCal.add(Calendar.DAY_OF_YEAR, nbrOfDaysInYear);
+//                daysRemains=i-nbrOfDaysInYear;
+//                nbrOfDaysInYear = startCal.getActualMaximum(Calendar.DAY_OF_YEAR);
+//            }
+//            startCal.add(Calendar.DAY_OF_YEAR, daysRemains);
+//        }
+        String newCal = getDayHourString(startCal);
+        if (DEBUG) AxDebug.debug(TAG,"CalDate: "+i+" -> "+newCal);
+        int result = date2index(context,startCal);
+        if (DEBUG) AxDebug.debug(TAG,"CalDate: "+getDayHourString(startCal)+" -> "+result);
+        return startCal;
+    }
+    public static int date2index(Context context, Calendar end){
+        return calcDaysDiff(MyDailyBread.getInstance(context).getValidFrDate(),end);
+        //return calcDaysDiff(start, end);
+    }
+    public static int calcDaysDiff(Calendar date1, Calendar date2) {
+        //checks if the start date is later then the end date - gives 0 if it is
+        if (DEBUG){
+            if (getDayHourString(date1).contentEquals(getDayHourString(date2))){
+                AxDebug.debug(TAG, "Equal");
+            }
+        }
+        boolean exchangeDate=false;
+        if (date1.get(Calendar.YEAR) >= date2.get(Calendar.YEAR)) {
+            if (date1.get(Calendar.DAY_OF_YEAR) >= date2.get(Calendar.DAY_OF_YEAR)) {
+                exchangeDate=true;
+            }
+        }
+        Calendar startCal = (Calendar) (exchangeDate?date2.clone():date1.clone());
+        startCal.set(Calendar.HOUR_OF_DAY, 12);
+        startCal.set(Calendar.MINUTE, 0);
+        startCal.set(Calendar.SECOND, 0);
+        startCal.set(Calendar.MILLISECOND, 0);
 
-        Calendar start = Calendar.getInstance();
-        start.setTimeZone(startCal.getTimeZone());
-        start.setTimeInMillis(startCal.getTimeInMillis());
+        Calendar endCal = (Calendar) (exchangeDate?date1.clone():date2.clone());
+        endCal.set(Calendar.HOUR_OF_DAY, 12);
+        endCal.set(Calendar.MINUTE, 0);
+        endCal.set(Calendar.SECOND, 0);
+        endCal.set(Calendar.MILLISECOND, 0);
+//        endCal.set(Calendar.HOUR_OF_DAY, 23);
+//        endCal.set(Calendar.MINUTE, 59);
+//        endCal.set(Calendar.SECOND, 59);
+//        endCal.set(Calendar.MILLISECOND, 0);
 
-        Calendar end = Calendar.getInstance();
-        end.setTimeZone(endCal.getTimeZone());
-        end.setTimeInMillis(endCal.getTimeInMillis());
+//      endCal.add(Calendar.SECOND, 1);
 
-        // Set the copies to be at midnight, but keep the day information.
+        Calendar dateCpy = (Calendar) startCal.clone();
+//        Date d1 = startCal.getTime();
+//        Date d2 = endCal.getTime();
+        //checks if there is a daylight saving change between the two dates
+//        boolean isDate1Summer = TimeZone.getDefault().inDaylightTime(d1);
+//        boolean isDate2Summer = TimeZone.getDefault().inDaylightTime(d2);
+//        int offset = 0;
+        //check if there as been a change in winter/summer time and adds/reduces an hour
+//        if (isDate1Summer && !isDate2Summer) {
+//            offset = 1;
+//        }
+//        if (!isDate1Summer && isDate2Summer) {
+//            offset = -1;
+//        }
 
-        start.set(Calendar.HOUR_OF_DAY, 0);
-        start.set(Calendar.MINUTE, 0);
-        start.set(Calendar.SECOND, 0);
-        start.set(Calendar.MILLISECOND, 0);
+        //int diffAux = calcDaysDiffAux(dateCpy, endCal);//Exclude last day
+        //int diffAux = (int) ((endCal.getTimeInMillis() - dateCpy.getTimeInMillis()) / (24*60*60*1000));
+        int diffAux = getUnsignedDiffInDays(endCal.getTime(),dateCpy.getTime());
 
-        end.set(Calendar.HOUR_OF_DAY, 0);
-        end.set(Calendar.MINUTE, 0);
-        end.set(Calendar.SECOND, 0);
-        end.set(Calendar.MILLISECOND, 0);
+//        int fullDay = checkFullDay(dateCpy, endCal, offset);
+        //if (DEBUG) AxDebug.debug(TAG,"nbrOfDays Difference (Exclude last day)="+diffAux+"("+fullDay+")");
+//        return diffAux+fullDay;
+        if (DEBUG) AxDebug.debug(TAG,"CalDate: "+getDayHourString(startCal)+" -> "+getDayHourString(endCal)+" = "+diffAux+" days(ex. last day)");
+        return diffAux;
+    }
+    //http://stackoverflow.com/questions/3838527/android-java-date-difference-in-days
+    private final static long MILLISECS_PER_DAY = 24 * 60 * 60 * 1000;
+    private static long getDateToLong(Date date) {
+        return Date.UTC(date.getYear(), date.getMonth(), date.getDate(), 12, 0, 0);
+    }
+    public static Calendar getSignedAddInDays(Calendar startDate, int nbrOfDays) {
+        long beginMS = getDateToLong(startDate.getTime()); // Time in UTC
+        long endMS=beginMS+nbrOfDays*MILLISECS_PER_DAY;// Time in UTC
+        Calendar newCal = Calendar.getInstance();
+        newCal.setTimeZone(TimeZone.getTimeZone("UTC"));
+        newCal.setTimeInMillis(endMS);
+        newCal.setTimeZone(startDate.getTimeZone());
+        return newCal;
+    }
+    public static int getSignedDiffInDays(Date beginDate, Date endDate) {
+        long beginMS = getDateToLong(beginDate);
+        long endMS = getDateToLong(endDate);
+        long diff = (endMS - beginMS) / (MILLISECS_PER_DAY);
+        return (int)diff;
+    }
+    public static int getUnsignedDiffInDays(Date beginDate, Date endDate) {
+        return Math.abs(getSignedDiffInDays(beginDate, endDate));
+    }
 
-        // At this point, each calendar is set to midnight on
-        // their respective days. Now use TimeUnit.MILLISECONDS to
-        // compute the number of full days between the two of them.
-//        return (int) TimeUnit.MILLISECONDS.toDays(
-//                Math.abs(end.getTimeInMillis() - start.getTimeInMillis()));
-        return (int) ((end.getTimeInMillis() - start.getTimeInMillis()) / (24*60*60*1000));
+    // check if there is a 24 hour diff between the 2 dates including the daylight saving offset
+    public static int checkFullDay(Calendar day1, Calendar day2, int offset) {
+        if (day1.get(Calendar.HOUR_OF_DAY) <= day2.get(Calendar.HOUR_OF_DAY) + offset) {
+            return 0;
+        }
+        return -1;
+    }
+
+    // find the number of days between the 2 dates. check only the dates and not the hours
+    public static int calcDaysDiffAux(Calendar day1, Calendar day2) {
+        Calendar dayOne = (Calendar) day1.clone(),
+                 dayTwo = (Calendar) day2.clone();
+
+        if (dayOne.get(Calendar.YEAR) == dayTwo.get(Calendar.YEAR)) {
+            return Math.abs(dayOne.get(Calendar.DAY_OF_YEAR) - dayTwo.get(Calendar.DAY_OF_YEAR));
+        } else {
+            if (dayTwo.get(Calendar.YEAR) > dayOne.get(Calendar.YEAR)) {
+                //swap them
+                Calendar temp = dayOne;
+                dayOne = dayTwo;
+                dayTwo = temp;
+            }
+            int extraDays = 0;
+
+            while (dayOne.get(Calendar.YEAR) > dayTwo.get(Calendar.YEAR)) {
+                dayOne.add(Calendar.YEAR, -1);
+                // getActualMaximum() important for leap years
+                extraDays += dayOne.getActualMaximum(Calendar.DAY_OF_YEAR);
+            }
+            return extraDays - dayTwo.get(Calendar.DAY_OF_YEAR) + dayOne.get(Calendar.DAY_OF_YEAR);
+        }
     }
 	public Calendar getValidFrDate(){
 		setValidRange();
@@ -337,30 +495,30 @@ public class MyDailyBread {
 				    		validFrDate.set(Calendar.YEAR, lastYear);
 				    		validFrDate.set(Calendar.MONTH, lastMonth);
 				    		validFrDate.set(Calendar.DAY_OF_MONTH, lastDay);
-				    		validFrDate.set(Calendar.HOUR_OF_DAY, 23);
-				    		validFrDate.set(Calendar.MINUTE, 59);
-				    		validFrDate.set(Calendar.SECOND, 59);
+				    		validFrDate.set(Calendar.HOUR_OF_DAY,0);//23
+				    		validFrDate.set(Calendar.MINUTE, 0);//59
+				    		validFrDate.set(Calendar.SECOND, 0);//59
 				    	}
 				    	if (newDate.compareTo(validFrDate)<0){
 				    		validFrDate = (Calendar) newDate.clone();
-				    		validFrDate.set(Calendar.HOUR_OF_DAY, 23);
-				    		validFrDate.set(Calendar.MINUTE, 59);
-				    		validFrDate.set(Calendar.SECOND, 59);
+				    		validFrDate.set(Calendar.HOUR_OF_DAY, 0);//23
+				    		validFrDate.set(Calendar.MINUTE, 0);//59
+				    		validFrDate.set(Calendar.SECOND, 0);//59
 				    	}
 				    	if (validToDate==null){
 				    		validToDate = Calendar.getInstance();
 				    		validToDate.set(Calendar.YEAR, lastYear);
 				    		validToDate.set(Calendar.MONTH, lastMonth);
 				    		validToDate.set(Calendar.DAY_OF_MONTH, lastDay);
-				    		validToDate.set(Calendar.HOUR_OF_DAY, 0);
-				    		validToDate.set(Calendar.MINUTE, 0);
-				    		validFrDate.set(Calendar.SECOND, 0);
+				    		validToDate.set(Calendar.HOUR_OF_DAY, 23);
+				    		validToDate.set(Calendar.MINUTE, 59);
+				    		validToDate.set(Calendar.SECOND, 59);
 				    	}
 				    	if (newDate.compareTo(validToDate)>0){
 				    		validToDate = (Calendar) newDate.clone();
-				    		validToDate.set(Calendar.HOUR_OF_DAY,0);
-				    		validToDate.set(Calendar.MINUTE, 0);
-				    		validToDate.set(Calendar.SECOND, 0);
+				    		validToDate.set(Calendar.HOUR_OF_DAY,23);
+				    		validToDate.set(Calendar.MINUTE, 59);
+				    		validToDate.set(Calendar.SECOND, 59);
 				    	}				    	
 				    	// Check Value
 				    	if (IS_CHECK_VALID_VERSE){
@@ -597,6 +755,9 @@ public class MyDailyBread {
 	static public String getDayString(Calendar calendar){
 		return calendar.get(Calendar.YEAR)+"-"+(calendar.get(Calendar.MONTH)+1)+"-"+calendar.get(Calendar.DAY_OF_MONTH);
 	}
+    static public String getDayHourString(Calendar calendar){
+        return calendar.get(Calendar.YEAR)+"-"+(calendar.get(Calendar.MONTH)+1)+"-"+calendar.get(Calendar.DAY_OF_MONTH)+" "+calendar.get(Calendar.HOUR_OF_DAY)+":"+calendar.get(Calendar.MINUTE);
+    }
 	private void printContentValues(String str, ContentValues vals)	{
 	   Set<Entry<String, Object>> s=vals.valueSet();
 	   Iterator<?> itr = s.iterator();

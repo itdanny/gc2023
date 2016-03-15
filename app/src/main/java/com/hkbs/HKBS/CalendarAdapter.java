@@ -141,6 +141,7 @@ public class CalendarAdapter extends BaseAdapter {
 			curCal = curDayEvents.getCalendar();
 			String output="<bold>"+String.valueOf(curCal.get(Calendar.DAY_OF_MONTH))+"</bold>";
 			// show UNDERLINE on TODAY
+            MyUtil.sdfYYYYMMDD.setTimeZone(curCal.getTimeZone());
 			final boolean isToday = MyUtil.sdfYYYYMMDD.format(curCal.getTime()).equals(MyUtil.sdfYYYYMMDD.format(today.getTime()));
 			if (isToday){
 				output = "<u>"+output+"</u>";

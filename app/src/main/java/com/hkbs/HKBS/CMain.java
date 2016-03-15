@@ -176,33 +176,56 @@ public class CMain extends MyActivity {
 
     private class CustomViewAdapter extends FragmentStatePagerAdapter {
         Calendar mCalendar;
-        long mStartTime;
+        //long mStartTime;
         DailyFragment dailyFragments[] = new DailyFragment[3];
         public CustomViewAdapter(FragmentManager fm) {
             super(fm);
             mCalendar = Calendar.getInstance();
-            mStartTime = CMain.mDailyBread.getValidFrDate().getTimeInMillis();
+            //mStartTime = CMain.mDailyBread.getValidFrDate().getTimeInMillis();
         }
         @Override
         public Fragment getItem(int position) {
-            mCalendar.setTimeInMillis(mStartTime);
+            //mCalendar.setTimeInMillis(mStartTime);
+            mCalendar.setTimeInMillis(CMain.mDailyBread.getValidFrDate().getTimeInMillis());
             mCalendar.add(Calendar.DAY_OF_MONTH, position);
             //return DailyFragment.getInstance(mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH), mCalendar.get(Calendar.DAY_OF_MONTH));
-            final int targetPosition = position % 3;
-            if (dailyFragments[targetPosition]==null){
+//            final int targetPosition = position % 3;
+//            if (dailyFragments[targetPosition]==null){
                 return DailyFragment.getInstance(mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH), mCalendar.get(Calendar.DAY_OF_MONTH));
-            } else {
-                dailyFragments[targetPosition].onRefreshSettings(mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH), mCalendar.get(Calendar.DAY_OF_MONTH));
-                return dailyFragments[targetPosition];
-            }
+//            } else {
+//                dailyFragments[targetPosition].onRefreshSettings(mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH), mCalendar.get(Calendar.DAY_OF_MONTH));
+//                return dailyFragments[targetPosition];
+//            }
         }
         @Override
         public int getCount() {
-            return (int) CMain.mDailyBread.getNbrOfValidDays();
+            if (nbrOfItems==-1){
+                nbrOfItems=(int) CMain.mDailyBread.getNbrOfValidDays(getApplicationContext());
+            }
+            return nbrOfItems;
         }
+        private int nbrOfItems=-1;
     }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
+//        //Test
+//        Context context = getApplicationContext();
+//        Calendar end = Calendar.getInstance();
+//        end.set(2015, 0, 1, 0, 0, 0);
+//        AxDebug.error(TAG, "Diff=" + MyDailyBread.date2index(context, end));
+//
+//        end.set(2015, 0, 2, 0, 0, 0);
+//        AxDebug.error(TAG, "Diff=" + MyDailyBread.date2index(context, end));
+//
+//        end.set(2016, 5, 30, 0, 0, 0);
+//        AxDebug.error(TAG, "Diff=" + MyDailyBread.date2index(context, end));
+//
+//        end.set(2016, 2, 15, 0, 0, 0);
+//        AxDebug.error(TAG, "Diff=" + MyDailyBread.date2index(context, end));
+//
+//        AxDebug.error(TAG,"End");
+//
+
         Log.e(TAG, "*** Start " + getPackageName()+" ***");
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
@@ -255,6 +278,7 @@ public class CMain extends MyActivity {
         CWidgetBase.broadcastMe(CMain.this);
 
         mPager = (CustomViewPager) findViewById(R.id.pager);
+        mPager.setOffscreenPageLimit(1);
         mAdapter = new CustomViewAdapter(getSupportFragmentManager());
         mPager.setAdapter(mAdapter);
         mPager.callBack = new CustomViewPager.CallBack() {
@@ -278,15 +302,20 @@ public class CMain extends MyActivity {
                 } else if (fistPageChange && position == 0) {
                     Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
                 }
+                mPager.isScrolling = false;
             }
 
             @Override
             public void onPageSelected(int i) {
-                mDisplayDay = (Calendar) mDailyBread.getValidFrDate().clone();
-                mDisplayDay.add(Calendar.DAY_OF_MONTH, i);
-                if (DEBUG) Log.i(TAG, "onPageSelected day=" + mDisplayDay.get(Calendar.DAY_OF_MONTH)+ " beg");
-                onRefreshPage(mDisplayDay, false);
-                if (DEBUG) Log.i(TAG, "onPageSelected day=" + mDisplayDay.get(Calendar.DAY_OF_MONTH)+ " end");
+                mDisplayDay = MyDailyBread.getInstance(getApplicationContext()).index2date(getApplicationContext(),i);
+//                mDisplayDay = (Calendar) mDailyBread.getValidFrDate().clone();
+//                mDisplayDay.add(Calendar.DAY_OF_MONTH, i);
+                if (DEBUG)
+                    Log.i(TAG, "onPageSelected day=" + mDisplayDay.get(Calendar.DAY_OF_MONTH) + " beg");
+                onRefreshPage(mDisplayDay, false, false);
+                if (DEBUG)
+                    Log.i(TAG, "onPageSelected day=" + mDisplayDay.get(Calendar.DAY_OF_MONTH) + " end");
+                mPager.isScrolling = false;
             }
 
             @Override
@@ -305,7 +334,6 @@ public class CMain extends MyActivity {
                 }
             }
         });
-
         if (DEBUG) MyUtil.log(TAG, "StartApp3..............End");
 
         AxTools.runFollow(new Runnable() {
@@ -1029,16 +1057,16 @@ public class CMain extends MyActivity {
                     if (newTime != 0) {
                         Calendar newDate = Calendar.getInstance();
                         newDate.setTimeInMillis(newTime);
-                        if (isWithinRange(newDate)) {
+                        if (isWithinRange(newDate, 0)) {
                             mDisplayDay.setTimeInMillis(newTime);
                         } else {
-                            if (newDate.compareTo(mDailyBread.getValidToDate()) > 0) {
-                                mDisplayDay.setTimeInMillis(mDailyBread.getValidToDate().getTimeInMillis());
-                            } else if (newDate.compareTo(mDailyBread.getValidFrDate()) < 0){
+                            if (newDate.compareTo(mDailyBread.getValidFrDate()) < 0){
                                 mDisplayDay.setTimeInMillis(mDailyBread.getValidFrDate().getTimeInMillis());
+                            } else {
+                                mDisplayDay.setTimeInMillis(mDailyBread.getValidToDate().getTimeInMillis());
                             }
                         }
-                        onRefreshPage(mDisplayDay,false);
+                        onRefreshPage(mDisplayDay,false, true);
                     }
                 }
                 overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
@@ -1052,9 +1080,26 @@ public class CMain extends MyActivity {
         }
     }
 
-    private boolean isWithinRange(Calendar checkDate) {
-        if (checkDate.compareTo(mDailyBread.getValidToDate()) > 0 ||
-                checkDate.compareTo(mDailyBread.getValidFrDate()) < 0) {
+    private boolean isWithinRange(Calendar checkDate, int nbrOfDates) {
+        Calendar frDate = (Calendar) mDailyBread.getValidFrDate().clone();
+        frDate.set(Calendar.HOUR_OF_DAY,0);
+        frDate.set(Calendar.MINUTE,0);
+        frDate.set(Calendar.SECOND,0);
+        frDate.set(Calendar.MILLISECOND,0);
+        Calendar toDate = (Calendar) mDailyBread.getValidToDate().clone();
+        toDate.set(Calendar.HOUR_OF_DAY,23);
+        toDate.set(Calendar.MINUTE,59);
+        toDate.set(Calendar.SECOND,59);
+        toDate.set(Calendar.MILLISECOND, 0);
+        toDate.add(Calendar.SECOND, 1);
+        Calendar tmpDate = (Calendar) checkDate.clone();
+        tmpDate.set(Calendar.HOUR_OF_DAY,11);
+        tmpDate.set(Calendar.MINUTE,59);
+        tmpDate.set(Calendar.SECOND, 59);
+        tmpDate.set(Calendar.MILLISECOND, 0);
+        tmpDate.add(Calendar.DAY_OF_MONTH,nbrOfDates);
+        if (checkDate.compareTo(frDate) < 0 ||
+            checkDate.compareTo(toDate) >= 0   ) {
             Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
             return false;
         } else {
@@ -1234,16 +1279,11 @@ public class CMain extends MyActivity {
 //	}
     public void gotoPrevDay() {
         if (mPager.isScrolling) return;
-        int result = MyDailyBread.calendarDaysBetween(mDailyBread.getValidFrDate(), mDisplayDay);
-        Log.i(TAG, "gotoPrevDay day=" + mDisplayDay.get(Calendar.DAY_OF_MONTH) + " (" + result + ")");
-        if (result <= 0) {
+        if (!isWithinRange(mDisplayDay, -1)) {
             Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
         } else {
             mDisplayDay.add(Calendar.DAY_OF_MONTH, -1);
-//            mViewIndex = mViewIndex == 1 ? 2 : 1;
-//            onRefreshPage(mViewIndex);
-            onRefreshPage(mDisplayDay, true);
-//            MyGestureListener.flingInFromRight(getApplicationContext(), mViewAnimator);
+            onRefreshPage(mDisplayDay, true, true);
         }
     }
 
@@ -1252,25 +1292,23 @@ public class CMain extends MyActivity {
         Calendar newCalendar = Calendar.getInstance();
         newCalendar.setTimeInMillis(mDisplayDay.getTimeInMillis());
         newCalendar.add(Calendar.MONTH, -1);
-        int result = MyDailyBread.calendarDaysBetween(mDailyBread.getValidFrDate(),newCalendar);
-        if (result<= 0) {
+        if (!isWithinRange(newCalendar,0)) {
             Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
             newCalendar.setTimeInMillis(mDailyBread.getValidFrDate().getTimeInMillis());
         }
         mDisplayDay.setTimeInMillis(newCalendar.getTimeInMillis());
-        onRefreshPage(mDisplayDay, false);
+        onRefreshPage(mDisplayDay, false, true);
     }
 
     public void gotoNextDay() {
         if (mPager.isScrolling) return;
-        int result = MyDailyBread.calendarDaysBetween(mDisplayDay, mDailyBread.getValidToDate());
-        if (result <= 0) {
+        if (!isWithinRange(mDisplayDay, 1)) {
             Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
         } else {
             mDisplayDay.add(Calendar.DAY_OF_MONTH, +1);
 //            mViewIndex = mViewIndex == 1 ? 2 : 1;
 //            onRefreshPage(mViewIndex);
-            onRefreshPage(mDisplayDay, true);
+            onRefreshPage(mDisplayDay, true, true);
             //MyGestureListener.flingInFromLeft(getApplicationContext(), mViewAnimator);
         }
     }
@@ -1280,19 +1318,30 @@ public class CMain extends MyActivity {
         Calendar newCalendar = Calendar.getInstance();
         newCalendar.setTimeInMillis(mDisplayDay.getTimeInMillis());
         newCalendar.add(Calendar.MONTH, +1);
-        int result = MyDailyBread.calendarDaysBetween(newCalendar, mDailyBread.getValidToDate());
-        if (result <= 0) {
+        if (!isWithinRange(newCalendar,0)) {
             Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
             newCalendar.setTimeInMillis(mDailyBread.getValidToDate().getTimeInMillis());
         }
         mDisplayDay.setTimeInMillis(newCalendar.getTimeInMillis());
-        onRefreshPage(mDisplayDay, false);
+        onRefreshPage(mDisplayDay, false, true);
 
     }
-    private void onRefreshPage(Calendar calendar, boolean smooth) {
-        int position = Math.abs(MyDailyBread.calendarDaysBetween(calendar, mDailyBread.getValidFrDate()));
-        if (mPager.getCurrentItem()!=position) {
+    private void onRefreshPage(Calendar calendar, final boolean smooth, boolean setPager) {
+        final int position = MyDailyBread.date2index(getApplicationContext(), calendar);//Exclude last day
+        if (setPager) {
             mPager.setCurrentItem(position, smooth);
+//            if (mPager.getCurrentItem() != position) {
+////            mPager.setAdapter(null);
+////            mPager.setAdapter(mAdapter);
+////            //mAdapter.notifyDataSetChanged();
+//            new Handler().postDelayed(new Runnable() {
+//                @Override
+//                public void run() {
+//                    mPager.setCurrentItem(position, smooth);
+//                }
+//            },1000);
+//            mAdapter.notifyDataSetChanged();
+//            }
         }
     }
     private void onClickViewSupport(Context context){
@@ -1445,22 +1494,13 @@ public class CMain extends MyActivity {
 	private void onClickToday(Context context){
 		MyUtil.trackClick(context, "Today", "M");
 		Calendar newDate = Calendar.getInstance();
-		if (isWithinRange(newDate)){
+		if (isWithinRange(newDate,0)){
+            MyUtil.sdfYYYYMMDD.setTimeZone(newDate.getTimeZone());
 			String newDateStr = MyUtil.sdfYYYYMMDD.format(newDate.getTime());
-//			String displayStr = MyUtil.sdfYYYYMMDD.format(mDisplayDay.getTime());
-//			int slideDirection = newDateStr.compareTo(displayStr);
-//			if (slideDirection!=0){
-				mDisplayDay.setTimeInMillis(newDate.getTimeInMillis());
-//				mViewIndex=mViewIndex==1?2:1;
-//				onRefreshPage(mViewIndex);
-                onRefreshPage(mDisplayDay,false);
-//				if (slideDirection>0){
-//					MyGestureListener.flingInFromLeft(getApplicationContext(), mViewAnimator);
-//				} else if (slideDirection<0){
-//					MyGestureListener.flingInFromRight(getApplicationContext(), mViewAnimator);
-//				}
-//			}
-			Toast.makeText(context,newDateStr, Toast.LENGTH_SHORT).show();			 
+            mDisplayDay.setTimeZone(newDate.getTimeZone());
+            mDisplayDay.setTimeInMillis(newDate.getTimeInMillis());
+            onRefreshPage(mDisplayDay,false, true);
+			Toast.makeText(context,newDateStr, Toast.LENGTH_SHORT).show();
 		}
 	}
 	private void onClickAbout(Context context){
