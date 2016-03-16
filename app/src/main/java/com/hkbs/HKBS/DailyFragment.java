@@ -235,6 +235,10 @@ public class DailyFragment extends Fragment {
             mBigDay.setTextSize(TypedValue.COMPLEX_UNIT_PX, dayFontSize);
         }
 
+        if (MyDailyBread.mAppWidth==320 && MyDailyBread.mAppHeight==480){
+            mHoliday1View.setTextSize(TypedValue.COMPLEX_UNIT_PX,mHoliday1View.getTextSize() * 0.85f);
+            mHoliday2View.setTextSize(TypedValue.COMPLEX_UNIT_PX,mHoliday2View.getTextSize() * 0.85f);
+        }
         final int maxCharacters=7;
         if (mHolidayText.equals("")){
             mHoliday1View.setVisibility(View.GONE);
@@ -284,7 +288,10 @@ public class DailyFragment extends Fragment {
 /***********************************************************************
  *  HOLY DAY
  ************************************************************************/
-
+        if (MyDailyBread.mAppWidth==320 && MyDailyBread.mAppHeight==480){
+            mHolyDay1View.setTextSize(TypedValue.COMPLEX_UNIT_PX,mHolyDay1View.getTextSize() * 0.85f);
+            mHolyDay2View.setTextSize(TypedValue.COMPLEX_UNIT_PX,mHolyDay2View.getTextSize() * 0.85f);
+        }
         mHolyDay1View.setTextColor(mTextColor);
         mHolyDay2View.setTextColor(mTextColor);
         if (MyUtil.getPrefInt(MyUtil.PREF_HOLY_DAY,0)<=0 || mHolyDayText.equals("")){
@@ -471,18 +478,32 @@ public class DailyFragment extends Fragment {
         }
         mGoldTextView.setText(goldText.replace("#", "\n"));
         if (CMain.IS_2016_VERSION){
-            //(3 lines for text; 1 for verse;1 for top & bottom i.e. 3/5 = around 0.6)
+            //if (MyDailyBread.mSpecialDevice==MyDailyBread.DEVICE_XIAOMI3) {
+//            if (mScrType.equalsIgnoreCase(SMALL_LAYOUT)) {
+//                if (goldLines.length >= 4) {
+//                    //mGoldTextFontSize = setViewFontBySize(goldLines, mGoldTextView, (float) 11 / 38, 4, goldLines.length, 0.9f, mMaxCharsPerGoldLine);
+//                    RelativeLayout.LayoutParams goldTextLP = (RelativeLayout.LayoutParams) mGoldTextView.getLayoutParams();
+//                    goldTextLP.setMargins(goldTextLP.leftMargin, goldTextLP.topMargin - AxTools.dp2px(6), goldTextLP.rightMargin, goldTextLP.bottomMargin);
+//                    mGoldTextView.setLayoutParams(goldTextLP);
+//                }
+//            }
+                //(3 lines for text; 1 for verse;1 for top & bottom i.e. 3/5 = around 0.6)
 //            if (mScrType.equalsIgnoreCase(SMALL_LAYOUT)){//Higher ratio to small screen
 //                mGoldTextFontSize = setViewFontBySize(goldLines, mGoldTextView, (float) 11 / 38, 3, goldLines.length, 0.65f, mMaxCharsPerGoldLine);
 //            } else {
 //                mGoldTextFontSize = setViewFontBySize(goldLines, mGoldTextView, (float) 11 / 38, 3, goldLines.length, 0.6f, mMaxCharsPerGoldLine);
 //            }
-            //(4 lines for text; 1 for verse;1 for top & bottom i.e. 4/6 = around 0.66)
-            if (mScrType.equalsIgnoreCase(SMALL_LAYOUT)){//Higher ratio to small screen
-                mGoldTextFontSize = setViewFontBySize(goldLines, mGoldTextView, (float) 11 / 38, 4, goldLines.length, 0.7f, mMaxCharsPerGoldLine);
-            } else {
-                mGoldTextFontSize = setViewFontBySize(goldLines, mGoldTextView, (float) 11 / 38, 4, goldLines.length, 0.66f, mMaxCharsPerGoldLine);
-            }
+                //(4 lines for text; 1 for verse;1 for top & bottom i.e. 4/6 = around 0.66)
+                if (mScrType.equalsIgnoreCase(SMALL_LAYOUT)) {//Higher ratio to small screen
+                    if (goldLines.length>=4) {
+                        mGoldTextFontSize = setViewFontBySize(goldLines, mGoldTextView, (float) 11 / 38, 4, goldLines.length, 0.8f, mMaxCharsPerGoldLine);
+                    } else {
+                        mGoldTextFontSize = setViewFontBySize(goldLines, mGoldTextView, (float) 11 / 38, 4, goldLines.length, 0.7f, mMaxCharsPerGoldLine);
+                    }
+                } else {
+                    mGoldTextFontSize = setViewFontBySize(goldLines, mGoldTextView, (float) 11 / 38, 4, goldLines.length, 0.66f, mMaxCharsPerGoldLine);
+                }
+
             mGoldTextView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mGoldTextFontSize);
         } else {
             mGoldTextFontSize = (int) mGoldTextView.getTextSize();

@@ -68,7 +68,7 @@ public class CMain extends MyActivity {
         return curYear >= 2016;
     }
 //    final static private boolean IS_2015_OR_LATER = true;
-    final static public boolean DEBUG = false;
+    final static public boolean DEBUG = true;
     final static public boolean DEBUG_LAYOUT = false;
 
     final static private String TAG = CMain.class.getSimpleName();
@@ -1098,8 +1098,8 @@ public class CMain extends MyActivity {
         tmpDate.set(Calendar.SECOND, 59);
         tmpDate.set(Calendar.MILLISECOND, 0);
         tmpDate.add(Calendar.DAY_OF_MONTH,nbrOfDates);
-        if (checkDate.compareTo(frDate) < 0 ||
-            checkDate.compareTo(toDate) >= 0   ) {
+        if (tmpDate.compareTo(frDate) < 0 ||
+            tmpDate.compareTo(toDate) >= 0   ) {
             Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
             return false;
         } else {

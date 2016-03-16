@@ -76,7 +76,7 @@
 	 <dimen name="std_c_image_bottom">8dp</dimen>
 	 <dimen name="std_p_image_top">2dp</dimen>
      <dimen name="std_p_image_bottom">16dp</dimen> <!-- Now control by code -->
-     <dimen name="std_gold_left_right">5dp</dimen>
+     <dimen name="std_gold_left_right">2dp</dimen>
      <dimen name="std_wisdom_left_margin">15dp</dimen>
      <dimen name="std_wisdom_right_margin">10dp</dimen>
 	 <dimen name="std_lunar_font_size">15sp</dimen>
@@ -99,7 +99,7 @@
      <dimen name="small_wisdom_right_margin">5dp</dimen>
      <dimen name="small_c_image_top">5dp</dimen>
 	 <dimen name="small_c_image_bottom">4dp</dimen>
-	 <dimen name="small_p_image_top">2dp</dimen>	 
+	 <dimen name="small_p_image_top">1dp</dimen>
 	 <dimen name="small_p_image_bottom">8dp</dimen>
      <dimen name="small_p_image_right">5dp</dimen>
 	 

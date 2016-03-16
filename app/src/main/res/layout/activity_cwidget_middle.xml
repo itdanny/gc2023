@@ -278,7 +278,7 @@
                 android:gravity="center"
                 android:maxLines="4"
                 android:ellipsize="end"
-                android:textSize="11sp" />
+                android:textSize="11sp" /><!-- 2016.03.16 11sp -->
 
             <!-- android:text="[XXXXXXXXXX]" -->
             <TextView

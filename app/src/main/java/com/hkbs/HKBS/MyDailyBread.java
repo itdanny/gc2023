@@ -25,6 +25,11 @@ import java.util.Set;
 import java.util.TimeZone;
 
 public class MyDailyBread {
+    // 2016.03.16 Change to 4 lines
+    // 2016.04.15 / 19
+    // 2016.05.10 / 14 / 20 / 22
+    // 2016.06.03 / 17
+
     static public int mCurrentYear=2015;//Valid Range will be from last SEPT
     static public boolean IS_TEST_2016_STANDARD = false && CMain.DEBUG;
     static public boolean IS_TEST_2016_HOLIDAY = false && IS_TEST_2016_STANDARD && CMain.DEBUG;
@@ -33,7 +38,7 @@ public class MyDailyBread {
 	static private boolean IS_CHECK_FUTURE_CHARS_ONLY = false && CMain.DEBUG;// PLEASE SET IT TO [[[false]]] for release
 	static private boolean IS_CHECK_VALID_VERSE = true && CMain.DEBUG;
 	static private boolean IS_CHECK_FIELD_VALUES = false;
-    static private boolean IS_CHECK_IF_LESS_THAN_4_LINES = false;
+    static private boolean IS_CHECK_IF_LESS_THAN_4_LINES = true;
 	
 	final static private boolean DEBUG=true && CMain.DEBUG;
 	final static private String TAG = MyDailyBread.class.getSimpleName();
@@ -41,6 +46,9 @@ public class MyDailyBread {
 	static private MyDailyBread myDailyBread;
 	static public int mAppWidth;
 	static public int mAppHeight;
+//    static public final int DEVICE_NORMAL = 0;
+//    static public final int DEVICE_XIAOMI3 = 1;
+//    static public int mSpecialDevice = DEVICE_NORMAL;
 	
 	static public int mGoldSizeL=0;
 	static public int mGoldSizeM=0;
@@ -106,6 +114,24 @@ public class MyDailyBread {
 		final WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
 	    final DisplayMetrics dm = new DisplayMetrics();
 	    wm.getDefaultDisplay().getMetrics(dm);
+
+//        if (DEBUG) {
+//            if (MyUtil.widthPixels(context)==1080 &&
+//                MyUtil.heightPixels(context)==1920 &&
+//                MyUtil.scaleDensity(context)==3){
+//                mSpecialDevice=DEVICE_XIAOMI3;
+//            }
+//        } else {
+//            if (android.os.Build.BRAND.equalsIgnoreCase("Xiaomi") &&
+//                android.os.Build.MODEL.contains("MI") &&
+//                android.os.Build.MODEL.contains("3W") &&
+//                MyUtil.widthPixels(context)==1080 &&
+//                MyUtil.heightPixels(context)==1920 &&
+//                MyUtil.scaleDensity(context)==3){
+//                mSpecialDevice=DEVICE_XIAOMI3;
+//            }
+//        }
+
 	    mAppHeight = dm.heightPixels;
 	    mAppWidth = dm.widthPixels;
 		if (myDailyBread==null){
