@@ -45,4 +45,4 @@
         android:textAppearance="?android:attr/textAppearanceSmall"
         android:textColor="@color/white" />
 
-</LinearLayout><!-- From: file:/Users/dchow/Documents/androidstudio/GC2016/libSuperToasts/src/main/res/layout/superactivitytoast_button.xml -->
+</LinearLayout>

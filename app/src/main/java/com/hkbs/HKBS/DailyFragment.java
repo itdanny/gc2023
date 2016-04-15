@@ -1,7 +1,6 @@
 package com.hkbs.HKBS;
 
 import android.content.ContentValues;
-import android.content.Context;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
@@ -111,10 +110,6 @@ public class DailyFragment extends Fragment {
         mLunar = new MyCalendarLunar(mCalendar);
         onRefreshScreen();
     }
-    private Context getLocalContext(){
-        if (mRootView!=null) return mRootView.getContext();
-        return getActivity();
-    }
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -148,16 +143,25 @@ public class DailyFragment extends Fragment {
 //    }
 //    synchronized private void onRefreshScreenOnUIThread(){
         if (mRootView==null) return;
+        if (mThisPageYear==0) {
+            AxTools.runLater(500, new Runnable() {
+                @Override
+                public void run() {
+                    onRefreshScreen();
+                }
+            });
+            return;
+        }
         try {
             mContentValues = new ContentValues(CMain.mDailyBread.getContentValues(mThisPageYear, mThisPageZeroBasedMonth, mThisPageDay));// get ContentValues from dailyBread file
         } catch (Exception e){
             mRootView.setVisibility(View.INVISIBLE);
-            AxTools.toast(AxTools.MsgType.ERROR, getActivity(),"找資料時出現問題 ("+ mThisPageYear +","+ mThisPageZeroBasedMonth +","+ mThisPageDay +") "+e.getMessage());
+            AxTools.toast(AxTools.MsgType.ERROR, getContext(),null,"找資料時出現問題 ("+ mThisPageYear +","+ mThisPageZeroBasedMonth +","+ mThisPageDay +") "+e.getMessage());
             return;
         }
         if (mContentValues==null) {
             mRootView.setVisibility(View.INVISIBLE);
-            AxTools.toast(AxTools.MsgType.ERROR,getActivity(),"找不到指定日期內容 ("+ mThisPageYear +","+ mThisPageZeroBasedMonth +","+ mThisPageDay +")");
+            AxTools.toast(AxTools.MsgType.ERROR,getContext(),null,"找不到指定日期內容 ("+ mThisPageYear +","+ mThisPageZeroBasedMonth +","+ mThisPageDay +")");
             return;
         }
         mScreenTypeView = (TextView) mRootView.findViewById(R.id.xmlPage1ScreenType);
@@ -746,7 +750,7 @@ public class DailyFragment extends Fragment {
                 statusBarHeight = getResources().getDimensionPixelSize(resourceId);
             }
         }
-        return MyUtil.heightPixels(getLocalContext()) - statusBarHeight;
+        return MyUtil.heightPixels(getContext()) - statusBarHeight;
     }
     /*
     * @param fullScreenRatio  The ratio that textView occupy on screen
@@ -886,7 +890,7 @@ private int getFontSizeByMaxCharacters(TextView textView, int maxCharacters){
             /
             maxCharacters);
     // Only Note has problem
-    if (android.os.Build.MODEL.equalsIgnoreCase("MID") && MyUtil.heightPixels(getLocalContext())==1232 && MyUtil.widthPixels(getLocalContext())==800){
+    if (android.os.Build.MODEL.equalsIgnoreCase("MID") && MyUtil.heightPixels(getContext())==1232 && MyUtil.widthPixels(getContext())==800){
         fontSize = (int) Math.floor(fontSize * 0.9);
     }
     if (DEBUG) MyUtil.log(TAG,

@@ -138,9 +138,10 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/my_widget_provider" />
         </receiver>
+        <!--android:enabled="@bool/largerWidget"-->
         <receiver android:name=".CWidgetLarge"
                   android:label="大版面"
-                  android:enabled="@bool/largerWidget">
+                  >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
@@ -155,9 +156,9 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/my_widget_provider_large" />
         </receiver>
+       <!--android:enabled="@bool/smallerWidget"-->
         <receiver android:name=".CWidgetSmall"
-                  android:label="小版面"
-                  android:enabled="@bool/smallerWidget">
+                  android:label="小版面">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
@@ -172,9 +173,10 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/my_widget_provider_small" />
         </receiver>
+        <!--android:enabled="@bool/middleWidget"-->
         <receiver android:name=".CWidgetMiddle"
                   android:label="中版面"
-                  android:enabled="@bool/middleWidget">
+                  >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
@@ -189,9 +191,10 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/my_widget_provider_middle" />
         </receiver>
+        <!--android:enabled="@bool/xlargerWidget"-->
         <receiver android:name=".CWidgetXLarge"
                   android:label="特大版面"
-                  android:enabled="@bool/xlargerWidget">
+                  >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />

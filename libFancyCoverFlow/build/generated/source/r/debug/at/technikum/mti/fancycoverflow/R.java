@@ -255,18 +255,18 @@ containing a value of this type.
         public static int zOrderOnTop=0x7f01001d;
     }
     public static final class color {
-        public static int common_action_bar_splitter=0x7f030000;
-        public static int common_signin_btn_dark_text_default=0x7f030001;
-        public static int common_signin_btn_dark_text_disabled=0x7f030002;
-        public static int common_signin_btn_dark_text_focused=0x7f030003;
-        public static int common_signin_btn_dark_text_pressed=0x7f030004;
-        public static int common_signin_btn_default_background=0x7f030005;
-        public static int common_signin_btn_light_text_default=0x7f030006;
-        public static int common_signin_btn_light_text_disabled=0x7f030007;
-        public static int common_signin_btn_light_text_focused=0x7f030008;
-        public static int common_signin_btn_light_text_pressed=0x7f030009;
-        public static int common_signin_btn_text_dark=0x7f03000a;
-        public static int common_signin_btn_text_light=0x7f03000b;
+        public static int common_action_bar_splitter=0x7f040000;
+        public static int common_signin_btn_dark_text_default=0x7f040001;
+        public static int common_signin_btn_dark_text_disabled=0x7f040002;
+        public static int common_signin_btn_dark_text_focused=0x7f040003;
+        public static int common_signin_btn_dark_text_pressed=0x7f040004;
+        public static int common_signin_btn_default_background=0x7f040005;
+        public static int common_signin_btn_light_text_default=0x7f040006;
+        public static int common_signin_btn_light_text_disabled=0x7f040007;
+        public static int common_signin_btn_light_text_focused=0x7f040008;
+        public static int common_signin_btn_light_text_pressed=0x7f040009;
+        public static int common_signin_btn_text_dark=0x7f04000a;
+        public static int common_signin_btn_text_light=0x7f04000b;
     }
     public static final class drawable {
         public static int common_signin_btn_icon_dark=0x7f020000;
@@ -307,36 +307,36 @@ containing a value of this type.
         public static int terrain=0x7f060005;
     }
     public static final class integer {
-        public static int google_play_services_version=0x7f040000;
+        public static int google_play_services_version=0x7f050000;
     }
     public static final class string {
-        public static int app_name=0x7f050000;
-        public static int auth_client_needs_enabling_title=0x7f050001;
-        public static int auth_client_needs_installation_title=0x7f050002;
-        public static int auth_client_needs_update_title=0x7f050003;
-        public static int auth_client_play_services_err_notification_msg=0x7f050004;
-        public static int auth_client_requested_by_msg=0x7f050005;
-        public static int auth_client_using_bad_version_title=0x7f050006;
-        public static int common_google_play_services_enable_button=0x7f050007;
-        public static int common_google_play_services_enable_text=0x7f050008;
-        public static int common_google_play_services_enable_title=0x7f050009;
-        public static int common_google_play_services_install_button=0x7f05000a;
-        public static int common_google_play_services_install_text_phone=0x7f05000b;
-        public static int common_google_play_services_install_text_tablet=0x7f05000c;
-        public static int common_google_play_services_install_title=0x7f05000d;
-        public static int common_google_play_services_invalid_account_text=0x7f05000e;
-        public static int common_google_play_services_invalid_account_title=0x7f05000f;
-        public static int common_google_play_services_network_error_text=0x7f050010;
-        public static int common_google_play_services_network_error_title=0x7f050011;
-        public static int common_google_play_services_unknown_issue=0x7f050012;
-        public static int common_google_play_services_unsupported_date_text=0x7f050013;
-        public static int common_google_play_services_unsupported_text=0x7f050014;
-        public static int common_google_play_services_unsupported_title=0x7f050015;
-        public static int common_google_play_services_update_button=0x7f050016;
-        public static int common_google_play_services_update_text=0x7f050017;
-        public static int common_google_play_services_update_title=0x7f050018;
-        public static int common_signin_button_text=0x7f050019;
-        public static int common_signin_button_text_long=0x7f05001a;
+        public static int app_name=0x7f03001a;
+        public static int auth_client_needs_enabling_title=0x7f030000;
+        public static int auth_client_needs_installation_title=0x7f030001;
+        public static int auth_client_needs_update_title=0x7f030002;
+        public static int auth_client_play_services_err_notification_msg=0x7f030003;
+        public static int auth_client_requested_by_msg=0x7f030004;
+        public static int auth_client_using_bad_version_title=0x7f030005;
+        public static int common_google_play_services_enable_button=0x7f030006;
+        public static int common_google_play_services_enable_text=0x7f030007;
+        public static int common_google_play_services_enable_title=0x7f030008;
+        public static int common_google_play_services_install_button=0x7f030009;
+        public static int common_google_play_services_install_text_phone=0x7f03000a;
+        public static int common_google_play_services_install_text_tablet=0x7f03000b;
+        public static int common_google_play_services_install_title=0x7f03000c;
+        public static int common_google_play_services_invalid_account_text=0x7f03000d;
+        public static int common_google_play_services_invalid_account_title=0x7f03000e;
+        public static int common_google_play_services_network_error_text=0x7f03000f;
+        public static int common_google_play_services_network_error_title=0x7f030010;
+        public static int common_google_play_services_unknown_issue=0x7f030011;
+        public static int common_google_play_services_unsupported_date_text=0x7f030012;
+        public static int common_google_play_services_unsupported_text=0x7f030013;
+        public static int common_google_play_services_unsupported_title=0x7f030014;
+        public static int common_google_play_services_update_button=0x7f030015;
+        public static int common_google_play_services_update_text=0x7f030016;
+        public static int common_google_play_services_update_title=0x7f030017;
+        public static int common_signin_button_text=0x7f030018;
+        public static int common_signin_button_text_long=0x7f030019;
     }
     public static final class styleable {
         /** Attributes that can be used with a AdsAttrs.

@@ -28,4 +28,4 @@
         android:paddingLeft="@dimen/superprogresstoast_progressbar_x_padding"
         android:paddingRight="@dimen/superprogresstoast_progressbar_x_padding"/>
 
-</LinearLayout><!-- From: file:/Users/dchow/Documents/androidstudio/GC2016/libSuperToasts/src/main/res/layout/superactivitytoast_progresshorizontal.xml -->
+</LinearLayout>

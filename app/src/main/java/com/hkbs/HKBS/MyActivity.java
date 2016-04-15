@@ -14,12 +14,12 @@ public class MyActivity extends FragmentActivity {
 	@Override
 	  protected void onCreate(Bundle savedInstanceState){
 		super.onCreate(savedInstanceState);
-		MyUtil.initMyUtil(this);
+        MyUtil.initMyUtil(getBaseContext());
 	}
 	@Override
 	  public void onStart() {
 	    super.onStart();
-	    EasyTracker.getInstance(this).activityStart(this);  // Add this method.	    
+        EasyTracker.getInstance(this).activityStart(this);  // Add this method.
 	  }
 
 	  @Override

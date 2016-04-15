@@ -109,7 +109,7 @@ public class CMain extends MyActivity {
                         switch (requestCode){
                             case MyPermission.REQUEST_ACCESS_STORAGE:
                                 if (success) {
-                                    onClickShare(CMain.this, true);
+                                    onClickShare(getBaseContext(), true);
                                 }
                                 break;
                         }
@@ -146,40 +146,17 @@ public class CMain extends MyActivity {
                 return super.onKeyDown(keyCode, event);
         }
     }
-
-    private GestureDetector mGesture = new GestureDetector(getBaseContext(), new MyGestureListener(new MyGestureListener.Callback() {
-        @Override
-        public boolean onClick(MotionEvent e) { // !!! SetClicable to TRUE !!!
-            if (DEBUG) MyUtil.log(TAG, "onClick day="+mDisplayDay.get(Calendar.DAY_OF_MONTH));
-            setControlsVisibility(!isTitleShown);
-            return true;
-        }
-        @Override public boolean onLongPress(MotionEvent e) {
-            return false;
-        }
-        @Override public boolean onRight() {
-            gotoNextDay();
-            return true;
-        }
-        @Override public boolean onLeft() {
-            gotoPrevDay();
-            return true;
-        }
-    }));
-    private View.OnTouchListener mViewOnTouch = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View v, MotionEvent event) {
-            mGesture.onTouchEvent(event);
-            return false;
-        }
-    };
+    private GestureDetector mGesture;
+    private View.OnTouchListener mViewOnTouch;
 
     private class CustomViewAdapter extends FragmentStatePagerAdapter {
         Calendar mCalendar;
+        Context mContext;
         //long mStartTime;
         DailyFragment dailyFragments[] = new DailyFragment[3];
-        public CustomViewAdapter(FragmentManager fm) {
+        public CustomViewAdapter(FragmentManager fm, Context context) {
             super(fm);
+            mContext = context;
             mCalendar = Calendar.getInstance();
             //mStartTime = CMain.mDailyBread.getValidFrDate().getTimeInMillis();
         }
@@ -200,7 +177,7 @@ public class CMain extends MyActivity {
         @Override
         public int getCount() {
             if (nbrOfItems==-1){
-                nbrOfItems=(int) CMain.mDailyBread.getNbrOfValidDays(getApplicationContext());
+                nbrOfItems=(int) CMain.mDailyBread.getNbrOfValidDays(mContext);
             }
             return nbrOfItems;
         }
@@ -244,6 +221,34 @@ public class CMain extends MyActivity {
         setContentView(R.layout.activity_cmain);
 
         mRootView = findViewById(R.id.xmlRoot);
+        mViewOnTouch =  new View.OnTouchListener() {
+            @Override
+            public boolean onTouch(View v, MotionEvent event) {
+                if (mGesture==null){
+                    mGesture = new GestureDetector(getApplicationContext(), new MyGestureListener(new MyGestureListener.Callback() {
+                        @Override
+                        public boolean onClick(MotionEvent e) { // !!! SetClicable to TRUE !!!
+                            if (DEBUG) MyUtil.log(TAG, "onClick day="+mDisplayDay.get(Calendar.DAY_OF_MONTH));
+                            setControlsVisibility(!isTitleShown);
+                            return true;
+                        }
+                        @Override public boolean onLongPress(MotionEvent e) {
+                            return false;
+                        }
+                        @Override public boolean onRight() {
+                            gotoNextDay();
+                            return true;
+                        }
+                        @Override public boolean onLeft() {
+                            gotoPrevDay();
+                            return true;
+                        }
+                    }));
+                }
+                mGesture.onTouchEvent(event);
+                return false;
+            }
+        };
         mRootView.setOnTouchListener(mViewOnTouch);
 
         AxImageView clickLeftView = (AxImageView) findViewById(R.id.xmlMainClickLeft);
@@ -279,7 +284,7 @@ public class CMain extends MyActivity {
 
         mPager = (CustomViewPager) findViewById(R.id.pager);
         mPager.setOffscreenPageLimit(1);
-        mAdapter = new CustomViewAdapter(getSupportFragmentManager());
+        mAdapter = new CustomViewAdapter(getSupportFragmentManager(), CMain.this);
         mPager.setAdapter(mAdapter);
         mPager.callBack = new CustomViewPager.CallBack() {
             @Override
