@@ -97,7 +97,8 @@ public class DailyFragment extends Fragment {
         dailyFragment.mThisPageZeroBasedMonth = month;
         dailyFragment.mThisPageDay = day;
         dailyFragment.mCalendar = Calendar.getInstance();
-        dailyFragment.mCalendar.set(year, month, day, 0, 0, 0);
+        // DC 2016.09.16
+        dailyFragment.mCalendar.set(year,month,day);
         dailyFragment.mLunar = new MyCalendarLunar(dailyFragment.mCalendar);
         return dailyFragment;
     }
@@ -106,7 +107,8 @@ public class DailyFragment extends Fragment {
         mThisPageZeroBasedMonth = month;
         mThisPageDay = day;
         mCalendar = Calendar.getInstance();
-        mCalendar.set(year, month, day, 0, 0, 0);
+        // DC 2016.09.16
+        mCalendar.set(year, month, day);
         mLunar = new MyCalendarLunar(mCalendar);
         onRefreshScreen();
     }
@@ -156,12 +158,12 @@ public class DailyFragment extends Fragment {
             mContentValues = new ContentValues(CMain.mDailyBread.getContentValues(mThisPageYear, mThisPageZeroBasedMonth, mThisPageDay));// get ContentValues from dailyBread file
         } catch (Exception e){
             mRootView.setVisibility(View.INVISIBLE);
-            AxTools.toast(AxTools.MsgType.ERROR, getContext(),null,"找資料時出現問題 ("+ mThisPageYear +","+ mThisPageZeroBasedMonth +","+ mThisPageDay +") "+e.getMessage());
+            AxTools.toast(AxTools.MsgType.ERROR, getContext(),null,"找資料時出現問題 ("+ mThisPageYear +","+ (mThisPageZeroBasedMonth+1) +","+ mThisPageDay +") "+e.getMessage());
             return;
         }
         if (mContentValues==null) {
             mRootView.setVisibility(View.INVISIBLE);
-            AxTools.toast(AxTools.MsgType.ERROR,getContext(),null,"找不到指定日期內容 ("+ mThisPageYear +","+ mThisPageZeroBasedMonth +","+ mThisPageDay +")");
+            AxTools.toast(AxTools.MsgType.ERROR,getContext(),null,"找不到指定日期內容 ("+ mThisPageYear +","+ (mThisPageZeroBasedMonth+1) +","+ mThisPageDay +")");
             return;
         }
         mScreenTypeView = (TextView) mRootView.findViewById(R.id.xmlPage1ScreenType);
@@ -612,20 +614,11 @@ public class DailyFragment extends Fragment {
         if (wisdomText.startsWith("#")) {
             wisdomText = wisdomText.substring(1);
         } else {
-            int englishColonPos = wisdomText.indexOf(":");
-            int chineseColonPos = wisdomText.indexOf("：");
-            if (englishColonPos < 0) {
-                if (chineseColonPos >= 0) {
-                    colonPos = chineseColonPos;
-                } else {
-                    colonPos = -1;
-                }
-            } else {
-                if (chineseColonPos >= 0) {
-                    colonPos = Math.min(englishColonPos, chineseColonPos);
-                } else {
-                    colonPos = englishColonPos;
-                }
+            wisdomText = wisdomText.replaceAll("：",":");
+            colonPos = wisdomText.indexOf(":");
+            int lineBreakPos = wisdomText.indexOf("#");
+            if (lineBreakPos!=-1 && colonPos!=-1 && lineBreakPos<colonPos){
+                colonPos = -1;
             }
         }
         String wisdomLines [] = wisdomText.split("#");

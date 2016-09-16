@@ -144,11 +144,12 @@ public class CWidgetBase extends AppWidgetProvider {
 		int nbr = 1;
 		Context context = recRef.context;
 		Calendar mDisplayDay = Calendar.getInstance();
+        // DC 2016.09.16 One More Day Or One Less Day for different Regions
 		// Protect Function
 		if (mDisplayDay.compareTo(mDailyBread.getValidToDate())>=0){
-			mDisplayDay.setTimeInMillis(mDailyBread.getValidToDate().getTimeInMillis());
+			mDisplayDay.setTimeInMillis(mDailyBread.getValidToDate().getTimeInMillis()-24*60*60*1000);
 		} else if (mDisplayDay.compareTo(mDailyBread.getValidFrDate())<=0 ){
-			mDisplayDay.setTimeInMillis(mDailyBread.getValidFrDate().getTimeInMillis());	
+			mDisplayDay.setTimeInMillis(mDailyBread.getValidFrDate().getTimeInMillis()+24*60*60*1000);
 		}
 //		mDisplayDay.set(Calendar.YEAR, 2014);
 //		mDisplayDay.set(Calendar.MONTH, 11);

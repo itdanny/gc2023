@@ -1086,6 +1086,9 @@ public class CMain extends MyActivity {
     }
 
     private boolean isWithinRange(Calendar checkDate, int nbrOfDates) {
+        if (MyDailyBread.allowBeyondRange && checkDate.get(Calendar.YEAR)>=MyDailyBread.beyondFrYear && checkDate.get(Calendar.YEAR)<=MyDailyBread.beyondToYear){
+            return true;
+        }
         Calendar frDate = (Calendar) mDailyBread.getValidFrDate().clone();
         frDate.set(Calendar.HOUR_OF_DAY,0);
         frDate.set(Calendar.MINUTE,0);
@@ -1284,7 +1287,7 @@ public class CMain extends MyActivity {
 //	}
     public void gotoPrevDay() {
         if (mPager.isScrolling) return;
-        if (!isWithinRange(mDisplayDay, -1)) {
+        if (!MyDailyBread.allowBeyondRange && !isWithinRange(mDisplayDay, -1)) {
             Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
         } else {
             mDisplayDay.add(Calendar.DAY_OF_MONTH, -1);
@@ -1297,7 +1300,7 @@ public class CMain extends MyActivity {
         Calendar newCalendar = Calendar.getInstance();
         newCalendar.setTimeInMillis(mDisplayDay.getTimeInMillis());
         newCalendar.add(Calendar.MONTH, -1);
-        if (!isWithinRange(newCalendar,0)) {
+        if (!MyDailyBread.allowBeyondRange && !isWithinRange(newCalendar,0)) {
             Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
             newCalendar.setTimeInMillis(mDailyBread.getValidFrDate().getTimeInMillis());
         }
@@ -1307,7 +1310,7 @@ public class CMain extends MyActivity {
 
     public void gotoNextDay() {
         if (mPager.isScrolling) return;
-        if (!isWithinRange(mDisplayDay, 1)) {
+        if (!MyDailyBread.allowBeyondRange && !isWithinRange(mDisplayDay, 1)) {
             Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
         } else {
             mDisplayDay.add(Calendar.DAY_OF_MONTH, +1);
@@ -1323,7 +1326,7 @@ public class CMain extends MyActivity {
         Calendar newCalendar = Calendar.getInstance();
         newCalendar.setTimeInMillis(mDisplayDay.getTimeInMillis());
         newCalendar.add(Calendar.MONTH, +1);
-        if (!isWithinRange(newCalendar,0)) {
+        if (!MyDailyBread.allowBeyondRange && !isWithinRange(newCalendar,0)) {
             Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
             newCalendar.setTimeInMillis(mDailyBread.getValidToDate().getTimeInMillis());
         }
@@ -1335,18 +1338,6 @@ public class CMain extends MyActivity {
         final int position = MyDailyBread.date2index(getApplicationContext(), calendar);//Exclude last day
         if (setPager) {
             mPager.setCurrentItem(position, smooth);
-//            if (mPager.getCurrentItem() != position) {
-////            mPager.setAdapter(null);
-////            mPager.setAdapter(mAdapter);
-////            //mAdapter.notifyDataSetChanged();
-//            new Handler().postDelayed(new Runnable() {
-//                @Override
-//                public void run() {
-//                    mPager.setCurrentItem(position, smooth);
-//                }
-//            },1000);
-//            mAdapter.notifyDataSetChanged();
-//            }
         }
     }
     private void onClickViewSupport(Context context){

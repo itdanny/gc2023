@@ -256,7 +256,7 @@ public class MyHoliday {
             "20161225＊聖誕節",
             "20161226聖誕節後第一個周日",
             "20161227聖誕節後第二個周日"
-		
+
 	};
 	static final private String [] HOLIDAYS_TW = new String [] {
 		"20120101中華民國開國紀念日",

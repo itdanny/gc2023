@@ -29,6 +29,9 @@ public class MyDailyBread {
     // 2016.04.15 / 19
     // 2016.05.10 / 14 / 20 / 22
     // 2016.06.03 / 17
+    static public boolean allowBeyondRange =false;
+    static public int beyondFrYear=2015;
+    static public int beyondToYear=2063;
 
     static public int mCurrentYear=2015;//Valid Range will be from last SEPT
     static public boolean IS_TEST_2016_STANDARD = false && CMain.DEBUG;
@@ -156,7 +159,7 @@ public class MyDailyBread {
                 if (CMain.IS_2016_VERSION) {
                     //validFrDate.set(2011, 9, 1, 0, 0, 0); // 1-1
                     validFrDate.set(2015, 0, 1, 0, 0, 0); // 1-1
-                    validToDate.set(2016, 5, 30, 23, 59, 59); // Custom; May be by season
+                    validToDate.set(2016, 11, 31, 23, 59, 59); // Custom; May be by season
                 } else {
                     validFrDate.set(mCurrentYear - 1, 0, 1, 0, 0, 0); // 1-1
                     validToDate.set(mCurrentYear, 11, 31, 23, 59, 59); // 2016-12-21
@@ -206,7 +209,14 @@ public class MyDailyBread {
 //    }
     public long getNbrOfValidDays(Context context){
         setValidRange();
-        return date2index(context, validToDate)+1;//Include last day
+        if (allowBeyondRange){
+            Calendar calendar = Calendar.getInstance();
+            calendar.setTimeInMillis(validToDate.getTimeInMillis());
+            calendar.set(Calendar.YEAR, beyondToYear);
+            return date2index(context, calendar) + 1;//Include last day
+        } else {
+            return date2index(context, validToDate) + 1;//Include last day
+        }
     }
     public static Calendar index2date(Context context, int i){
         //i = 1;
@@ -796,19 +806,31 @@ public class MyDailyBread {
 	}
 	public ContentValues getContentValues(int year, int month, int day){
 		try {
-			int keyNbr = mMap.get(getDayString(year, month, day));
+            int keyNbr = mMap.get(getDayString(year, month, day));
 			return mValueList.get(keyNbr);
-		} catch (Exception e){
-			return null;
+		} catch (Exception e1){
+            if (MyDailyBread.allowBeyondRange && year >= beyondFrYear && year <= beyondToYear ) {
+                year = 2016;
+                try {
+                    int keyNbr = mMap.get(getDayString(year, month, day));
+                    return mValueList.get(keyNbr);
+                } catch (Exception e2) {
+                    MyUtil.logError(TAG, "Exception:" + e2.getMessage());
+                    return null;
+                }
+            } else {
+                MyUtil.logError(TAG, "Exception:" + e1.getMessage());
+                return null;
+            }
 		}
 	}
-	public String getValues(int year, int month, int day, String keyWord){
-		int keyNbr = mMap.get(getDayString(year, month, day));
-		ContentValues cv = mValueList.get(keyNbr);
-		if (cv==null){
-			return "";
-		} else {
-			return cv.getAsString(keyWord);
-		}
-	}	
+//	public String getValues(int year, int month, int day, String keyWord){
+//		int keyNbr = mMap.get(getDayString(year, month, day));
+//		ContentValues cv = mValueList.get(keyNbr);
+//		if (cv==null){
+//			return "";
+//		} else {
+//			return cv.getAsString(keyWord);
+//		}
+//	}
 }
