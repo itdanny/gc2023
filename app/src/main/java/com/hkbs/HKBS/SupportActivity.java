@@ -148,7 +148,10 @@ public class SupportActivity extends MyActivity implements OnClickListener {
         }
     }
     private void setHolyDayColor(){
-        if (CMain.IS_2016_VERSION) {
+        if (CMain.IS_2017_VERSION && Calendar.getInstance().get(Calendar.YEAR)>=2017) {
+            findViewById(R.id.xmlSupportHolyDayTitle).setVisibility(View.GONE);
+            findViewById(R.id.xmlSupportHolyDayButtons).setVisibility(View.GONE);
+        } else if (CMain.IS_2016_VERSION) {
             findViewById(R.id.xmlSupportHolyDayTitle).setVisibility(View.VISIBLE);
             findViewById(R.id.xmlSupportHolyDayButtons).setVisibility(View.VISIBLE);
         } else {

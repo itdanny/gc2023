@@ -210,7 +210,8 @@ public class CWidgetBase extends AppWidgetProvider {
         /***********************************************************************
          *  HOLY DAY
          ************************************************************************/
-        if (MyUtil.getPrefInt(MyUtil.PREF_HOLY_DAY,-1)<=0) {
+        if ((CMain.IS_2017_VERSION && Calendar.getInstance().get(Calendar.YEAR)>=2017) ||
+            MyUtil.getPrefInt(MyUtil.PREF_HOLY_DAY,-1)<=0) {
             recRef.views.setViewVisibility(getID(context, nbr, "HolyDay1"), View.GONE);
             recRef.views.setViewVisibility(getID(context, nbr, "HolyDay2"), View.GONE);
         } else {
@@ -237,7 +238,6 @@ public class CWidgetBase extends AppWidgetProvider {
          ************************************************************************/
         recRef.views.setTextViewText(getID(context, nbr, "Day"), String.valueOf(curDay));
         recRef.views.setTextColor(getID(context, nbr, "Day"), textColor);
-
 
         recRef.views.setTextViewText(getID(context, nbr, "EngYear"), String.valueOf(curYear));
 		recRef.views.setTextColor(getID(context, nbr, "EngYear"), textColor);

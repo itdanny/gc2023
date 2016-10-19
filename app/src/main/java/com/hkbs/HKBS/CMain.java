@@ -57,6 +57,7 @@ import java.util.Calendar;
  */
 public class CMain extends MyActivity {
     final static public boolean IS_2016_VERSION = true;
+    final static public boolean IS_2017_VERSION = true;
     static public boolean is_2016DayShown() {
         if (mDisplayDay == null) {
             Calendar calendar = Calendar.getInstance();
@@ -1165,14 +1166,14 @@ public class CMain extends MyActivity {
                             mPager.setAdapter(null);
                             mPager.setAdapter(mAdapter);
                             onClickToday(CMain.this);
-                            askHolyDay();
+                            //askHolyDay();
                         }
                     });
                     alertBuilder.show();
                 }
             }, 1000);
         } else {
-            askHolyDay();
+            //askHolyDay();
         }
         AxTools.runLater(500, new Runnable() {
             @Override
@@ -1436,7 +1437,7 @@ public class CMain extends MyActivity {
             final Object eabcv[] = getEBCV(getContentValueGoldVerse());
             final String finalEabcv = (String) eabcv[0]+ (String) eabcv[1]+" "+eabcv[3]+":"+eabcv[4];
             MyUtil.log(TAG, "bcv:"+finalEabcv);
-            intent.setComponent(new ComponentName("org.arkist.cnote","org.arkist.cnote.KnockActivity"));
+            intent.setComponent(new ComponentName("org.arkist.cnote","org.arkist.bx.BxActivity"));
             intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
             intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK); // Disable bring existing task to foreground; Should used with New_Task
             intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // A New Task

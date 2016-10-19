@@ -300,7 +300,8 @@ public class DailyFragment extends Fragment {
         }
         mHolyDay1View.setTextColor(mTextColor);
         mHolyDay2View.setTextColor(mTextColor);
-        if (MyUtil.getPrefInt(MyUtil.PREF_HOLY_DAY,0)<=0 || mHolyDayText.equals("")){
+        if ((CMain.IS_2017_VERSION && Calendar.getInstance().get(Calendar.YEAR)>=2017) ||
+            (MyUtil.getPrefInt(MyUtil.PREF_HOLY_DAY,0)<=0 || mHolyDayText.equals(""))){
             mHolyDay1View.setVisibility(View.GONE);
             mHolyDay2View.setVisibility(View.GONE);
         } else {
@@ -531,7 +532,7 @@ public class DailyFragment extends Fragment {
          *  GOLD VERSE TEXT 金句經文出處
          ************************************************************************************/
 
-        mGoldVerseView.setText(mContentValues.getAsString(MyDailyBread.wGoldVerse) + (mThisPageYear >= 2016 ? "" : "；和合本修訂版"));
+        mGoldVerseView.setText(mContentValues.getAsString(MyDailyBread.wGoldVerse) + (mThisPageYear >= 2016 ? "；和合本" : "；和合本修訂版"));
         mGoldVerseView.setTextColor(mTextColor);
         // From HKBS, size change to less than Gold
         if (CMain.IS_2016_VERSION) {

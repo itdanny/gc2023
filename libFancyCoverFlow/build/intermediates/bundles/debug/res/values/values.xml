@@ -4,6 +4,8 @@
     <attr format="reference" name="ecoGalleryStyle"/>
     <declare-styleable name="CustomAbsSpinner"><attr format="reference" name="entries"/></declare-styleable>
     <declare-styleable name="EcoGallery"><attr format="integer" name="gravity"/><attr format="integer" name="animationDuration"/><attr format="float" name="EcoUnselectedAlpha"/><attr format="dimension" name="spacing"/></declare-styleable>
-    <declare-styleable name="FancyCoverFlow"><attr format="float" name="unselectedAlpha"/><attr format="float" name="unselectedSaturation"/><attr format="float" name="unselectedScale"/><attr format="integer" name="maxRotation"/><attr format="float" name="scaleDownGravity"/><attr format="integer" name="actionDistance"><enum name="auto" value="2147483647"/></attr></declare-styleable>
+    <declare-styleable name="FancyCoverFlow"><attr format="float" name="unselectedAlpha"/><attr format="float" name="unselectedSaturation"/><attr format="float" name="unselectedScale"/><attr format="integer" name="maxRotation"/><attr format="float" name="scaleDownGravity"/><attr format="integer" name="actionDistance">
+            <enum name="auto" value="2147483647"/>
+        </attr></declare-styleable>
     <string name="app_name">FancyCoverFlow</string>
 </resources>
