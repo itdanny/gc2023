@@ -1429,25 +1429,32 @@ public class CMain extends MyActivity {
 		onExitGoodCalendar(context);
 		startActivity(intent);
 	}
+    private void startBibleMap(Context context, Intent intent, ComponentName componentName){
+        final Object eabcv[] = getEBCV(getContentValueGoldVerse());
+        final String finalEabcv = (String) eabcv[0]+ (String) eabcv[1]+" "+eabcv[3]+":"+eabcv[4];
+        MyUtil.log(TAG, "bcv:"+finalEabcv);
+        intent.setComponent(componentName);
+        intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK); // Disable bring existing task to foreground; Should used with New_Task
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // A New Task
+        intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        intent.setData(ContentUris.withAppendedId(Uri.EMPTY, CALL_FROM_EXTERNAL_APP));
+        intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, CALL_FROM_EXTERNAL_APP);
+        intent.putExtra(AppWidgetManager.EXTRA_CUSTOM_EXTRAS, CALL_FROM_EXTERNAL_APP);
+        intent.putExtra(AppWidgetManager.EXTRA_CUSTOM_INFO, finalEabcv);
+        //onExitGoodCalendar(context);
+        context.startActivity(intent);
+    }
 	private void onClickOfflineBible(Context context){
         Intent intent = context.getPackageManager().getLaunchIntentForPackage("org.arkist.cnote");
         if (intent != null){
             MyUtil.trackClick(context, "BibleApp", "M");
             //intent.setComponent(new ComponentName("org.arkist.cnote","org.arkist.cnote.WebActivity"));
-            final Object eabcv[] = getEBCV(getContentValueGoldVerse());
-            final String finalEabcv = (String) eabcv[0]+ (String) eabcv[1]+" "+eabcv[3]+":"+eabcv[4];
-            MyUtil.log(TAG, "bcv:"+finalEabcv);
-            intent.setComponent(new ComponentName("org.arkist.cnote","org.arkist.bx.BxActivity"));
-            intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-            intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK); // Disable bring existing task to foreground; Should used with New_Task
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK); // A New Task
-            intent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
-            intent.setData(ContentUris.withAppendedId(Uri.EMPTY, CALL_FROM_EXTERNAL_APP));
-            intent.putExtra(AppWidgetManager.EXTRA_APPWIDGET_ID, CALL_FROM_EXTERNAL_APP);
-            intent.putExtra(AppWidgetManager.EXTRA_CUSTOM_EXTRAS, CALL_FROM_EXTERNAL_APP);
-            intent.putExtra(AppWidgetManager.EXTRA_CUSTOM_INFO, finalEabcv);
-            //onExitGoodCalendar(context);
-            context.startActivity(intent);
+            try {
+                startBibleMap(context,intent,new ComponentName("org.arkist.cnote","org.arkist.bx.BxActivity"));
+            } catch (Exception e){
+                startBibleMap(context,intent,new ComponentName("org.arkist.cnote","org.arkist.cnote.KnockActivity"));
+            }
         } else {
             try {
                 MyUtil.trackClick(context, "BiblePlayStore", "M");

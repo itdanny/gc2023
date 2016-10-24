@@ -147,27 +147,36 @@ public class MyBroadcast extends BroadcastReceiver {
 	 * 
 	 */
     private void doDailyGoldSentence(Context context){
-		final Calendar today = Calendar.getInstance();		
-		int curYear = today.get(Calendar.YEAR);
-		int curMonth = today.get(Calendar.MONTH);
-		int curDay = today.get(Calendar.DAY_OF_MONTH);
-		
-		// get ContentValues from dailyBread file
-		MyDailyBread mDailyBread = MyDailyBread.getInstance(context);
-		ContentValues cv = mDailyBread.getContentValues(curYear, curMonth, curDay);
+        try {
+            final Calendar today = Calendar.getInstance();
+            int curYear = today.get(Calendar.YEAR);
+            int curMonth = today.get(Calendar.MONTH);
+            int curDay = today.get(Calendar.DAY_OF_MONTH);
 
-		// GOLD TEXT
-		String todayMsg = cv.getAsString(MyDailyBread.wGoldText);
-		if (todayMsg==null || todayMsg.equals("")){			
-			todayMsg = "提醒：請細讀今天金句"; 
-		} else {
-			todayMsg = todayMsg.replace("#", "\n")+" ["+cv.getAsString(MyDailyBread.wGoldVerse)+"]";
-			todayMsg = "金句提醒:"+todayMsg;
-		}
-	    sendNotification(context,
-                todayMsg,
-                NOTIFICATION_ID_TODAY_VERSE, NOTIFICATION_ID_TODAY_VERSE);
-        if (DEBUG) System.out.println("Daily Reminder:Complete");
+            // get ContentValues from dailyBread file
+
+            MyDailyBread mDailyBread = MyDailyBread.getInstance(context);
+            ContentValues cv = mDailyBread.getContentValues(curYear, curMonth, curDay);
+            String todayMsg;
+            if (cv==null){
+                todayMsg = "請下載最新全年金句日曆";
+            } else {
+                // GOLD TEXT
+                todayMsg = cv.getAsString(MyDailyBread.wGoldText);
+                if (todayMsg == null || todayMsg.equals("")) {
+                    todayMsg = "提醒：請細讀今天金句";
+                } else {
+                    todayMsg = todayMsg.replace("#", "\n") + " [" + cv.getAsString(MyDailyBread.wGoldVerse) + "]";
+                    todayMsg = "金句提醒:" + todayMsg;
+                }
+            }
+            sendNotification(context,
+                    todayMsg,
+                    NOTIFICATION_ID_TODAY_VERSE, NOTIFICATION_ID_TODAY_VERSE);
+            if (DEBUG) System.out.println("Daily Reminder:Complete");
+        } catch (Exception e){
+            // Do nothing
+        }
 	}
 	static private void sendNotification(Context context, String message,int notificationID, int notificationNbr){
 		//if (android.os.Build.VERSION.SDK_INT >= 11) {
