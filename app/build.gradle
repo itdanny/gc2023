@@ -2,14 +2,14 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 23
-    buildToolsVersion '23.0.1'
+    buildToolsVersion '25.0.1'
 
     defaultConfig {
         applicationId "com.hkbs.HKBS"
         minSdkVersion 8
         targetSdkVersion 23
-        versionCode 48
-        versionName "3.18"
+        versionCode 49
+        versionName "3.19"
     }
     buildTypes {
         release {
