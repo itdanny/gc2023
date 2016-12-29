@@ -158,7 +158,7 @@ public class CWidgetBase extends AppWidgetProvider {
 		int curMonth = mDisplayDay.get(Calendar.MONTH);
 		int curDay = mDisplayDay.get(Calendar.DAY_OF_MONTH);
 		
-		final MyCalendarLunar lunar = new MyCalendarLunar(mDisplayDay);
+		final MyCalendarLunar lunar = new MyCalendarLunar(mDisplayDay,MyApp.mIsSimplifiedChinese);
 		final Calendar monthEndDate = (Calendar) mDisplayDay.clone();
 		String holiday = MyHoliday.getHolidayRemark(mDisplayDay.getTime());
 		final boolean isHoliday = (!holiday.equals("") && !holiday.startsWith("#")) || mDisplayDay.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY;
@@ -168,7 +168,7 @@ public class CWidgetBase extends AppWidgetProvider {
 		}
 		int nbrOfDaysTo30 = 30-lunar.getDay(); // Chinese Day
 		monthEndDate.add(Calendar.DAY_OF_MONTH, nbrOfDaysTo30);
-		final MyCalendarLunar monthEndLunar = new MyCalendarLunar(monthEndDate);
+		final MyCalendarLunar monthEndLunar = new MyCalendarLunar(monthEndDate,MyApp.mIsSimplifiedChinese);
 		boolean isBigMonth = (monthEndLunar.getDay()==30)?true:false;
 
         /***********************************************************************
@@ -298,7 +298,7 @@ public class CWidgetBase extends AppWidgetProvider {
         float layoutWidthInPixels=0;
 		if (CMain.IS_2016_VERSION) {
             if (curYear>=2016  || MyDailyBread.IS_TEST_2016_YEAR) {
-                String dimenIdStr = context.getString(R.string.layoutType) + getClassTag() + "_width";
+                String dimenIdStr = context.getString(R.string.widget_layoutType) + getClassTag() + "_width";
                 //Log.e(TAG,"package name="+context.getPackageName());
                 int dimenId = context.getResources().getIdentifier(dimenIdStr, "dimen", context.getPackageName());// "com.hkbs.HKBS"
 
@@ -386,7 +386,7 @@ public class CWidgetBase extends AppWidgetProvider {
             } catch (Exception e){
                 //
             }
-            appVersionName="v"+appVersionName+"."+context.getString(R.string.deviceType)+getClassTag()+" "+AxTools.getScreenWidth()+":"+layoutWidthInPixels;
+            appVersionName="v"+appVersionName+"."+context.getString(R.string.widget_deviceType)+getClassTag()+" "+AxTools.getScreenWidth()+":"+layoutWidthInPixels;
             Log.w(TAG, appVersionName);
             recRef.views.setTextViewText(R.id.xmlWidgetVersion, appVersionName);
             recRef.views.setTextColor(R.id.xmlWidgetVersion, textColor);

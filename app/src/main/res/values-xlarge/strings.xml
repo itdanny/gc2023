@@ -1,4 +1,4 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources>
-    <string name="deviceType">x</string>
+    <string name="widget_deviceType">x</string>
 </resources>

@@ -1,5 +1,17 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+    <!--<string-array name="special_locale_names">-->
+        <!--<item>中文 (简体)</item>-->
+        <!--<item>中文 (繁體)</item>-->
+    <!--</string-array>-->
+
+    <string name="BibleApp">聖經行事曆</string>
+
+    <string name="main_select_share">請選擇分享:</string>
+    <string name="main_share_text">文字</string>
+    <string name="main_share_image">圖像</string>
+    <string name="main_share_bible">經文分享</string>
+
     <string name="PermissionReason">程式將會要求允許\n\n(儲存位置)儲存相片資料</string>
     <string name="permissionRequest">請按「%1$s」設定「允許」程式使用「%2$s」功能</string>
     <string name="permissionCalendar">日曆</string>
@@ -9,12 +21,76 @@
     <string name="permissionContact">聯絡</string>
     <string name="BtnOk">確定</string>
     <string name="BtnCancel">取消</string>
+    <string name="disable">關閉</string>
+    <string name="enable">開啟</string>
 
-    <string name="hk_holiday_term">*<a href="http://www.labour.gov.hk/tc/news/latest_holidays2016.htm">香港法定假期</a></string>
-    <string name="deviceType">v</string>
-    <string name="layoutType">v</string><!--If there is layout, should have this declaration -->
-	<string name="about_hkbs">1950年成立，是聯合聖經公會（UBS）全球147家聖經公會成員之一。一直秉承「讓每一個人能以可負擔的價錢，獲得一本讀得明白的聖經」為宗旨，承擔中文聖經翻譯、出版、分發到社會各階層，並推廣聖經的使命。多年來出版及發行《和合本》、《廣東話聖經》、《呂振中譯本》、《現代中文譯本》、《新標點和合本》等聖經版本。2010年出版《和合本修訂版》新舊約全書，承傳《和合本》聖經近一個世紀對全球華人教會的祝福。</string>
-	<string name="about_arkist">希望每一個人都勤力讀聖經, 明白神的話語。所以自2009年起, 開發Nokia手機聖經程式，並把經文分類、整理，直至現在。願主的話語常與你同在。</string>
+    <string name="widget_deviceType">v</string>
+    <string name="widget_layoutType">v</string><!--If there is layout, should have this declaration -->
+
+    <string name="info">系統資訊</string>
+    <string name="infoBrand">牌子:</string>
+    <string name="infoModel">型號:</string>
+    <string name="infoSysVersion">系統版本:</string>
+    <string name="infoAppVersion">程式版本:</string>
+    <string name="infoFrDate">有效開始日:</string>
+    <string name="infoToDate">有效結束日:</string>
+    <string name="infoScreenType">畫面:</string>
+    <string name="infoDensity">密度:</string>
+    <string name="infoResolution">解析度:</string>
+
+    <string name="dummy_content">DUMMY\nCONTENT</string>
+    <string name="tomorrow">明天</string>
+    <string name="WordToday">今天</string>
+    <string name="WordGoldVerse">金句</string>
+    <string name="MsgCalendarChangeEventDate">提示: 連續按日期2次可更改 [日期]</string>
+    <string name="calendar_out_of_range">超出支援顯示範圍</string>
+
+    <string name="app_name_2015">全年好日曆</string>
+    <string name="app_name">全年金句日曆</string>
+
+    <string name="main_share">分享</string>
+    <string name="main_bible">在線閱讀</string>
+    <string name="main_arkist">離線閱讀</string>
+    <string name="main_calendar">日曆</string>
+    <string name="main_alarm">提醒設定</string>
+    <string name="main_about">關於我們</string>
+    <string name="main_support">支援</string>
+    <string name="main_copy">複製</string>
+    <string name="main_today">今天</string>
+    <string name="main_copy_to_pasteboard">已把金句放到剪貼薄</string>
+
+    <string name="support_contact">如有任何問題，請電郵到 info@arkist.org。謝謝。</string>
+    <string name="support_subject">「全年金句日曆」查詢</string>
+    <string name="support_device_info">以下是正使用裝置資料:</string>
+    <string name="support_mail_via">電郵 經...</string>
+    <string name="support_mail_to">mailto:</string>
+    <string name="support_restart">重啟程式</string>
+
+    <string name="alarm_reminder">金句提醒</string>
+    <string name="alarm_others">其他設定</string>
+
+    <string name="about_technicalSupport">技術支援</string>
+    <string name="about_contactUs">聯絡我們</string>
+    <string name="about_contentEnquiry">內容查詢</string>
+    <string name="about_churchCalendar">教會年曆</string>
+    <string name="about_calendarHK">香港</string>
+    <string name="about_calendarTW">台灣</string>
+    <string name="about_calendarOT">其他</string>
+    <string name="about_langType">言語</string>
+    <string name="about_langTraditional">繁體</string>
+    <string name="about_langSimplified">簡體</string>
+    <string name="about_calendarLocation">日曆地區</string>
+    <string name="about_hk_holiday_term">*<a href="http://www.labour.gov.hk/tc/news/latest_holidays2017.htm">香港法定假期</a></string>
+
+    <string name="about_arkist_address1">網頁Website：www.arkist.org</string>
+    <string name="about_arkist_address2">電郵Email：info@arkist.org</string>
+    <string name="about_hkbs_address1">電話Tel：(852) 2368 5147</string>
+    <string name="about_hkbs_address2">傳真 Fax：(852) 2311 0167</string>
+    <string name="about_hkbs_address3">網頁Website：www.hkbs.org.hk</string>
+    <string name="about_hkbs_address4">電郵Email：info@hkbs.org.hk</string>
+
+    <string name="about_hkbs">1950年成立，是聯合聖經公會（UBS）全球147家聖經公會成員之一。一直秉承「讓每一個人能以可負擔的價錢，獲得一本讀得明白的聖經」為宗旨，承擔中文聖經翻譯、出版、分發到社會各階層，並推廣聖經的使命。多年來出版及發行《和合本》、《廣東話聖經》、《呂振中譯本》、《現代中文譯本》、《新標點和合本》等聖經版本。2010年出版《和合本修訂版》新舊約全書，承傳《和合本》聖經近一個世紀對全球華人教會的祝福。</string>
+    <string name="about_arkist">希望每一個人都勤力讀聖經, 明白神的話語。所以自2009年起, 開發Nokia手機聖經程式，並把經文分類、整理，直至現在。願主的話語常與你同在。</string>
     <!--\n版權聲明\n全年金句日曆 2016 ＠Arkist 版權所有\n\n\n版權聲明(2015年12月31日或之前)\n 全年好日曆 2015 ©香港聖經公會 所有\n和合本修訂版 2006, 2010 ©香港聖經公會 版權所有\n蒙香港聖經公會允許使用\nwww.hkbs.org.hk</string> -->
     <string name="about_copyright2016">
             <![CDATA[
@@ -25,7 +101,7 @@
 蒙香港聖經公會允許使用\nwww.hkbs.org.hk
         ]]>
     </string>
-    <string name="about_copyright2015">版權聲明\n全年好日曆 2015 ＠香港聖經公會 版權所有\n和合本修訂版 2006, 2010 ©香港聖經公會 版權所有\n蒙香港聖經公會允許使用\nwww.hkbs.org.hk</string>
+    <string name="about_copyright2015">版權聲明\n全年好日曆 2016 ＠香港聖經公會 版權所有\n和合本修訂版 2006, 2010 ©香港聖經公會 版權所有\n蒙香港聖經公會允許使用\nwww.hkbs.org.hk</string>
 	<string name="app_rule2016">
         <![CDATA[
 <p><big><big><u>使用條款</u></big></big><br/>
@@ -64,23 +140,23 @@
 <br/>
         ]]>
     </string>
-<!-- 	<string name="about_hkbs_address">
-        <![CDATA[
-<p>香港聖經公會 Hong Kong Bible Society<br/>
-香港九龍尖沙咀漆咸道南67號安年大廈902室<br/>
-<br/>
-Room 902, Oriental Centre,<br/>
-67 Chatham Road South,<br/>
-Tsimshatsui, Kowloon, Hong Kong<br/>
-<br/>
-電話Tel：(852) 2368 5147<br/>
-傳真 Fax：(852) 2311 0167<br/>
-網頁Website：www.hkbs.org.hk<br/>
-電郵Email：info@hkbs.org.hk<br/></p>
-        ]]> </string>-->
+    <!-- 	<string name="about_hkbs_address">
+            <![CDATA[
+    <p>香港聖經公會 Hong Kong Bible Society<br/>
+    香港九龍尖沙咀漆咸道南67號安年大廈902室<br/>
+    <br/>
+    Room 902, Oriental Centre,<br/>
+    67 Chatham Road South,<br/>
+    Tsimshatsui, Kowloon, Hong Kong<br/>
+    <br/>
+    電話Tel：(852) 2368 5147<br/>
+    傳真 Fax：(852) 2311 0167<br/>
+    網頁Website：www.hkbs.org.hk<br/>
+    電郵Email：info@hkbs.org.hk<br/></p>
+            ]]> </string>-->
 
-<!-- <p>香港聖經公會 Hong Kong Bible Society<br/>
-<br/> -->
+    <!-- <p>香港聖經公會 Hong Kong Bible Society<br/>
+    <br/> -->
 	<string name="about_hkbs_address">
         <![CDATA[
 <p>電話Tel：(852) 2368 5147<br/>
@@ -96,29 +172,7 @@ Tsimshatsui, Kowloon, Hong Kong<br/>
 電郵Email：info@arkist.org<br/></p></center>
         ]]>
 	</string>
-	<string name="about_arkist_address1">網頁Website：www.arkist.org</string>
-	<string name="about_arkist_address2">電郵Email：info@arkist.org</string>
-	<string name="about_hkbs_address1">電話Tel：(852) 2368 5147</string>
-	<string name="about_hkbs_address2">傳真 Fax：(852) 2311 0167</string>
-	<string name="about_hkbs_address3">網頁Website：www.hkbs.org.hk</string>
-	<string name="about_hkbs_address4">電郵Email：info@hkbs.org.hk</string>	
-    <string name="app_name_2015">全年好日曆</string>
-    <string name="app_name">全年金句日曆</string>
-    <string name="main_share">分享</string>
-    <string name="main_bible">在線閱讀</string>
-    <string name="main_arkist">離線閱讀</string>
-    <string name="main_calendar">日曆</string>
-    <string name="main_alarm">提醒設定</string>
-    <string name="main_about">關於我們</string>
-    <string name="main_support">支援</string>
-    <string name="main_copy">複製</string>
-    <string name="main_today">今天</string>
-    <string name="dummy_content">DUMMY\nCONTENT</string>
-    <string name="tomorrow">明天</string>
-    <string name="WordToday">今天</string>
-    <string name="WordGoldVerse">金句</string>
-    <string name="MsgCalendarChangeEventDate">提示: 連續按日期2次可更改 [日期]</string>
-    
+
     <string name="quick_response_custom_msg">Custom message\u2026</string>
     <string name="no_title_label">(No title)</string>
     <string name="quick_response_email_failed">Failed to find an email program</string>

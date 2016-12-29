@@ -9,6 +9,7 @@ import android.net.Uri;
 import android.provider.CalendarContract;
 
 import com.hkbs.HKBS.CalendarAdapter;
+import com.hkbs.HKBS.MyApp;
 import com.hkbs.HKBS.MyHoliday;
 import com.hkbs.HKBS.arkUtil.MyUtil;
 
@@ -588,7 +589,7 @@ public class MyCalendar {
     		lunarTerm="";
     		lunarDate="";
     		if (!defaultLang.equals(MyUtil.PREF_LANG_EN)) {
-    			final MyCalendarLunar lunar = new MyCalendarLunar(lastDay);
+    			final MyCalendarLunar lunar = new MyCalendarLunar(lastDay, MyApp.mIsSimplifiedChinese);
     			lunarTerm = MyCalendarLunar.solar.getSolarTerm(lastDay);
     			lunarDate = lunar.toChineseMMDD();
     		} 

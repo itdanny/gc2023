@@ -9,6 +9,7 @@ import android.view.WindowManager;
 import com.hkbs.HKBS.arkUtil.MyUtil;
 
 import org.arkist.share.AxDebug;
+import org.arkist.share.AxTools;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -375,9 +376,16 @@ public class MyDailyBread {
 	}
 	private void readFileFromAsset(){
         BufferedReader bReader=null;
+        String dummyLine="";
         try {
 			Calendar today = Calendar.getInstance();
-            final InputStreamReader iReader = new InputStreamReader(mContext.getAssets().open("dailyBread.csv"), "UTF-8");
+            String lang=AxTools.getPrefStr(MyApp.PREF_APP_LANG,"");
+            final InputStreamReader iReader;
+            if (lang.equalsIgnoreCase(MyApp.PREF_APP_LANG_CN)) {
+                iReader = new InputStreamReader(mContext.getAssets().open("dailyBread_cn.csv"), "UTF-8");
+            } else {
+                iReader = new InputStreamReader(mContext.getAssets().open("dailyBread.csv"), "UTF-8");
+            }
 			bReader = new BufferedReader(iReader);
 		    // do reading, usually loop until end of file reading 
 		    String line = bReader.readLine();
@@ -433,6 +441,7 @@ public class MyDailyBread {
 		    	}
 			    while (line != null) {
 			    	line=line.replace("\"", "");
+                    dummyLine=line;
 			    	String [] fields = line.split(",");
                     // Check Valid Line
                     boolean validLine=true;
@@ -770,8 +779,10 @@ public class MyDailyBread {
 //		    	MyUtil.log(TAG,"HintSize L px:"+mHintSizeL);// 26 chars 2014-04-15
 //		    	MyUtil.log(TAG,"HintSize S px:"+mHintSizeS);// 24 chars 2014-05-08		    	
 		    
-		} catch (IOException e1) {
+		} catch (Exception e1) {
 		    //log the exception
+            Log.e(TAG, "Error:\n"+dummyLine);
+            Log.e(TAG,e1.getMessage());
 		} finally {
             if (bReader!=null) {
                 try {

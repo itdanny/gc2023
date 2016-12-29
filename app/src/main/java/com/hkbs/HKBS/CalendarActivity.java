@@ -28,12 +28,8 @@ import android.widget.ViewAnimator;
 
 public class CalendarActivity extends MyActivity{
 	final static private boolean DEBUG=true;
-	final static private String TAG = CalendarActivity.class.getSimpleName();	
 
 	public Calendar monthToShow;
-	public Handler handler;
-		
-	private String [] topicList;
 	private TextView calendarMonth;
 	private TextView calendarTitle;
 	private ImageView calendarIcon;
@@ -247,7 +243,7 @@ public class CalendarActivity extends MyActivity{
 //		MyUtil.log(TAG, MyDailyBread.getDayString(checkDate)+" Vs "+MyDailyBread.getDayString(validFrDate)+" "+checkDate.compareTo(validFrDate));
 		if (checkDate.compareTo(validToDate)>0 ||
 			checkDate.compareTo(validFrDate)<0 ){
-			Toast.makeText(CalendarActivity.this, "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
+			Toast.makeText(CalendarActivity.this, R.string.calendar_out_of_range, Toast.LENGTH_SHORT).show();
 			return false;
 		} else {
 			return true;
@@ -270,7 +266,7 @@ public class CalendarActivity extends MyActivity{
 	static public Calendar getPrevMonth(Calendar oldMonth, int newDay){
 		Calendar newMonth = (Calendar) oldMonth.clone();
 		newMonth.set(Calendar.DAY_OF_MONTH, 1); // Ensure day is 1; Otherwise, calculation will be wrong if 30 on Feb
-		if (newMonth.get(Calendar.MONTH) == newMonth.getActualMinimum(Calendar.MONTH)) {
+		if ((int) newMonth.get(Calendar.MONTH) == (int) newMonth.getActualMinimum(Calendar.MONTH)) {
 			newMonth.set((newMonth.get(Calendar.YEAR) - 1), newMonth.getActualMaximum(Calendar.MONTH), 1);
 		} else {
 			newMonth.set(Calendar.MONTH, newMonth.get(Calendar.MONTH) - 1);
@@ -299,7 +295,7 @@ public class CalendarActivity extends MyActivity{
 	static public Calendar getNextMonth(Calendar oldMonth, int newDay){
 		Calendar newMonth = (Calendar) oldMonth.clone();
 		newMonth.set(Calendar.DAY_OF_MONTH, 1); // Ensure day is 1; Otherwise, calculation will be wrong if 30 on Feb
-		if (newMonth.get(Calendar.MONTH) == newMonth.getActualMaximum(Calendar.MONTH)) {
+		if ((int)newMonth.get(Calendar.MONTH) == (int)newMonth.getActualMaximum(Calendar.MONTH)) {
 			newMonth.set((newMonth.get(Calendar.YEAR) + 1), newMonth.getActualMinimum(Calendar.MONTH), 1);
 		} else {
 			newMonth.set(Calendar.MONTH, newMonth.get(Calendar.MONTH) + 1);

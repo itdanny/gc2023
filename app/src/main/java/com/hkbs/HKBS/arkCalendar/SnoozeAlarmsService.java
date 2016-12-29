@@ -16,7 +16,7 @@ package com.hkbs.HKBS.arkCalendar;
  */
 
 
-
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.IntentService;
 import android.app.NotificationManager;
@@ -24,9 +24,11 @@ import android.content.ContentResolver;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.IBinder;
 import android.provider.CalendarContract.CalendarAlerts;
+import android.support.v4.app.ActivityCompat;
 
 /**
  * Service for asynchronously marking a fired alarm as dismissed and scheduling
@@ -34,7 +36,7 @@ import android.provider.CalendarContract.CalendarAlerts;
  */
 @SuppressLint("NewApi")
 public class SnoozeAlarmsService extends IntentService {
-    private static final String[] PROJECTION = new String[] {
+    private static final String[] PROJECTION = new String[]{
             CalendarAlerts.STATE,
     };
     private static final int COLUMN_INDEX_STATE = 0;
@@ -66,7 +68,7 @@ public class SnoozeAlarmsService extends IntentService {
             // Remove notification
             if (notificationId != AlertUtils.EXPIRED_GROUP_NOTIFICATION_ID) {
                 NotificationManager nm =
-                    (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
+                        (NotificationManager) getSystemService(Context.NOTIFICATION_SERVICE);
                 nm.cancel(notificationId);
             }
 
@@ -76,6 +78,16 @@ public class SnoozeAlarmsService extends IntentService {
                     CalendarAlerts.EVENT_ID + "=" + eventId;
             ContentValues dismissValues = new ContentValues();
             dismissValues.put(PROJECTION[COLUMN_INDEX_STATE], CalendarAlerts.STATE_DISMISSED);
+            if (ActivityCompat.checkSelfPermission(this, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+                // TODO: Consider calling
+                //    ActivityCompat#requestPermissions
+                // here to request the missing permissions, and then overriding
+                //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+                //                                          int[] grantResults)
+                // to handle the case where the user grants the permission. See the documentation
+                // for ActivityCompat#requestPermissions for more details.
+                return;
+            }
             resolver.update(uri, dismissValues, selection, null);
 
             // Add a new alarm

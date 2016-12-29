@@ -1,0 +1,209 @@
+<?xml version="1.0" encoding="utf-8"?>
+<resources xmlns:xliff="urn:oasis:names:tc:xliff:document:1.2">
+        <!--<string-array name="special_locale_names">-->
+        <!--<item>中文 (简体)</item>-->
+        <!--<item>中文 (繁体)</item>-->
+        <!--</string-array>-->
+
+        <string name="BibleApp">圣经行事历</string>
+
+        <string name="main_select_share">请选择分享:</string>
+        <string name="main_share_text">文字</string>
+        <string name="main_share_image">图像</string>
+        <string name="main_share_bible">经文分享</string>
+
+        <string name="PermissionReason">程式将会要求允许\n\n(储存位置)储存相片资料</string>
+        <string name="permissionRequest">请按「%1$s」设定「允许」程式使用「%2$s」功能</string>
+        <string name="permissionCalendar">日历</string>
+        <string name="permissionStorage">储存</string>
+        <string name="permissionLocation">地点</string>
+        <string name="permissionCamera">相机</string>
+        <string name="permissionContact">联络</string>
+        <string name="BtnOk">确定</string>
+        <string name="BtnCancel">取消</string>
+        <string name="disable">关闭</string>
+        <string name="enable">开启</string>
+
+        <string name="widget_deviceType">v</string>
+        <string name="widget_layoutType">v</string><!--If there is layout, should have this declaration -->
+
+        <string name="info">系统资讯</string>
+        <string name="infoBrand">牌子:</string>
+        <string name="infoModel">型号:</string>
+        <string name="infoSysVersion">系统版本:</string>
+        <string name="infoAppVersion">程式版本:</string>
+        <string name="infoFrDate">有效开始日:</string>
+        <string name="infoToDate">有效结束日:</string>
+        <string name="infoScreenType">画面:</string>
+        <string name="infoDensity">密度:</string>
+        <string name="infoResolution">解析度:</string>
+
+        <string name="dummy_content">DUMMY\nCONTENT</string>
+        <string name="tomorrow">明天</string>
+        <string name="WordToday">今天</string>
+        <string name="WordGoldVerse">金句</string>
+        <string name="MsgCalendarChangeEventDate">提示: 连续按日期2次可更改 [日期]</string>
+        <string name="calendar_out_of_range">超出支援显示范围</string>
+
+        <string name="app_name_2015">全年好日历</string>
+        <string name="app_name">全年金句日历</string>
+
+        <string name="main_share">分享</string>
+        <string name="main_bible">在线阅读</string>
+        <string name="main_arkist">离线阅读</string>
+        <string name="main_calendar">日历</string>
+        <string name="main_alarm">提醒设定</string>
+        <string name="main_about">关于我们</string>
+        <string name="main_support">支援</string>
+        <string name="main_copy">复制</string>
+        <string name="main_today">今天</string>
+        <string name="main_copy_to_pasteboard">已把金句放到剪贴薄</string>
+
+        <string name="support_contact">如有任何问题，请电邮到 info@arkist.org。谢谢。 </string>
+        <string name="support_subject">「全年金句日历」查询</string>
+        <string name="support_device_info">以下是正使用装置资料:</string>
+        <string name="support_mail_via">电邮 经...</string>
+        <string name="support_mail_to">mailto:</string>
+        <string name="support_restart">重启程式</string>
+
+        <string name="alarm_reminder">金句提醒</string>
+        <string name="alarm_others">其他设定</string>
+
+        <string name="about_technicalSupport">技术支援</string>
+        <string name="about_contactUs">联络我们</string>
+        <string name="about_contentEnquiry">内容查询</string>
+        <string name="about_churchCalendar">教会年历</string>
+        <string name="about_calendarHK">香港</string>
+        <string name="about_calendarTW">台湾</string>
+        <string name="about_calendarOT">其他</string>
+        <string name="about_langType">言语</string>
+        <string name="about_langTraditional">繁体</string>
+        <string name="about_langSimplified">简体</string>
+        <string name="about_calendarLocation">日历地区</string>
+        <string name="about_hk_holiday_term">*<a href="http://www.labour.gov.hk/tc/news/latest_holidays2017.htm">香港法定假期</a></string>
+
+        <string name="about_arkist_address1">网页Website：www.arkist.org</string>
+        <string name="about_arkist_address2">电邮Email：info@arkist.org</string>
+        <string name="about_hkbs_address1">电话Tel：(852) 2368 5147</string>
+        <string name="about_hkbs_address2">传真 Fax：(852) 2311 0167</string>
+        <string name="about_hkbs_address3">网页Website：www.hkbs.org.hk</string>
+        <string name="about_hkbs_address4">电邮Email：info@hkbs.org.hk</string>
+
+        <string name="about_hkbs">1950年成立，是联合圣经公会（UBS）全球147家圣经公会成员之一。一直秉承「让每一个人能以可负担的价钱，获得一本读得明白的圣经」为宗旨，承担中文圣经翻译、出版、分发到社会各阶层，并推广圣经的使命。多年来出版及发行《和合本》、《广东话圣经》、《吕振中译本》、《现代中文译本》、《新标点和合本》等圣经版本。 2010年出版《和合本修订版》新旧约全书，承传《和合本》圣经近一个世纪对全球华人教会的祝福。 </string>
+        <string name="about_arkist">希望每一个人都勤力读圣经, 明白神的话语。所以自2009年起, 开发Nokia手机圣经程式，并把经文分类、整理，直至现在。愿主的话语常与你同在。 </string>
+        <!--\n版权声明\n全年金句日历2016 ＠Arkist 版权所有\n\n\n版权声明(2015年12月31日或之前)\n 全年好日历2015 ©香港圣经公会所有\ n和合本修订版2006, 2010 ©香港圣经公会版权所有\n蒙香港圣经公会允许使用\nwww.hkbs.org.hk</string> -->
+        <string name="about_copyright2016">
+            <![CDATA[
+<p><u>版权声明</u><br/>
+全年金句日历 2016 ＠Arkist 版权所有
+全年好日历 2015 ＠香港圣经公会 版权所有<br/>
+和合本修订版 2006, 2010 ©香港圣经公会 版权所有<br/>
+蒙香港圣经公会允许使用\nwww.hkbs.org.hk
+        ]]>
+    </string>
+    <string name="about_copyright2015">版权声明\n全年好日历2016 ＠香港圣经公会版权所有\n和合本修订版2006, 2010 ©香港圣经公会版权所有\n蒙香港圣经公会允许使用\nwww.hkbs .org.hk</string>
+<string name="app_rule2016">
+        <![CDATA[
+<p><big><big><u>使用条款</u></big></big><br/>
+在使用「全年金句日历」应用程式前，请细阅本条款及细则：<br/>
+<br/>
+1. 「全年金句日历」及「全年好日历」（2015年或之前的名称）应用程式是由Arkist开发，应用程式及其任何更新、修改或提升，均受版权法、商标法及其他有关知识产权法律所保护。 <br/>
+<br/>
+2. 「全年金句日历」应用程式的内容，包括文字、介面、图案、展品、文件及其他组成部分，版权属Arkist所有；2015年或之前之「全年好日历」应用程式的内容，包括文字、介面、图案、展品、文件及其他组成部分，版权属香港圣经公会所有；和合本修订版2006, 2010 版权属香港圣经公会所有，蒙香港圣经公会允许使用；「全年金句日历」及「全年好日历」应用程式的任何软体、代码、脚本程式等，版权属Arkist所有。 <br/>
+<br/>
+3. 在未经Arkist及香港圣经公会预先书面批准下，不得仿造、复制、印制、销售、转售或利用作商业用途。 <br/>
+<br/>
+4. Arkist对「全年金句日历」应用程式所提供的任何服务及特性、缺失、错误发送或故障概不负责。 <br/>
+<br/>
+5. 须同意只合法使用「全年金句日历」应用程式，而使用方式并不侵犯或限制或妨碍任何第三方使用及享用「全年金句日历」应用程式。 <br/>
+<br/>
+6. 当首次使用「全年金句日历」应用程式，本条款及细则即时生效。 Arkist保留权利不时更改本条款及细则。 <br/>
+<br/>
+        ]]>
+    </string>
+        <string name="app_rule2015">
+        <![CDATA[
+<p><big><big><u>使用条款</u></big></big><br/><br/>
+在使用「全年好日历」应用程式前，请细阅本条款及细则：<br/>
+<br/>
+1. 「全年好日历」应用程式是由Arkist开发，其应用程式及任何更新、修改或提升，均受版权法、商标法及其他有关知识产权法律所保护。 <br/>
+<br/>
+2. 「全年好日历」应用程式的内容，包括文字、介面、图案、展品、文件及其他组成部分，版权属香港圣经公会所有；应用程式的任何软体、代码、脚本程式等，版权属Arkist所有。 <br/>
+<br/>
+3. 在未经Arkist预先书面批准下，不得仿造、复制、印制、销售、转售或利用作商业用途。 <br/>
+<br/>
+4. Arkist对「全年好日历」应用程式所提供的任何服务及特性、缺失、错误发送或故障概不负责。 <br/>
+<br/>
+5. 须同意只合法使用「全年好日历」应用程式，而使用方式并不侵犯或限制或妨碍任何第三方使用及享用「全年好日历」应用程式。 <br/>
+<br/>
+6. 当首次使用「全年好日历」应用程式，本条款及细则即时生效。 Arkist保留权利不时更改本条款及细则。 <br/>
+<br/>
+        ]]>
+    </string>
+        <!-- <string name="about_hkbs_address">
+            <![CDATA[
+    <p>香港圣经公会 Hong Kong Bible Society<br/>
+    香港九龙尖沙咀漆咸道南67号安年大厦902室<br/>
+    <br/>
+    Room 902, Oriental Centre,<br/>
+    67 Chatham Road South,<br/>
+    Tsimshatsui, Kowloon, Hong Kong<br/>
+    <br/>
+    电话Tel：(852) 2368 5147<br/>
+    传真 Fax：(852) 2311 0167<br/>
+    网页Website：www.hkbs.org.hk<br/>
+    电邮Email：info@hkbs.org.hk<br/></p>
+            ]]> </string>-->
+
+        <!-- <p>香港圣经公会 Hong Kong Bible Society<br/>
+    <br/> -->
+<string name="about_hkbs_address">
+        <![CDATA[
+<p>电话Tel：(852) 2368 5147<br/>
+传真 Fax：(852) 2311 0167<br/>
+网页Website：www.hkbs.org.hk<br/>
+电邮Email：info@hkbs.org.hk<br/></p>
+        ]]>
+</string>
+<string name="about_arkist_address">
+        <![CDATA[
+<center><p>
+网页Website：www.arkist.org<br/>
+电邮Email：info@arkist.org<br/></p></center>
+        ]]>
+</string>
+
+        <string name="quick_response_custom_msg">Custom message\u2026</string>
+        <string name="no_title_label">(No title)</string>
+        <string name="quick_response_email_failed">Failed to find an email program</string>
+        <string name="snooze_label">"Snooze"</string>
+        <string name="email_guests_label">Email guests</string>
+        <!--
+    public String getQuantityString (int id, int quantity, Object... formatArgs)
+    the first count parameter selects the appropriate plural string and the second count parameter is inserted into the %d placeholder.
+     -->
+        <plurals name="Nminutes">
+            <item quantity="one">1 minute</item>
+            <item quantity="other"><xliff:g id="count">%d</xliff:g> minutes</item>
+        </plurals>
+        <!-- number of events in the notification bar -->
+        <plurals name="Nevents">
+            <item quantity="one">1 event</item><!-- This is the label for a 1 event. -->
+            <item quantity="other"><xliff:g id="count">%d</xliff:g> events</item><!-- This is the label for 2 or more events. -->
+        </plurals>
+        <!-- number of remaining events for an alert digest in the notification bar [CHAR LIMIT = 30] -->
+        <plurals name="N_remaining_events">
+            <item quantity="one">+1 event</item>
+            <item quantity="other">+<xliff:g id="count">%d</xliff:g> events</item>
+        </plurals>
+        <!-- This is shown in the popup picker when emailing attendees -->
+        <string name="email_picker_label">Email with</string>
+        <!-- This shows the number of additional reminders that were missed. This
+        is the singular case so it displays '1 more reminder' -->
+        <string name="alert_missed_events_single">(<xliff:g id="reminder_count">%s</xliff:g> more reminder)</string>
+        <!-- This shows the number of additional reminders that were missed. For example,
+         if there were two additional reminders then this would show
+         '2 more reminders' -->
+        <string name="alert_missed_events_multiple">(<xliff:g id="reminder_count">%s</xliff:g> more reminders)</string>
+
+</resources>

@@ -15,6 +15,7 @@ package com.hkbs.HKBS.arkCalendar;
  * limitations under the License.
  */
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Notification;
 import android.app.PendingIntent;
@@ -23,6 +24,7 @@ import android.content.BroadcastReceiver;
 import android.content.ContentUris;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
@@ -32,6 +34,7 @@ import android.os.PowerManager;
 import android.provider.CalendarContract.Attendees;
 import android.provider.CalendarContract.Calendars;
 import android.provider.CalendarContract.Events;
+import android.support.v4.app.ActivityCompat;
 import android.text.SpannableStringBuilder;
 import android.text.TextUtils;
 import android.text.style.RelativeSizeSpan;
@@ -62,7 +65,7 @@ import com.hkbs.HKBS.arkUtil.MyUtil;
  */
 @SuppressLint("NewApi")
 public class AlertReceiver extends BroadcastReceiver {
-	private static final boolean DEBUG=true;
+    private static final boolean DEBUG = true;
     private static final String TAG = "AlertReceiver";
 
     private static final String DELETE_ALL_ACTION = "org.arkist.calendar.DELETEALL";
@@ -77,26 +80,26 @@ public class AlertReceiver extends BroadcastReceiver {
     public static final String ACTION_DISMISS_OLD_REMINDERS = "removeOldReminders";
     private static final int NOTIFICATION_DIGEST_MAX_LENGTH = 3;
     private static final String DELETE_ACTION = "delete";
-    
-    private static Handler sAsyncHandler;
+
+    //private static Handler sAsyncHandler;
     static {
         HandlerThread thr = new HandlerThread("AlertReceiver async");
         thr.start();
-        sAsyncHandler = new Handler(thr.getLooper());
+        //sAsyncHandler = new Handler(thr.getLooper());
     }
 
     @Override
     public void onReceive(final Context context, final Intent intent) {
-        if (DEBUG) MyUtil.log(TAG,"onReceive: a=" + intent.getAction() + " " + intent.toString());
+        if (DEBUG) MyUtil.log(TAG, "onReceive: a=" + intent.getAction() + " " + intent.toString());
         if (android.os.Build.VERSION.SDK_INT < AlertService.NEW_API_VERSION) {
-        	if (DELETE_ACTION.equals(intent.getAction())) {
+            if (DELETE_ACTION.equals(intent.getAction())) {
 
                 /* The user has clicked the "Clear All Notifications"
                  * buttons so dismiss all Calendar alerts.
                  */
                 // TODO Grab a wake lock here?
                 Intent serviceIntent = new Intent(context, DismissAllAlarmsServiceAPI8.class);
-        		context.startService(serviceIntent);
+                context.startService(serviceIntent);
             } else {
                 Intent i = new Intent();
                 i.setClass(context, AlertService.class);
@@ -112,41 +115,41 @@ public class AlertReceiver extends BroadcastReceiver {
             }
 
         } else {
-	        if (DELETE_ALL_ACTION.equals(intent.getAction())) {
+            if (DELETE_ALL_ACTION.equals(intent.getAction())) {
 	            /* The user has clicked the "Clear All Notifications"
 	             * buttons so dismiss all Calendar alerts.
 	             */
-	            // TODO Grab a wake lock here?
-	            Intent serviceIntent = new Intent(context, DismissAlarmsService.class);
-	            context.startService(serviceIntent);
-	        } else if (MAIL_ACTION.equals(intent.getAction())) {
-	            // Close the notification shade.
-	            Intent closeNotificationShadeIntent = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
-	            context.sendBroadcast(closeNotificationShadeIntent);
-	
-	            // Now start the email intent.
-	            final long eventId = intent.getLongExtra(EXTRA_EVENT_ID, -1);
-	            if (eventId != -1) {
-	                Intent i = new Intent(context, QuickResponseActivity.class);
-	                i.putExtra(QuickResponseActivity.EXTRA_EVENT_ID, eventId);
-	                //DC:MW 
-	                i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-	                context.startActivity(i);
-	            }
-	        } else { // onReceive...startService...onCreate...startCommand...updateAlertNotification....
-	            Intent i = new Intent();
-	            i.setClass(context, AlertService.class); // <<<--------
-	            i.putExtras(intent);
-	            i.putExtra("action", intent.getAction());
-	            Uri uri = intent.getData();
-	
-	            // This intent might be a BOOT_COMPLETED so it might not have a Uri.
-	            if (uri != null) {
-	                i.putExtra("uri", uri.toString());
-	            }
-	            beginStartingService(context, i);
-	        }
-        }        
+                // TODO Grab a wake lock here?
+                Intent serviceIntent = new Intent(context, DismissAlarmsService.class);
+                context.startService(serviceIntent);
+            } else if (MAIL_ACTION.equals(intent.getAction())) {
+                // Close the notification shade.
+                Intent closeNotificationShadeIntent = new Intent(Intent.ACTION_CLOSE_SYSTEM_DIALOGS);
+                context.sendBroadcast(closeNotificationShadeIntent);
+
+                // Now start the email intent.
+                final long eventId = intent.getLongExtra(EXTRA_EVENT_ID, -1);
+                if (eventId != -1) {
+                    Intent i = new Intent(context, QuickResponseActivity.class);
+                    i.putExtra(QuickResponseActivity.EXTRA_EVENT_ID, eventId);
+                    //DC:MW
+                    i.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+                    context.startActivity(i);
+                }
+            } else { // onReceive...startService...onCreate...startCommand...updateAlertNotification....
+                Intent i = new Intent();
+                i.setClass(context, AlertService.class); // <<<--------
+                i.putExtras(intent);
+                i.putExtra("action", intent.getAction());
+                Uri uri = intent.getData();
+
+                // This intent might be a BOOT_COMPLETED so it might not have a Uri.
+                if (uri != null) {
+                    i.putExtra("uri", uri.toString());
+                }
+                beginStartingService(context, i);
+            }
+        }
     }
 
     /**
@@ -155,10 +158,10 @@ public class AlertReceiver extends BroadcastReceiver {
      */
     public static void beginStartingService(Context context, Intent intent) {
         synchronized (mStartingServiceSync) {
-        	if (DEBUG) MyUtil.log(TAG,"beginStartingService");
+            if (DEBUG) MyUtil.log(TAG, "beginStartingService");
             if (mStartingService == null) {
                 PowerManager pm =
-                    (PowerManager)context.getSystemService(Context.POWER_SERVICE);
+                        (PowerManager) context.getSystemService(Context.POWER_SERVICE);
                 mStartingService = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
                         "StartingAlertService");
                 mStartingService.setReferenceCounted(false);
@@ -174,7 +177,7 @@ public class AlertReceiver extends BroadcastReceiver {
      */
     public static void finishStartingService(Service service, int startId) {
         synchronized (mStartingServiceSync) {
-        	if (DEBUG) MyUtil.log(TAG,"finishStartingService");
+            if (DEBUG) MyUtil.log(TAG, "finishStartingService");
             if (mStartingService != null) {
                 if (service.stopSelfResult(startId)) {
                     mStartingService.release();
@@ -184,23 +187,23 @@ public class AlertReceiver extends BroadcastReceiver {
     }
 
     private static PendingIntent createClickEventIntent(Context context, long eventId,
-            long startMillis, long endMillis, int notificationId) {
-    	if (DEBUG) MyUtil.log(TAG,"createClickEventIntent");
+                                                        long startMillis, long endMillis, int notificationId) {
+        if (DEBUG) MyUtil.log(TAG, "createClickEventIntent");
         return createDismissAlarmsIntent(context, eventId, startMillis, endMillis, notificationId,
                 "org.arkist.calendar.CLICK", true);
     }
 
     private static PendingIntent createDeleteEventIntent(Context context, long eventId,
-            long startMillis, long endMillis, int notificationId) {
-    	if (DEBUG) MyUtil.log(TAG,"createDeketeEventIntent");
+                                                         long startMillis, long endMillis, int notificationId) {
+        if (DEBUG) MyUtil.log(TAG, "createDeketeEventIntent");
         return createDismissAlarmsIntent(context, eventId, startMillis, endMillis, notificationId,
                 "org.arkist.calendar.DELETE", false);
     }
 
     private static PendingIntent createDismissAlarmsIntent(Context context, long eventId,
-            long startMillis, long endMillis, int notificationId, String action,
-            boolean showEvent) {
-    	if (DEBUG) MyUtil.log(TAG,"createDismissAlarmsIntent");
+                                                           long startMillis, long endMillis, int notificationId, String action,
+                                                           boolean showEvent) {
+        if (DEBUG) MyUtil.log(TAG, "createDismissAlarmsIntent");
         Intent intent = new Intent();
         intent.setClass(context, DismissAlarmsService.class);
         intent.putExtra(AlertUtils.EVENT_ID_KEY, eventId);
@@ -223,8 +226,8 @@ public class AlertReceiver extends BroadcastReceiver {
     }
 
     private static PendingIntent createSnoozeIntent(Context context, long eventId,
-            long startMillis, long endMillis, int notificationId) {
-    	if (DEBUG) MyUtil.log(TAG,"createSnoozeIntent");
+                                                    long startMillis, long endMillis, int notificationId) {
+        if (DEBUG) MyUtil.log(TAG, "createSnoozeIntent");
         Intent intent = new Intent();
         intent.setClass(context, SnoozeAlarmsService.class);
         intent.putExtra(AlertUtils.EVENT_ID_KEY, eventId);
@@ -238,24 +241,25 @@ public class AlertReceiver extends BroadcastReceiver {
         intent.setData(builder.build());
         return PendingIntent.getService(context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
     }
+
     @SuppressLint("InlinedApi")
     private static PendingIntent createAlertActivityIntent(Context context) {
-    	if (DEBUG) MyUtil.log(TAG,"createAlertIntent");
-    	Intent clickIntent = new Intent();
+        if (DEBUG) MyUtil.log(TAG, "createAlertIntent");
+        Intent clickIntent = new Intent();
         clickIntent.setClass(context, CMain.class);
         //DC:MW 
         if (android.os.Build.VERSION.SDK_INT >= 11) {
-        	clickIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);        	
+            clickIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         }
         clickIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         return PendingIntent.getActivity(context, 0, clickIntent,
-                    PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_UPDATE_CURRENT);
+                PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_UPDATE_CURRENT);
     }
 
     public static NotificationWrapper makeBasicNotification(Context context, String title,
-            String summaryText, long startMillis, long endMillis, long eventId,
-            int notificationId, boolean doPopup) {
-    	if (DEBUG) MyUtil.log(TAG,"makeBasicNotification");
+                                                            String summaryText, long startMillis, long endMillis, long eventId,
+                                                            int notificationId, boolean doPopup) {
+        if (DEBUG) MyUtil.log(TAG, "makeBasicNotification");
         Notification n = makeBasicNotificationBuilder(context, title, summaryText, startMillis,
                 endMillis, eventId, notificationId, doPopup, false, false).build();
 
@@ -263,12 +267,12 @@ public class AlertReceiver extends BroadcastReceiver {
     }
 
     private static Notification.Builder makeBasicNotificationBuilder(Context context, String title,
-            String summaryText, long startMillis, long endMillis, long eventId,
-            int notificationId, boolean doPopup, boolean highPriority, boolean addActionButtons) {
-    	if (DEBUG) MyUtil.log(TAG,"makeBasicNotificationBuilder");
+                                                                     String summaryText, long startMillis, long endMillis, long eventId,
+                                                                     int notificationId, boolean doPopup, boolean highPriority, boolean addActionButtons) {
+        if (DEBUG) MyUtil.log(TAG, "makeBasicNotificationBuilder");
         Resources resources = context.getResources();
         if (title == null || title.length() == 0) {
-        	title = resources.getString(R.string.no_title_label);
+            title = resources.getString(R.string.no_title_label);
         }
 
         // Create an intent triggered by clicking on the status icon, that dismisses the
@@ -288,7 +292,7 @@ public class AlertReceiver extends BroadcastReceiver {
         notificationBuilder.setDeleteIntent(deleteIntent);
         if (addActionButtons) {
             // Create a snooze button.  TODO: change snooze to 10 minutes.
-        	if (DEBUG) MyUtil.log(TAG, "AddSnoozeIntent");
+            if (DEBUG) MyUtil.log(TAG, "AddSnoozeIntent");
             PendingIntent snoozeIntent = createSnoozeIntent(context, eventId, startMillis,
                     endMillis, notificationId);
             notificationBuilder.addAction(R.drawable.ic_alarm_holo_dark,
@@ -303,8 +307,8 @@ public class AlertReceiver extends BroadcastReceiver {
 
         }
         if (doPopup) {
-            PendingIntent pendingIntent= createAlertActivityIntent(context);
-            if (pendingIntent!=null) {
+            PendingIntent pendingIntent = createAlertActivityIntent(context);
+            if (pendingIntent != null) {
                 notificationBuilder.setFullScreenIntent(pendingIntent, true);
             }
         }
@@ -325,9 +329,9 @@ public class AlertReceiver extends BroadcastReceiver {
      * the notification manager based on the priority.
      */
     public static NotificationWrapper makeExpandingNotification(Context context, String title,
-            String summaryText, String description, long startMillis, long endMillis, long eventId,
-            int notificationId, boolean doPopup, boolean highPriority) {
-    	
+                                                                String summaryText, String description, long startMillis, long endMillis, long eventId,
+                                                                int notificationId, boolean doPopup, boolean highPriority) {
+
         Notification.Builder basicBuilder = makeBasicNotificationBuilder(context, title,
                 summaryText, startMillis, endMillis, eventId, notificationId,
                 doPopup, highPriority, true);
@@ -361,8 +365,8 @@ public class AlertReceiver extends BroadcastReceiver {
      * Creates an expanding digest notification for expired events.
      */
     public static NotificationWrapper makeDigestNotification(Context context,
-            ArrayList<AlertService.NotificationInfo> notificationInfos, String digestTitle,
-            boolean expandable) {
+                                                             ArrayList<AlertService.NotificationInfo> notificationInfos, String digestTitle,
+                                                             boolean expandable) {
         if (notificationInfos == null || notificationInfos.size() < 1) {
             return null;
         }
@@ -467,9 +471,9 @@ public class AlertReceiver extends BroadcastReceiver {
         return nw;
     }
 
-    private static final String[] ATTENDEES_PROJECTION = new String[] {
-        Attendees.ATTENDEE_EMAIL,           // 0
-        Attendees.ATTENDEE_STATUS,          // 1
+    private static final String[] ATTENDEES_PROJECTION = new String[]{
+            Attendees.ATTENDEE_EMAIL,           // 0
+            Attendees.ATTENDEE_STATUS,          // 1
     };
     private static final int ATTENDEES_INDEX_EMAIL = 0;
     private static final int ATTENDEES_INDEX_STATUS = 1;
@@ -477,10 +481,10 @@ public class AlertReceiver extends BroadcastReceiver {
     private static final String ATTENDEES_SORT_ORDER = Attendees.ATTENDEE_NAME + " ASC, "
             + Attendees.ATTENDEE_EMAIL + " ASC";
 
-    private static final String[] EVENT_PROJECTION = new String[] {
-        Calendars.OWNER_ACCOUNT, // 0
-        Calendars.ACCOUNT_NAME,  // 1
-        Events.TITLE,            // 2
+    private static final String[] EVENT_PROJECTION = new String[]{
+            Calendars.OWNER_ACCOUNT, // 0
+            Calendars.ACCOUNT_NAME,  // 1
+            Events.TITLE,            // 2
     };
     private static final int EVENT_INDEX_OWNER_ACCOUNT = 0;
     private static final int EVENT_INDEX_ACCOUNT_NAME = 1;
@@ -493,8 +497,18 @@ public class AlertReceiver extends BroadcastReceiver {
     }
 
     private static Cursor getAttendeesCursor(Context context, long eventId) {
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return null;
+        }
         return context.getContentResolver().query(Attendees.CONTENT_URI,
-                ATTENDEES_PROJECTION, ATTENDEES_WHERE, new String[] { Long.toString(eventId) },
+                ATTENDEES_PROJECTION, ATTENDEES_WHERE, new String[]{Long.toString(eventId)},
                 ATTENDEES_SORT_ORDER);
     }
 

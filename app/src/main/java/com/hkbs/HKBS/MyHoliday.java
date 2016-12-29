@@ -131,8 +131,9 @@ public class MyHoliday {
         "20150510母親節",
 	    "20150621父親節",
         "20160508母親節",
-        "20160619父親節"
-
+        "20160619父親節",
+        "20170514母親節",
+        "20170618父親節"
 	};
 	static final private String [] HOLIDAYS_HK = new String [] {
 		"20110101一月一日",
@@ -260,6 +261,7 @@ public class MyHoliday {
 
             "20170102*一月一日翌日",
             "20170128*農曆年初一",
+			"20170129*農曆年初二",
             "20170130*農曆年初三",
             "20170131*農曆年初四",
             "20170404*清明節",
@@ -268,9 +270,6 @@ public class MyHoliday {
             "20170417復活節",
             "20170501*勞動節",
             "20170503佛誕",
-            "20170514母親節",
-            "20170530端午節",
-            "20170618父親節",
             "20170701*香港特別行政區成立紀念日",
             "20171002*國慶日翌日",
             "20171005*中秋節翌日",
@@ -357,7 +356,7 @@ public class MyHoliday {
         "20161010國慶日",
 
         "20170101中華民國開國紀念日",
-        "20170101中華民國開國紀念日補假",
+        "20170102中華民國開國紀念日補假",
         "20170127除夕",
         "20170128農曆年初一",
         "20170129農曆年初二",
@@ -369,7 +368,7 @@ public class MyHoliday {
 
         "20170403兒童節",
         "20170404民族掃墓節",
-        "20170501勞動節",
+
         "20170529端午節彈性放假",
         "20170530端午節",
         "20171004中秋節",
@@ -401,8 +400,10 @@ public class MyHoliday {
 		String dayRemark="";
 		String yyyymmdd = sdf.format(date);
 		String loopHolidays [];
+        boolean isHongKong=false;
 		if (MyUtil.getCurCountry().equals("HK")){
 			loopHolidays=HOLIDAYS_HK;
+            isHongKong=true;
 		} else if (MyUtil.getCurCountry().equals("TW")){
 			loopHolidays=HOLIDAYS_TW;
 		} else {
@@ -418,14 +419,16 @@ public class MyHoliday {
 				}
 			}
 		}
-		for (int i=SPECIAL.length-1;i>=0;i--){
-			if (SPECIAL[i].startsWith(yyyymmdd)){
-				dayRemark = SPECIAL[i].substring(yyyymmdd.length());
-				return dayRemark;
-			} else if (SPECIAL[i].compareTo(yyyymmdd)<0){
-				break;
-			}
-		}		
+        if (isHongKong) { // Only HK use Mother Day; Father Day
+            for (int i = SPECIAL.length - 1; i >= 0; i--) {
+                if (SPECIAL[i].startsWith(yyyymmdd)) {
+                    dayRemark = SPECIAL[i].substring(yyyymmdd.length());
+                    return dayRemark;
+                } else if (SPECIAL[i].compareTo(yyyymmdd) < 0) {
+                    break;
+                }
+            }
+        }
 		return dayRemark;
 	}
 }

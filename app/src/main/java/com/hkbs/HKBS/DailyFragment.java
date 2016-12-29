@@ -99,7 +99,7 @@ public class DailyFragment extends Fragment {
         dailyFragment.mCalendar = Calendar.getInstance();
         // DC 2016.09.16
         dailyFragment.mCalendar.set(year,month,day);
-        dailyFragment.mLunar = new MyCalendarLunar(dailyFragment.mCalendar);
+        dailyFragment.mLunar = new MyCalendarLunar(dailyFragment.mCalendar,MyApp.mIsSimplifiedChinese);
         return dailyFragment;
     }
     protected void onRefreshSettings(int year, int month, int day){
@@ -109,7 +109,7 @@ public class DailyFragment extends Fragment {
         mCalendar = Calendar.getInstance();
         // DC 2016.09.16
         mCalendar.set(year, month, day);
-        mLunar = new MyCalendarLunar(mCalendar);
+        mLunar = new MyCalendarLunar(mCalendar,true);
         onRefreshScreen();
     }
     @Override
@@ -357,7 +357,7 @@ public class DailyFragment extends Fragment {
         final Calendar monthEndDate = (Calendar) mCalendar.clone();
         int nbrOfDaysTo30 = 30-mLunar.getDay(); // Chinese Day
         monthEndDate.add(Calendar.DAY_OF_MONTH, nbrOfDaysTo30);
-        final MyCalendarLunar monthEndLunar = new MyCalendarLunar(monthEndDate);
+        final MyCalendarLunar monthEndLunar = new MyCalendarLunar(monthEndDate,MyApp.mIsSimplifiedChinese);
         boolean isBigMonth = (monthEndLunar.getDay()==30)?true:false;
         // Settting
         mChiLunarMonth.setText(mLunar.toChineseMM() + (isBigMonth ? "大" : "小"));
@@ -732,7 +732,7 @@ public class DailyFragment extends Fragment {
             mWisdomVerseFontSize = Math.min(mWisdomVerseFontSize, (int) Math.floor(wisdomVerseWidth / maxWisdomVerseChars));
             mWisdomVerseView.setTextSize(TypedValue.COMPLEX_UNIT_PX, mWisdomVerseFontSize);//DC: 2013.12.12
             if (DEBUG) {
-                Log.w(TAG, "Device="+getString(R.string.deviceType)+" screen=" + mScrType + " WisdomFontSize=" + mWisdomTextFontSize + " v="+mWisdomVerseFontSize + " height="+mWisdomTextView.getHeight()+" "+ mThisPageYear +"-"+(mThisPageZeroBasedMonth +1)+"-"+ mThisPageDay);
+                Log.w(TAG, "Device="+getString(R.string.widget_deviceType)+" screen=" + mScrType + " WisdomFontSize=" + mWisdomTextFontSize + " v="+mWisdomVerseFontSize + " height="+mWisdomTextView.getHeight()+" "+ mThisPageYear +"-"+(mThisPageZeroBasedMonth +1)+"-"+ mThisPageDay);
             }
         }
     }

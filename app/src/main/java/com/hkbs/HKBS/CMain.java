@@ -184,6 +184,16 @@ public class CMain extends MyActivity {
         }
         private int nbrOfItems=-1;
     }
+
+    @Override
+    protected void attachBaseContext(Context newBase) {
+        if (MyApp.mNewLangContext!=null) {
+            super.attachBaseContext(MyApp.mNewLangContext);
+        } else {
+            super.attachBaseContext(newBase);
+        }
+    }
+
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 //        //Test
@@ -533,7 +543,7 @@ public class CMain extends MyActivity {
             if (mainBtnPlan != null) {
                 Intent intent = CMain.this.getPackageManager().getLaunchIntentForPackage("org.arkist.cnote");
                 if (intent != null) { // Exist
-                    mainBtnPlan.setText("聖經行事曆");
+                    mainBtnPlan.setText(R.string.BibleApp);
                 }
             }
 
@@ -662,10 +672,10 @@ public class CMain extends MyActivity {
 
     private void popSelectTextImage(Context context, DialogInterface.OnClickListener listener) {
         AlertDialog.Builder builder = new AlertDialog.Builder(this);
-        builder.setTitle("請選擇分享:");
-        String[] options = {"文字", "圖像"};
+        builder.setTitle(R.string.main_select_share);
+        String[] options = {getString(R.string.main_share_text), getString(R.string.main_share_image)};
         builder.setItems(options, listener);
-        builder.setNegativeButton("取消", null);
+        builder.setNegativeButton(getString(R.string.BtnCancel), null);
         alert = builder.create();
         alert.show();
     }
@@ -712,7 +722,7 @@ public class CMain extends MyActivity {
                 "[" + cv.getAsString(MyDailyBread.wGoldVerse) + " RCUV]";
         MyClipboardManager mgr = new MyClipboardManager();
         mgr.copyToClipboard(CMain.this, verse);
-        Toast.makeText(getApplicationContext(), "已把金句放到剪貼薄", Toast.LENGTH_SHORT).show();
+        Toast.makeText(getApplicationContext(), R.string.main_copy_to_pasteboard, Toast.LENGTH_SHORT).show();
         //onClickSupport(CMain.this);
     }
 
@@ -793,7 +803,7 @@ public class CMain extends MyActivity {
         intent.setType("text/plain");
         intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "「" +
                 (IS_2016_VERSION ?context.getString(R.string.app_name):context.getString(R.string.app_name_2015)) +
-                "」經文分享");//getResources().getString(R.string.app_name)
+                "」"+getString(R.string.main_share_bible));//getResources().getString(R.string.app_name)
         intent.putExtra(android.content.Intent.EXTRA_TEXT, verse);
         startActivity(Intent.createChooser(intent, getResources().getString(R.string.app_name_2015)));
     }
@@ -954,6 +964,73 @@ public class CMain extends MyActivity {
             {"65", "猶大書", "猶"},
             {"66", "啟示錄", "啟"}
     };
+    static final public String[][] BOOKS_CHS = new String[][]{
+            {"1", "创世记", "创"},
+            {"2", "出埃及记", "出"},
+            {"3", "利未记", "利"},
+            {"4", "民数记", "民"},
+            {"5", "申命记", "申"},
+            {"6", "约书亚记", "书"},
+            {"7", "士师记", "士"},
+            {"8", "路得记", "得"},
+            {"9", "撒母耳记上", "撒上"},
+            {"10", "撒母耳记下", "撒下"},
+            {"11", "列王纪上", "王上"},
+            {"12", "列王纪下", "王下"},
+            {"13", "历代志上", "代上"},
+            {"14", "历代志下", "代下"},
+            {"15", "以斯拉记", "拉"},
+            {"16", "尼希米记", "尼"},
+            {"17", "以斯帖记", "斯"},
+            {"18", "约伯记", "伯"},
+            {"19", "诗篇", "诗"},
+            {"20", "箴言", "箴"},
+            {"21", "传道书", "传"},
+            {"22", "雅歌", "歌"},
+            {"23","以赛亚书","赛"},
+            {"24", "耶利米书", "耶"},
+            {"25", "耶利米哀歌", "哀"},
+            {"26", "以西结书", "结"},
+            {"27", "但以理书", "但"},
+            {"28", "何西阿书", "何"},
+            {"29", "约珥书", "珥"},
+            {"30", "阿摩司书", "摩"},
+            {"31", "俄巴底亚书", "俄"},
+            {"32", "约拿书", "拿"},
+            {"33", "弥迦书", "弥"},
+            {"34", "那鸿书", "鸿"},
+            {"35", "哈巴谷书", "哈"},
+            {"36", "西番雅书", "番"},
+            {"37", "哈该书", "该"},
+            {"38", "撒迦利亚书", "亚"},
+            {"39", "玛拉基书", "玛"},
+            {"40", "马太福音", "太"},
+            {"41", "马可福音", "可"},
+            {"42", "路加福音", "路"},
+            {"43", "约翰福音", "约"},
+            {"44", "使徒行传", "徒"},
+            {"45", "罗马书", "罗"},
+            {"46", "哥林多前书", "林前"},
+            {"47", "哥林多后书", "林后"},
+            {"48", "加拉太书", "加"},
+            {"49", "以弗所书", "弗"},
+            {"50", "腓立比书", "腓"},
+            {"51", "歌罗西书", "西"},
+            {"52", "帖撒罗尼迦前书", "帖前"},
+            {"53", "帖撒罗尼迦后书", "帖后"},
+            {"54", "提摩太前书", "提前"},
+            {"55", "提摩太后书", "提后"},
+            {"56", "提多书", "多"},
+            {"57", "腓利门书", "门"},
+            {"58", "希伯来书", "来"},
+            {"59", "雅各书", "雅"},
+            {"60", "彼得前书", "彼前"},
+            {"61", "彼得后书", "彼后"},
+            {"62", "约翰一书", "约一"},//约翰壹书4章18节
+            {"62", "约翰二书", "约二"},
+            {"62", "约翰三书", "约三"},
+            {"65", "犹大书", "犹"},
+            {"66", "启示录", "启"}};
     static String digits = "0123456789";
 
     static public Object[] getEBCV(String bcv) {
@@ -972,12 +1049,23 @@ public class CMain extends MyActivity {
         bookName=bookName.replace("壹","一");//約翰壹書4章18節
         bookName=bookName.replace("貳","二");
         bookName=bookName.replace("參","三");
+        String lang = AxTools.getPrefStr(MyApp.PREF_APP_LANG,"");
         String bookAbbrev = "";
-        for (int i = 0; i < BOOKS_CHT.length; i++) {
-            if (bookName.equalsIgnoreCase(BOOKS_CHT[i][1])) {
-                bookAbbrev = BOOKS_CHT[i][2];
-                bookNbr = i + 1;
-                break;
+        if (lang.equalsIgnoreCase(MyApp.PREF_APP_LANG_CN)){
+            for (int i = 0; i < BOOKS_CHS.length; i++) {
+                if (bookName.equalsIgnoreCase(BOOKS_CHS[i][1])) {
+                    bookAbbrev = BOOKS_CHS[i][2];
+                    bookNbr = i + 1;
+                    break;
+                }
+            }
+        } else {
+            for (int i = 0; i < BOOKS_CHT.length; i++) {
+                if (bookName.equalsIgnoreCase(BOOKS_CHT[i][1])) {
+                    bookAbbrev = BOOKS_CHT[i][2];
+                    bookNbr = i + 1;
+                    break;
+                }
             }
         }
         if (bookAbbrev.equalsIgnoreCase("")) {

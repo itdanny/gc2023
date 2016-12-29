@@ -24,7 +24,7 @@
                 android:gravity="center"
                 android:paddingLeft="18dp"
                 android:paddingRight="18dp"
-                android:text="技術支援"
+                android:text="@string/about_technicalSupport"
                 android:textStyle="bold"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
             
@@ -89,7 +89,7 @@
 
             <Button
                 android:id="@+id/supportGetSupport"
-                android:text="聯絡我們"
+                android:text="@string/about_contactUs"
                 android:gravity="center"
                 android:layout_gravity="center"
                 android:layout_width="wrap_content"
@@ -104,7 +104,7 @@
                 android:gravity="center"
                 android:paddingLeft="18dp"
                 android:paddingRight="18dp"
-                android:text="內容查詢"
+                android:text="@string/about_contentEnquiry"
                 android:textStyle="bold"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
             
@@ -196,7 +196,7 @@
                 android:text="@string/about_hkbs_address4"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
                 </LinearLayout>
-                
+
             <TextView
                 android:layout_width="match_parent"
                 android:layout_height="wrap_content"
@@ -205,7 +205,40 @@
                 android:gravity="center"
                 android:paddingLeft="18dp"
                 android:paddingRight="18dp"
-                android:text="日曆地區"
+                android:text="@string/about_langType"
+                android:textStyle="bold"
+                android:textAppearance="?android:attr/textAppearanceMedium" />
+            <LinearLayout
+                android:orientation="horizontal"
+                android:layout_marginTop="5dp"
+                android:layout_height="wrap_content"
+                android:layout_width="match_parent"
+                android:gravity="center_horizontal">
+                <Button
+                    android:id="@+id/xmlLangTraditional"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:text="@string/about_langTraditional"/>
+
+                <Button
+                    android:id="@+id/xmlLangSimplified"
+                    android:layout_marginLeft="5dp"
+                    android:layout_height="wrap_content"
+                    android:layout_width="wrap_content"
+                    android:layout_toLeftOf="@id/xmlLangTraditional"
+                    android:text="@string/about_langSimplified"/>
+
+            </LinearLayout>
+
+            <TextView
+                android:layout_width="match_parent"
+                android:layout_height="wrap_content"
+                android:layout_gravity="center"
+                android:layout_marginTop="25dp"
+                android:gravity="center"
+                android:paddingLeft="18dp"
+                android:paddingRight="18dp"
+                android:text="@string/about_calendarLocation"
                 android:textStyle="bold"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
             <TextView
@@ -216,7 +249,7 @@
                 android:gravity="center"
                 android:paddingLeft="18dp"
                 android:paddingRight="18dp"
-                android:text="@string/hk_holiday_term"
+                android:text="@string/about_hk_holiday_term"
                 android:textAppearance="?android:attr/textAppearanceSmall" />
             <!--
                 http://www.labour.gov.hk/tc/news/latest_holidays2016.htm
@@ -230,21 +263,19 @@
                     android:layout_height="wrap_content"
                 	android:layout_width="wrap_content"
                 	android:layout_centerHorizontal="true"
-                	android:text="香港"/>
-                
+                	android:text="@string/about_calendarHK"/>
                 <Button 
                     android:id="@+id/xmlSupportTaiWan"
                     android:layout_height="wrap_content"
                 	android:layout_width="wrap_content"
                 	android:layout_toLeftOf="@id/xmlSupportHongKong"
-                	android:text="台灣"/>
-                
+                	android:text="@string/about_calendarTW"/>
                 <Button 
                     android:id="@+id/xmlSupportOther"
                     android:layout_height="wrap_content"
                 	android:layout_width="wrap_content"
                 	android:layout_toRightOf="@id/xmlSupportHongKong"
-                	android:text="其他"/>
+                	android:text="@string/about_calendarOT"/>
             </RelativeLayout>
 
             <TextView
@@ -256,7 +287,7 @@
                 android:gravity="center"
                 android:paddingLeft="18dp"
                 android:paddingRight="18dp"
-                android:text="教會年曆"
+                android:text="@string/about_churchCalendar"
                 android:textStyle="bold"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
 
@@ -270,12 +301,12 @@
                     android:id="@+id/xmlSupportHolyDayOff"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:text="關閉"/>
+                    android:text="@string/disable"/>
                 <Button
                     android:id="@+id/xmlSupportHolyDayOn"
                     android:layout_height="wrap_content"
                     android:layout_width="wrap_content"
-                    android:text="開啟"/>
+                    android:text="@string/enable"/>
             </LinearLayout>
 
             <TextView
@@ -286,7 +317,7 @@
                 android:gravity="center"
                 android:paddingLeft="18dp"
                 android:paddingRight="18dp"
-                android:text="系統資訊"
+                android:text="@string/info"
                 android:textStyle="bold"
                 android:textAppearance="?android:attr/textAppearanceMedium" />
              <TextView

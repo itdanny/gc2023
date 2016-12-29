@@ -1,15 +1,15 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 23
+    compileSdkVersion 25
     buildToolsVersion '25.0.1'
 
     defaultConfig {
         applicationId "com.hkbs.HKBS"
-        minSdkVersion 8
+        minSdkVersion 9
         targetSdkVersion 23
-        versionCode 49
-        versionName "3.19"
+        versionCode 50
+        versionName "3.20"
     }
     buildTypes {
         release {
@@ -21,10 +21,10 @@ android {
 
 dependencies {
     compile files('libs/nineoldandroids-2.4.0.jar')
-    compile 'com.android.support:support-v4:23.3.0'
     compile project(':libArkist')
     compile project(':libFancyCoverFlow')
     compile project(':libSuperToasts')
+    compile 'com.android.support:support-v4:25.1.0'
 }
 /*all*.exclude group: 'com.android.support', module: 'support-v4'*/
 configurations {

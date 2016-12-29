@@ -31,6 +31,8 @@ import com.hkbs.HKBS.arkCalendar.MyCalendarLunar;
 import com.hkbs.HKBS.arkUtil.MySquareView;
 import com.hkbs.HKBS.arkUtil.MyUtil;
 
+import org.arkist.share.AxTools;
+
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -55,12 +57,15 @@ public class CalendarAdapter extends BaseAdapter {
 	private int gridType;
 	private String defaultLang;
 	private Calendar today;
+    static private SimpleDateFormat mSdf;
 	
 	//private Calendar today = Calendar.getInstance();
 	static public Map<String, String> holidayMap = new HashMap<String, String>();
 		//static public String holidayCityName = "";
 		
 	public CalendarAdapter(Context actContext, Calendar monthCalendar, int gridType) {
+        boolean isTraditionalChinese = AxTools.getPrefStr(MyApp.PREF_APP_LANG,MyApp.PREF_APP_LANG_TW).contentEquals(MyApp.PREF_APP_LANG_TW);
+        mSdf = new SimpleDateFormat("EEE",isTraditionalChinese?Locale.TRADITIONAL_CHINESE:Locale.SIMPLIFIED_CHINESE);
 		defaultLang = MyUtil.getPrefStr(MyUtil.PREF_LANG, "HK");
 		selectedDate = (Calendar) monthCalendar.clone();
 		today = Calendar.getInstance();
@@ -159,10 +164,10 @@ public class CalendarAdapter extends BaseAdapter {
 			if (!defaultLang.equals(MyUtil.PREF_LANG_EN)){				
 				if (IS_SHOW_LUNAR_DAY_ON_SUNDAY_ONLY){
 					if (curCal.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY){
-						output = output + "<br><small>("+(new MyCalendarLunar(curDayEvents.getCalendar())).toMMDD()+")</small>";
+						output = output + "<br><small>("+(new MyCalendarLunar(curDayEvents.getCalendar(),MyApp.mIsSimplifiedChinese)).toMMDD()+")</small>";
 					}
 				} else {
-					MyCalendarLunar lunarDay = new MyCalendarLunar(curDayEvents.getCalendar());
+					MyCalendarLunar lunarDay = new MyCalendarLunar(curDayEvents.getCalendar(),MyApp.mIsSimplifiedChinese);
 ////					if (lunarDay.getDay()==1){
 ////						output = output + "<br><font color=\"blue\"><small>"+lunarDay.toChineseMM()+"</small></font>";
 ////					} else if (lunarDay.getDay()==15){
@@ -293,7 +298,7 @@ public class CalendarAdapter extends BaseAdapter {
 			daysTitles = new MyDayEvents[7];
 			int dayName = FIRST_DAY_OF_WEEK;// 1
 			for (int i = 0; i < 7; i++) {
-				daysTitles[i] = new MyDayEvents(MyDayEvents.TYPE_TITLE, getShortDayName(dayName));				
+				daysTitles[i] = new MyDayEvents(MyDayEvents.TYPE_TITLE, getShortDayName(dayName));
 				dayName++;
 				if (dayName > 6) {
 					dayName = 0;
@@ -316,10 +321,11 @@ public class CalendarAdapter extends BaseAdapter {
 	}
 
 	public static String getShortDayName(int day) {
-		Calendar c = Calendar.getInstance();
-		c.set(2013, 0, 5, 0, 0, 0); // 2013.1.5 is Saturday
-		c.add(Calendar.DAY_OF_MONTH, day);
-		return String.format("%ta", c);
+		Calendar cal = Calendar.getInstance();
+		cal.set(2013, 0, 5, 0, 0, 0); // 2013.1.5 is Saturday
+		cal.add(Calendar.DAY_OF_MONTH, day);
+		return mSdf.format(cal.getTime());
+		//return String.format("%ta", cal);
 	}
 
 }

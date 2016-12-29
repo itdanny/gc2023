@@ -41,19 +41,19 @@ public class MyAlert extends Dialog {
 	public interface CancelListener {
         public void reject(MyAlert alert);
     }
-	static public void show(Activity activity, String message){
-		if (activity!=null && !activity.isFinishing()) {
-			MyAlert alert = new MyAlert(activity, message);
-			alert.show();
-		}
-	}
-	public MyAlert(Activity activity, String message) {
-		super(activity);
-		this.message = message;
-		this.okListener = null;
-		this.cancelListener = null;
-		initSetup();		
-	}
+//	static public void show(Activity activity, String message){
+//		if (activity!=null && !activity.isFinishing()) {
+//			MyAlert alert = new MyAlert(activity, message);
+//			alert.show();
+//		}
+//	}
+//	public MyAlert(Activity activity, String message) {
+//		super(activity);
+//		this.message = message;
+//		this.okListener = null;
+//		this.cancelListener = null;
+//		initSetup();
+//	}
 	static public void show(Activity activity, String message, OkListener okListener) {
 		if (activity!=null && !activity.isFinishing()) {
 			MyAlert alert = new MyAlert(activity, message, okListener);

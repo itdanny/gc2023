@@ -1,10 +1,16 @@
 package com.hkbs.HKBS;
 
+import android.app.Activity;
+import android.app.ActivityManager;
+import android.app.AlarmManager;
+import android.app.PendingIntent;
+import android.content.Context;
 import android.content.Intent;
 import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
+import android.os.Process;
 import android.text.method.LinkMovementMethod;
 import android.util.DisplayMetrics;
 import android.view.Display;
@@ -16,7 +22,10 @@ import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.hkbs.HKBS.arkUtil.MyAlert;
 import com.hkbs.HKBS.arkUtil.MyUtil;
+
+import org.arkist.share.AxDebug;
 
 import java.util.Calendar;
 
@@ -28,11 +37,14 @@ public class SupportActivity extends MyActivity implements OnClickListener {
 	private Button btnOther;
     private Button btnHolyDayOn;
     private Button btnHolyDayOff;
-	
+    private Button btnLangTradition;
+    private Button btnLangSimpified;
+
 	public SupportActivity() {
 		
 	}
-	@Override
+
+    @Override
 	public void onCreate(Bundle savedInstanceState) {
 		super.onCreate(savedInstanceState);
 		
@@ -58,9 +70,15 @@ public class SupportActivity extends MyActivity implements OnClickListener {
         btnGetSupport = (Button) findViewById(R.id.supportGetSupport);
         btnGetSupport.setOnClickListener(this);
 
-		btnTaiWan = (Button) findViewById(R.id.xmlSupportTaiWan);
+        btnLangTradition = (Button) findViewById(R.id.xmlLangTraditional);
+        btnLangTradition.setOnClickListener(this);
+
+        btnLangSimpified = (Button) findViewById(R.id.xmlLangSimplified);
+        btnLangSimpified.setOnClickListener(this);
+
+        btnTaiWan = (Button) findViewById(R.id.xmlSupportTaiWan);
 		btnTaiWan.setOnClickListener(this);
-		
+
 		btnHongKong = (Button) findViewById(R.id.xmlSupportHongKong);
 		btnHongKong.setOnClickListener(this);
 
@@ -70,6 +88,7 @@ public class SupportActivity extends MyActivity implements OnClickListener {
 		btnOther.setOnClickListener(this);
 
         setCountryColor();
+        setLangColor();
 
         btnHolyDayOn = (Button) findViewById(R.id.xmlSupportHolyDayOn);
         btnHolyDayOn.setOnClickListener(this);
@@ -96,21 +115,22 @@ public class SupportActivity extends MyActivity implements OnClickListener {
             //
         }
         String body =
-                "牌子:"+android.os.Build.BRAND+"\n"+
-                "型號:"+android.os.Build.MODEL+"\n"+
-                "系統版本:"+android.os.Build.VERSION.RELEASE+"\n"+
-                "程式版本:"+appVersionName+"\n"+
-                "有效開始日："+dailyBread.getValidFrDate().get(Calendar.YEAR)+"."+
-                (dailyBread.getValidFrDate().get(Calendar.MONTH)+1)+"."+
-                dailyBread.getValidFrDate().get(Calendar.DAY_OF_MONTH)+"\n"+
-                "有效結束日："+dailyBread.getValidToDate().get(Calendar.YEAR)+"."+
-                (dailyBread.getValidToDate().get(Calendar.MONTH)+1)+"."+
-                dailyBread.getValidToDate().get(Calendar.DAY_OF_MONTH)+"\n"+
+                getString(R.string.infoBrand)+android.os.Build.BRAND+"\n"+
+                getString(R.string.infoModel)+android.os.Build.MODEL+"\n"+
+                getString(R.string.infoSysVersion)+android.os.Build.VERSION.RELEASE+"\n"+
+                getString(R.string.infoAppVersion)+appVersionName+"\n"+
+                getString(R.string.infoFrDate)+dailyBread.getValidFrDate().get(Calendar.YEAR)+"."+
+                        (dailyBread.getValidFrDate().get(Calendar.MONTH)+1)+"."+
+                        dailyBread.getValidFrDate().get(Calendar.DAY_OF_MONTH)+"\n"+
+                getString(R.string.infoToDate)+dailyBread.getValidToDate().get(Calendar.YEAR)+"."+
+                        (dailyBread.getValidToDate().get(Calendar.MONTH)+1)+"."+
+                        dailyBread.getValidToDate().get(Calendar.DAY_OF_MONTH)+"\n"+
                 "SDK:"+Build.VERSION.SDK_INT+"\n"+
-                "畫面:"+CMain.mScreenType+"\n"+
+                getString(R.string.infoScreenType)+CMain.mScreenType+"\n"+
 //                      "大小:"+String.format("%.2f",screenInches)+"\n"+
-                "密度:"+MyUtil.scaleDensity(SupportActivity.this)+"\n"+
-                "解析度:"+MyUtil.widthPixels(SupportActivity.this)+"x"+MyUtil.heightPixels(SupportActivity.this)+"\n";
+                getString(R.string.infoDensity)+MyUtil.scaleDensity(SupportActivity.this)+"\n"+
+                getString(R.string.infoResolution)+MyUtil.widthPixels(SupportActivity.this)+"x"+
+                        MyUtil.heightPixels(SupportActivity.this)+"\n";
         return body;
     }
     private void setRealDeviceSizeInPixels() {
@@ -167,6 +187,16 @@ public class SupportActivity extends MyActivity implements OnClickListener {
             btnHolyDayOff.setTextColor(getResources().getColor(R.color.white));
         }
     }
+    private void setLangColor(){
+        btnLangSimpified.setTextColor(getResources().getColor(R.color.white));
+        btnLangTradition.setTextColor(getResources().getColor(R.color.white));
+        String lang = MyUtil.getPrefStr(MyApp.PREF_APP_LANG, MyApp.PREF_APP_LANG_TW);
+        if (lang.equalsIgnoreCase(MyApp.PREF_APP_LANG_CN)){
+            btnLangSimpified.setTextColor(getResources().getColor(R.color.black));
+        } else {
+            btnLangTradition.setTextColor(getResources().getColor(R.color.black));
+        }
+    }
 	private void setCountryColor(){
 		btnTaiWan.setTextColor(getResources().getColor(R.color.white));
 		btnHongKong.setTextColor(getResources().getColor(R.color.white));
@@ -185,17 +215,17 @@ public class SupportActivity extends MyActivity implements OnClickListener {
 		switch (v.getId()) {
             case R.id.supportGetSupport:
                 if (android.os.Build.VERSION.SDK_INT<15) {
-                    Toast.makeText(SupportActivity.this, "如有任何問題，請電郵到 info@arkirg.org。謝謝。", Toast.LENGTH_LONG).show();
+                    Toast.makeText(SupportActivity.this,R.string.support_contact, Toast.LENGTH_LONG).show();
                 } else {
                     try {
                         Intent intent = new Intent(Intent.ACTION_SENDTO);
-                        intent.setData(Uri.parse("mailto:"));
+                        intent.setData(Uri.parse(getString(R.string.support_mail_to)));
                         intent.putExtra(Intent.EXTRA_EMAIL, new String[]{"info@arkist.org"});
-                        intent.putExtra(Intent.EXTRA_SUBJECT, "「全年金句日曆」查詢");
-                        intent.putExtra(Intent.EXTRA_TEXT, "\n以下是正使用裝置資料:\n" + getAppInfo() + "\n");
-                        startActivity(Intent.createChooser(intent, "電郵 經..."));
+                        intent.putExtra(Intent.EXTRA_SUBJECT, getString(R.string.support_subject));
+                        intent.putExtra(Intent.EXTRA_TEXT, "\n"+getString(R.string.support_device_info)+"\n" + getAppInfo() + "\n");
+                        startActivity(Intent.createChooser(intent, getString(R.string.support_mail_via)));
                     } catch (Exception e) {
-                        Toast.makeText(SupportActivity.this, "如有任何問題，請電郵到 info@arkirg.org。謝謝。", Toast.LENGTH_LONG).show();
+                        Toast.makeText(SupportActivity.this,R.string.support_contact, Toast.LENGTH_LONG).show();
                     }
                 }
             break;
@@ -211,6 +241,34 @@ public class SupportActivity extends MyActivity implements OnClickListener {
 			MyUtil.setPrefStr(MyUtil.PREF_COUNTRY, "CN");
 			setCountryColor();
 			break;
+        case R.id.xmlLangTraditional:
+            if (!MyUtil.getPrefStr(MyApp.PREF_APP_LANG, MyApp.PREF_APP_LANG_TW).equalsIgnoreCase(MyApp.PREF_APP_LANG_TW)){
+                MyUtil.setPrefStr(MyApp.PREF_APP_LANG, MyApp.PREF_APP_LANG_TW);
+                setLangColor();
+                MyAlert.show(SupportActivity.this, getString(R.string.support_restart), new MyAlert.OkListener() {
+                            @Override
+                            public void ready(MyAlert alert) {
+                                restart(SupportActivity.this);
+                            }
+                        });
+            }
+            break;
+        case R.id.xmlLangSimplified:
+            if (!MyUtil.getPrefStr(MyApp.PREF_APP_LANG, MyApp.PREF_APP_LANG_CN).equalsIgnoreCase(MyApp.PREF_APP_LANG_CN)) {
+                MyUtil.setPrefStr(MyApp.PREF_APP_LANG, MyApp.PREF_APP_LANG_CN);
+                setLangColor();
+                // If use simplified word, don't use traditional calendar
+                    MyUtil.setPrefStr(MyUtil.PREF_COUNTRY, "CN");
+                    setCountryColor();
+                // Restart
+                MyAlert.show(SupportActivity.this, getString(R.string.support_restart), new MyAlert.OkListener() {
+                    @Override
+                    public void ready(MyAlert alert) {
+                        restart(SupportActivity.this);
+                    }
+                });
+            }
+            break;
         case R.id.xmlSupportHolyDayOn:
             MyUtil.setPrefInt(MyUtil.PREF_HOLY_DAY, 1);
             setHolyDayColor();
@@ -222,4 +280,38 @@ public class SupportActivity extends MyActivity implements OnClickListener {
 		}
         CWidgetBase.broadcastMe(SupportActivity.this);
 	}
+    private void restart(Activity activity){
+        Intent intent = activity.getPackageManager().getLaunchIntentForPackage(activity.getPackageName());
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        //intent.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+        int mPendingIntentId = 99999;
+        PendingIntent mPendingIntent = PendingIntent.getActivity(activity, mPendingIntentId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        AlarmManager mgr = (AlarmManager) activity.getSystemService(Context.ALARM_SERVICE);
+        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 400, mPendingIntent);
+
+        if (activity!=null) {
+            try {
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                    activity.finishAndRemoveTask();
+                    activity.finishAffinity();
+                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+                    activity.finishAffinity();
+                } else {
+                    if (!activity.isFinishing()) {
+                        activity.finish();
+                    }
+                }
+            } catch (Exception e){
+                AxDebug.error(this,e.getMessage());
+            }
+        }
+
+//        ActivityManager am = (ActivityManager) activity.getSystemService(Activity.ACTIVITY_SERVICE);
+//        String currentPackageName = activity.getPackageName();
+//        am.killBackgroundProcesses(currentPackageName);
+
+        Process.killProcess(Process.myPid());
+    }
 }

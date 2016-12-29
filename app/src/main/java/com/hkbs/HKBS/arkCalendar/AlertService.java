@@ -17,6 +17,7 @@ package com.hkbs.HKBS.arkCalendar;
 
 // 4.1.2_r1
 
+import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.AlarmManager;
 import android.app.Notification;
@@ -27,8 +28,8 @@ import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.database.Cursor;
-import android.media.AudioManager;
 import android.net.Uri;
 import android.os.Bundle;
 import android.os.Handler;
@@ -40,8 +41,8 @@ import android.os.Process;
 import android.provider.CalendarContract;
 import android.provider.CalendarContract.Attendees;
 import android.provider.CalendarContract.CalendarAlerts;
+import android.support.v4.app.ActivityCompat;
 import android.text.TextUtils;
-import android.text.format.DateFormat;
 import android.text.format.DateUtils;
 import android.text.format.Time;
 import android.util.Log;
@@ -49,9 +50,7 @@ import android.util.Log;
 import java.util.ArrayList;
 import java.util.HashMap;
 import java.util.List;
-import java.util.Locale;
 import java.util.TimeZone;
-
 
 
 import com.hkbs.HKBS.arkUtil.MyUtil;
@@ -61,26 +60,26 @@ import com.hkbs.HKBS.arkUtil.MyUtil;
  */
 @SuppressLint("NewApi")
 public class AlertService extends Service {
-	public static final int NEW_API_VERSION=16;//Should set to 16; CalendarContract is API 14; build(); addAction() is API16
+    public static final int NEW_API_VERSION = 16;//Should set to 16; CalendarContract is API 14; build(); addAction() is API16
     static final boolean DEBUG = MyUtil.DEBUG_APP && false;
     private static final String TAG = "AlertService";
 
     private volatile Looper mServiceLooper;
     private volatile ServiceHandler mServiceHandler;
 
-    static final String[] ALERT_PROJECTION = new String[] {
-        CalendarAlerts._ID,                     // 0
-        CalendarAlerts.EVENT_ID,                // 1
-        CalendarAlerts.STATE,                   // 2
-        CalendarAlerts.TITLE,                   // 3
-        CalendarAlerts.EVENT_LOCATION,          // 4
-        CalendarAlerts.SELF_ATTENDEE_STATUS,    // 5
-        CalendarAlerts.ALL_DAY,                 // 6
-        CalendarAlerts.ALARM_TIME,              // 7
-        CalendarAlerts.MINUTES,                 // 8
-        CalendarAlerts.BEGIN,                   // 9
-        CalendarAlerts.END,                     // 10
-        CalendarAlerts.DESCRIPTION,             // 11 // API 16 or later
+    static final String[] ALERT_PROJECTION = new String[]{
+            CalendarAlerts._ID,                     // 0
+            CalendarAlerts.EVENT_ID,                // 1
+            CalendarAlerts.STATE,                   // 2
+            CalendarAlerts.TITLE,                   // 3
+            CalendarAlerts.EVENT_LOCATION,          // 4
+            CalendarAlerts.SELF_ATTENDEE_STATUS,    // 5
+            CalendarAlerts.ALL_DAY,                 // 6
+            CalendarAlerts.ALARM_TIME,              // 7
+            CalendarAlerts.MINUTES,                 // 8
+            CalendarAlerts.BEGIN,                   // 9
+            CalendarAlerts.END,                     // 10
+            CalendarAlerts.DESCRIPTION,             // 11 // API 16 or later
     };
 
     private static final String DISMISS_OLD_SELECTION = CalendarAlerts.END + "<? AND "
@@ -103,7 +102,7 @@ public class AlertService extends Service {
         ArrayList<NotificationWrapper> mNw;
 
         public NotificationWrapper(Notification n, int notificationId, long eventId,
-                long startMillis, long endMillis, boolean doPopup) {
+                                   long startMillis, long endMillis, boolean doPopup) {
             mNotification = n;
             mEventId = eventId;
             mBegin = startMillis;
@@ -119,7 +118,7 @@ public class AlertService extends Service {
 
         public void add(NotificationWrapper nw) {
             if (mNw == null) {
-                mNw = new ArrayList<NotificationWrapper>();
+                mNw = new ArrayList<>();
             }
             mNw.add(nw);
         }
@@ -148,15 +147,15 @@ public class AlertService extends Service {
             mNm.cancelAll();
         }
 
-        @Override 
-		public void notify(int id, NotificationWrapper notification) {
-			mNm.notify(id, notification.mNotification);			
-		}
+        @Override
+        public void notify(int id, NotificationWrapper notification) {
+            mNm.notify(id, notification.mNotification);
+        }
 
-		@Override
-		public void notify(String tag, int id, NotificationWrapper nw) {
-			mNm.notify(tag, id, nw.mNotification);
-		}
+        @Override
+        public void notify(String tag, int id, NotificationWrapper nw) {
+            mNm.notify(tag, id, nw.mNotification);
+        }
     }
 
     void processMessage(Message msg) { // Called when start service by AlertReceiver
@@ -170,17 +169,22 @@ public class AlertService extends Service {
                     + " Action = " + action);
         }
 
-        if (action.equals(Intent.ACTION_PROVIDER_CHANGED) ||
-                action.equals(android.provider.CalendarContract.ACTION_EVENT_REMINDER) ||
-                action.equals(Intent.ACTION_LOCALE_CHANGED)) {
-            updateAlertNotification(this);
-        } else if (action.equals(Intent.ACTION_BOOT_COMPLETED)
-                || action.equals(Intent.ACTION_TIME_CHANGED)) {
-            doTimeChanged();
-        } else if (action.equals(AlertReceiver.ACTION_DISMISS_OLD_REMINDERS)) {
-            dismissOldAlerts(this);
-        } else {
-            Log.w(TAG, "Invalid action: " + action);
+        switch (action) {
+            case Intent.ACTION_PROVIDER_CHANGED:
+            case CalendarContract.ACTION_EVENT_REMINDER:
+            case Intent.ACTION_LOCALE_CHANGED:
+                updateAlertNotification(this);
+                break;
+            case Intent.ACTION_BOOT_COMPLETED:
+            case Intent.ACTION_TIME_CHANGED:
+                doTimeChanged();
+                break;
+            case AlertReceiver.ACTION_DISMISS_OLD_REMINDERS:
+                dismissOldAlerts(this);
+                break;
+            default:
+                Log.w(TAG, "Invalid action: " + action);
+                break;
         }
     }
 
@@ -189,21 +193,31 @@ public class AlertService extends Service {
         final long currentTime = System.currentTimeMillis();
         ContentValues vals = new ContentValues();
         vals.put(CalendarAlerts.STATE, CalendarAlerts.STATE_DISMISSED);
-        cr.update(CalendarAlerts.CONTENT_URI, vals, DISMISS_OLD_SELECTION, new String[] {
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.WRITE_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+            // TODO: Consider calling
+            //    ActivityCompat#requestPermissions
+            // here to request the missing permissions, and then overriding
+            //   public void onRequestPermissionsResult(int requestCode, String[] permissions,
+            //                                          int[] grantResults)
+            // to handle the case where the user grants the permission. See the documentation
+            // for ActivityCompat#requestPermissions for more details.
+            return;
+        }
+        cr.update(CalendarAlerts.CONTENT_URI, vals, DISMISS_OLD_SELECTION, new String[]{
                 Long.toString(currentTime), Integer.toString(CalendarAlerts.STATE_SCHEDULED)
         });
     }
 
     static boolean updateAlertNotification(Context context) {
-    	if (DEBUG) MyUtil.log(TAG,"updateAlertNotification");
-    	ContentResolver cr = context.getContentResolver();
+        if (DEBUG) MyUtil.log(TAG, "updateAlertNotification");
+        ContentResolver cr = context.getContentResolver();
         NotificationMgr nm = new NotificationMgrWrapper(
                 (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE));
         final long currentTime = System.currentTimeMillis();
         //SharedPreferences prefs = GeneralPreferences.getSharedPreferences(context);
 
         if (DEBUG) MyUtil.log(TAG, "Beginning updateAlertNotification");
-        
+
 //        if (!prefs.getBoolean(GeneralPreferences.KEY_ALERTS, true)) {
 //            if (DEBUG) {
 //                Log.d(TAG, "alert preference is OFF");
@@ -214,15 +228,19 @@ public class AlertService extends Service {
 //            nm.cancelAll();
 //            return true;
 //        }
-        if (MyUtil.getPrefStr(MyUtil.PREF_ALERT, "Y").equals("N")){
-        	if (DEBUG) MyUtil.log(TAG,"alert preference is OFF");
-        	nm.cancelAll();
-        	return true;
+        if (MyUtil.getPrefStr(MyUtil.PREF_ALERT, "Y").equals("N")) {
+            if (DEBUG) MyUtil.log(TAG, "alert preference is OFF");
+            nm.cancelAll();
+            return true;
         }
-        Cursor alertCursor = cr.query(CalendarAlerts.CONTENT_URI, ALERT_PROJECTION,
-                (Api8.ACTIVE_ALERTS_SELECTION + currentTime), Api8.ACTIVE_ALERTS_SELECTION_ARGS,
-                Api8.ACTIVE_ALERTS_SORT);
-
+        Cursor alertCursor;
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+            alertCursor = null;
+        } else {
+            alertCursor = cr.query(CalendarAlerts.CONTENT_URI, ALERT_PROJECTION,
+                    (Api8.ACTIVE_ALERTS_SELECTION + currentTime), Api8.ACTIVE_ALERTS_SELECTION_ARGS,
+                    Api8.ACTIVE_ALERTS_SORT);
+        }
         if (alertCursor == null || alertCursor.getCount() == 0) {
             if (alertCursor != null) alertCursor.close();
             if (DEBUG) MyUtil.log(TAG, "No fired or scheduled alerts");
@@ -237,15 +255,15 @@ public class AlertService extends Service {
     }
 
     public static boolean generateAlerts(Context context, NotificationMgr nm,
-            Cursor alertCursor, final long currentTime,
-            final int maxNotifications) {
-    	if (DEBUG) MyUtil.log(TAG,"generateAlertCount:"+ alertCursor.getCount());
-        
+                                         Cursor alertCursor, final long currentTime,
+                                         final int maxNotifications) {
+        if (DEBUG) MyUtil.log(TAG, "generateAlertCount:" + alertCursor.getCount());
+
         // Process the query results and bucketize events.
-        ArrayList<NotificationInfo> highPriorityEvents = new ArrayList<NotificationInfo>();
-        ArrayList<NotificationInfo> mediumPriorityEvents = new ArrayList<NotificationInfo>();
-        ArrayList<NotificationInfo> lowPriorityEvents = new ArrayList<NotificationInfo>();
-        
+        ArrayList<NotificationInfo> highPriorityEvents = new ArrayList<>();
+        ArrayList<NotificationInfo> mediumPriorityEvents = new ArrayList<>();
+        ArrayList<NotificationInfo> lowPriorityEvents = new ArrayList<>();
+
         int numFired = processQuery(alertCursor, context, currentTime, highPriorityEvents,
                 mediumPriorityEvents, lowPriorityEvents);
         MyUtil.setPrefInt(MyUtil.PREF_ALERT_NBR_OF_FIRES, numFired);
@@ -311,18 +329,18 @@ public class AlertService extends Service {
             } else {
                 // Multiple expired events are listed in a digest.
                 notification = AlertReceiver.makeDigestNotification(context,
-                    lowPriorityEvents, expiredDigestTitle, false);
+                        lowPriorityEvents, expiredDigestTitle, false);
             }
 
             // Add options for a quiet update.
             addNotificationOptions(notification, true, expiredDigestTitle,
-            		Api8.getVibrate(context),
+                    Api8.getVibrate(context),
                     MyUtil.getPrefStr(MyUtil.PREF_ALERT_RINGTONE, ""));
 
             if (DEBUG) {
-              Log.d(TAG, "Quietly posting digest alarm notification, numEvents:" + numLowPriority
-                      + ", notificationId:" + AlertUtils.EXPIRED_GROUP_NOTIFICATION_ID);
-          }
+                Log.d(TAG, "Quietly posting digest alarm notification, numEvents:" + numLowPriority
+                        + ", notificationId:" + AlertUtils.EXPIRED_GROUP_NOTIFICATION_ID);
+            }
 
             // Post the new notification for the group.
             nm.notify(AlertUtils.EXPIRED_GROUP_NOTIFICATION_ID, notification);
@@ -368,9 +386,9 @@ public class AlertService extends Service {
      * can show.
      */
     static void redistributeBuckets(ArrayList<NotificationInfo> highPriorityEvents,
-            ArrayList<NotificationInfo> mediumPriorityEvents,
-            ArrayList<NotificationInfo> lowPriorityEvents, int maxNotifications) {
-    	if (DEBUG) MyUtil.log(TAG,"redistributeBuckets");
+                                    ArrayList<NotificationInfo> mediumPriorityEvents,
+                                    ArrayList<NotificationInfo> lowPriorityEvents, int maxNotifications) {
+        if (DEBUG) MyUtil.log(TAG, "redistributeBuckets");
         // If too many high priority alerts, shift the remaining high priority and all the
         // medium priority ones to the low priority bucket.  Note that order is important
         // here; these lists are sorted by descending start time.  Maintain that ordering
@@ -412,7 +430,7 @@ public class AlertService extends Service {
     }
 
     private static void logEventIdsBumped(List<NotificationInfo> list1,
-            List<NotificationInfo> list2) {
+                                          List<NotificationInfo> list2) {
         StringBuilder ids = new StringBuilder();
         if (list1 != null) {
             for (NotificationInfo info : list1) {
@@ -436,7 +454,7 @@ public class AlertService extends Service {
     }
 
     private static long getNextRefreshTime(NotificationInfo info, long currentTime) {
-    	if (DEBUG) MyUtil.log(TAG,"getNextRefreshTime");
+        if (DEBUG) MyUtil.log(TAG, "getNextRefreshTime");
         // We change an event's priority bucket at 15 minutes into the event (so recently started
         // concurrent events stay high priority)
         long nextRefreshTime = Long.MAX_VALUE;
@@ -465,12 +483,12 @@ public class AlertService extends Service {
      *     a quiet update.
      */
     static int processQuery(final Cursor alertCursor, final Context context,
-            final long currentTime, ArrayList<NotificationInfo> highPriorityEvents,
-            ArrayList<NotificationInfo> mediumPriorityEvents,
-            ArrayList<NotificationInfo> lowPriorityEvents) {
-    	if (DEBUG) MyUtil.log(TAG,"processQuery");
+                            final long currentTime, ArrayList<NotificationInfo> highPriorityEvents,
+                            ArrayList<NotificationInfo> mediumPriorityEvents,
+                            ArrayList<NotificationInfo> lowPriorityEvents) {
+        if (DEBUG) MyUtil.log(TAG, "processQuery");
         ContentResolver cr = context.getContentResolver();
-        HashMap<Long, NotificationInfo> eventIds = new HashMap<Long, NotificationInfo>();
+        HashMap<Long, NotificationInfo> eventIds = new HashMap<>();
         int numFired = 0;
         try {
             while (alertCursor.moveToNext()) {
@@ -638,6 +656,7 @@ public class AlertService extends Service {
         }
         return numFired;
     }
+
     /**
      * Convert given UTC time into current local time. This assumes it is for an
      * allday event and will adjust the time to be on a midnight boundary.
@@ -665,6 +684,7 @@ public class AlertService extends Service {
         recycle.timezone = Time.TIMEZONE_UTC;
         return recycle.normalize(true);
     }
+
     /**
      * High priority cutoff should be 1/4 event duration or 15 min, whichever is longer.
      */
@@ -684,9 +704,10 @@ public class AlertService extends Service {
         }
         return digestTitle.toString();
     }
+
     private static void postNotification(NotificationInfo info, String summaryText,
-            Context context, boolean highPriority, NotificationMgr notificationMgr, int notificationId) {
-    	if (DEBUG) MyUtil.log(TAG,"postNotification");
+                                         Context context, boolean highPriority, NotificationMgr notificationMgr, int notificationId) {
+        if (DEBUG) MyUtil.log(TAG, "postNotification");
         String tickerText = getTickerText(info.eventName, info.location);
         boolean isDoPopup = MyUtil.getPrefStr(MyUtil.PREF_ALERT_POPUP, "N").equals("Y");
         NotificationWrapper notification = AlertReceiver.makeExpandingNotification(context,
@@ -697,14 +718,14 @@ public class AlertService extends Service {
         boolean quietUpdate = true;
         String ringtone = "";//NotificationPrefs.EMPTY_RINGTONE;
         if (info.newAlert) {
-            quietUpdate =  MyUtil.getPrefInt(MyUtil.PREF_ALERT_NBR_OF_FIRES, 0)==0;//prefs.quietUpdate;
+            quietUpdate = MyUtil.getPrefInt(MyUtil.PREF_ALERT_NBR_OF_FIRES, 0) == 0;//prefs.quietUpdate;
 
             // If we've already played a ringtone, don't play any more sounds so only
             // 1 sound per group of notifications.
             ringtone = MyUtil.getPrefStr(MyUtil.PREF_ALERT_RINGTONE, "");// prefs.getRingtoneAndSilence();
         }
         addNotificationOptions(notification, quietUpdate, tickerText,
-        		Api8.getVibrate(context),ringtone);
+                Api8.getVibrate(context), ringtone);
 
         // Post the notification.
         notificationMgr.notify(notificationId, notification);
@@ -716,6 +737,7 @@ public class AlertService extends Service {
                     + (highPriority ? ", high-priority" : ""));
         }
     }
+
     private static String getTickerText(String eventName, String location) {
         String tickerText = eventName;
         if (!TextUtils.isEmpty(location)) {
@@ -735,7 +757,7 @@ public class AlertService extends Service {
         boolean newAlert;
 
         NotificationInfo(String eventName, String location, String description, long startMillis,
-                long endMillis, long eventId, boolean allDay, boolean newAlert) {
+                         long endMillis, long eventId, boolean allDay, boolean newAlert) {
             this.eventName = eventName;
             this.location = location;
             this.description = description;
@@ -748,11 +770,11 @@ public class AlertService extends Service {
     }
 
     private static void addNotificationOptions(NotificationWrapper nw, boolean quietUpdate,
-            String tickerText, boolean defaultVibrate, String reminderRingtone) {
+                                               String tickerText, boolean defaultVibrate, String reminderRingtone) {
         Notification notification = nw.mNotification;
         notification.flags |= Notification.FLAG_SHOW_LIGHTS;
         notification.defaults |= Notification.DEFAULT_LIGHTS;
-        
+
         // Quietly update notification bar. Nothing new. Maybe something just got deleted.
         if (!quietUpdate) {
             // Flash ticker in status bar
@@ -860,7 +882,7 @@ public class AlertService extends Service {
 //    }
 
     private void doTimeChanged() {
-    	if (DEBUG) MyUtil.log(TAG,"doTimeChanged");
+        if (DEBUG) MyUtil.log(TAG, "doTimeChanged");
         ContentResolver cr = getContentResolver();
         Object service = getSystemService(Context.ALARM_SERVICE);
         AlarmManager manager = (AlarmManager) service;
@@ -869,21 +891,22 @@ public class AlertService extends Service {
         rescheduleMissedAlarms(cr, this, manager);
         updateAlertNotification(this);
     }
+
     private static final String SORT_ORDER_ALARMTIME_ASC =
             CalendarContract.CalendarAlerts.ALARM_TIME + " ASC";
 
     private static final String WHERE_RESCHEDULE_MISSED_ALARMS =
             CalendarContract.CalendarAlerts.STATE
-            + "="
-            + CalendarContract.CalendarAlerts.STATE_SCHEDULED
-            + " AND "
-            + CalendarContract.CalendarAlerts.ALARM_TIME
-            + "<?"
-            + " AND "
-            + CalendarContract.CalendarAlerts.ALARM_TIME
-            + ">?"
-            + " AND "
-            + CalendarContract.CalendarAlerts.END + ">=?";
+                    + "="
+                    + CalendarContract.CalendarAlerts.STATE_SCHEDULED
+                    + " AND "
+                    + CalendarContract.CalendarAlerts.ALARM_TIME
+                    + "<?"
+                    + " AND "
+                    + CalendarContract.CalendarAlerts.ALARM_TIME
+                    + ">?"
+                    + " AND "
+                    + CalendarContract.CalendarAlerts.END + ">=?";
 
     /**
      * Searches the CalendarAlerts table for alarms that should have fired but
@@ -894,20 +917,23 @@ public class AlertService extends Service {
      * @param context the Context
      * @param manager the AlarmManager
      */
-    public static final void rescheduleMissedAlarms(ContentResolver cr, Context context,
-            AlarmManager manager) {
+    public static void rescheduleMissedAlarms(ContentResolver cr, Context context,
+                                              AlarmManager manager) {
         // Get all the alerts that have been scheduled but have not fired
         // and should have fired by now and are not too old.
         long now = System.currentTimeMillis();
         long ancient = now - DateUtils.DAY_IN_MILLIS;
-        String[] projection = new String[] {
-            CalendarContract.CalendarAlerts.ALARM_TIME,
+        String[] projection = new String[]{
+                CalendarContract.CalendarAlerts.ALARM_TIME,
         };
 
         // TODO: construct an explicit SQL query so that we can add
         // "GROUPBY" instead of doing a sort and de-dup
+        if (ActivityCompat.checkSelfPermission(context, Manifest.permission.READ_CALENDAR) != PackageManager.PERMISSION_GRANTED) {
+            return;
+        }
         Cursor cursor = cr.query(CalendarAlerts.CONTENT_URI, projection,
-                WHERE_RESCHEDULE_MISSED_ALARMS, (new String[] {
+                WHERE_RESCHEDULE_MISSED_ALARMS, (new String[]{
                         Long.toString(now), Long.toString(ancient), Long.toString(now)
                 }), SORT_ORDER_ALARMTIME_ASC);
         if (cursor == null) {
