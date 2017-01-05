@@ -159,15 +159,15 @@ public class MyBroadcast extends BroadcastReceiver {
             ContentValues cv = mDailyBread.getContentValues(curYear, curMonth, curDay);
             String todayMsg;
             if (cv==null){
-                todayMsg = "請下載最新全年金句日曆";
+                todayMsg = context.getString(R.string.broadcast_download);
             } else {
                 // GOLD TEXT
                 todayMsg = cv.getAsString(MyDailyBread.wGoldText);
                 if (todayMsg == null || todayMsg.equals("")) {
-                    todayMsg = "提醒：請細讀今天金句";
+                    todayMsg = context.getString(R.string.broadcast_remind_today);
                 } else {
                     todayMsg = todayMsg.replace("#", "\n") + " [" + cv.getAsString(MyDailyBread.wGoldVerse) + "]";
-                    todayMsg = "金句提醒:" + todayMsg;
+                    todayMsg = context.getString(R.string.broadcast_remind) + todayMsg;
                 }
             }
             sendNotification(context,

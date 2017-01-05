@@ -11,7 +11,6 @@ import com.hkbs.HKBS.arkUtil.MyUtil;
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
-import android.os.Handler;
 import android.text.Html;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
@@ -243,7 +242,7 @@ public class CalendarActivity extends MyActivity{
 //		MyUtil.log(TAG, MyDailyBread.getDayString(checkDate)+" Vs "+MyDailyBread.getDayString(validFrDate)+" "+checkDate.compareTo(validFrDate));
 		if (checkDate.compareTo(validToDate)>0 ||
 			checkDate.compareTo(validFrDate)<0 ){
-			Toast.makeText(CalendarActivity.this, R.string.calendar_out_of_range, Toast.LENGTH_SHORT).show();
+			MyDailyBread.showOutOfBounds(this,checkDate);
 			return false;
 		} else {
 			return true;

@@ -43,10 +43,15 @@
     <string name="WordToday">今天</string>
     <string name="WordGoldVerse">金句</string>
     <string name="MsgCalendarChangeEventDate">提示: 連續按日期2次可更改 [日期]</string>
-    <string name="calendar_out_of_range">超出支援顯示範圍</string>
+    <string name="out_of_range">超出支援顯示範圍</string>
+    <string name="out_of_range_download">超出範圍,可到Goolge Play檢查是否有新更新,或電郵到info@arkist.org查詢</string>
 
     <string name="app_name_2015">全年好日曆</string>
     <string name="app_name">全年金句日曆</string>
+
+    <string name="broadcast_download">請下載最新全年金句日曆</string>
+    <string name="broadcast_remind_today">提醒：請細讀今天金句</string>
+    <string name="broadcast_remind">金句提醒:</string>
 
     <string name="main_share">分享</string>
     <string name="main_bible">在線閱讀</string>
@@ -58,6 +63,8 @@
     <string name="main_copy">複製</string>
     <string name="main_today">今天</string>
     <string name="main_copy_to_pasteboard">已把金句放到剪貼薄</string>
+    <string name="main_find_bible_app">找尋閱讀聖經App</string>
+    <string name="main_cannot_find_bible_app">找不到此機閱讀聖經App版本</string>
 
     <string name="support_contact">如有任何問題，請電郵到 info@arkist.org。謝謝。</string>
     <string name="support_subject">「全年金句日曆」查詢</string>

@@ -33,6 +33,15 @@ public class MyCalendarLunar {
 	final static private String TAG = MyCalendarLunar.class.getSimpleName();
 
 	static SimpleDateFormat chineseDateFormat = new SimpleDateFormat("yyyy年MM月dd日");
+	static String solarTerms [];
+	static String solarTerms_tc[] =
+			{"立春", "雨水", "驚蟄", "春分",
+					"清明", "穀雨", "立夏", "小滿", "芒種", "夏至", "小暑", "大暑", "立秋",
+					"處暑", "白露", "秋分", "寒露", "霜降", "立冬", "小雪", "大雪", "冬至", "小寒", "大寒"};
+	static String solarTerms_sc[] =
+			{"立春", "雨水", "惊蛰", "春分",
+					"清明", "谷雨", "立夏", "小满", "芒种", "夏至", "小暑", "大暑", "立秋",
+					"处暑", "白露", "秋分", "寒露", "霜降", "立冬", "小雪", "大雪", "冬至", "小寒", "大寒"};
 
 	final static long[] lunarInfo = new long[]
 	{ 0x04bd8, 0x04ae0, 0x0a570, 0x054d5, 0x0d260, 0x0d950, 0x16554, 0x056a0, 0x09ad0, 0x055d2,
@@ -226,7 +235,6 @@ public class MyCalendarLunar {
 	}
 	public String toString() {
 		return year + "年" + (leap ? (mIsSimpleChinese?"闰":"閏") : "") + chineseNumber[month - 1] + "月" + getChinaDayString(day);
-		
 	}
 	public int getMonth(){
 		return month;
@@ -424,80 +432,72 @@ public class MyCalendarLunar {
 			//MyApp.log(TAG,year+"/"+(month+1)+"/"+day+","+term);
 			return term;
 		}
-		static String solarTerms [];
-		static String solarTerms_tc[] =
-				{"立春", "雨水", "驚蟄", "春分",
-				 "清明", "穀雨", "立夏", "小滿", "芒種", "夏至", "小暑", "大暑", "立秋",
-				 "處暑", "白露", "秋分", "寒露", "霜降", "立冬", "小雪", "大雪", "冬至", "小寒", "大寒"};
-		static String solarTerms_sc[] =
-				{"立春", "雨水", "惊蛰", "春分",
-				"清明", "谷雨", "立夏", "小满", "芒种", "夏至", "小暑", "大暑", "立秋",
-				"处暑", "白露", "秋分", "寒露", "霜降", "立冬", "小雪", "大雪", "冬至", "小寒", "大寒"};
-		public static String getSolarTerm(int year) {
-			StringBuffer sb = new StringBuffer();
-			sb.append("---").append(year);
-			if(year%4 == 0 && year%100 !=0 || year%400 ==0){//闰年
-				sb.append(mIsSimpleChinese?" 闰年":" 閏年");
-			} else {
-				sb.append(" 平年");
-			}
-			if (mIsSimpleChinese) {
-				sb.append("\n")
-						.append("小寒:1月").append(getSolarTermNum(year, SolarTermsEnum.XIAOHAN.name()))
-						.append("日,大寒:1月").append(getSolarTermNum(year, SolarTermsEnum.DAHAN.name()))
-						.append("立春：2月").append(getSolarTermNum(year, SolarTermsEnum.LICHUN.name()))
-						.append("日,雨水：2月").append(getSolarTermNum(year, SolarTermsEnum.YUSHUI.name()))
-						.append("日,惊蛰:3月").append(getSolarTermNum(year, SolarTermsEnum.JINGZHE.name()))
-						.append("日,春分:3月").append(getSolarTermNum(year, SolarTermsEnum.CHUNFEN.name()))
-						.append("日,清明:4月").append(getSolarTermNum(year, SolarTermsEnum.QINGMING.name()))
-						.append("日,谷雨:4月").append(getSolarTermNum(year, SolarTermsEnum.GUYU.name()))
-						.append("日,立夏:5月").append(getSolarTermNum(year, SolarTermsEnum.LIXIA.name()))
-						.append("日,小满:5月").append(getSolarTermNum(year, SolarTermsEnum.XIAOMAN.name()))
-						.append("日,芒种:6月").append(getSolarTermNum(year, SolarTermsEnum.MANGZHONG.name()))
-						.append("日,夏至:6月").append(getSolarTermNum(year, SolarTermsEnum.XIAZHI.name()))
-						.append("日,小暑:7月").append(getSolarTermNum(year, SolarTermsEnum.XIAOSHU.name()))
-						.append("日,大暑:7月").append(getSolarTermNum(year, SolarTermsEnum.DASHU.name()))
-						.append("日,\n立秋:8月").append(getSolarTermNum(year, SolarTermsEnum.LIQIU.name()))
-						.append("日,处暑:8月").append(getSolarTermNum(year, SolarTermsEnum.CHUSHU.name()))
-						.append("日,白露:9月").append(getSolarTermNum(year, SolarTermsEnum.BAILU.name()))
-						.append("日,秋分:9月").append(getSolarTermNum(year, SolarTermsEnum.QIUFEN.name()))
-						.append("日,寒露:10月").append(getSolarTermNum(year, SolarTermsEnum.HANLU.name()))
-						.append("日,霜降:10月").append(getSolarTermNum(year, SolarTermsEnum.SHUANGJIANG.name()))
-						.append("日,立冬:11月").append(getSolarTermNum(year, SolarTermsEnum.LIDONG.name()))
-						.append("日,小雪:11月").append(getSolarTermNum(year, SolarTermsEnum.XIAOXUE.name()))
-						.append("日,大雪:12月").append(getSolarTermNum(year, SolarTermsEnum.DAXUE.name()))
-						.append("日,冬至:12月").append(getSolarTermNum(year, SolarTermsEnum.DONGZHI.name()))
-						.append("日");
-			} else {
-				sb.append("\n")
-						.append("小寒:1月").append(getSolarTermNum(year,SolarTermsEnum.XIAOHAN.name()))
-						.append("日,大寒:1月").append(getSolarTermNum(year,SolarTermsEnum.DAHAN.name()))
-						.append("立春：2月").append(getSolarTermNum(year,SolarTermsEnum.LICHUN.name()))
-						.append("日,雨水：2月").append(getSolarTermNum(year,SolarTermsEnum.YUSHUI.name()))
-						.append("日,驚蟄:3月").append(getSolarTermNum(year,SolarTermsEnum.JINGZHE.name()))
-						.append("日,春分:3月").append(getSolarTermNum(year,SolarTermsEnum.CHUNFEN.name()))
-						.append("日,清明:4月").append(getSolarTermNum(year,SolarTermsEnum.QINGMING.name()))
-						.append("日,谷雨:4月").append(getSolarTermNum(year,SolarTermsEnum.GUYU.name()))
-						.append("日,立夏:5月").append(getSolarTermNum(year,SolarTermsEnum.LIXIA.name()))
-						.append("日,小滿:5月").append(getSolarTermNum(year,SolarTermsEnum.XIAOMAN.name()))
-						.append("日,芒種:6月").append(getSolarTermNum(year,SolarTermsEnum.MANGZHONG.name()))
-						.append("日,夏至:6月").append(getSolarTermNum(year,SolarTermsEnum.XIAZHI.name()))
-						.append("日,小暑:7月").append(getSolarTermNum(year,SolarTermsEnum.XIAOSHU.name()))
-						.append("日,大暑:7月").append(getSolarTermNum(year,SolarTermsEnum.DASHU.name()))
-						.append("日,\n立秋:8月").append(getSolarTermNum(year,SolarTermsEnum.LIQIU.name()))
-						.append("日,處暑:8月").append(getSolarTermNum(year,SolarTermsEnum.CHUSHU.name()))
-						.append("日,白露:9月").append(getSolarTermNum(year,SolarTermsEnum.BAILU.name()))
-						.append("日,秋分:9月").append(getSolarTermNum(year,SolarTermsEnum.QIUFEN.name()))
-						.append("日,寒露:10月").append(getSolarTermNum(year,SolarTermsEnum.HANLU.name()))
-						.append("日,霜降:10月").append(getSolarTermNum(year,SolarTermsEnum.SHUANGJIANG.name()))
-						.append("日,立冬:11月").append(getSolarTermNum(year,SolarTermsEnum.LIDONG.name()))
-						.append("日,小雪:11月").append(getSolarTermNum(year,SolarTermsEnum.XIAOXUE.name()))
-						.append("日,大雪:12月").append(getSolarTermNum(year,SolarTermsEnum.DAXUE.name()))
-						.append("日,冬至:12月").append(getSolarTermNum(year,SolarTermsEnum.DONGZHI.name()))
-						.append("日");
-			}
-		return sb.toString(); 
-		} 
+
+//		public static String getSolarTerm(int year) {
+//			StringBuffer sb = new StringBuffer();
+//			sb.append("---").append(year);
+//			if(year%4 == 0 && year%100 !=0 || year%400 ==0){//闰年
+//				sb.append(mIsSimpleChinese?" 闰年":" 閏年");
+//			} else {
+//				sb.append(" 平年");
+//			}
+//			if (mIsSimpleChinese) {
+//				sb.append("\n")
+//						.append("小寒:1月").append(getSolarTermNum(year, SolarTermsEnum.XIAOHAN.name()))
+//						.append("日,大寒:1月").append(getSolarTermNum(year, SolarTermsEnum.DAHAN.name()))
+//						.append("立春：2月").append(getSolarTermNum(year, SolarTermsEnum.LICHUN.name()))
+//						.append("日,雨水：2月").append(getSolarTermNum(year, SolarTermsEnum.YUSHUI.name()))
+//						.append("日,惊蛰:3月").append(getSolarTermNum(year, SolarTermsEnum.JINGZHE.name()))
+//						.append("日,春分:3月").append(getSolarTermNum(year, SolarTermsEnum.CHUNFEN.name()))
+//						.append("日,清明:4月").append(getSolarTermNum(year, SolarTermsEnum.QINGMING.name()))
+//						.append("日,谷雨:4月").append(getSolarTermNum(year, SolarTermsEnum.GUYU.name()))
+//						.append("日,立夏:5月").append(getSolarTermNum(year, SolarTermsEnum.LIXIA.name()))
+//						.append("日,小满:5月").append(getSolarTermNum(year, SolarTermsEnum.XIAOMAN.name()))
+//						.append("日,芒种:6月").append(getSolarTermNum(year, SolarTermsEnum.MANGZHONG.name()))
+//						.append("日,夏至:6月").append(getSolarTermNum(year, SolarTermsEnum.XIAZHI.name()))
+//						.append("日,小暑:7月").append(getSolarTermNum(year, SolarTermsEnum.XIAOSHU.name()))
+//						.append("日,大暑:7月").append(getSolarTermNum(year, SolarTermsEnum.DASHU.name()))
+//						.append("日,\n立秋:8月").append(getSolarTermNum(year, SolarTermsEnum.LIQIU.name()))
+//						.append("日,处暑:8月").append(getSolarTermNum(year, SolarTermsEnum.CHUSHU.name()))
+//						.append("日,白露:9月").append(getSolarTermNum(year, SolarTermsEnum.BAILU.name()))
+//						.append("日,秋分:9月").append(getSolarTermNum(year, SolarTermsEnum.QIUFEN.name()))
+//						.append("日,寒露:10月").append(getSolarTermNum(year, SolarTermsEnum.HANLU.name()))
+//						.append("日,霜降:10月").append(getSolarTermNum(year, SolarTermsEnum.SHUANGJIANG.name()))
+//						.append("日,立冬:11月").append(getSolarTermNum(year, SolarTermsEnum.LIDONG.name()))
+//						.append("日,小雪:11月").append(getSolarTermNum(year, SolarTermsEnum.XIAOXUE.name()))
+//						.append("日,大雪:12月").append(getSolarTermNum(year, SolarTermsEnum.DAXUE.name()))
+//						.append("日,冬至:12月").append(getSolarTermNum(year, SolarTermsEnum.DONGZHI.name()))
+//						.append("日");
+//			} else {
+//				sb.append("\n")
+//						.append("小寒:1月").append(getSolarTermNum(year,SolarTermsEnum.XIAOHAN.name()))
+//						.append("日,大寒:1月").append(getSolarTermNum(year,SolarTermsEnum.DAHAN.name()))
+//						.append("立春：2月").append(getSolarTermNum(year,SolarTermsEnum.LICHUN.name()))
+//						.append("日,雨水：2月").append(getSolarTermNum(year,SolarTermsEnum.YUSHUI.name()))
+//						.append("日,驚蟄:3月").append(getSolarTermNum(year,SolarTermsEnum.JINGZHE.name()))
+//						.append("日,春分:3月").append(getSolarTermNum(year,SolarTermsEnum.CHUNFEN.name()))
+//						.append("日,清明:4月").append(getSolarTermNum(year,SolarTermsEnum.QINGMING.name()))
+//						.append("日,谷雨:4月").append(getSolarTermNum(year,SolarTermsEnum.GUYU.name()))
+//						.append("日,立夏:5月").append(getSolarTermNum(year,SolarTermsEnum.LIXIA.name()))
+//						.append("日,小滿:5月").append(getSolarTermNum(year,SolarTermsEnum.XIAOMAN.name()))
+//						.append("日,芒種:6月").append(getSolarTermNum(year,SolarTermsEnum.MANGZHONG.name()))
+//						.append("日,夏至:6月").append(getSolarTermNum(year,SolarTermsEnum.XIAZHI.name()))
+//						.append("日,小暑:7月").append(getSolarTermNum(year,SolarTermsEnum.XIAOSHU.name()))
+//						.append("日,大暑:7月").append(getSolarTermNum(year,SolarTermsEnum.DASHU.name()))
+//						.append("日,\n立秋:8月").append(getSolarTermNum(year,SolarTermsEnum.LIQIU.name()))
+//						.append("日,處暑:8月").append(getSolarTermNum(year,SolarTermsEnum.CHUSHU.name()))
+//						.append("日,白露:9月").append(getSolarTermNum(year,SolarTermsEnum.BAILU.name()))
+//						.append("日,秋分:9月").append(getSolarTermNum(year,SolarTermsEnum.QIUFEN.name()))
+//						.append("日,寒露:10月").append(getSolarTermNum(year,SolarTermsEnum.HANLU.name()))
+//						.append("日,霜降:10月").append(getSolarTermNum(year,SolarTermsEnum.SHUANGJIANG.name()))
+//						.append("日,立冬:11月").append(getSolarTermNum(year,SolarTermsEnum.LIDONG.name()))
+//						.append("日,小雪:11月").append(getSolarTermNum(year,SolarTermsEnum.XIAOXUE.name()))
+//						.append("日,大雪:12月").append(getSolarTermNum(year,SolarTermsEnum.DAXUE.name()))
+//						.append("日,冬至:12月").append(getSolarTermNum(year,SolarTermsEnum.DONGZHI.name()))
+//						.append("日");
+//			}
+//		return sb.toString();
+//		}
 
 //		public static void main(String[] args) { 
 //			for(int year=1912;year<2015;year++){ 

@@ -5,6 +5,7 @@ import android.content.Context;
 import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.WindowManager;
+import android.widget.Toast;
 
 import com.hkbs.HKBS.arkUtil.MyUtil;
 
@@ -12,7 +13,6 @@ import org.arkist.share.AxDebug;
 import org.arkist.share.AxTools;
 
 import java.io.BufferedReader;
-import java.io.IOException;
 import java.io.InputStreamReader;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -219,14 +219,14 @@ public class MyDailyBread {
             return date2index(context, validToDate) + 1;//Include last day
         }
     }
-    public static Calendar index2date(Context context, int i){
+    public static Calendar index2date(Context context, int nbrOfDays){
         //i = 1;
         Calendar startCal = (Calendar) MyDailyBread.getInstance(context).getValidFrDate().clone();
         startCal.set(Calendar.HOUR_OF_DAY, 12);
         startCal.set(Calendar.MINUTE, 0);
         startCal.set(Calendar.SECOND, 0);
         startCal.set(Calendar.MILLISECOND, 0);
-        startCal = getSignedAddInDays(startCal,i);
+        startCal = getSignedAddInDays(startCal,nbrOfDays);
 //        startCal.add(Calendar.DAY_OF_YEAR,i);
 //        int nbrOfDaysInYear = startCal.getActualMaximum(Calendar.DAY_OF_YEAR);
 //        if (i <= nbrOfDaysInYear){
@@ -241,7 +241,7 @@ public class MyDailyBread {
 //            startCal.add(Calendar.DAY_OF_YEAR, daysRemains);
 //        }
         String newCal = getDayHourString(startCal);
-        if (DEBUG) AxDebug.debug(TAG,"CalDate: "+i+" -> "+newCal);
+        if (DEBUG) AxDebug.debug(TAG,"CalDate: "+nbrOfDays+" -> "+newCal);
         int result = date2index(context,startCal);
         if (DEBUG) AxDebug.debug(TAG,"CalDate: "+getDayHourString(startCal)+" -> "+result);
         return startCal;
@@ -310,6 +310,13 @@ public class MyDailyBread {
     private final static long MILLISECS_PER_DAY = 24 * 60 * 60 * 1000;
     private static long getDateToLong(Date date) {
         return Date.UTC(date.getYear(), date.getMonth(), date.getDate(), 12, 0, 0);
+    }
+    public static void showOutOfBounds(Context context, Calendar calendar){
+        if (calendar.getTimeInMillis() > Calendar.getInstance().getTimeInMillis()){
+            Toast.makeText(context, R.string.out_of_range_download, Toast.LENGTH_LONG).show();
+        } else {
+            Toast.makeText(context, R.string.out_of_range, Toast.LENGTH_SHORT).show();
+        }
     }
     public static Calendar getSignedAddInDays(Calendar startDate, int nbrOfDays) {
         long beginMS = getDateToLong(startDate.getTime()); // Time in UTC

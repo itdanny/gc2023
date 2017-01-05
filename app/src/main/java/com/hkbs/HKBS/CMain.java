@@ -218,6 +218,7 @@ public class CMain extends MyActivity {
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         mDailyBread = MyDailyBread.getInstance(CMain.this);
+        mDisplayDay = MyDailyBread.getInstance(getApplicationContext()).index2date(getApplicationContext(),0);
         AxTools.init(CMain.this);
 //        scaleDensity(getApplicationContext());
         MyUtil.initMyUtil(this);
@@ -314,9 +315,11 @@ public class CMain extends MyActivity {
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
                 int lastIdx = mAdapter.getCount() - 1;
                 if (lastPageChange && position == lastIdx) {
-                    Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
+                    Calendar calendar = (Calendar) mDailyBread.getValidToDate().clone();
+                    calendar.add(Calendar.MONTH,1);
+                    MyDailyBread.showOutOfBounds(getApplicationContext(),calendar);
                 } else if (fistPageChange && position == 0) {
-                    Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
+                    MyDailyBread.showOutOfBounds(getApplicationContext(),mDailyBread.getValidFrDate());
                 }
                 mPager.isScrolling = false;
             }
@@ -718,8 +721,9 @@ public class CMain extends MyActivity {
     }
     private void copyText(Context context) {
         ContentValues cv = getContentValues();
+        if (cv==null) return;
         final String verse = cv.getAsString(MyDailyBread.wGoldText).replace("#", " ") +
-                "[" + cv.getAsString(MyDailyBread.wGoldVerse) + " RCUV]";
+                "[" + cv.getAsString(MyDailyBread.wGoldVerse)+"]";// + " RCUV]";
         MyClipboardManager mgr = new MyClipboardManager();
         mgr.copyToClipboard(CMain.this, verse);
         Toast.makeText(getApplicationContext(), R.string.main_copy_to_pasteboard, Toast.LENGTH_SHORT).show();
@@ -1197,7 +1201,7 @@ public class CMain extends MyActivity {
         tmpDate.add(Calendar.DAY_OF_MONTH,nbrOfDates);
         if (tmpDate.compareTo(frDate) < 0 ||
             tmpDate.compareTo(toDate) >= 0   ) {
-            Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
+            MyDailyBread.showOutOfBounds(getApplicationContext(),tmpDate);
             return false;
         } else {
             return true;
@@ -1377,7 +1381,7 @@ public class CMain extends MyActivity {
     public void gotoPrevDay() {
         if (mPager.isScrolling) return;
         if (!MyDailyBread.allowBeyondRange && !isWithinRange(mDisplayDay, -1)) {
-            Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
+            MyDailyBread.showOutOfBounds(getApplicationContext(),mDisplayDay);
         } else {
             mDisplayDay.add(Calendar.DAY_OF_MONTH, -1);
             onRefreshPage(mDisplayDay, true, true);
@@ -1390,7 +1394,7 @@ public class CMain extends MyActivity {
         newCalendar.setTimeInMillis(mDisplayDay.getTimeInMillis());
         newCalendar.add(Calendar.MONTH, -1);
         if (!MyDailyBread.allowBeyondRange && !isWithinRange(newCalendar,0)) {
-            Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
+            MyDailyBread.showOutOfBounds(getApplicationContext(),newCalendar);
             newCalendar.setTimeInMillis(mDailyBread.getValidFrDate().getTimeInMillis());
         }
         mDisplayDay.setTimeInMillis(newCalendar.getTimeInMillis());
@@ -1400,13 +1404,12 @@ public class CMain extends MyActivity {
     public void gotoNextDay() {
         if (mPager.isScrolling) return;
         if (!MyDailyBread.allowBeyondRange && !isWithinRange(mDisplayDay, 1)) {
-            Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
+            Calendar calendar = (Calendar) mDisplayDay.clone();
+            calendar.add(Calendar.MONTH,1);
+            MyDailyBread.showOutOfBounds(getApplicationContext(),calendar);
         } else {
             mDisplayDay.add(Calendar.DAY_OF_MONTH, +1);
-//            mViewIndex = mViewIndex == 1 ? 2 : 1;
-//            onRefreshPage(mViewIndex);
             onRefreshPage(mDisplayDay, true, true);
-            //MyGestureListener.flingInFromLeft(getApplicationContext(), mViewAnimator);
         }
     }
 
@@ -1416,7 +1419,7 @@ public class CMain extends MyActivity {
         newCalendar.setTimeInMillis(mDisplayDay.getTimeInMillis());
         newCalendar.add(Calendar.MONTH, +1);
         if (!MyDailyBread.allowBeyondRange && !isWithinRange(newCalendar,0)) {
-            Toast.makeText(getApplicationContext(), "超出支援顯示範圍", Toast.LENGTH_SHORT).show();
+            MyDailyBread.showOutOfBounds(getApplicationContext(),newCalendar);
             newCalendar.setTimeInMillis(mDailyBread.getValidToDate().getTimeInMillis());
         }
         mDisplayDay.setTimeInMillis(newCalendar.getTimeInMillis());
@@ -1460,63 +1463,63 @@ public class CMain extends MyActivity {
         //onExitGoodCalendar(context);
         startActivity(intent);
     }
-	private void onClickViewHkbsBible(Context context){
-		boolean isShownAdBanner = AxTools.getPrefBoolean("pref_showBanner", false);
-		//isShownAdBanner=false;
-		if (isShownAdBanner){
-			onViewHKBSBible(context);
-			return;
-		}
-		AxTools.setPrefBoolean("pref_showBanner", true);
-		final ImageView img = (ImageView) findViewById(R.id.xmlAdBannerImage);		
-//		try {
-//			img.setImageResource(R.drawable.alarm_2015);
-//		} catch (Exception e){
-			BitmapFactory.Options options=new BitmapFactory.Options();
-			options.inSampleSize = 2;
-			Bitmap preview_bitmap=BitmapFactory.decodeResource(getResources(),R.drawable.banner,options);
-			img.setImageBitmap(preview_bitmap);
+//	private void onClickViewHkbsBible(Context context){
+//		boolean isShownAdBanner = AxTools.getPrefBoolean("pref_showBanner", false);
+//		//isShownAdBanner=false;
+//		if (isShownAdBanner){
+//			onViewHKBSBible(context);
+//			return;
 //		}
-		    
-		final RelativeLayout layout = (RelativeLayout) findViewById(R.id.xmlAdBanner);
-		layout.setVisibility(View.VISIBLE);
-		final TextView text = (TextView) findViewById(R.id.xmlAdBannerText);
-		text.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				layout.setVisibility(View.GONE);
-				onViewHKBSBible(CMain.this);
-			}
-		});
-		final ImageView imgClose = (ImageView) findViewById(R.id.xmlAdBannerClose);
-		imgClose.setOnClickListener(new View.OnClickListener() {
-			@Override
-			public void onClick(View v) {
-				layout.setVisibility(View.GONE);
-				onViewHKBSBible(CMain.this);
-			}
-		});				
-	}
-	private void onExitGoodCalendar(Context context){
-		Toast.makeText(context, "你將會離開「"+(CMain.IS_2016_VERSION?context.getString(R.string.app_name):context.getString(R.string.app_name_2015))+"」並進入其他網站或程式 !", Toast.LENGTH_SHORT).show();
-	}
-	private void onViewHKBSBible(Context context){		
-		MyUtil.trackClick(context, "BibleHKBS", "M");
-		final Object eabcv[] = getEBCV(getContentValueGoldVerse());
-		//final String prefix = "http://rcuv.hkbs.org.hk/bible_list.php?dowhat=&version=RCUV&bible=";
-		final String prefix = "http://rcuv.hkbs.org.hk/RCUV_1/";
-//		final String chapter = "&chapter=";
-//		final String suffix = "&section=0";
-		final int bookNbr = (Integer) eabcv[2];
-		final int chapterNbr = (Integer) eabcv[3];
-		final int verseNbr = (Integer) eabcv[4];
-//		final String url = prefix+BOOKS_ENG[bookNbr-1]+chapter+chapterNbr+suffix;
-		final String url = prefix+BOOKS_ENG[bookNbr-1]+"/"+chapterNbr+":"+verseNbr;
-		Intent intent = new Intent(Intent.ACTION_VIEW);
-		intent.setData(Uri.parse(url));
-		onExitGoodCalendar(context);
-		startActivity(intent);
-	}
+//		AxTools.setPrefBoolean("pref_showBanner", true);
+//		final ImageView img = (ImageView) findViewById(R.id.xmlAdBannerImage);
+////		try {
+////			img.setImageResource(R.drawable.alarm_2015);
+////		} catch (Exception e){
+//			BitmapFactory.Options options=new BitmapFactory.Options();
+//			options.inSampleSize = 2;
+//			Bitmap preview_bitmap=BitmapFactory.decodeResource(getResources(),R.drawable.banner,options);
+//			img.setImageBitmap(preview_bitmap);
+////		}
+//
+//		final RelativeLayout layout = (RelativeLayout) findViewById(R.id.xmlAdBanner);
+//		layout.setVisibility(View.VISIBLE);
+//		final TextView text = (TextView) findViewById(R.id.xmlAdBannerText);
+//		text.setOnClickListener(new View.OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//				layout.setVisibility(View.GONE);
+//				onViewHKBSBible(CMain.this);
+//			}
+//		});
+//		final ImageView imgClose = (ImageView) findViewById(R.id.xmlAdBannerClose);
+//		imgClose.setOnClickListener(new View.OnClickListener() {
+//			@Override
+//			public void onClick(View v) {
+//				layout.setVisibility(View.GONE);
+//				onViewHKBSBible(CMain.this);
+//			}
+//		});
+//	}
+//	private void onExitGoodCalendar(Context context){
+//		Toast.makeText(context, "你將會離開「"+(CMain.IS_2016_VERSION?context.getString(R.string.app_name):context.getString(R.string.app_name_2015))+"」並進入其他網站或程式 !", Toast.LENGTH_SHORT).show();
+//	}
+//	private void onViewHKBSBible(Context context){
+//		MyUtil.trackClick(context, "BibleHKBS", "M");
+//		final Object eabcv[] = getEBCV(getContentValueGoldVerse());
+//		//final String prefix = "http://rcuv.hkbs.org.hk/bible_list.php?dowhat=&version=RCUV&bible=";
+//		final String prefix = "http://rcuv.hkbs.org.hk/RCUV_1/";
+////		final String chapter = "&chapter=";
+////		final String suffix = "&section=0";
+//		final int bookNbr = (Integer) eabcv[2];
+//		final int chapterNbr = (Integer) eabcv[3];
+//		final int verseNbr = (Integer) eabcv[4];
+////		final String url = prefix+BOOKS_ENG[bookNbr-1]+chapter+chapterNbr+suffix;
+//		final String url = prefix+BOOKS_ENG[bookNbr-1]+"/"+chapterNbr+":"+verseNbr;
+//		Intent intent = new Intent(Intent.ACTION_VIEW);
+//		intent.setData(Uri.parse(url));
+//		onExitGoodCalendar(context);
+//		startActivity(intent);
+//	}
     private void startBibleMap(Context context, Intent intent, ComponentName componentName){
         final Object eabcv[] = getEBCV(getContentValueGoldVerse());
         final String finalEabcv = (String) eabcv[0]+ (String) eabcv[1]+" "+eabcv[3]+":"+eabcv[4];
@@ -1546,14 +1549,14 @@ public class CMain extends MyActivity {
         } else {
             try {
                 MyUtil.trackClick(context, "BiblePlayStore", "M");
-                Toast.makeText(getApplicationContext(), "找尋閱讀聖經App", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), R.string.main_find_bible_app, Toast.LENGTH_SHORT).show();
                 Intent downloadIntent = new Intent(Intent.ACTION_VIEW);
                 downloadIntent.setData(Uri.parse("market://details?id=org.arkist.cnote"));
                 //onExitGoodCalendar(context);
                 startActivity(downloadIntent);
             } catch (Exception e){
                 MyUtil.trackClick(context, "BiblePlayStoreError", "M");
-                Toast.makeText(getApplicationContext(), "找尋不到此機閱讀聖經App版本", Toast.LENGTH_SHORT).show();
+                Toast.makeText(getApplicationContext(), R.string.main_cannot_find_bible_app, Toast.LENGTH_SHORT).show();
             }
         }
 	}

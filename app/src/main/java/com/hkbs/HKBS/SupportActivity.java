@@ -308,9 +308,9 @@ public class SupportActivity extends MyActivity implements OnClickListener {
             }
         }
 
-//        ActivityManager am = (ActivityManager) activity.getSystemService(Activity.ACTIVITY_SERVICE);
-//        String currentPackageName = activity.getPackageName();
-//        am.killBackgroundProcesses(currentPackageName);
+        ActivityManager am = (ActivityManager) activity.getSystemService(Activity.ACTIVITY_SERVICE);
+        String currentPackageName = activity.getPackageName();
+        am.killBackgroundProcesses(currentPackageName);
 
         Process.killProcess(Process.myPid());
     }
