@@ -444,7 +444,7 @@ public class CWidgetBase extends AppWidgetProvider {
 			this.widgetID = widgetID;
 			this.intent = null;
 			this.widgetAction = 0;
-			//if (DEBUG) Log.i(TAG,"onUpdateActionWidgetId="+this.widgetID);
+			if (DEBUG) Log.i(TAG,"onUpdateActionWidgetId="+this.widgetID);
 		}
 	}
 	// It will auto update for every 30 minutes. NO need currently.
