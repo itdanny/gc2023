@@ -215,6 +215,7 @@ public class DailyFragment extends Fragment {
         setRow3ChineseYearMonthAndWeekday();
         setRow4GoldText();
         setRow5Wisdom();
+        mRootView.setVisibility(View.VISIBLE);
         AxDebug.info(this, "Refresh Completed ("+(mThisPageZeroBasedMonth+1)+"."+mThisPageDay+")");
     }
     private void setRow1YearAndMonth(){

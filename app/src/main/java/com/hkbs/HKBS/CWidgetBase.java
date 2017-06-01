@@ -127,8 +127,10 @@ public class CWidgetBase extends AppWidgetProvider {
 		MyUtil.initMyUtil(recRef.context);
 		MyDailyBread mDailyBread = MyDailyBread.getInstance(recRef.context);
 		Intent intent = new Intent(recRef.context, CMain.class);
-		final PendingIntent pendingIntent = PendingIntent.getActivity(recRef.context,
-        		0, intent, PendingIntent.FLAG_UPDATE_CURRENT);//PendingIntent.FLAG_UPDATE_CURRENT
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+		final PendingIntent pendingIntent = PendingIntent.getActivity(recRef.context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
         if (pendingIntent!=null) {
             recRef.views.setOnClickPendingIntent(R.id.xmlPage1Middle, pendingIntent);
         }
@@ -457,7 +459,7 @@ public class CWidgetBase extends AppWidgetProvider {
 		intent.setAction("com.hkbs.HKBS.WidgetUpdate");
 		//intent.setData(ContentUris.withAppendedId(Uri.EMPTY, buttonID));
 		intent.putExtra(AxAlarm.EXTRA_BROADCAST_CODE, MyBroadcast.REQUEST_WIDGET);
-		// below statment should be different on every call so that it won't reuse and can't broadcase wrong variables
+        // below statment should be different on every call so that it won't reuse and can't broadcase wrong variables
 		//intentCounter++;
 		intent.setData(Uri.withAppendedPath(Uri.parse(MyBroadcast.URI_SCHEME+ "://widget/"+MyBroadcast.REQUEST_WIDGET+"/"),"1"));
 		context.sendBroadcast(intent);

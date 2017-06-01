@@ -1,13 +1,5 @@
 package com.hkbs.HKBS;
 
-import java.text.ParseException;
-import java.util.Calendar;
-
-import com.hkbs.HKBS.arkCalendar.MyCalendar.MyDayEvents;
-import com.hkbs.HKBS.arkUtil.MyGestureListener;
-import com.hkbs.HKBS.arkUtil.MyRunLater;
-import com.hkbs.HKBS.arkUtil.MyUtil;
-
 import android.app.DatePickerDialog;
 import android.content.Intent;
 import android.os.Bundle;
@@ -15,15 +7,22 @@ import android.text.Html;
 import android.view.GestureDetector;
 import android.view.MotionEvent;
 import android.view.View;
-import android.view.Window;
 import android.view.View.OnClickListener;
+import android.view.Window;
+import android.widget.DatePicker;
 import android.widget.GridView;
 import android.widget.ImageView;
-
-import android.widget.DatePicker;
 import android.widget.TextView;
 import android.widget.Toast;
 import android.widget.ViewAnimator;
+
+import com.hkbs.HKBS.arkCalendar.MyCalendar.MyDayEvents;
+import com.hkbs.HKBS.arkUtil.MyGestureListener;
+import com.hkbs.HKBS.arkUtil.MyRunLater;
+import com.hkbs.HKBS.arkUtil.MyUtil;
+
+import java.text.ParseException;
+import java.util.Calendar;
 
 public class CalendarActivity extends MyActivity{
 	final static private boolean DEBUG=true;
@@ -89,6 +88,7 @@ public class CalendarActivity extends MyActivity{
 				}
 			@Override public boolean onClick(MotionEvent e){
 				GridView grid = gridViewList[gridViewIndex];
+                if (grid==null) return false;
 				int firstPos = grid.getFirstVisiblePosition();
 				int invisibleHeight = (firstPos/7) * grid.getChildAt(0).getHeight();
 				int newX = (int) (e.getX());
