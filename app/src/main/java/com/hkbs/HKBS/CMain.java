@@ -1,6 +1,7 @@
 package com.hkbs.HKBS;
 
 import android.annotation.TargetApi;
+import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.appwidget.AppWidgetManager;
 import android.content.ComponentName;
@@ -10,7 +11,6 @@ import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
 import android.graphics.Bitmap;
-import android.graphics.BitmapFactory;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.net.Uri;
@@ -31,9 +31,6 @@ import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
-import android.widget.ImageView;
-import android.widget.RelativeLayout;
-import android.widget.TextView;
 import android.widget.Toast;
 
 import com.hkbs.HKBS.arkUtil.MyGestureListener;
@@ -48,6 +45,7 @@ import org.arkist.share.AxTools;
 import java.io.File;
 import java.io.OutputStream;
 import java.util.Calendar;
+import java.util.List;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -1234,34 +1232,40 @@ public class CMain extends MyActivity {
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
-                    AlertDialog.Builder alertBuilder = new AlertDialog.Builder(CMain.this);
-                    CharSequence items[] = {"台灣", "香港", "其他"};
-                    alertBuilder.setTitle("請選擇日曆地區：");
-                    // If cancel, then others;
-                    alertBuilder.setItems(items, new DialogInterface.OnClickListener() {
-                        @Override
-                        public void onClick(DialogInterface dialog, int which) {
-                            switch (which) {
-                                case 0:
-                                    MyUtil.setPrefStr(MyUtil.PREF_COUNTRY, "TW");
-                                    break;
-                                case 1:
-                                    MyUtil.setPrefStr(MyUtil.PREF_COUNTRY, "HK");
-                                    break;
-                                default:
-                                    MyUtil.setPrefStr(MyUtil.PREF_COUNTRY, "CN");
-                                    break;
+                    try {
+                        AlertDialog.Builder alertBuilder = new AlertDialog.Builder(CMain.this);
+                        CharSequence items[] = {"台灣", "香港", "其他"};
+                        alertBuilder.setTitle("請選擇日曆地區：");
+                        // If cancel, then others;
+                        alertBuilder.setItems(items, new DialogInterface.OnClickListener() {
+                            @Override
+                            public void onClick(DialogInterface dialog, int which) {
+                                switch (which) {
+                                    case 0:
+                                        MyUtil.setPrefStr(MyUtil.PREF_COUNTRY, "TW");
+                                        break;
+                                    case 1:
+                                        MyUtil.setPrefStr(MyUtil.PREF_COUNTRY, "HK");
+                                        break;
+                                    default:
+                                        MyUtil.setPrefStr(MyUtil.PREF_COUNTRY, "CN");
+                                        break;
+                                }
+                                //DailyFragment dailyFragment = (DailyFragment) mAdapter.getItem(mPager.getCurrentItem());
+                                //dailyFragment.onRefreshScreen();
+                                //mAdapter.notifyDataSetChanged();
+                                mPager.setAdapter(null);
+                                mPager.setAdapter(mAdapter);
+                                onClickToday(CMain.this);
+                                //askHolyDay();
                             }
-                            //DailyFragment dailyFragment = (DailyFragment) mAdapter.getItem(mPager.getCurrentItem());
-                            //dailyFragment.onRefreshScreen();
-                            //mAdapter.notifyDataSetChanged();
-                            mPager.setAdapter(null);
-                            mPager.setAdapter(mAdapter);
-                            onClickToday(CMain.this);
-                            //askHolyDay();
+                        });
+                        if (CMain.isAppInForground(CMain.this) && !CMain.this.isFinishing()) {
+                            alertBuilder.show();
                         }
-                    });
-                    alertBuilder.show();
+                    } catch (Exception ignored){
+
+                    }
                 }
             }, 1000);
         } else {
@@ -1270,9 +1274,15 @@ public class CMain extends MyActivity {
         AxTools.runLater(500, new Runnable() {
             @Override
             public void run() {
-                DailyFragment dailyFragment = (DailyFragment) mAdapter.getItem(mPager.getCurrentItem());
-                dailyFragment.onRefreshScreen();
-                mAdapter.notifyDataSetChanged();
+            try {
+                if (CMain.isAppInForground(CMain.this) && !CMain.this.isFinishing()) {
+                    DailyFragment dailyFragment = (DailyFragment) mAdapter.getItem(mPager.getCurrentItem());
+                    dailyFragment.onRefreshScreen();
+                    mAdapter.notifyDataSetChanged();
+                }
+            } catch (Exception ignored){
+
+            }
             }
         });
     }
@@ -1776,4 +1786,20 @@ public class CMain extends MyActivity {
 //        builder.setCancelable(false);
 //        dialog = builder.show();
 //    }
+    public static boolean isAppInForground(Context context){
+        boolean isInForeground = false;
+        ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
+        List<ActivityManager.RunningAppProcessInfo> runningProcesses = am.getRunningAppProcesses();
+        for (ActivityManager.RunningAppProcessInfo processInfo : runningProcesses) {
+            if (processInfo.importance == ActivityManager.RunningAppProcessInfo.IMPORTANCE_FOREGROUND) {
+                for (String activeProcess : processInfo.pkgList) {
+                    if (activeProcess.equals(context.getPackageName())) {
+                        isInForeground = true;
+                    }
+                }
+            }
+        }
+
+        return isInForeground;
+    }
 }

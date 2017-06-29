@@ -393,7 +393,7 @@ public class MyHoliday {
             "20171002*國慶日翌日",
             "20171005*中秋節翌日",
             "20171028*重陽節",
-            "20171225*聖誕節",
+            "20171225聖誕節",
             "20171226聖誕節後第一個周日"
 	};
 	static final private String [] HOLIDAYS_TW = new String [] {

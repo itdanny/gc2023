@@ -598,6 +598,7 @@ public class MyCalendar {
     		// Holiday
     		//final String holidayText = CalendarAdapter.getHolidayText(context, lastDay);
     		String holidayText = MyHoliday.getHolidayRemark(lastDay.getTime());
+            holidayText= holidayText.replace("*","");
     		if (holidayText.startsWith("#")){
     			holidayText=holidayText.substring(1);
     		}    			

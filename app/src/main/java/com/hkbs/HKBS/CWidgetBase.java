@@ -50,8 +50,9 @@ public class CWidgetBase extends AppWidgetProvider {
         // Enter relevant functionality for when the last widget is disabled
     }
 	@Override
-	public void onReceive(Context context, Intent intent) {
-		super.onReceive(context, intent);	
+	public void onReceive(final Context context, Intent intent) {
+		super.onReceive(context, intent);
+        //if (intent !=null && intent.getAction()==Intent.ACTION_TIME_CHANGED) return;
 		// Whatever receive; just do it.
 		
 ////		int actionID = intent.getIntExtra(AppWidgetManager.EXTRA_CUSTOM_EXTRAS,0);
@@ -69,8 +70,13 @@ public class CWidgetBase extends AppWidgetProvider {
         MyUtil.log(getLayoutTag(), "widget.onReceive "+((intent!=null && intent.getAction()!=null)?intent.getAction():""));
         refreshAll(context);
 
-        AxAlarm.setDailyOnDateChange(context);
-
+        Thread thread = new Thread(new Runnable() {
+            @Override
+            public void run() {
+                AxAlarm.setDailyOnDateChange(context);
+            }
+        });
+        thread.start();
 	}
     public String getClassName(){
         return CWidgetBase.class.getName();
@@ -163,6 +169,7 @@ public class CWidgetBase extends AppWidgetProvider {
 		final MyCalendarLunar lunar = new MyCalendarLunar(mDisplayDay,MyApp.mIsSimplifiedChinese);
 		final Calendar monthEndDate = (Calendar) mDisplayDay.clone();
 		String holiday = MyHoliday.getHolidayRemark(mDisplayDay.getTime());
+        holiday = holiday.replace("*","");
 		final boolean isHoliday = (!holiday.equals("") && !holiday.startsWith("#")) || mDisplayDay.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY;
 		int textColor = recRef.context.getResources().getColor(isHoliday?R.color.holiday:R.color.weekday);
 		if (holiday.startsWith("#")){

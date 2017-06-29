@@ -158,7 +158,7 @@ public class MyBroadcast extends BroadcastReceiver {
             MyDailyBread mDailyBread = MyDailyBread.getInstance(context);
             ContentValues cv = mDailyBread.getContentValues(curYear, curMonth, curDay);
             String todayMsg;
-            if (cv==null){
+            if (cv==null || mDailyBread==null){
                 todayMsg = context.getString(R.string.broadcast_download);
             } else {
                 // GOLD TEXT

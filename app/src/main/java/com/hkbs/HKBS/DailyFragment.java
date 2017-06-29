@@ -202,6 +202,7 @@ public class DailyFragment extends Fragment {
             if (!DEBUG) mScreenTypeView.setText("");
         }
         mHolidayText = MyHoliday.getHolidayRemark(mCalendar.getTime());
+        mHolidayText = mHolidayText.replace("*","");
         mHolyDayText = MyHoliday.getHolyDayText(mCalendar.getTime());
 
         mIsHoliday = ((!mHolidayText.equals("")) & !mHolidayText.startsWith("#")) || mCalendar.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY;
