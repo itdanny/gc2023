@@ -31,18 +31,22 @@ public class AxAlarm {
 	final static private String PREF_ALARM_ON = "AlarmOn";
 	final static private String PREF_ALARM_HOUR = "AlarmHour";
 	final static private String PREF_ALARM_MIN = "AlarmMin";
-	
+
+    //2017.07.03 ANR lock problem
+    final static private Object lockObject = new Object();
 	static public void setDailyOnDateChange(Context context){
-		Intent intent = new Intent();
-	    intent.setAction(MANIFEST_ACTION_DATE_CHANGE);
-	    PendingIntent pi = PendingIntent.getBroadcast(context, REQUEST_CODE_DATE_CHANGE, intent,PendingIntent.FLAG_UPDATE_CURRENT);
-	    AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-	    //long startTime = timeToStartFromNow(0, 0);
-	    //am.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, startTime, MILLSECOND_IN_DAYS, pi);
-	    Calendar cal = hhmm2Calendar(0,0);
-	    am.cancel(pi);
-	    am.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), MILLSECOND_IN_DAYS, pi);
-	    if (DEBUG) Log.i(TAG, "Alarm.dateChange at "+sdfYYYYMMDDHHMM.format(cal.getTime()));
+        synchronized (lockObject) {
+            Intent intent = new Intent();
+            intent.setAction(MANIFEST_ACTION_DATE_CHANGE);
+            PendingIntent pi = PendingIntent.getBroadcast(context, REQUEST_CODE_DATE_CHANGE, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+            AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
+            //long startTime = timeToStartFromNow(0, 0);
+            //am.setRepeating(AlarmManager.ELAPSED_REALTIME_WAKEUP, startTime, MILLSECOND_IN_DAYS, pi);
+            Calendar cal = hhmm2Calendar(0, 0);
+            am.cancel(pi);
+            am.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), MILLSECOND_IN_DAYS, pi);
+            if (DEBUG) Log.i(TAG, "Alarm.dateChange at " + sdfYYYYMMDDHHMM.format(cal.getTime()));
+        }
 	}
 	/*
 	 * No need specify the broadcast class i.e.

@@ -73,7 +73,7 @@ public class CMain extends MyActivity {
     final static private String TAG = CMain.class.getSimpleName();
 
     final static private int CALL_FROM_EXTERNAL_APP = -999;
-    private static final int AUTO_HIDE_DELAY_MILLIS = 3000;
+    private static final int AUTO_HIDE_DELAY_MILLIS = 1500;
     static public MyDailyBread mDailyBread;
 
 //    static public int mCalendarYear = 2015;
@@ -86,7 +86,7 @@ public class CMain extends MyActivity {
     static public String mScreenType = "";
 
     //private ViewAnimator mViewAnimator;
-    private boolean isTitleShown = true;
+    private boolean isTitleShown = false;
     //private int mViewIndex = 1;
     private CustomViewPager mPager;
     private CustomViewAdapter mAdapter;
@@ -240,10 +240,14 @@ public class CMain extends MyActivity {
                         public boolean onClick(MotionEvent e) { // !!! SetClicable to TRUE !!!
                             if (DEBUG) MyUtil.log(TAG, "onClick day="+mDisplayDay.get(Calendar.DAY_OF_MONTH));
                             setControlsVisibility(!isTitleShown);
+                            //setControlsVisibility(true);
                             return true;
                         }
                         @Override public boolean onLongPress(MotionEvent e) {
-                            return false;
+                            if (DEBUG) MyUtil.log(TAG, "onClick day="+mDisplayDay.get(Calendar.DAY_OF_MONTH));
+                            setControlsVisibility(!isTitleShown);
+                            //setControlsVisibility(true);
+                            return true;
                         }
                         @Override public boolean onRight() {
                             gotoNextDay();
@@ -301,7 +305,8 @@ public class CMain extends MyActivity {
             public void clicked(MotionEvent motionEvent) {
                 //onClickItem(motionEvent);
                 if (DEBUG) MyUtil.log(TAG, "onClicked");
-                setControlsVisibility(!isTitleShown);
+                //setControlsVisibility(!isTitleShown);
+                setControlsVisibility(true);
                 //mRootView.performClick();
             }
         };
@@ -365,11 +370,10 @@ public class CMain extends MyActivity {
     }
     @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void setControlsVisibility(boolean isVisible) {
-        if (isTitleShown == isVisible) {
-            return;
-        }
         if (this.isFinishing()) return;
-
+        if (isVisible && isTitleShown){
+            isVisible=false;
+        }
         onCreateSetButtons();
 
         if (mControlsView == null) mControlsView = findViewById(R.id.xmlMainControls);
@@ -399,7 +403,8 @@ public class CMain extends MyActivity {
                 mShortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
             }
             mTitleView.animate().translationY(isVisible ? 0 : -mTitleHeight).setDuration(mShortAnimTime);
-
+//            mControlsView.setVisibility(isVisible ? View.VISIBLE : View.GONE);
+//            mTitleView.setVisibility(isVisible ? View.VISIBLE : View.GONE);
         } else {
             // If the ViewPropertyAnimator APIs aren't
             // available, simply show or hide the in-layout UI
@@ -608,13 +613,13 @@ public class CMain extends MyActivity {
      * system UI. This is to prevent the jarring behavior of controls going away
      * while interacting with activity UI.
      */
-    View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
-        @Override
-        public boolean onTouch(View view, MotionEvent motionEvent) {
-            delayedHide();
-            return false;
-        }
-    };
+//    View.OnTouchListener mDelayHideTouchListener = new View.OnTouchListener() {
+//        @Override
+//        public boolean onTouch(View view, MotionEvent motionEvent) {
+//            delayedHide();
+//            return false;
+//        }
+//    };
 
     Handler mHideHandler = new Handler();
     Runnable mHideRunnable = new Runnable() {
@@ -718,14 +723,18 @@ public class CMain extends MyActivity {
         return cv.getAsString(MyDailyBread.wGoldVerse) + (curYear >= 2016 ? "" : "；和合本修訂版");
     }
     private void copyText(Context context) {
-        ContentValues cv = getContentValues();
-        if (cv==null) return;
-        final String verse = cv.getAsString(MyDailyBread.wGoldText).replace("#", " ") +
-                "[" + cv.getAsString(MyDailyBread.wGoldVerse)+"]";// + " RCUV]";
-        MyClipboardManager mgr = new MyClipboardManager();
-        mgr.copyToClipboard(CMain.this, verse);
-        Toast.makeText(getApplicationContext(), R.string.main_copy_to_pasteboard, Toast.LENGTH_SHORT).show();
-        //onClickSupport(CMain.this);
+        try {
+            ContentValues cv = getContentValues();
+            if (cv == null) return;
+            final String verse = cv.getAsString(MyDailyBread.wGoldText).replace("#", " ") +
+                    "[" + cv.getAsString(MyDailyBread.wGoldVerse) + "]";// + " RCUV]";
+            MyClipboardManager mgr = new MyClipboardManager();
+            mgr.copyToClipboard(CMain.this, verse);
+            Toast.makeText(getApplicationContext(), R.string.main_copy_to_pasteboard, Toast.LENGTH_SHORT).show();
+            //onClickSupport(CMain.this);
+        } catch (Exception ignored){
+            Toast.makeText(getApplicationContext(), R.string.main_nothing_to_copy, Toast.LENGTH_SHORT).show();
+        }
     }
 
     private void copyImage(Context context) {
@@ -1218,6 +1227,7 @@ public class CMain extends MyActivity {
     @Override
     protected void onResume() {
         super.onResume();
+        delayedHide();
 //		if (android.os.Build.VERSION.SDK_INT < 11) {
 //			mBroadcast = new MyBroadcast();
 //			registerReceiver(mBroadcast, new IntentFilter());
@@ -1554,7 +1564,11 @@ public class CMain extends MyActivity {
             try {
                 startBibleMap(context,intent,new ComponentName("org.arkist.cnote","org.arkist.bx.BxActivity"));
             } catch (Exception e){
-                startBibleMap(context,intent,new ComponentName("org.arkist.cnote","org.arkist.cnote.KnockActivity"));
+                try {
+                    startBibleMap(context, intent, new ComponentName("org.arkist.cnote", "org.arkist.cnote.KnockActivity"));
+                } catch (Exception e2){
+                    Toast.makeText(getApplicationContext(), R.string.main_cannot_find_bible_app, Toast.LENGTH_SHORT).show();
+                }
             }
         } else {
             try {

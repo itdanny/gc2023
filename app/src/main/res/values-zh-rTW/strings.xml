@@ -63,6 +63,7 @@
     <string name="main_copy">複製</string>
     <string name="main_today">今天</string>
     <string name="main_copy_to_pasteboard">已把金句放到剪貼薄</string>
+    <string name="main_nothing_to_copy">找不到可複製文字</string>
     <string name="main_find_bible_app">找尋閱讀聖經App</string>
     <string name="main_cannot_find_bible_app">找不到此機閱讀聖經App版本</string>
 
