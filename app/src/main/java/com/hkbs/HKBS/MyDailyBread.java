@@ -244,7 +244,17 @@ public class MyDailyBread {
         if (DEBUG) AxDebug.debug(TAG,"CalDate: "+nbrOfDays+" -> "+newCal);
         int result = date2index(context,startCal);
         if (DEBUG) AxDebug.debug(TAG,"CalDate: "+getDayHourString(startCal)+" -> "+result);
+        if (startCal.compareTo(MyDailyBread.getInstance(context).getValidToDate())>0){
+            startCal = (Calendar) MyDailyBread.getInstance(context).getValidToDate().clone();
+        }
+
         return startCal;
+    }
+    static public Calendar getValidCalendar(Context context, Calendar calendar){
+        if (calendar.compareTo(MyDailyBread.getInstance(context).getValidToDate())>0){
+            calendar = (Calendar) MyDailyBread.getInstance(context).getValidToDate().clone();
+        }
+        return calendar;
     }
     public static int date2index(Context context, Calendar end){
         return calcDaysDiff(MyDailyBread.getInstance(context).getValidFrDate(),end);

@@ -217,6 +217,7 @@ public class CMain extends MyActivity {
         requestWindowFeature(Window.FEATURE_NO_TITLE);
         mDailyBread = MyDailyBread.getInstance(CMain.this);
         mDisplayDay = MyDailyBread.getInstance(getApplicationContext()).index2date(getApplicationContext(),0);
+        mDisplayDay = MyDailyBread.getValidCalendar(this, mDisplayDay);
         AxTools.init(CMain.this);
 //        scaleDensity(getApplicationContext());
         MyUtil.initMyUtil(this);
@@ -283,6 +284,7 @@ public class CMain extends MyActivity {
         });
 
         mDisplayDay = Calendar.getInstance();
+        mDisplayDay = MyDailyBread.getValidCalendar(this, mDisplayDay);
 //        mViewAnimator = (ViewAnimator) findViewById(R.id.xmlMainContents);
 
         mControlsView = findViewById(R.id.xmlMainControls);
@@ -330,6 +332,7 @@ public class CMain extends MyActivity {
             @Override
             public void onPageSelected(int i) {
                 mDisplayDay = MyDailyBread.getInstance(getApplicationContext()).index2date(getApplicationContext(),i);
+                mDisplayDay = MyDailyBread.getValidCalendar(CMain.this, mDisplayDay);
 //                mDisplayDay = (Calendar) mDailyBread.getValidFrDate().clone();
 //                mDisplayDay.add(Calendar.DAY_OF_MONTH, i);
                 if (DEBUG)
@@ -708,11 +711,17 @@ public class CMain extends MyActivity {
         saveScreenShot();
         popSelectTextImage(context, shareListener);
     }
-    private ContentValues getContentValues(){
-        int curYear = mDisplayDay.get(Calendar.YEAR);
-        int curMonth = mDisplayDay.get(Calendar.MONTH);
-        int curDay = mDisplayDay.get(Calendar.DAY_OF_MONTH);
-        ContentValues cv = mDailyBread.getContentValues(curYear, curMonth, curDay);
+    private ContentValues getContentValues(Context context){
+        ContentValues cv;
+        try {
+            int curYear = mDisplayDay.get(Calendar.YEAR);
+            int curMonth = mDisplayDay.get(Calendar.MONTH);
+            int curDay = mDisplayDay.get(Calendar.DAY_OF_MONTH);
+            cv = mDailyBread.getContentValues(curYear, curMonth, curDay);
+        } catch (Exception ignored){
+            Calendar calendar = MyDailyBread.getInstance(context).getValidToDate();
+            cv = mDailyBread.getContentValues(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
+        }
         return cv;
     }
     private String getContentValueGoldVerse(){
@@ -724,7 +733,7 @@ public class CMain extends MyActivity {
     }
     private void copyText(Context context) {
         try {
-            ContentValues cv = getContentValues();
+            ContentValues cv = getContentValues(context);
             if (cv == null) return;
             final String verse = cv.getAsString(MyDailyBread.wGoldText).replace("#", " ") +
                     "[" + cv.getAsString(MyDailyBread.wGoldVerse) + "]";// + " RCUV]";
@@ -802,21 +811,25 @@ public class CMain extends MyActivity {
     }
 
     private void shareText(Context context) {
-        int curYear = mDisplayDay.get(Calendar.YEAR);
-        int curMonth = mDisplayDay.get(Calendar.MONTH);
-        int curDay = mDisplayDay.get(Calendar.DAY_OF_MONTH);
-        ContentValues cv = mDailyBread.getContentValues(curYear, curMonth, curDay);
-        final String verse = cv.getAsString(MyDailyBread.wGoldText).replace("#", " ") +
-                "[" + cv.getAsString(MyDailyBread.wGoldVerse) +
-                (is_2016DayShown()?";和合本]":"；和合本修訂版]");
-        MyUtil.trackClick(context, "Share", "M");
-        Intent intent = new Intent(android.content.Intent.ACTION_SEND);
-        intent.setType("text/plain");
-        intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "「" +
-                (IS_2016_VERSION ?context.getString(R.string.app_name):context.getString(R.string.app_name_2015)) +
-                "」"+getString(R.string.main_share_bible));//getResources().getString(R.string.app_name)
-        intent.putExtra(android.content.Intent.EXTRA_TEXT, verse);
-        startActivity(Intent.createChooser(intent, getResources().getString(R.string.app_name_2015)));
+        try {
+            int curYear = mDisplayDay.get(Calendar.YEAR);
+            int curMonth = mDisplayDay.get(Calendar.MONTH);
+            int curDay = mDisplayDay.get(Calendar.DAY_OF_MONTH);
+            ContentValues cv = mDailyBread.getContentValues(curYear, curMonth, curDay);
+            final String verse = cv.getAsString(MyDailyBread.wGoldText).replace("#", " ") +
+                    "[" + cv.getAsString(MyDailyBread.wGoldVerse) +
+                    (is_2016DayShown() ? ";和合本]" : "；和合本修訂版]");
+            MyUtil.trackClick(context, "Share", "M");
+            Intent intent = new Intent(android.content.Intent.ACTION_SEND);
+            intent.setType("text/plain");
+            intent.putExtra(android.content.Intent.EXTRA_SUBJECT, "「" +
+                    (IS_2016_VERSION ? context.getString(R.string.app_name) : context.getString(R.string.app_name_2015)) +
+                    "」" + getString(R.string.main_share_bible));//getResources().getString(R.string.app_name)
+            intent.putExtra(android.content.Intent.EXTRA_TEXT, verse);
+            startActivity(Intent.createChooser(intent, getResources().getString(R.string.app_name_2015)));
+        } catch (Exception ignored){
+
+        }
     }
 
     static final public String[] BOOKS_ENG = new String[]{
