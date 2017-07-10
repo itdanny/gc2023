@@ -154,7 +154,7 @@ public class CWidgetBase extends AppWidgetProvider {
 		Calendar mDisplayDay = Calendar.getInstance();
         // DC 2016.09.16 One More Day Or One Less Day for different Regions
 		// Protect Function
-		if (mDisplayDay.compareTo(mDailyBread.getValidToDate())>=0){
+		if (!MyDailyBread.allowBeyondRange && mDisplayDay.compareTo(mDailyBread.getValidToDate())>=0){
 			mDisplayDay.setTimeInMillis(mDailyBread.getValidToDate().getTimeInMillis()-24*60*60*1000);
 		} else if (mDisplayDay.compareTo(mDailyBread.getValidFrDate())<=0 ){
 			mDisplayDay.setTimeInMillis(mDailyBread.getValidFrDate().getTimeInMillis()+24*60*60*1000);

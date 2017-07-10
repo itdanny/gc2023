@@ -30,7 +30,7 @@ public class MyDailyBread {
     // 2016.04.15 / 19
     // 2016.05.10 / 14 / 20 / 22
     // 2016.06.03 / 17
-    static public boolean allowBeyondRange =false;
+    static public boolean allowBeyondRange = false;
     static public int beyondFrYear=2015;
     static public int beyondToYear=2063;
 
@@ -244,14 +244,13 @@ public class MyDailyBread {
         if (DEBUG) AxDebug.debug(TAG,"CalDate: "+nbrOfDays+" -> "+newCal);
         int result = date2index(context,startCal);
         if (DEBUG) AxDebug.debug(TAG,"CalDate: "+getDayHourString(startCal)+" -> "+result);
-        if (startCal.compareTo(MyDailyBread.getInstance(context).getValidToDate())>0){
+        if (!allowBeyondRange && startCal.compareTo(MyDailyBread.getInstance(context).getValidToDate())>0){
             startCal = (Calendar) MyDailyBread.getInstance(context).getValidToDate().clone();
         }
-
         return startCal;
     }
     static public Calendar getValidCalendar(Context context, Calendar calendar){
-        if (calendar.compareTo(MyDailyBread.getInstance(context).getValidToDate())>0){
+        if (!MyDailyBread.allowBeyondRange && calendar.compareTo(MyDailyBread.getInstance(context).getValidToDate())>0){
             calendar = (Calendar) MyDailyBread.getInstance(context).getValidToDate().clone();
         }
         return calendar;
@@ -313,7 +312,7 @@ public class MyDailyBread {
 //        int fullDay = checkFullDay(dateCpy, endCal, offset);
         //if (DEBUG) AxDebug.debug(TAG,"nbrOfDays Difference (Exclude last day)="+diffAux+"("+fullDay+")");
 //        return diffAux+fullDay;
-        if (DEBUG) AxDebug.debug(TAG,"CalDate: "+getDayHourString(startCal)+" -> "+getDayHourString(endCal)+" = "+diffAux+" days(ex. last day)");
+        if (DEBUG) AxDebug.debug(TAG,"CalDate: "+getDayHourString(startCal)+" -> "+getDayHourString(endCal)+" has "+diffAux+" days(ex. last day)");
         return diffAux;
     }
     //http://stackoverflow.com/questions/3838527/android-java-date-difference-in-days
@@ -322,8 +321,17 @@ public class MyDailyBread {
         return Date.UTC(date.getYear(), date.getMonth(), date.getDate(), 12, 0, 0);
     }
     public static void showOutOfBounds(Context context, Calendar calendar){
-        if (calendar.getTimeInMillis() > Calendar.getInstance().getTimeInMillis()){
-            Toast.makeText(context, R.string.out_of_range_download, Toast.LENGTH_LONG).show();
+        String strDate="";
+//        try {
+//            strDate="("+getDayString(calendar.get(Calendar.YEAR),calendar.get(Calendar.MONTH),calendar.get(Calendar.DAY_OF_MONTH))+")";
+//        } catch (Exception ignored){
+//
+//        }
+        Calendar toDate = MyDailyBread.getInstance(context).getValidToDate();
+        if (calendar.getTimeInMillis() > toDate.getTimeInMillis()){
+            String str=toDate.get(Calendar.YEAR)+"-"+(toDate.get(Calendar.MONTH)+1)+"-"+toDate.get(Calendar.DAY_OF_MONTH);
+            str = strDate+context.getString(R.string.out_of_range_download,str);
+            Toast.makeText(context, str, Toast.LENGTH_LONG).show();
         } else {
             Toast.makeText(context, R.string.out_of_range, Toast.LENGTH_SHORT).show();
         }
@@ -833,22 +841,52 @@ public class MyDailyBread {
 	   }
 	}
 	public ContentValues getContentValues(int year, int month, int day){
+        int keyNbr=0;
 		try {
-            int keyNbr = mMap.get(getDayString(year, month, day));
+            keyNbr = mMap.get(getDayString(year, month, day));
 			return mValueList.get(keyNbr);
 		} catch (Exception e1){
+            boolean isError=false;
             if (MyDailyBread.allowBeyondRange && year >= beyondFrYear && year <= beyondToYear ) {
-                year = 2016;
+                //
+                //
+//                Calendar lastDate = MyDailyBread.getInstance(mContext).getValidToDate();
+//                Calendar getContentDate = (Calendar) lastDate.clone();
+//                getContentDate.set(year, month, day);
+//                if (getContentDate.compareTo(lastDate) > 0){
+//                    MyDailyBread.showOutOfBounds(mContext,getContentDate);
+//                }
+                if ((year % 2) == 0) {
+                    // number is even
+                    year = 2016;
+                } else {
+                    year = 2017;
+                }
+                if (month==1 && day==29){
+                    year=2016; // Only 2016 Feb has 29 days
+                }
                 try {
-                    int keyNbr = mMap.get(getDayString(year, month, day));
-                    return mValueList.get(keyNbr);
+                    keyNbr = mMap.get(getDayString(year, month, day));
+                    isError=false;
                 } catch (Exception e2) {
-                    MyUtil.logError(TAG, "Exception:" + e2.getMessage());
+                    MyUtil.logError(TAG, "Adjusted Value not find in array:"+year+","+month+","+day);
+                    isError=true;
+                }
+            } else {
+                MyUtil.logError(TAG, "Value not find in array:"+year+","+month+","+day);
+                isError=true;
+            }
+            if (isError){
+                try {
+                    Calendar calendar = MyDailyBread.getInstance(mContext).getValidToDate();
+                    keyNbr = mMap.get(getDayString(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH)));
+                    return mValueList.get(keyNbr);
+                } catch (Exception e){
+                    MyUtil.logError(TAG, "Use last date value not find in array");
                     return null;
                 }
             } else {
-                MyUtil.logError(TAG, "Exception:" + e1.getMessage());
-                return null;
+                return mValueList.get(keyNbr);
             }
 		}
 	}

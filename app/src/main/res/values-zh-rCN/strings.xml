@@ -44,7 +44,7 @@
         <string name="WordGoldVerse">金句</string>
         <string name="MsgCalendarChangeEventDate">提示: 连续按日期2次可更改 [日期]</string>
         <string name="out_of_range">超出支援显示范围</string>
-        <string name="out_of_range_download">超出范围,可到Google Play检查是否有新更新,或电邮到info@arkist.org查询</string>
+        <string name="out_of_range_download">超出范围(%1$s),可到Google Play检查是否有新更新,或电邮到info@arkist.org查询</string>
 
         <string name="app_name_2015">全年好日历</string>
         <string name="app_name">全年金句日历</string>

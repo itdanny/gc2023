@@ -92,7 +92,7 @@ public class CMain extends MyActivity {
     private CustomViewAdapter mAdapter;
 
     private View mRootView;
-
+    static int showOutOfBounds=0;
 //    private LinearLayout page1;
 //    private LinearLayout page2;
     private Handler handler;
@@ -163,11 +163,18 @@ public class CMain extends MyActivity {
         public Fragment getItem(int position) {
             //mCalendar.setTimeInMillis(mStartTime);
             mCalendar.setTimeInMillis(CMain.mDailyBread.getValidFrDate().getTimeInMillis());
-            mCalendar.add(Calendar.DAY_OF_MONTH, position);
+            mCalendar.add(Calendar.DAY_OF_YEAR, position);
+//            if (mCalendar.getTimeInMillis()>CMain.mDailyBread.getValidToDate().getTimeInMillis()){
+//
+//            }
             //return DailyFragment.getInstance(mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH), mCalendar.get(Calendar.DAY_OF_MONTH));
 //            final int targetPosition = position % 3;
 //            if (dailyFragments[targetPosition]==null){
-                return DailyFragment.getInstance(mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH), mCalendar.get(Calendar.DAY_OF_MONTH));
+            int year=mCalendar.get(Calendar.YEAR);
+            int month=mCalendar.get(Calendar.MONTH);
+            int day=mCalendar.get(Calendar.DAY_OF_MONTH);
+            MyUtil.log(TAG, "Get Item:"+year+","+month+","+day);
+                return DailyFragment.getInstance(year, month, day);
 //            } else {
 //                dailyFragments[targetPosition].onRefreshSettings(mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH), mCalendar.get(Calendar.DAY_OF_MONTH));
 //                return dailyFragments[targetPosition];
@@ -328,7 +335,6 @@ public class CMain extends MyActivity {
                 }
                 mPager.isScrolling = false;
             }
-
             @Override
             public void onPageSelected(int i) {
                 mDisplayDay = MyDailyBread.getInstance(getApplicationContext()).index2date(getApplicationContext(),i);
@@ -341,6 +347,13 @@ public class CMain extends MyActivity {
                 if (DEBUG)
                     Log.i(TAG, "onPageSelected day=" + mDisplayDay.get(Calendar.DAY_OF_MONTH) + " end");
                 mPager.isScrolling = false;
+                if (MyDailyBread.allowBeyondRange && mDisplayDay.getTimeInMillis()>MyDailyBread.getInstance(CMain.this).getValidToDate().getTimeInMillis()){
+                    if (showOutOfBounds==0){
+                        MyDailyBread.showOutOfBounds(getApplicationContext(),mDisplayDay);
+                    }
+                    showOutOfBounds++;
+                    if (showOutOfBounds>3) showOutOfBounds=0;
+                }
             }
 
             @Override
@@ -1433,7 +1446,6 @@ public class CMain extends MyActivity {
         mDisplayDay.setTimeInMillis(newCalendar.getTimeInMillis());
         onRefreshPage(mDisplayDay, false, true);
     }
-
     public void gotoNextDay() {
         if (mPager.isScrolling) return;
         if (!MyDailyBread.allowBeyondRange && !isWithinRange(mDisplayDay, 1)) {
@@ -1441,7 +1453,7 @@ public class CMain extends MyActivity {
             calendar.add(Calendar.MONTH,1);
             MyDailyBread.showOutOfBounds(getApplicationContext(),calendar);
         } else {
-            mDisplayDay.add(Calendar.DAY_OF_MONTH, +1);
+            mDisplayDay.add(Calendar.DAY_OF_MONTH, 1);
             onRefreshPage(mDisplayDay, true, true);
         }
     }

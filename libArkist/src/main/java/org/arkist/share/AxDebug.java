@@ -1,14 +1,5 @@
 package org.arkist.share;
 
-import java.lang.reflect.InvocationTargetException;
-import java.lang.reflect.Method;
-import java.util.ArrayList;
-import java.util.Calendar;
-import java.util.List;
-import java.util.Map;
-import java.util.Map.Entry;
-import java.util.Set;
-
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -22,6 +13,15 @@ import android.view.ViewGroup;
 
 import com.google.analytics.tracking.android.EasyTracker;
 import com.google.analytics.tracking.android.MapBuilder;
+
+import java.lang.reflect.InvocationTargetException;
+import java.lang.reflect.Method;
+import java.util.ArrayList;
+import java.util.Calendar;
+import java.util.List;
+import java.util.Map;
+import java.util.Map.Entry;
+import java.util.Set;
 
 public class AxDebug {
 	static final private String TAG = AxDebug.class.getSimpleName();
@@ -217,7 +217,11 @@ public class AxDebug {
 		} else if (type.equalsIgnoreCase("W")){
 			Log.w(tag,methodLine+message);
 		} else if (type.equalsIgnoreCase("D")){
-			Log.d(tag,methodLine+message);
+            if (android.os.Build.BRAND.contentEquals("HUAWEI")){
+                Log.i(tag,methodLine+message);
+            } else {
+                Log.d(tag,methodLine+message);
+            }
 		} else if (type.equalsIgnoreCase("A")){
 			String callers="...";
 			if (ste!=null){
