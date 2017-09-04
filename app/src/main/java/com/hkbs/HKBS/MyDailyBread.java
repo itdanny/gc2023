@@ -89,8 +89,7 @@ public class MyDailyBread {
 	private Map<String, Integer> mMap;
 	private Calendar validFrDate=null;
 	private Calendar validToDate=null;
-	//private ContentValues mEmptyContentValues;
-	
+
 	//GYear,GMonth,GDay,GoldText,GoldVerse,GoldFrame,GoldAlign,GoldSize,BigText,BigAlign,BigSize,SmallText
 	final static String wGYear = "GYear";
 	final static String wGMonth = "GMonth";
