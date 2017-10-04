@@ -253,8 +253,8 @@ public class MyHoliday {
         "20160619父親節",
         "20170514母親節",
         "20170618父親節",
-        "20170513母親節",
-        "20170617父親節"
+        "20180513母親節",
+        "20180617父親節"
             // Mother 2nd Sunday of May
             // Father 3rd Sunday of June
 	};
