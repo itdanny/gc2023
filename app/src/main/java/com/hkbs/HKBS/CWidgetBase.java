@@ -7,7 +7,6 @@ import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.net.Uri;
 import android.os.AsyncTask;
 import android.os.Handler;
 import android.text.TextUtils;
@@ -19,8 +18,8 @@ import android.widget.RemoteViews;
 
 import com.hkbs.HKBS.arkCalendar.MyCalendarLunar;
 import com.hkbs.HKBS.arkUtil.MyUtil;
+import com.hkbs.MyGoldBroadcast;
 
-import org.arkist.share.AxAlarm;
 import org.arkist.share.AxDebug;
 import org.arkist.share.AxTools;
 
@@ -60,7 +59,7 @@ public class CWidgetBase extends AppWidgetProvider {
 		
 ////		int actionID = intent.getIntExtra(AppWidgetManager.EXTRA_CUSTOM_EXTRAS,0);
 ////		switch (actionID){
-////			case MyBroadcast.REQUEST_WIDGET:
+////			case MyGoldBroadcast.REQUEST_WIDGET:
 //
 //			    AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
 //			    ComponentName thisAppWidget = new ComponentName(context.getPackageName(), CWidget.class.getName());
@@ -487,18 +486,19 @@ public class CWidgetBase extends AppWidgetProvider {
 		}
 	}
 	// It will auto update for every 30 minutes. NO need currently.
-	//-> Call MyBroadcast -> Call CWidget onReceive -> Call CWidget onUpdate
-	// All Activities can have receiver but we centrallized all receive in MyBroadcast and use Filter to control.
+	//-> Call MyGoldBroadcast -> Call CWidget onReceive -> Call CWidget onUpdate
+	// All Activities can have receiver but we centrallized all receive in MyGoldBroadcast and use Filter to control.
 	// This app won't answer call individually
+    static private int intentCounter;
 	static public void broadcastMe(Context context){
-		if (DEBUG) MyUtil.log(TAG, "broadcastme.");
-		Intent intent=new Intent(context,MyBroadcast.class);
-		intent.setAction("com.hkbs.HKBS.WidgetUpdate");
+		if (DEBUG) MyUtil.log(TAG, "Alarm.broadcastme.");
+		Intent intent=new Intent(context,MyGoldBroadcast.class);
+        intent.setAction("com.hkbs.HKBS.WidgetUpdate");
 		//intent.setData(ContentUris.withAppendedId(Uri.EMPTY, buttonID));
-		intent.putExtra(AxAlarm.EXTRA_BROADCAST_CODE, MyBroadcast.REQUEST_WIDGET);
+//		intent.putExtra(AxAlarm.EXTRA_BROADCAST_CODE, MyGoldBroadcast.REQUEST_WIDGET);
         // below statment should be different on every call so that it won't reuse and can't broadcase wrong variables
-		//intentCounter++;
-		intent.setData(Uri.withAppendedPath(Uri.parse(MyBroadcast.URI_SCHEME+ "://widget/"+MyBroadcast.REQUEST_WIDGET+"/"),"1"));
+//		intentCounter++;
+//		intent.setData(Uri.withAppendedPath(Uri.parse(MyGoldBroadcast.URI_SCHEME+ "://widget/"+ MyGoldBroadcast.REQUEST_WIDGET+"/"),String.valueOf(intentCounter)));
 		context.sendBroadcast(intent);
 	}
 }

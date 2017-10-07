@@ -1,4 +1,4 @@
-package com.hkbs.HKBS;
+package com.hkbs;
 
 import android.annotation.SuppressLint;
 import android.app.NotificationManager;
@@ -14,15 +14,23 @@ import android.content.res.Resources;
 import android.support.v4.app.NotificationCompat;
 import android.util.Log;
 
+import com.hkbs.HKBS.AxAlarm;
+import com.hkbs.HKBS.CMain;
+import com.hkbs.HKBS.CWidgetBase;
+import com.hkbs.HKBS.CWidgetLarge;
+import com.hkbs.HKBS.CWidgetMiddle;
+import com.hkbs.HKBS.CWidgetNormal;
+import com.hkbs.HKBS.CWidgetSmall;
+import com.hkbs.HKBS.CWidgetXLarge;
+import com.hkbs.HKBS.MyDailyBread;
+import com.hkbs.HKBS.R;
 import com.hkbs.HKBS.arkUtil.MyUtil;
-
-import org.arkist.share.AxAlarm;
 
 import java.util.Calendar;
 
-public class MyBroadcast extends BroadcastReceiver {
+public class MyGoldBroadcast extends BroadcastReceiver {
     final static private boolean DEBUG=true && CMain.DEBUG;
-    final static private String TAG = MyBroadcast.class.getSimpleName();
+    final static private String TAG = MyGoldBroadcast.class.getSimpleName();
     final static public String URI_SCHEME = "CalendarWidget";
     static public boolean screenIsOn=true;
     static public boolean lastScreenState=true;
@@ -30,25 +38,18 @@ public class MyBroadcast extends BroadcastReceiver {
     static BroadcastReceiver mReceiver;
     
     static final public int REQUEST_WIDGET=2;
-//	static final public int REQUEST_RECEIVER=5;
+	static final public int NOTIFICATION_ID_TODAY_VERSE=1;
 	
-	static public final int NOTIFICATION_ID_TODAY_VERSE=1;
-	
-//	static private final String INTENT_ACTION_ALARM="org.arkist.cnote.ALARM";
-//	static private final String INTENT_ACTION_NEWS="org.arkist.cnote.NEWS";
-//	static public final String INTENT_ACTION_KILL="org.arkist.cnote.KILL";
-//	static public final String INTENT_ACTION_TYPE="AnyStringHere";
-	
-	public MyBroadcast() {
+	public MyGoldBroadcast() {
 	}
-
 	@Override
 	public void onReceive(Context context, Intent intent) {
-		if (intent==null) {
-			if (DEBUG) MyUtil.logError(TAG, "onReceive....null");
+        Log.i(TAG,"Alarm.broadcast");
+        if (intent==null) {
+			if (DEBUG) MyUtil.logError(TAG, "Alarm.Broadcast.onReceive....null");
 			return;
 		}
-        if (DEBUG) MyUtil.log(TAG, "Broadcast.onReceive....");
+        if (DEBUG) MyUtil.log(TAG, "Alarm.Broadcast.onReceive....");
 		String intentAction = intent.getAction();
 		if (intentAction!=null){
 			if (intentAction.equals(Intent.ACTION_SCREEN_OFF)) {
@@ -57,20 +58,28 @@ public class MyBroadcast extends BroadcastReceiver {
 			} else if (intentAction.equals(Intent.ACTION_SCREEN_ON)) {
 	        	screenIsOn = true;
 	            isStopUpdateWidget = false;	            
-	            //MyBroadcast.updateAllWidget(context);
+	            //MyGoldBroadcast.updateAllWidget(context);
 			} else if ( intentAction.equals(Intent.ACTION_BOOT_COMPLETED) || 
 						intentAction.equals(Intent.ACTION_PACKAGE_ADDED) || 
 						intentAction.equals(Intent.ACTION_PACKAGE_FIRST_LAUNCH)){
 				setReceiverOn(context);
-				//MyBroadcast.updateAllWidget(context);
+				//MyGoldBroadcast.updateAllWidget(context);
 			} else if ( intentAction.equals(Intent.ACTION_SHUTDOWN) || 
 						intentAction.equals(Intent.ACTION_PACKAGE_REMOVED)){
-				setReceiverOff(context);			
-			} else if (intentAction.equals(AxAlarm.MANIFEST_ACTION_DATE_CHANGE)){
-				if (DEBUG) Log.i(TAG, "Action Alarm DateChange");
-				//MyBroadcast.updateAllWidget(context);
+				setReceiverOff(context);
+			} else if (intentAction.equals(AxAlarm.MANIFEST_ACTION_DATE_CHANGE)) {
+                if (DEBUG) Log.i(TAG, "Action Alarm DateChange");
+                //MyGoldBroadcast.updateAllWidget(context);
+            } else if (intentAction.equals(AxAlarm.MANIFEST_ACTION + AxAlarm.REQUEST_CODE_DATE_CHANGE)){
+                if (DEBUG) Log.i(TAG, "Action Alarm DateChange");
+                //MyGoldBroadcast.updateAllWidget(context);
+            } else if (intentAction.equals(AxAlarm.MANIFEST_ACTION + AxAlarm.REQUEST_CODE_ALARM)){
+                if (DEBUG) Log.i(TAG, "Action Alarm Alarm");
+                //AxAlarm.setDailyAlarm(context, AxAlarm.MODE.SET_DEFAULT, 9, 0);
+                doDailyGoldSentence(context);
 			} else if (intentAction.equals(AxAlarm.MANIFEST_ACTION_ALARM)){
                 if (DEBUG) Log.i(TAG, "Action Alarm Alarm");
+                //AxAlarm.setDailyAlarm(context, AxAlarm.MODE.SET_DEFAULT, 9, 0);
 				doDailyGoldSentence(context);
 			} else {
                 if (DEBUG) Log.i(TAG, "Others..."+intentAction);
@@ -79,17 +88,17 @@ public class MyBroadcast extends BroadcastReceiver {
 //					doDailyGoldSentence(context);
 //				} else 
 				//if (requestCode==REQUEST_WIDGET){
-					//MyBroadcast.updateAllWidget(context);
+					//MyGoldBroadcast.updateAllWidget(context);
 				//}
 			}
         }
-        MyBroadcast.updateAllWidget(context);
+        MyGoldBroadcast.updateAllWidget(context);
 		lastScreenState=screenIsOn;
 		
 	}
 	static public synchronized void setReceiverOn(Context context){
 		if (mReceiver==null){
-			mReceiver = new MyBroadcast();
+			mReceiver = new MyGoldBroadcast();
             final IntentFilter screenFilter = new IntentFilter(Intent.ACTION_SCREEN_ON);
             screenFilter.addAction(Intent.ACTION_SCREEN_OFF);
             context.getApplicationContext().registerReceiver(mReceiver, screenFilter);
@@ -148,6 +157,7 @@ public class MyBroadcast extends BroadcastReceiver {
 	 */
     private void doDailyGoldSentence(Context context){
         try {
+            if (DEBUG) System.out.println("Daily Reminder:Start");
             final Calendar today = Calendar.getInstance();
             int curYear = today.get(Calendar.YEAR);
             int curMonth = today.get(Calendar.MONTH);

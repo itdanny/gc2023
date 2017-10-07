@@ -7,15 +7,20 @@ android {
     defaultConfig {
         applicationId "com.hkbs.HKBS"
         minSdkVersion 9
-        targetSdkVersion 23
-        versionCode 65
-        versionName "3.35"
-        multiDexEnabled true
+        targetSdkVersion 25
+        versionCode 66
+        versionName "3.36"
+//        multiDexEnabled true
     }
-    dexOptions {
-        preDexLibraries = false
-    }
+//    dexOptions {
+//        preDexLibraries = false
+//    }
     buildTypes {
+        debug {
+            minifyEnabled false
+            proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'
+            debuggable true
+        }
         release {
             minifyEnabled false
             proguardFiles getDefaultProguardFile('proguard-android.txt'), 'proguard-rules.pro'

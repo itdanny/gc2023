@@ -135,7 +135,7 @@ activity#com.hkbs.HKBS.JustBroadcast
 ADDED from AndroidManifest.xml:77:9
 	android:name
 		ADDED from AndroidManifest.xml:78:13
-receiver#com.hkbs.HKBS.MyBroadcast
+receiver#com.hkbs.MyGoldBroadcast
 ADDED from AndroidManifest.xml:91:9
 	android:enabled
 		ADDED from AndroidManifest.xml:93:13

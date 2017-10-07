@@ -1,5 +1,6 @@
 package com.hkbs.HKBS;
 
+import android.Manifest;
 import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
@@ -10,6 +11,7 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
+import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -19,9 +21,11 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore.Images;
+import android.support.v4.app.ActivityCompat;
 import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
+import android.support.v4.content.ContextCompat;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -37,8 +41,8 @@ import com.hkbs.HKBS.arkUtil.MyGestureListener;
 import com.hkbs.HKBS.arkUtil.MyPermission;
 import com.hkbs.HKBS.arkUtil.MyUtil;
 import com.hkbs.HKBS.util.SystemUiHider;
+import com.hkbs.MyGoldBroadcast;
 
-import org.arkist.share.AxAlarm;
 import org.arkist.share.AxImageView;
 import org.arkist.share.AxTools;
 
@@ -96,6 +100,7 @@ public class CMain extends MyActivity {
 //    private LinearLayout page1;
 //    private LinearLayout page2;
     private Handler handler;
+    private MyGoldBroadcast myGoldBroadcast;
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (!MyPermission.getInstance().onRequestPermissionsResult(
@@ -109,6 +114,12 @@ public class CMain extends MyActivity {
                             case MyPermission.REQUEST_ACCESS_STORAGE:
                                 if (success) {
                                     onClickShare(getBaseContext(), true);
+                                }
+                                break;
+                            case MyPermission.REQUEST_ACCESS_ALARM:
+                                if (success) {
+                                    AxAlarm.setDailyAlarm(CMain.this, AxAlarm.MODE.SET_DEFAULT, 9, 0);
+                                    AxAlarm.setDailyOnDateChange(CMain.this);
                                 }
                                 break;
                         }
@@ -199,6 +210,11 @@ public class CMain extends MyActivity {
         }
     }
 
+//    @Override
+//    protected void onDestroy() {
+//        super.onDestroy();
+//        this.unregisterReceiver(myGoldBroadcast);
+//    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
 //        //Test
@@ -300,8 +316,29 @@ public class CMain extends MyActivity {
 
         onCreateSetButtons();
 
-        AxAlarm.setDailyAlarm(CMain.this, AxAlarm.MODE.SET_DEFAULT, 9, 0);
-        AxAlarm.setDailyOnDateChange(CMain.this);
+        if (ContextCompat.checkSelfPermission(this,
+                Manifest.permission.SET_ALARM)
+                != PackageManager.PERMISSION_GRANTED) {
+            // Should we show an explanation?
+            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
+                    Manifest.permission.SET_ALARM)) {
+                // Show an explanation to the user *asynchronously* -- don't block
+                // this thread waiting for the user's response! After the user
+                // sees the explanation, try again to request the permission.
+            } else {
+                // No explanation needed, we can request the permission.
+                ActivityCompat.requestPermissions(this,
+                        new String[]{Manifest.permission.SET_ALARM}, MyPermission.REQUEST_ACCESS_ALARM);
+                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
+                // app-defined int constant. The callback method gets the
+                // result of the request.
+            }
+        } else {
+            AxAlarm.setDailyAlarm(CMain.this, AxAlarm.MODE.SET_DEFAULT, 9, 0);
+            AxAlarm.setDailyOnDateChange(CMain.this);
+        }
+//        myGoldBroadcast = new MyGoldBroadcast();
+//        this.registerReceiver(myGoldBroadcast,new IntentFilter(AxAlarm.MANIFEST_ACTION_ALARM));
 
         CWidgetBase.broadcastMe(CMain.this);
 
@@ -1249,13 +1286,13 @@ public class CMain extends MyActivity {
 //    }
 
     // For testing only since we want broadcast onReceive event app stopped
-//	static private MyBroadcast mBroadcast; 
+//	static private MyGoldBroadcast mBroadcast;
     @Override
     protected void onResume() {
         super.onResume();
         delayedHide();
 //		if (android.os.Build.VERSION.SDK_INT < 11) {
-//			mBroadcast = new MyBroadcast();
+//			mBroadcast = new MyGoldBroadcast();
 //			registerReceiver(mBroadcast, new IntentFilter());
 //		}
         if (DEBUG) MyUtil.log(TAG, "onResume");

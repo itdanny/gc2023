@@ -1,10 +1,13 @@
-package org.arkist.share;
+package com.hkbs.HKBS;
 
 import android.app.AlarmManager;
 import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
+import android.os.Build;
 import android.util.Log;
+
+import org.arkist.share.AxTools;
 
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
@@ -20,11 +23,11 @@ public class AxAlarm {
 	//final static public String MANIFEST_ACTION_NOTIFY_1 = "AxAlarm_Notify_1"; // For Manifest;
 	
 	final static public String EXTRA_BROADCAST_CODE = "extraBroadcastCode";
-	final static private int REQUEST_CODE_ALARM = 11;
-	final static private int REQUEST_CODE_DATE_CHANGE = 12;
+	final static public int REQUEST_CODE_ALARM = 11;
+	final static public int REQUEST_CODE_DATE_CHANGE = 12;
 //	final static private int REQUEST_CODE_NOTIFY_1 = 21;
 
-    final static private boolean DEBUG = false;
+    final static private boolean DEBUG = true;
 	final static private String TAG = AxAlarm.class.getSimpleName(); 
 	final static private long MILLSECOND_IN_DAYS = 24*60*60*1000;
 	final static private SimpleDateFormat sdfYYYYMMDDHHMM = new SimpleDateFormat("yyyy-MM-dd HH:mm",Locale.US);
@@ -50,13 +53,13 @@ public class AxAlarm {
 	}
 	/*
 	 * No need specify the broadcast class i.e.
-	 * Intent intent = new Intent(context, MyBroadcast.class);
+	 * Intent intent = new Intent(context, MyGoldBroadcast.class);
 	 */	
 	static public PendingIntent getPendingIntent(Context context, int requestCode){
         if (DEBUG) Log.i(TAG, "Set:"+MANIFEST_ACTION+String.valueOf(requestCode));
 		Intent intent = new Intent();
     	intent.setAction(MANIFEST_ACTION+String.valueOf(requestCode));    	
-    	PendingIntent pendingIntent = PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_CANCEL_CURRENT);
 		return pendingIntent;
 	}
 	/* 
@@ -86,10 +89,14 @@ public class AxAlarm {
 //	}
 	static public void setDailyAlarm(Context context, MODE mode, int setHour, int setMinute){
 		//-- for Good Calendar --
+        context = context.getApplicationContext();
 		MODE finalMode = gc_setAlarm(context, mode, setHour, setMinute);
 		alarmCancel(context);
-		if (finalMode==MODE.ON){			
-			alarmOn(setHour, setMinute, MILLSECOND_IN_DAYS, context, getPendingIntent(context, MANIFEST_ACTION_ALARM, REQUEST_CODE_ALARM));
+		if (finalMode==MODE.ON){
+            setHour=AxTools.getPrefInt(PREF_ALARM_HOUR,setHour);
+            setMinute=AxTools.getPrefInt(PREF_ALARM_MIN,setMinute);
+			//alarmOn(setHour, setMinute, MILLSECOND_IN_DAYS, context, getPendingIntent(context, MANIFEST_ACTION_ALARM, REQUEST_CODE_ALARM));
+            alarmOn(setHour, setMinute, MILLSECOND_IN_DAYS, context, REQUEST_CODE_ALARM);
 		}
 	}
 	static public void alarmCancel(Context c) {
@@ -140,19 +147,20 @@ public class AxAlarm {
 	    if (!(repeatInterval == -1)){
 	    	am.setRepeating(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), repeatInterval, pi);
 	    } else {
-	    	am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pi);
+	    	//am.set(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis()+50, pi);
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+                am.setExactAndAllowWhileIdle(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pi);
+            } else if (Build.VERSION.SDK_INT >=  Build.VERSION_CODES.KITKAT) {
+                am.setExact(AlarmManager.RTC_WAKEUP, cal.getTimeInMillis(), pi);
+            } else {
+                am.set(AlarmManager.RTC_WAKEUP,  cal.getTimeInMillis(), pi);
+            }
 	    }
-//	    Calendar startCal = Calendar.getInstance();
-//	    Time time = new Time();
-//	    time.setToNow();
-//	    time.hour = hour;
-//	    time.minute = minute;
-//	    startCal.set(time.year, time.month, time.monthDay, time.hour, time.minute, 0);
 		if (DEBUG) Log.i(TAG, "Alarm.Set to "+sdfYYYYMMDDHHMM.format(cal.getTime())+" on "+sdfYYYYMMDDHHMM.format(Calendar.getInstance().getTime()));
 	}
-	static public void alarmOff(Context c, int requestCode) {
-		alarmOff(c, getPendingIntent(c, requestCode));
-	}
+//	static public void alarmOff(Context c, int requestCode) {
+//		alarmOff(c, getPendingIntent(c, requestCode));
+//	}
 	static private void alarmOff(Context c, PendingIntent pi) {		
 		AlarmManager am = (AlarmManager) c.getSystemService(Context.ALARM_SERVICE);
 	    am.cancel(pi);
@@ -190,7 +198,7 @@ public class AxAlarm {
 //    elapsedTime.second=0;
 //    return elapsedTime.toMillis(true) + spanInMillis(nowTime, startTime);
 //}	
-	//final static private String URI_SCHEME = "MyBroadcast";
+	//final static private String URI_SCHEME = "MyGoldBroadcast";
 //	final static private int REQUEST_ALARM=1;
 //	final static public String API8_ACTION_ALARM = "Api8ActionAlarm";
 //	final static public String EXTRA_BROADCAST_CODE = "extraBroadcastCode";
@@ -221,7 +229,7 @@ public class AxAlarm {
 	
 //	} else {
 //	AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
-//	Intent intent = new Intent(context, MyBroadcast.class);// Wake up a broadcast
+//	Intent intent = new Intent(context, MyGoldBroadcast.class);// Wake up a broadcast
 //	PendingIntent pendingIntent;
 //	int requestCode=REQUEST_ALARM;
 //	intent.setAction(String.valueOf(requestCode));

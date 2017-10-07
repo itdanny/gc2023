@@ -11,8 +11,6 @@ import android.widget.TimePicker;
 
 import com.hkbs.HKBS.arkUtil.MyUtil;
 
-import org.arkist.share.AxAlarm;
-
 public class AlarmActivity extends MyActivity {
 //	final static private String TAG = AlarmActivity.class.getSimpleName();
 	

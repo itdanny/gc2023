@@ -25,6 +25,7 @@ public class MyPermission {
     static final public int REQUEST_ACCESS_SYNC = 4;
     static final public int REQUEST_ACCESS_ACCOUNT_CAMERA = 5;
     static final public int REQUEST_ACCESS_CONFIG = 6;
+    static final public int REQUEST_ACCESS_ALARM = 7;
 
     static private MyPermission myPermission;
     public interface Callback{

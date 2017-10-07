@@ -91,18 +91,18 @@ public class MyDailyBread {
 	private Calendar validToDate=null;
 
 	//GYear,GMonth,GDay,GoldText,GoldVerse,GoldFrame,GoldAlign,GoldSize,BigText,BigAlign,BigSize,SmallText
-	final static String wGYear = "GYear";
-	final static String wGMonth = "GMonth";
-	final static String wGDay = "GDay";
-	final static String wGoldText = "GoldText";
-	final static String wGoldVerse = "GoldVerse";
-	final static String wGoldFrame = "GoldFrame";
-	final static String wGoldAlign = "GoldAlign";
-	final static String wGoldSize = "GoldSize";
-	final static String wBigText = "BigText";
-	final static String wBigAlign = "BigAlign";
-	final static String wBigSize = "BigSize";
-	final static String wSmallText = "SmallText";
+	final static public String wGYear = "GYear";
+	final static public String wGMonth = "GMonth";
+	final static public String wGDay = "GDay";
+	final static public String wGoldText = "GoldText";
+	final static public String wGoldVerse = "GoldVerse";
+	final static public String wGoldFrame = "GoldFrame";
+	final static public String wGoldAlign = "GoldAlign";
+	final static public String wGoldSize = "GoldSize";
+	final static public String wBigText = "BigText";
+	final static public String wBigAlign = "BigAlign";
+	final static public String wBigSize = "BigSize";
+	final static public String wSmallText = "SmallText";
 	
 //	static public MyDailyBread getInstance(Activity act){
 //		final Context context = act.getBaseContext();
