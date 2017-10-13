@@ -852,8 +852,10 @@ public class CMain extends MyActivity {
                 (IS_2016_VERSION ?context.getString(R.string.app_name):context.getString(R.string.app_name_2015)) +
                 "」經文分享");
         share.putExtra(android.content.Intent.EXTRA_STREAM, uri);
-        startActivity(Intent.createChooser(share, "分享圖像"));
-
+        try {
+            startActivity(Intent.createChooser(share, "分享圖像"));
+        } catch (Exception ignored){
+        }
 //		Intent share = new Intent(Intent.ACTION_SEND);
 //		share.setType("image/jpeg");
 //		share.putExtra(Intent.EXTRA_STREAM, Uri.parse(Environment.getExternalStorageDirectory().getPath()+"/screenshot.png"));
