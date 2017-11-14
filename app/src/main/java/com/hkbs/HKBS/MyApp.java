@@ -1,10 +1,10 @@
 package com.hkbs.HKBS;
 
-import android.app.Application;
 import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.LocaleList;
+import android.support.multidex.MultiDexApplication;
 
 import org.arkist.share.AxDebug;
 import org.arkist.share.AxTools;
@@ -15,7 +15,7 @@ import java.util.Locale;
  * Created by dchow on 28/12/2016.
  */
 
-public class MyApp extends Application {
+public class MyApp extends MultiDexApplication {
     final static public String PREF_APP_LANG = "prefAppLang";
     final static public String PREF_APP_LANG_CN = "CN";
     final static public String PREF_APP_LANG_TW = "TW";

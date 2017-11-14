@@ -10,6 +10,7 @@ import android.widget.ImageView;
 import android.widget.TimePicker;
 
 import com.hkbs.HKBS.arkUtil.MyUtil;
+import com.hkbs.MyGoldBroadcast;
 
 public class AlarmActivity extends MyActivity {
 //	final static private String TAG = AlarmActivity.class.getSimpleName();
@@ -80,7 +81,8 @@ public class AlarmActivity extends MyActivity {
 		AxAlarm.setDailyAlarm(AlarmActivity.this,
 				cb.isChecked()?AxAlarm.MODE.ON:AxAlarm.MODE.OFF,
 				tp.getCurrentHour(),
-				tp.getCurrentMinute());
+				tp.getCurrentMinute(),
+                MyGoldBroadcast.class);
 	}	
 
 }

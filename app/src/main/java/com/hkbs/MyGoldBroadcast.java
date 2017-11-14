@@ -1,6 +1,7 @@
 package com.hkbs;
 
-import android.annotation.SuppressLint;
+import android.app.Notification;
+import android.app.NotificationChannel;
 import android.app.NotificationManager;
 import android.app.PendingIntent;
 import android.appwidget.AppWidgetManager;
@@ -27,6 +28,8 @@ import com.hkbs.HKBS.R;
 import com.hkbs.HKBS.arkUtil.MyUtil;
 
 import java.util.Calendar;
+
+import static android.content.Context.NOTIFICATION_SERVICE;
 
 public class MyGoldBroadcast extends BroadcastReceiver {
     final static private boolean DEBUG=true && CMain.DEBUG;
@@ -63,6 +66,7 @@ public class MyGoldBroadcast extends BroadcastReceiver {
 						intentAction.equals(Intent.ACTION_PACKAGE_ADDED) || 
 						intentAction.equals(Intent.ACTION_PACKAGE_FIRST_LAUNCH)){
 				setReceiverOn(context);
+                AxAlarm.setDailyAlarm(context, AxAlarm.MODE.SET_DEFAULT, 9, 0, MyGoldBroadcast.class);
 				//MyGoldBroadcast.updateAllWidget(context);
 			} else if ( intentAction.equals(Intent.ACTION_SHUTDOWN) || 
 						intentAction.equals(Intent.ACTION_PACKAGE_REMOVED)){
@@ -81,6 +85,7 @@ public class MyGoldBroadcast extends BroadcastReceiver {
                 if (DEBUG) Log.i(TAG, "Action Alarm Alarm");
                 //AxAlarm.setDailyAlarm(context, AxAlarm.MODE.SET_DEFAULT, 9, 0);
 				doDailyGoldSentence(context);
+                AxAlarm.setDailyAlarm(context, AxAlarm.MODE.SET_DEFAULT, 9, 0, MyGoldBroadcast.class);
 			} else {
                 if (DEBUG) Log.i(TAG, "Others..."+intentAction);
 				int requestCode = intent.getIntExtra(AxAlarm.EXTRA_BROADCAST_CODE, -1);
@@ -197,7 +202,7 @@ public class MyGoldBroadcast extends BroadcastReceiver {
 		// Kill existing task (Perform like Intent.FLAG_ACTIVITY_CLEAR_TASK)
 		//context.sendBroadcast(new Intent(INTENT_ACTION_KILL));
 	}
-	@SuppressLint("InlinedApi")
+	//@SuppressLint("InlinedApi")
 	static private void api11sendNotification(Context context, String message,int notificationID, int notificationNbr){
 		Resources res = context.getResources();
 	    String pAppName = res.getString(R.string.app_name);
@@ -218,16 +223,35 @@ public class MyGoldBroadcast extends BroadcastReceiver {
                 newIntent,
                 (notificationID == NOTIFICATION_ID_TODAY_VERSE) ? PendingIntent.FLAG_UPDATE_CURRENT : 0);
 		if (contentIntent!=null) {
-            NotificationCompat.Builder builder =
-                    new NotificationCompat.Builder(context)
-                            .setSmallIcon(R.drawable.ic_launcher)
-                            .setContentTitle("[" + pAppName + "]")
-                            .setContentText(message);
-            builder.setAutoCancel(false);
-            builder.setContentIntent(contentIntent);
-           // Add as notification
-            NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
-            manager.notify(notificationNbr, builder.build());
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.O) {
+                String channelId = "BroadcastChannel" + String.valueOf(notificationID);//"my_channel_01";
+
+                NotificationChannel channel = new NotificationChannel(channelId, pAppName, NotificationManager.IMPORTANCE_HIGH);
+                channel.enableLights(true);
+                NotificationManager mNotificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+                mNotificationManager.createNotificationChannel(channel);
+                Notification.Builder oreoBuilder = new Notification.Builder(context,channelId);
+                Notification notificationPopup = oreoBuilder.setContentText(message)
+                        .setSmallIcon(R.drawable.ic_launcher)
+                        .setContentTitle("[" + pAppName + "]")
+                        .setChannelId(channelId)
+                        .setAutoCancel(false)
+                        .setContentIntent(contentIntent)
+                        .build();
+                NotificationManager notificationManager = (NotificationManager) context.getSystemService(NOTIFICATION_SERVICE);
+                notificationManager.notify(notificationNbr, notificationPopup);
+            } else {
+                NotificationCompat.Builder builder =
+                        new NotificationCompat.Builder(context)
+                                .setSmallIcon(R.drawable.ic_launcher)
+                                .setContentTitle("[" + pAppName + "]")
+                                .setContentText(message);
+                builder.setAutoCancel(false);
+                builder.setContentIntent(contentIntent);
+                // Add as notification
+                NotificationManager manager = (NotificationManager) context.getSystemService(Context.NOTIFICATION_SERVICE);
+                manager.notify(notificationNbr, builder.build());
+            }
         }
 	}
 }

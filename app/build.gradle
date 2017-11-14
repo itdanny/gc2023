@@ -1,16 +1,16 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 25
-    buildToolsVersion '25.0.1'
+    compileSdkVersion 27
+    buildToolsVersion '26.0.2'
 
     defaultConfig {
         applicationId "com.hkbs.HKBS"
-        minSdkVersion 9
-        targetSdkVersion 25
+        minSdkVersion 14
+        targetSdkVersion 23
         versionCode 67
         versionName "3.37"
-//      multiDexEnabled true
+        multiDexEnabled true
     }
 //    dexOptions {
 //        preDexLibraries = false
@@ -34,7 +34,8 @@ dependencies {
     compile project(':libArkist')
     compile project(':libFancyCoverFlow')
     compile project(':libSuperToasts')
-    compile 'com.android.support:support-v4:25.1.0'
+    implementation 'com.android.support:multidex:1.0.2'
+    implementation 'com.android.support:support-v4:27.0.1'
 }
 /*all*.exclude group: 'com.android.support', module: 'support-v4'*/
 configurations {

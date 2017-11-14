@@ -90,7 +90,9 @@ public class CalendarActivity extends MyActivity{
 				GridView grid = gridViewList[gridViewIndex];
                 if (grid==null) return false;
 				int firstPos = grid.getFirstVisiblePosition();
-				int invisibleHeight = (firstPos/7) * grid.getChildAt(0).getHeight();
+				View view = grid.getChildAt(0);
+				if (view==null) return false;
+				int invisibleHeight = (firstPos/7) * view.getHeight();
 				int newX = (int) (e.getX());
 				int newY = (int) (e.getY()  - invisibleHeight);
 				final int pos = grid.pointToPosition(newX,newY);

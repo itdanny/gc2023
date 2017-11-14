@@ -118,7 +118,7 @@ public class CMain extends MyActivity {
                                 break;
                             case MyPermission.REQUEST_ACCESS_ALARM:
                                 if (success) {
-                                    AxAlarm.setDailyAlarm(CMain.this, AxAlarm.MODE.SET_DEFAULT, 9, 0);
+                                    AxAlarm.setDailyAlarm(CMain.this, AxAlarm.MODE.SET_DEFAULT, 9, 0, MyGoldBroadcast.class);
                                     AxAlarm.setDailyOnDateChange(CMain.this);
                                 }
                                 break;
@@ -334,7 +334,7 @@ public class CMain extends MyActivity {
                 // result of the request.
             }
         } else {
-            AxAlarm.setDailyAlarm(CMain.this, AxAlarm.MODE.SET_DEFAULT, 9, 0);
+            AxAlarm.setDailyAlarm(CMain.this, AxAlarm.MODE.SET_DEFAULT, 9, 0, MyGoldBroadcast.class);
             AxAlarm.setDailyOnDateChange(CMain.this);
         }
 //        myGoldBroadcast = new MyGoldBroadcast();

@@ -55,11 +55,11 @@ public class AxAlarm {
 	 * No need specify the broadcast class i.e.
 	 * Intent intent = new Intent(context, MyGoldBroadcast.class);
 	 */	
-	static public PendingIntent getPendingIntent(Context context, int requestCode){
+	static public PendingIntent getPendingIntent(Context context, int requestCode, Class broadcastClass){
         if (DEBUG) Log.i(TAG, "Set:"+MANIFEST_ACTION+String.valueOf(requestCode));
-		Intent intent = new Intent();
+		Intent intent = new Intent(context,broadcastClass);
     	intent.setAction(MANIFEST_ACTION+String.valueOf(requestCode));    	
-        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, requestCode, intent, PendingIntent.FLAG_CANCEL_CURRENT);
+        PendingIntent pendingIntent = PendingIntent.getBroadcast(context, requestCode, intent, 0);//PendingIntent.FLAG_CANCEL_CURRENT);
 		return pendingIntent;
 	}
 	/* 
@@ -87,7 +87,7 @@ public class AxAlarm {
 //	public static void notifyCancel(Context c) {
 //		offAlarm(c, MANIFEST_ACTION_NOTIFY_1, REQUEST_CODE_NOTIFY_1);
 //	}
-	static public void setDailyAlarm(Context context, MODE mode, int setHour, int setMinute){
+	static public void setDailyAlarm(Context context, MODE mode, int setHour, int setMinute, Class broadcastClass){
 		//-- for Good Calendar --
         context = context.getApplicationContext();
 		MODE finalMode = gc_setAlarm(context, mode, setHour, setMinute);
@@ -96,7 +96,7 @@ public class AxAlarm {
             setHour=AxTools.getPrefInt(PREF_ALARM_HOUR,setHour);
             setMinute=AxTools.getPrefInt(PREF_ALARM_MIN,setMinute);
 			//alarmOn(setHour, setMinute, MILLSECOND_IN_DAYS, context, getPendingIntent(context, MANIFEST_ACTION_ALARM, REQUEST_CODE_ALARM));
-            alarmOn(setHour, setMinute, MILLSECOND_IN_DAYS, context, REQUEST_CODE_ALARM);
+            alarmOn(setHour, setMinute, MILLSECOND_IN_DAYS, context, REQUEST_CODE_ALARM, broadcastClass);
 		}
 	}
 	static public void alarmCancel(Context c) {
@@ -137,10 +137,8 @@ public class AxAlarm {
 		}		 
 		return mode;
     }
-	static public void alarmOn(int hour, int minute, long repeatInterval, final Context c, int requestCode) {
-		alarmOn(hour, minute, repeatInterval, c, getPendingIntent(c, requestCode));
-	}
-	static private void alarmOn(int hour, int minute, long repeatInterval, final Context c, PendingIntent pi) {
+	static public void alarmOn(int hour, int minute, long repeatInterval, final Context c, int requestCode, Class broadcastClass) {
+        PendingIntent pi = getPendingIntent(c, requestCode, broadcastClass);
 		AlarmManager am = (AlarmManager) c.getSystemService(Context.ALARM_SERVICE);
 	    Calendar cal = hhmm2Calendar(hour,minute);
 	    am.cancel(pi);
