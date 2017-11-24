@@ -8,8 +8,8 @@ android {
         applicationId "com.hkbs.HKBS"
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 67
-        versionName "3.37"
+        versionCode 68
+        versionName "3.38"
         multiDexEnabled true
     }
 //    dexOptions {
@@ -41,3 +41,4 @@ dependencies {
 configurations {
     all*.exclude group: 'com.google.android.gms', module: 'play-services'
 }
+apply plugin: 'com.google.gms.google-services'
