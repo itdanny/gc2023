@@ -8,8 +8,8 @@ android {
         applicationId "com.hkbs.HKBS"
         minSdkVersion 14
         targetSdkVersion 23
-        versionCode 68
-        versionName "3.38"
+        versionCode 69
+        versionName "3.39"
         multiDexEnabled true
     }
 //    dexOptions {
