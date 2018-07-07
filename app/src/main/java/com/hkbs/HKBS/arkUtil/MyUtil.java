@@ -9,7 +9,6 @@ import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.os.Vibrator;
 import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
@@ -18,13 +17,13 @@ import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
-import com.google.analytics.tracking.android.EasyTracker;
-import com.google.analytics.tracking.android.MapBuilder;
-
 import java.text.SimpleDateFormat;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+
+//import com.google.analytics.tracking.android.EasyTracker;
+//import com.google.analytics.tracking.android.MapBuilder;
 
 public class MyUtil {
 	final static private String TAG = MyUtil.class.getSimpleName();	
@@ -131,10 +130,10 @@ public class MyUtil {
 		return settings.getString(key, defaultValue);
 	}
 	static public void vibrate(Context context){
-		if (IS_GET_VIBRATE_PERMISSION){
-	    	Vibrator vib = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
-			vib.vibrate(300);
-		}
+//		if (IS_GET_VIBRATE_PERMISSION){
+//	    	Vibrator vib = (Vibrator) context.getSystemService(Context.VIBRATOR_SERVICE);
+//			vib.vibrate(300);
+//		}
     }
 	@SuppressLint("InlinedApi")
 	static public void popDate(Context context, String yyyymmddStr, DatePickerDialog.OnDateSetListener listener){
@@ -217,19 +216,19 @@ public class MyUtil {
 //        }
 //    }
     static public void trackClick(Context thisContext, String label, String fromWhere){
-    	Context context = thisContext;//MyApp.getInstance().getApplicationContext();
-    	EasyTracker easyTracker = EasyTracker.getInstance(context);
-        if (easyTracker!=null){
-        	// MyApplog(TAG, "TrackClick:"+fromWhere+"_"+label);
-        	easyTracker.send(MapBuilder
-        		      .createEvent("tClick", // Category
-        		                   "tFrom_"+fromWhere, // Action
-        		                   "tBtn_"+label, // Label
-        		                   null) // Value
-        		      .build()
-        		  );
-
-        }
+//    	Context context = thisContext;//MyApp.getInstance().getApplicationContext();
+//    	EasyTracker easyTracker = EasyTracker.getInstance(context);
+//        if (easyTracker!=null){
+//        	// MyApplog(TAG, "TrackClick:"+fromWhere+"_"+label);
+//        	easyTracker.send(MapBuilder
+//        		      .createEvent("tClick", // Category
+//        		                   "tFrom_"+fromWhere, // Action
+//        		                   "tBtn_"+label, // Label
+//        		                   null) // Value
+//        		      .build()
+//        		  );
+//
+//        }
     }
     static public String getCurCountry(){
     	String country = MyUtil.getPrefStr(PREF_COUNTRY, "");

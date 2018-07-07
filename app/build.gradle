@@ -2,14 +2,14 @@ apply plugin: 'com.android.application'
 
 android {
     compileSdkVersion 27
-    buildToolsVersion '26.0.2'
+    buildToolsVersion '27.0.3'
 
     defaultConfig {
         applicationId "com.hkbs.HKBS"
         minSdkVersion 14
-        targetSdkVersion 23
-        versionCode 69
-        versionName "3.39"
+        targetSdkVersion 26
+        versionCode 71
+        versionName "3.41"
         multiDexEnabled true
     }
 //    dexOptions {
@@ -30,15 +30,17 @@ android {
 }
 
 dependencies {
-    compile files('libs/nineoldandroids-2.4.0.jar')
-    compile project(':libArkist')
-    compile project(':libFancyCoverFlow')
-    compile project(':libSuperToasts')
+    implementation files('libs/nineoldandroids-2.4.0.jar')
+    implementation project(':libArkist')
+    implementation project(':libFancyCoverFlow')
+    implementation project(':libSuperToasts')
     implementation 'com.android.support:multidex:1.0.2'
     implementation 'com.android.support:support-v4:27.0.1'
+
 }
 /*all*.exclude group: 'com.android.support', module: 'support-v4'*/
 configurations {
     all*.exclude group: 'com.google.android.gms', module: 'play-services'
 }
+
 apply plugin: 'com.google.gms.google-services'
