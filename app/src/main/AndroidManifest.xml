@@ -17,6 +17,7 @@
 <!-- Add harwareAccelerated to avoid Fatal Signal 11
     http://stackoverflow.com/questions/14023291/fatal-signal-11-sigsegv-at-0x00000000-code-1-phonegap
 -->
+
     <application
         android:name="com.hkbs.HKBS.MyApp"
         android:hardwareAccelerated="@bool/HardwareAcceration"
@@ -40,6 +41,16 @@
                 <!--<category android:name="android.intent.category.LAUNCHER" />-->
             <!--</intent-filter>-->
         <!--</activity>-->
+        <!-- 2018.07.10 -->
+        <provider
+            android:name="android.support.v4.content.FileProvider"
+            android:authorities="${applicationId}.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
         <receiver
             android:name="com.hkbs.MyGoldBroadcast"
             android:enabled="true"

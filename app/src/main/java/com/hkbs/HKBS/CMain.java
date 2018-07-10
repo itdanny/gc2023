@@ -26,6 +26,7 @@ import android.support.v4.app.Fragment;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.app.FragmentStatePagerAdapter;
 import android.support.v4.content.ContextCompat;
+import android.support.v4.content.FileProvider;
 import android.support.v4.view.ViewPager;
 import android.text.TextUtils;
 import android.util.Log;
@@ -817,7 +818,13 @@ public class CMain extends MyActivity {
         values.put(Images.Media.MIME_TYPE, "image/jpeg");
         //Uri uri = getContentResolver().insert(Media.EXTERNAL_CONTENT_URI,values);
         String fileName = "pic_" + String.valueOf(System.currentTimeMillis()) + ".jpg";
-        Uri uri = Uri.fromFile(new File(Environment.getExternalStorageDirectory(), fileName));
+        File imageFile = new File(Environment.getExternalStorageDirectory(), fileName);
+        Uri uri;
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
+            uri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider",imageFile);
+        } else {
+            uri = Uri.fromFile(imageFile);
+        }
         //Uri uri = Uri.fromFile(new File(getFilesDir(),fileName));
         OutputStream outstream;
         int tryCounter = 1;
@@ -854,7 +861,8 @@ public class CMain extends MyActivity {
         share.putExtra(android.content.Intent.EXTRA_STREAM, uri);
         try {
             startActivity(Intent.createChooser(share, "分享圖像"));
-        } catch (Exception ignored){
+        } catch (Exception e){
+            Toast.makeText(this, "Error", Toast.LENGTH_LONG).show();
         }
 //		Intent share = new Intent(Intent.ACTION_SEND);
 //		share.setType("image/jpeg");
