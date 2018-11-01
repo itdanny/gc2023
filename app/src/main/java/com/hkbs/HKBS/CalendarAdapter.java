@@ -64,7 +64,12 @@ public class CalendarAdapter extends BaseAdapter {
 		//static public String holidayCityName = "";
 		
 	public CalendarAdapter(Context actContext, Calendar monthCalendar, int gridType) {
-        boolean isTraditionalChinese = AxTools.getPrefStr(MyApp.PREF_APP_LANG,MyApp.PREF_APP_LANG_TW).contentEquals(MyApp.PREF_APP_LANG_TW);
+        boolean isTraditionalChinese;
+        try {
+            isTraditionalChinese=AxTools.getPrefStr(MyApp.PREF_APP_LANG, MyApp.PREF_APP_LANG_TW).contentEquals(MyApp.PREF_APP_LANG_TW);
+        } catch (Exception e){
+            isTraditionalChinese=false;
+        }
         mSdf = new SimpleDateFormat("EEE",isTraditionalChinese?Locale.TRADITIONAL_CHINESE:Locale.SIMPLIFIED_CHINESE);
 		defaultLang = MyUtil.getPrefStr(MyUtil.PREF_LANG, "HK");
 		selectedDate = (Calendar) monthCalendar.clone();

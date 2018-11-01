@@ -30,7 +30,7 @@ public class MyDailyBread {
     // 2016.04.15 / 19
     // 2016.05.10 / 14 / 20 / 22
     // 2016.06.03 / 17
-    static public boolean allowBeyondRange = false;
+    static public boolean allowBeyondRange = true;
     static public int beyondFrYear=2015;
     static public int beyondToYear=2063;
 
@@ -221,24 +221,12 @@ public class MyDailyBread {
     public static Calendar index2date(Context context, int nbrOfDays){
         //i = 1;
         Calendar startCal = (Calendar) MyDailyBread.getInstance(context).getValidFrDate().clone();
-        startCal.set(Calendar.HOUR_OF_DAY, 12);
-        startCal.set(Calendar.MINUTE, 0);
-        startCal.set(Calendar.SECOND, 0);
-        startCal.set(Calendar.MILLISECOND, 0);
+        // 2018.11.01 DC
+//        startCal.set(Calendar.HOUR_OF_DAY, 12);
+//        startCal.set(Calendar.MINUTE, 0);
+//        startCal.set(Calendar.SECOND, 0);
+//        startCal.set(Calendar.MILLISECOND, 0);
         startCal = getSignedAddInDays(startCal,nbrOfDays);
-//        startCal.add(Calendar.DAY_OF_YEAR,i);
-//        int nbrOfDaysInYear = startCal.getActualMaximum(Calendar.DAY_OF_YEAR);
-//        if (i <= nbrOfDaysInYear){
-//            startCal.add(Calendar.DAY_OF_YEAR, i);
-//        } else {
-//            int daysRemains=i;
-//            while (daysRemains>=nbrOfDaysInYear){
-//                startCal.add(Calendar.DAY_OF_YEAR, nbrOfDaysInYear);
-//                daysRemains=i-nbrOfDaysInYear;
-//                nbrOfDaysInYear = startCal.getActualMaximum(Calendar.DAY_OF_YEAR);
-//            }
-//            startCal.add(Calendar.DAY_OF_YEAR, daysRemains);
-//        }
         String newCal = getDayHourString(startCal);
         if (DEBUG) AxDebug.debug(TAG,"CalDate: "+nbrOfDays+" -> "+newCal);
         int result = date2index(context,startCal);
@@ -855,17 +843,23 @@ public class MyDailyBread {
 //                if (getContentDate.compareTo(lastDate) > 0){
 //                    MyDailyBread.showOutOfBounds(mContext,getContentDate);
 //                }
+                int baseYear=validFrDate.get(Calendar.YEAR);
                 if ((year % 2) == 0) {
                     // number is even
-                    year = 2016;
+                    year = baseYear;
                 } else {
-                    year = 2017;
+                    year = baseYear+1;
                 }
+                boolean day29=false;
                 if (month==1 && day==29){
-                    year=2016; // Only 2016 Feb has 29 days
+                    day29=true;
                 }
                 try {
-                    keyNbr = mMap.get(getDayString(year, month, day));
+                    if (day29) {
+                        keyNbr = mMap.get(getDayString(year, 6, 15));
+                    } else {
+                        keyNbr = mMap.get(getDayString(year, month, day));
+                    }
                     isError=false;
                 } catch (Exception e2) {
                     MyUtil.logError(TAG, "Adjusted Value not find in array:"+year+","+month+","+day);

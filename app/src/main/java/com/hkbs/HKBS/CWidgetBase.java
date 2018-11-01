@@ -178,13 +178,16 @@ public class CWidgetBase extends AppWidgetProvider {
             int nbr = 1;
             Context context = recRef.context;
             Calendar mDisplayDay = Calendar.getInstance();
-            // DC 2016.09.16 One More Day Or One Less Day for different Regions
-            // Protect Function
-            if (!MyDailyBread.allowBeyondRange && mDisplayDay.compareTo(mDailyBread.getValidToDate())>=0){
-                mDisplayDay.setTimeInMillis(mDailyBread.getValidToDate().getTimeInMillis()-24*60*60*1000);
-            } else if (mDisplayDay.compareTo(mDailyBread.getValidFrDate())<=0 ){
-                mDisplayDay.setTimeInMillis(mDailyBread.getValidFrDate().getTimeInMillis()+24*60*60*1000);
-            }
+
+            // DC 2018.11.01 Cancel below protection as we use current time to do index2date and date2index
+//            // DC 2016.09.16 One More Day Or One Less Day for different Regions
+//            // Protect Function
+//            if (!MyDailyBread.allowBeyondRange && mDisplayDay.compareTo(mDailyBread.getValidToDate())>=0){
+//                mDisplayDay.setTimeInMillis(mDailyBread.getValidToDate().getTimeInMillis()-24*60*60*1000);
+//            } else if (mDisplayDay.compareTo(mDailyBread.getValidFrDate())<=0 ){
+//                mDisplayDay.setTimeInMillis(mDailyBread.getValidFrDate().getTimeInMillis()+24*60*60*1000);
+//            }
+
 //		mDisplayDay.set(Calendar.YEAR, 2014);
 //		mDisplayDay.set(Calendar.MONTH, 11);
 //		mDisplayDay.set(Calendar.DAY_OF_MONTH, 25);

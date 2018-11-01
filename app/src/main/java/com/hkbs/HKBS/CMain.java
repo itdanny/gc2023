@@ -92,16 +92,18 @@ public class CMain extends MyActivity {
 
     //private ViewAnimator mViewAnimator;
     private boolean isTitleShown = false;
-    //private int mViewIndex = 1;
     private CustomViewPager mPager;
     private CustomViewAdapter mAdapter;
 
     private View mRootView;
-    static int showOutOfBounds=0;
-//    private LinearLayout page1;
-//    private LinearLayout page2;
+    static int showOutOfBoundsIfAllowBeyondRange=0; // Toggle to show system is out-of-bound
     private Handler handler;
-    private MyGoldBroadcast myGoldBroadcast;
+
+    @Override
+    protected void onSaveInstanceState(Bundle InstanceState) {
+        super.onSaveInstanceState(InstanceState);
+        InstanceState.clear();
+    }
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (!MyPermission.getInstance().onRequestPermissionsResult(
@@ -163,34 +165,20 @@ public class CMain extends MyActivity {
     private class CustomViewAdapter extends FragmentStatePagerAdapter {
         Calendar mCalendar;
         Context mContext;
-        //long mStartTime;
-        DailyFragment dailyFragments[] = new DailyFragment[3];
         public CustomViewAdapter(FragmentManager fm, Context context) {
             super(fm);
             mContext = context;
             mCalendar = Calendar.getInstance();
-            //mStartTime = CMain.mDailyBread.getValidFrDate().getTimeInMillis();
         }
         @Override
         public Fragment getItem(int position) {
-            //mCalendar.setTimeInMillis(mStartTime);
             mCalendar.setTimeInMillis(CMain.mDailyBread.getValidFrDate().getTimeInMillis());
             mCalendar.add(Calendar.DAY_OF_YEAR, position);
-//            if (mCalendar.getTimeInMillis()>CMain.mDailyBread.getValidToDate().getTimeInMillis()){
-//
-//            }
-            //return DailyFragment.getInstance(mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH), mCalendar.get(Calendar.DAY_OF_MONTH));
-//            final int targetPosition = position % 3;
-//            if (dailyFragments[targetPosition]==null){
             int year=mCalendar.get(Calendar.YEAR);
             int month=mCalendar.get(Calendar.MONTH);
             int day=mCalendar.get(Calendar.DAY_OF_MONTH);
             MyUtil.log(TAG, "Get Item:"+year+","+month+","+day);
-                return DailyFragment.getInstance(year, month, day);
-//            } else {
-//                dailyFragments[targetPosition].onRefreshSettings(mCalendar.get(Calendar.YEAR), mCalendar.get(Calendar.MONTH), mCalendar.get(Calendar.DAY_OF_MONTH));
-//                return dailyFragments[targetPosition];
-//            }
+            return DailyFragment.getInstance(year, month, day);
         }
         @Override
         public int getCount() {
@@ -385,13 +373,16 @@ public class CMain extends MyActivity {
                 if (DEBUG)
                     Log.i(TAG, "onPageSelected day=" + mDisplayDay.get(Calendar.DAY_OF_MONTH) + " end");
                 mPager.isScrolling = false;
-                if (MyDailyBread.allowBeyondRange && mDisplayDay.getTimeInMillis()>MyDailyBread.getInstance(CMain.this).getValidToDate().getTimeInMillis()){
-                    if (showOutOfBounds==0){
-                        MyDailyBread.showOutOfBounds(getApplicationContext(),mDisplayDay);
-                    }
-                    showOutOfBounds++;
-                    if (showOutOfBounds>3) showOutOfBounds=0;
-                }
+
+                // 2018.11.01 Not display out of bounds
+//                if (MyDailyBread.allowBeyondRange && mDisplayDay.getTimeInMillis()>MyDailyBread.getInstance(CMain.this).getValidToDate().getTimeInMillis()){
+//                    if (showOutOfBoundsIfAllowBeyondRange==0){
+//                        MyDailyBread.showOutOfBounds(getApplicationContext(),mDisplayDay);
+//                    }
+//                    showOutOfBoundsIfAllowBeyondRange++;
+//                    if (showOutOfBoundsIfAllowBeyondRange>3) showOutOfBoundsIfAllowBeyondRange=0;
+//                }
+
             }
 
             @Override
