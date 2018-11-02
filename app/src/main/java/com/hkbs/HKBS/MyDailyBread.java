@@ -394,7 +394,7 @@ public class MyDailyBread {
             String lang=AxTools.getPrefStr(MyApp.PREF_APP_LANG,"");
             final InputStreamReader iReader;
             if (lang.equalsIgnoreCase(MyApp.PREF_APP_LANG_CN)) {
-                iReader = new InputStreamReader(mContext.getAssets().open("dailyBread_cn.csv"), "UTF-8");
+                iReader = new InputStreamReader(mContext.getAssets().open("dailyBread_sc.csv"), "UTF-8");
             } else {
                 iReader = new InputStreamReader(mContext.getAssets().open("dailyBread.csv"), "UTF-8");
             }
