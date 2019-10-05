@@ -17,12 +17,19 @@
 
 package at.technikum.mti.fancycoverflow;
 
-import android.*;
-import android.R;
 import android.annotation.SuppressLint;
 import android.annotation.TargetApi;
 import android.content.Context;
-import android.graphics.*;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.ColorMatrix;
+import android.graphics.ColorMatrixColorFilter;
+import android.graphics.LinearGradient;
+import android.graphics.Matrix;
+import android.graphics.Paint;
+import android.graphics.PorterDuff;
+import android.graphics.PorterDuffXfermode;
+import android.graphics.Shader;
 import android.os.Build;
 import android.util.AttributeSet;
 import android.view.View;
@@ -112,10 +119,8 @@ class FancyCoverFlowItemWrapper extends ViewGroup {
         if (hasReflection != this.isReflectionEnabled) {
             this.isReflectionEnabled = hasReflection;
 
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                // Turn off hardware acceleration if necessary (reflections won't support it).
-                this.setLayerType(hasReflection ? View.LAYER_TYPE_SOFTWARE : View.LAYER_TYPE_HARDWARE, null);
-            }
+            // Turn off hardware acceleration if necessary (reflections won't support it).
+            this.setLayerType(hasReflection ? View.LAYER_TYPE_SOFTWARE : View.LAYER_TYPE_HARDWARE, null);
 
             this.remeasureChildren();
         }
@@ -188,16 +193,12 @@ class FancyCoverFlowItemWrapper extends ViewGroup {
 
         if (childView != null) {
             // If on honeycomb or newer, cache the view.
-            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB) {
-                if (childView.isDirty()) {
-                    childView.draw(this.wrappedViewDrawingCanvas);
-
-                    if (this.isReflectionEnabled) {
-                        this.createReflectedImages();
-                    }
-                }
-            } else {
+            if (childView.isDirty()) {
                 childView.draw(this.wrappedViewDrawingCanvas);
+
+                if (this.isReflectionEnabled) {
+                    this.createReflectedImages();
+                }
             }
         }
 

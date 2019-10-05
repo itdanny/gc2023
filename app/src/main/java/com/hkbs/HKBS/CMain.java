@@ -428,35 +428,27 @@ public class CMain extends MyActivity {
         int mShortAnimTime = 0;
         isTitleShown = isVisible;
 
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.HONEYCOMB_MR2) {
-            // If the ViewPropertyAnimator API is available
-            // (Honeycomb MR2 and later), use it to animate the
-            // in-layout UI controls at the bottom of the
-            // screen.
-            if (mControlsHeight == 0) {
-                mControlsHeight = mControlsView.getHeight();
-            }
-            if (mShortAnimTime == 0) {
-                mShortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-            }
-            mControlsView.animate().translationY(isVisible ? 0 : mControlsHeight).setDuration(mShortAnimTime);
+        // If the ViewPropertyAnimator API is available
+        // (Honeycomb MR2 and later), use it to animate the
+        // in-layout UI controls at the bottom of the
+        // screen.
+        if (mControlsHeight == 0) {
+            mControlsHeight = mControlsView.getHeight();
+        }
+        if (mShortAnimTime == 0) {
+            mShortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+        }
+        mControlsView.animate().translationY(isVisible ? 0 : mControlsHeight).setDuration(mShortAnimTime);
 
-            if (mTitleHeight == 0) {
-                mTitleHeight = mTitleView.getHeight();
-            }
-            if (mShortAnimTime == 0) {
-                mShortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
-            }
-            mTitleView.animate().translationY(isVisible ? 0 : -mTitleHeight).setDuration(mShortAnimTime);
+        if (mTitleHeight == 0) {
+            mTitleHeight = mTitleView.getHeight();
+        }
+        if (mShortAnimTime == 0) {
+            mShortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
+        }
+        mTitleView.animate().translationY(isVisible ? 0 : -mTitleHeight).setDuration(mShortAnimTime);
 //            mControlsView.setVisibility(isVisible ? View.VISIBLE : View.GONE);
 //            mTitleView.setVisibility(isVisible ? View.VISIBLE : View.GONE);
-        } else {
-            // If the ViewPropertyAnimator APIs aren't
-            // available, simply show or hide the in-layout UI
-            // controls.
-            mControlsView.setVisibility(isVisible ? View.VISIBLE : View.GONE);
-            mTitleView.setVisibility(isVisible ? View.VISIBLE : View.GONE);
-        }
         mLeftRightPanel.setVisibility(isVisible ? View.VISIBLE : View.GONE);
         if (isVisible) {
             // Schedule a hide().

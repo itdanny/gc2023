@@ -1,11 +1,11 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 27
+    compileSdkVersion 28
 
     defaultConfig {
         minSdkVersion 14
-        targetSdkVersion 27
+        targetSdkVersion 28
         versionCode 1
         versionName "1.0"
     }
@@ -22,6 +22,6 @@ dependencies {
     implementation project(':libFancyCoverFlow')
     implementation project(':libSuperToasts')
     implementation files('libs/libGoogleAnalyticsServices.jar')
-    implementation 'com.android.support:support-v4:27.1.1'
+    implementation 'com.android.support:support-v4:28.0.0'
 }
 

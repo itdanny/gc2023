@@ -208,15 +208,10 @@ public class MyGoldBroadcast extends BroadcastReceiver {
 	    String pAppName = res.getString(R.string.app_name);
 		
 		Intent newIntent = new Intent(context, CMain.class);
-		if (android.os.Build.VERSION.SDK_INT >= 11) {
-			newIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP | 
-					   		   Intent.FLAG_ACTIVITY_CLEAR_TASK |
-					   		   Intent.FLAG_ACTIVITY_NEW_TASK);// Clean activities in task and start NEW			
-		} else {
-			newIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
-							   Intent.FLAG_ACTIVITY_NEW_TASK);
-		}
-		newIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
+        newIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                              Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                              Intent.FLAG_ACTIVITY_NEW_TASK);// Clean activities in task and start NEW
+        newIntent.addFlags(Intent.FLAG_ACTIVITY_NO_HISTORY);
 		
 		PendingIntent contentIntent = PendingIntent.getActivity(context,
                 notificationNbr,

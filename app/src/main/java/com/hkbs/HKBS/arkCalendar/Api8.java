@@ -131,27 +131,17 @@ public class Api8 {
 	}
 	@SuppressLint("InlinedApi")
 	static public int getNewInstanceFlags(){
-		if (android.os.Build.VERSION.SDK_INT >= 11) {
-			return 	Intent.FLAG_ACTIVITY_CLEAR_TOP | 
-					Intent.FLAG_ACTIVITY_CLEAR_TASK |
-					Intent.FLAG_ACTIVITY_MULTIPLE_TASK |
-					Intent.FLAG_ACTIVITY_NEW_TASK;// For multiple window only
-		} else {
-			return 	Intent.FLAG_ACTIVITY_CLEAR_TOP |
-					Intent.FLAG_ACTIVITY_NEW_TASK;
-		}
-	}
+        return 	Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                Intent.FLAG_ACTIVITY_MULTIPLE_TASK |
+                Intent.FLAG_ACTIVITY_NEW_TASK;// For multiple window only
+    }
 	@SuppressLint("InlinedApi")
 	static public int getTopActivityFlags(){
-		if (android.os.Build.VERSION.SDK_INT >= 11) {
-			return 	Intent.FLAG_ACTIVITY_CLEAR_TOP | 
-					Intent.FLAG_ACTIVITY_CLEAR_TASK |
-					Intent.FLAG_ACTIVITY_NEW_TASK;// Clean activities in task and start NEW
-		} else {
-			return 	Intent.FLAG_ACTIVITY_CLEAR_TOP |
-					Intent.FLAG_ACTIVITY_NEW_TASK;
-		}
-	}
+        return 	Intent.FLAG_ACTIVITY_CLEAR_TOP |
+                Intent.FLAG_ACTIVITY_CLEAR_TASK |
+                Intent.FLAG_ACTIVITY_NEW_TASK;// Clean activities in task and start NEW
+    }
 	static public boolean updateAlertNotificationAPI8(Context context) {
         ContentResolver cr = context.getContentResolver();
         final long currentTime = System.currentTimeMillis();

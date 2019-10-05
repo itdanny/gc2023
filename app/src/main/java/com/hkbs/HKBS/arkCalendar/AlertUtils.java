@@ -40,15 +40,15 @@ import android.text.format.DateUtils;
 import android.text.format.Time;
 import android.util.Log;
 
+import com.hkbs.HKBS.CMain;
+import com.hkbs.HKBS.R;
+import com.hkbs.HKBS.arkUtil.MyUtil;
+
 import java.util.Formatter;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
-
-import com.hkbs.HKBS.CMain;
-import com.hkbs.HKBS.R;
-import com.hkbs.HKBS.arkUtil.MyUtil;
 
 @SuppressLint("NewApi")
 public class AlertUtils {
@@ -70,7 +70,7 @@ public class AlertUtils {
      * listeners when a reminder should be fired. The provider will keep
      * scheduled reminders up to date but apps may use this to implement snooze
      * functionality without modifying the reminders table. Scheduled alarms
-     * will generate an intent using {@link #ACTION_EVENT_REMINDER}.
+     * will generate an intent using .
      *
      * @param context A context for referencing system resources
      * @param manager The AlarmManager to use or null
@@ -306,7 +306,7 @@ public class AlertUtils {
          * This is a helper class for handling the async queries and updates for the
          * time zone settings in Calendar.
          */
-        private class AsyncTZHandler extends AsyncQueryHandler {
+        private static class AsyncTZHandler extends AsyncQueryHandler {
             public AsyncTZHandler(ContentResolver cr) {
                 super(cr);
             }
@@ -364,7 +364,6 @@ public class AlertUtils {
          * must be provided. All activities within an app should provide the
          * same preferences name or behavior may become erratic.
          *
-         * @param prefsName
          */
         public TimeZoneUtils() {            
         }

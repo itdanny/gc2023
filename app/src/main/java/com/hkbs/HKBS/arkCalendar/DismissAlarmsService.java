@@ -16,8 +16,6 @@ package com.hkbs.HKBS.arkCalendar;
  */
 
 
-import com.hkbs.HKBS.arkUtil.MyUtil;
-
 import android.annotation.SuppressLint;
 import android.app.IntentService;
 import android.app.NotificationManager;
@@ -29,6 +27,9 @@ import android.net.Uri;
 import android.os.IBinder;
 import android.provider.CalendarContract.CalendarAlerts;
 import android.support.v4.app.TaskStackBuilder;
+
+import com.hkbs.HKBS.arkUtil.MyPermission;
+import com.hkbs.HKBS.arkUtil.MyUtil;
 
 
 /**
@@ -55,7 +56,15 @@ public class DismissAlarmsService extends IntentService {
 
     @Override
     public void onHandleIntent(Intent intent) {
-    	if (DEBUG) MyUtil.log(TAG, "onHandleIntent");
+        if (DEBUG) MyUtil.log(TAG, "onHandleIntent");
+
+        if (!MyPermission.getInstance().checkPermission(
+                this,
+                MyPermission.REQUEST_ACCESS_STORAGE,
+                false)){
+            return;
+        }
+
         long eventId = intent.getLongExtra(AlertUtils.EVENT_ID_KEY, -1);
         long eventStart = intent.getLongExtra(AlertUtils.EVENT_START_KEY, -1);
         long eventEnd = intent.getLongExtra(AlertUtils.EVENT_END_KEY, -1);

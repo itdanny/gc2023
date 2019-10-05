@@ -28,7 +28,6 @@ import android.content.pm.PackageManager;
 import android.content.res.Resources;
 import android.database.Cursor;
 import android.net.Uri;
-import android.os.Handler;
 import android.os.HandlerThread;
 import android.os.PowerManager;
 import android.provider.CalendarContract.Attendees;
@@ -40,14 +39,14 @@ import android.text.TextUtils;
 import android.text.style.RelativeSizeSpan;
 import android.text.style.TextAppearanceSpan;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.regex.Pattern;
-
 import com.hkbs.HKBS.CMain;
 import com.hkbs.HKBS.R;
 import com.hkbs.HKBS.arkCalendar.AlertService.NotificationWrapper;
 import com.hkbs.HKBS.arkUtil.MyUtil;
+
+import java.util.ArrayList;
+import java.util.List;
+import java.util.regex.Pattern;
 
 /**
  * Receives android.intent.action.EVENT_REMINDER intents and handles
@@ -163,7 +162,7 @@ public class AlertReceiver extends BroadcastReceiver {
                 PowerManager pm =
                         (PowerManager) context.getSystemService(Context.POWER_SERVICE);
                 mStartingService = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
-                        "StartingAlertService");
+                        "gc2015:StartingAlertService");
                 mStartingService.setReferenceCounted(false);
             }
             mStartingService.acquire();
@@ -248,9 +247,7 @@ public class AlertReceiver extends BroadcastReceiver {
         Intent clickIntent = new Intent();
         clickIntent.setClass(context, CMain.class);
         //DC:MW 
-        if (android.os.Build.VERSION.SDK_INT >= 11) {
-            clickIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        }
+        clickIntent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         clickIntent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
         return PendingIntent.getActivity(context, 0, clickIntent,
                 PendingIntent.FLAG_ONE_SHOT | PendingIntent.FLAG_UPDATE_CURRENT);
@@ -624,11 +621,7 @@ public class AlertReceiver extends BroadcastReceiver {
         }
         else {
         	//DC:MW 
-        	if (android.os.Build.VERSION.SDK_INT >= 11) {
-        		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        	} else {
-        		intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        	}
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK | Intent.FLAG_ACTIVITY_CLEAR_TASK);
             return intent;
         }
     }
@@ -759,7 +752,7 @@ public class AlertReceiver extends BroadcastReceiver {
                 PowerManager pm =
                     (PowerManager)context.getSystemService(Context.POWER_SERVICE);
                 mStartingService = pm.newWakeLock(PowerManager.PARTIAL_WAKE_LOCK,
-                        "StartingAlertService");
+                        "gc2015:StartingAlertService");
                 mStartingService.setReferenceCounted(false);
             }
             mStartingService.acquire();

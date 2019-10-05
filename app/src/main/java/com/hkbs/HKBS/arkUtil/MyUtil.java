@@ -140,20 +140,12 @@ public class MyUtil {
 		String[] curCal = yyyymmddStr.split(" ");
 		curCal = curCal[0].split("-");
 		DatePickerDialog dlg;
-		if (android.os.Build.VERSION.SDK_INT >= 11) {
-			dlg = new DatePickerDialog(context,
-					android.R.style.Theme_Holo_Light_Dialog_NoActionBar, listener, 
-					Integer.parseInt(curCal[0]),
-					Integer.parseInt(curCal[1])-1,
-					Integer.parseInt(curCal[2]));
-		} else {
-			dlg = new DatePickerDialog(context,
-					android.R.style.Theme_Dialog, listener, 
-					Integer.parseInt(curCal[0]),
-					Integer.parseInt(curCal[1])-1,
-					Integer.parseInt(curCal[2]));
-		}
-		dlg.show();
+        dlg = new DatePickerDialog(context,
+                android.R.style.Theme_Holo_Light_Dialog_NoActionBar, listener,
+                Integer.parseInt(curCal[0]),
+                Integer.parseInt(curCal[1])-1,
+                Integer.parseInt(curCal[2]));
+        dlg.show();
 	}	
 	static public BitmapDrawable scaleDrawable(Drawable drawing, int boundBoxInDp){
 		Bitmap bitmap = ((BitmapDrawable) drawing).getBitmap();

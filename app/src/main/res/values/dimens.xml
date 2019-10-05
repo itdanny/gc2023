@@ -111,6 +111,9 @@
     <dimen name="appwidget_margin">0dp</dimen>
 	<dimen name="appwidget_min_width">294dp</dimen>
 	<dimen name="appwidget_min_height">294dp</dimen>
+<!--    <dimen name="appwidget_margin">0dp</dimen>-->
+<!--    <dimen name="appwidget_min_width">250dp</dimen>-->
+<!--    <dimen name="appwidget_min_height">250dp</dimen>-->
 
     <!--
 Refer to App Widget Documentation for margin information

@@ -3,6 +3,7 @@ package com.hkbs.HKBS.arkUtil;
 import android.Manifest;
 import android.annotation.SuppressLint;
 import android.app.Activity;
+import android.content.Context;
 import android.content.Intent;
 import android.content.pm.PackageManager;
 import android.net.Uri;
@@ -39,7 +40,8 @@ public class MyPermission {
     }
     public void MyPermission() {
     }
-    public boolean checkPermission(final Activity activity, final int requestCode, boolean suppressRequestPermission ){
+    public boolean checkPermission(final Context context, final int requestCode, boolean suppressRequestPermission ){
+        final Activity activity = (context instanceof Activity)?(Activity)context:null;
         if (Build.VERSION.SDK_INT >= 23) {
             //减少是否拥有权限
             int permission=0;
@@ -49,13 +51,13 @@ public class MyPermission {
             String permissionDesc;
             switch (requestCode){
                 case REQUEST_ACCESS_ACCOUNT_CAMERA:
-                    permissionDesc=activity.getString(R.string.permissionCalendar) + "," +
-                            activity.getString(R.string.permissionContact);
+                    permissionDesc=context.getString(R.string.permissionCalendar) + "," +
+                            context.getString(R.string.permissionContact);
                     permission_1 = Manifest.permission.CAMERA;
                     permission_2 = Manifest.permission.GET_ACCOUNTS;
-                    permission = ContextCompat.checkSelfPermission(activity, permission_1);
+                    permission = ContextCompat.checkSelfPermission(context, permission_1);
                     if (permission== PackageManager.PERMISSION_GRANTED) {
-                        permission = ContextCompat.checkSelfPermission(activity, permission_2);
+                        permission = ContextCompat.checkSelfPermission(context, permission_2);
                     }
                     permissionArr = new String[]{
                             Manifest.permission.CAMERA,
@@ -64,30 +66,30 @@ public class MyPermission {
 
                     break;
                 case REQUEST_ACCESS_STORAGE:
-                    permissionDesc=activity.getString(R.string.permissionStorage);
+                    permissionDesc=context.getString(R.string.permissionStorage);
                     permission_1= Manifest.permission.WRITE_EXTERNAL_STORAGE;
-                    permission = ContextCompat.checkSelfPermission(activity, permission_1);
+                    permission = ContextCompat.checkSelfPermission(context, permission_1);
                     permissionArr = new String[]{
                             Manifest.permission.READ_EXTERNAL_STORAGE,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE};
                     break;
                 case REQUEST_ACCESS_LOCATION:
-                    permissionDesc=activity.getString(R.string.permissionLocation);
+                    permissionDesc=context.getString(R.string.permissionLocation);
                     permission_1=Manifest.permission.ACCESS_FINE_LOCATION;
-                    permission = ContextCompat.checkSelfPermission(activity, permission_1);
+                    permission = ContextCompat.checkSelfPermission(context, permission_1);
                     permissionArr = new String[]{
                             Manifest.permission.ACCESS_COARSE_LOCATION,
                             Manifest.permission.ACCESS_FINE_LOCATION};
                     break;
                 case REQUEST_ACCESS_CONFIG:
                 case REQUEST_ACCESS_SYNC:
-                    permissionDesc=activity.getString(R.string.permissionCalendar) + "," +
-                            activity.getString(R.string.permissionContact);
+                    permissionDesc=context.getString(R.string.permissionCalendar) + "," +
+                            context.getString(R.string.permissionContact);
                     permission_1 = Manifest.permission.WRITE_CALENDAR;
                     permission_2 = Manifest.permission.GET_ACCOUNTS;
-                    permission = ContextCompat.checkSelfPermission(activity, permission_1);
+                    permission = ContextCompat.checkSelfPermission(context, permission_1);
                     if (permission== PackageManager.PERMISSION_GRANTED) {
-                        permission = ContextCompat.checkSelfPermission(activity, permission_2);
+                        permission = ContextCompat.checkSelfPermission(context, permission_2);
                     }
                     permissionArr = new String[]{
                             Manifest.permission.WRITE_CALENDAR,
@@ -98,9 +100,9 @@ public class MyPermission {
                     break;
                 case REQUEST_ACCESS_CALENDAR:
                 default:
-                    permissionDesc=activity.getString(R.string.permissionCalendar);
+                    permissionDesc=context.getString(R.string.permissionCalendar);
                     permission_1 = Manifest.permission.WRITE_CALENDAR;
-                    permission = ContextCompat.checkSelfPermission(activity, permission_1);
+                    permission = ContextCompat.checkSelfPermission(context, permission_1);
                     permissionArr = new String[]{
                             Manifest.permission.WRITE_CALENDAR,
                             Manifest.permission.READ_CALENDAR};
@@ -110,6 +112,7 @@ public class MyPermission {
                 return true;
             } else {
                 if (suppressRequestPermission) return false;
+                if (activity==null) return false;
 
                 boolean firstAsking = true;//AxTools.getPrefBoolean("MyPermission" + permission_1, true);
                 AxTools.setPrefBoolean("MyPermission" + permission_1, false);

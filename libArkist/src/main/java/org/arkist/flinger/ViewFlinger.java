@@ -16,8 +16,6 @@
 
 package org.arkist.flinger;
 
-import java.util.ArrayList;
-
 import android.content.Context;
 import android.graphics.Canvas;
 import android.graphics.Rect;
@@ -33,6 +31,8 @@ import android.view.ViewConfiguration;
 import android.view.ViewGroup;
 import android.view.ViewParent;
 import android.widget.Scroller;
+
+import java.util.ArrayList;
 
 /**
  * A {@link android.view.ViewGroup} that shows one child at a time, allowing the user to swipe
@@ -983,8 +983,7 @@ public class ViewFlinger extends ViewGroup {
     }
 
     /**
-     * Unlocks the current screen, if it was previously locked. See also {@link
-     * Workspace#lockCurrentScreen()}.
+     * Unlocks the current screen, if it was previously locked. See also .
      */
     public void unlockCurrentScreen() {
         mLocked = false;
