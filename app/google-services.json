@@ -1,0 +1,73 @@
+{
+  "project_info": {
+    "project_number": "952553058310",
+    "firebase_url": "https://bm-2017.firebaseio.com",
+    "project_id": "bm-2017",
+    "storage_bucket": "bm-2017.appspot.com"
+  },
+  "client": [
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:952553058310:android:e8b0d5cc428092e7",
+        "android_client_info": {
+          "package_name": "org.arkist.cnote"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "952553058310-pbc061tscrj0hlrn83hi9sis0ea8bhtd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9NGJ6YVfQdGUNl2-bKDEXLQVYRw-FzIA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    },
+    {
+      "client_info": {
+        "mobilesdk_app_id": "1:952553058310:android:32a30e135f94ceb7",
+        "android_client_info": {
+          "package_name": "com.hkbs.HKBS"
+        }
+      },
+      "oauth_client": [
+        {
+          "client_id": "952553058310-pbc061tscrj0hlrn83hi9sis0ea8bhtd.apps.googleusercontent.com",
+          "client_type": 3
+        }
+      ],
+      "api_key": [
+        {
+          "current_key": "AIzaSyC9NGJ6YVfQdGUNl2-bKDEXLQVYRw-FzIA"
+        }
+      ],
+      "services": {
+        "analytics_service": {
+          "status": 1
+        },
+        "appinvite_service": {
+          "status": 1,
+          "other_platform_oauth_client": []
+        },
+        "ads_service": {
+          "status": 2
+        }
+      }
+    }
+  ],
+  "configuration_version": "1"
+}
