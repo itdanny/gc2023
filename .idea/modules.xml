@@ -2,11 +2,11 @@
 <project version="4">
   <component name="ProjectModuleManager">
     <modules>
-      <module fileurl="file://$PROJECT_DIR$/app/app.iml" filepath="$PROJECT_DIR$/app/app.iml" />
       <module fileurl="file://$PROJECT_DIR$/gc2015.iml" filepath="$PROJECT_DIR$/gc2015.iml" />
-      <module fileurl="file://$PROJECT_DIR$/libArkist/libArkist.iml" filepath="$PROJECT_DIR$/libArkist/libArkist.iml" />
-      <module fileurl="file://$PROJECT_DIR$/libFancyCoverFlow/libFancyCoverFlow.iml" filepath="$PROJECT_DIR$/libFancyCoverFlow/libFancyCoverFlow.iml" />
-      <module fileurl="file://$PROJECT_DIR$/libSuperToasts/libSuperToasts.iml" filepath="$PROJECT_DIR$/libSuperToasts/libSuperToasts.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/gc2015.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/gc2015.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/libArkist/gc2015.libArkist.iml" filepath="$PROJECT_DIR$/.idea/modules/libArkist/gc2015.libArkist.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/libFancyCoverFlow/gc2015.libFancyCoverFlow.iml" filepath="$PROJECT_DIR$/.idea/modules/libFancyCoverFlow/gc2015.libFancyCoverFlow.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/libSuperToasts/gc2015.libSuperToasts.iml" filepath="$PROJECT_DIR$/.idea/modules/libSuperToasts/gc2015.libSuperToasts.iml" />
     </modules>
   </component>
 </project>
