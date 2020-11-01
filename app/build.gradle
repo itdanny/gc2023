@@ -1,14 +1,14 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 28
+    compileSdkVersion 30
 
-    defaultConfig {
+    defaultConfig {0
         applicationId "com.hkbs.HKBS"
         minSdkVersion 14
         targetSdkVersion 30
-        versionCode 82
-        versionName "3.52"
+        versionCode 83
+        versionName "3.53"
         multiDexEnabled true
     }
 //    dexOptions {
