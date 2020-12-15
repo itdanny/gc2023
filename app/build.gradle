@@ -7,8 +7,8 @@ android {
         applicationId "com.hkbs.HKBS"
         minSdkVersion 14
         targetSdkVersion 30
-        versionCode 84
-        versionName "3.54"
+        versionCode 85
+        versionName "3.55"
         multiDexEnabled true
     }
 //    dexOptions {
@@ -26,6 +26,7 @@ android {
             debuggable false
         }
     }
+    buildToolsVersion '30.0.2'
 }
 
 dependencies {
@@ -33,13 +34,18 @@ dependencies {
     implementation project(':libArkist')
     implementation project(':libFancyCoverFlow')
     implementation project(':libSuperToasts')
-    implementation 'com.android.support:multidex:1.0.3'
-    implementation 'com.android.support:support-v4:28.0.0'
+    //implementation 'androidx.multidex:multidex:2.0.0'
+    implementation 'androidx.legacy:legacy-support-v4:1.0.0'
 
 }
 /*all*.exclude group: 'com.android.support', module: 'support-v4'*/
-configurations {
-    all*.exclude group: 'com.google.android.gms', module: 'play-services'
-}
+allprojects {
+    repositories {
+        jcenter()
+        google()
+    }}
+//configurations {
+//    all*.exclude group: 'com.google.android.gms', module: 'play-services'
+//}
 
 apply plugin: 'com.google.gms.google-services'

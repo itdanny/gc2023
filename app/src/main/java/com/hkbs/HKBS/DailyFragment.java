@@ -4,7 +4,7 @@ import android.content.ContentValues;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.support.v4.app.Fragment;
+import androidx.fragment.app.Fragment;
 import android.text.Html;
 import android.text.TextPaint;
 import android.text.TextUtils;
