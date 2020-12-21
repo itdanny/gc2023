@@ -9,12 +9,13 @@ import android.content.pm.PackageManager;
 import android.net.Uri;
 import android.os.Build;
 import android.provider.Settings;
-import androidx.core.content.ContextCompat;
 import android.text.TextUtils;
 
 import com.hkbs.HKBS.R;
 
 import org.arkist.share.AxTools;
+
+import androidx.core.content.ContextCompat;
 
 /**
  * Created by dchow on 26/1/2016.
@@ -49,14 +50,14 @@ public class MyPermission {
             String permission_1="";
             String permission_2="";
             String permissionDesc;
-            switch (requestCode){
+            switch (requestCode) {
                 case REQUEST_ACCESS_ACCOUNT_CAMERA:
-                    permissionDesc=context.getString(R.string.permissionCalendar) + "," +
+                    permissionDesc = context.getString(R.string.permissionCalendar) + "," +
                             context.getString(R.string.permissionContact);
                     permission_1 = Manifest.permission.CAMERA;
                     permission_2 = Manifest.permission.GET_ACCOUNTS;
                     permission = ContextCompat.checkSelfPermission(context, permission_1);
-                    if (permission== PackageManager.PERMISSION_GRANTED) {
+                    if (permission == PackageManager.PERMISSION_GRANTED) {
                         permission = ContextCompat.checkSelfPermission(context, permission_2);
                     }
                     permissionArr = new String[]{
@@ -66,9 +67,12 @@ public class MyPermission {
 
                     break;
                 case REQUEST_ACCESS_STORAGE:
-                    permissionDesc=context.getString(R.string.permissionStorage);
-                    permission_1= Manifest.permission.WRITE_EXTERNAL_STORAGE;
+                    permissionDesc = context.getString(R.string.permissionStorage);
+                    permission_1 = Manifest.permission.WRITE_EXTERNAL_STORAGE;
                     permission = ContextCompat.checkSelfPermission(context, permission_1);
+//                    if (permission == PackageManager.PERMISSION_GRANTED) {
+//                        permission = ContextCompat.checkSelfPermission(context, permission_2);
+//                    }
                     permissionArr = new String[]{
                             Manifest.permission.READ_EXTERNAL_STORAGE,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE};

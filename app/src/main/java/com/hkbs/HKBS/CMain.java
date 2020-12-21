@@ -21,13 +21,6 @@ import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
 import android.provider.MediaStore.Images;
-import androidx.core.app.ActivityCompat;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentStatePagerAdapter;
-import androidx.core.content.ContextCompat;
-import androidx.core.content.FileProvider;
-import androidx.viewpager.widget.ViewPager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.GestureDetector;
@@ -51,6 +44,14 @@ import java.io.File;
 import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.List;
+
+import androidx.core.app.ActivityCompat;
+import androidx.core.content.ContextCompat;
+import androidx.core.content.FileProvider;
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+import androidx.fragment.app.FragmentStatePagerAdapter;
+import androidx.viewpager.widget.ViewPager;
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
@@ -803,8 +804,9 @@ public class CMain extends MyActivity {
         String fileName = "pic_" + String.valueOf(System.currentTimeMillis()) + ".jpg";
         File imageFile = new File(Environment.getExternalStorageDirectory(), fileName);
         Uri uri;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {
-            uri = FileProvider.getUriForFile(context, BuildConfig.APPLICATION_ID + ".provider",imageFile);
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {//"com.hkbs.HKBS.provider"
+            //uri = FileProvider.getUriForFile(context,BuildConfig.APPLICATION_ID + ".provider",imageFile);
+            uri = FileProvider.getUriForFile(context,"com.hkbs.HKBS.provider",imageFile);
         } else {
             uri = Uri.fromFile(imageFile);
         }
@@ -833,7 +835,15 @@ public class CMain extends MyActivity {
             outstream.flush();
             outstream.close();
         } catch (Exception e) {
-            Toast.makeText(this, "Error:" + tryCounter + " " + e.toString(), Toast.LENGTH_LONG).show();
+            if (tryCounter==1) {
+                try {
+
+                } catch (Exception e1) {
+                    Toast.makeText(this, "Error11:" + tryCounter + " " + e.toString(), Toast.LENGTH_LONG).show();
+                }
+            } else {
+                Toast.makeText(this, "Error:" + tryCounter + " " + e.toString(), Toast.LENGTH_LONG).show();
+            }
             //System.err.println(e.toString());
         }
         Intent share = new Intent(Intent.ACTION_SEND);

@@ -44,9 +44,12 @@
             <!--</intent-filter>-->
         <!--</activity>-->
         <!-- 2018.07.10 -->
+        <!-- 2020.12.21
+        ApplicationID is defined in build.gradle "com.hkbs.HKBS"
+        Before ... due to use DEX, it use other applicationID -->
         <provider
             android:name="androidx.core.content.FileProvider"
-            android:authorities="${applicationId}.provider"
+            android:authorities="com.hkbs.HKBS.provider"
             android:exported="false"
             android:grantUriPermissions="true">
             <meta-data
