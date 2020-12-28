@@ -1,9 +1,9 @@
 package com.hkbs.HKBS.arkCalendar;
 
-import java.text.ParseException;
+import android.os.Build;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.Date;
 import java.util.HashMap;
 import java.util.Map;
 
@@ -141,23 +141,44 @@ public class MyCalendarLunar {
 	 * @return
 	 */
 	static private boolean mIsSimpleChinese;
+    static private long mBaseDateTime=-1;
 	public MyCalendarLunar(Calendar cal, boolean isSimpleChinese) {
 		mIsSimpleChinese=isSimpleChinese;
 		@SuppressWarnings("unused")
 		int yearCyl, monCyl, dayCyl;
 
 		int leapMonth = 0;
-		Date baseDate = null;
-
-		try {
-			baseDate = chineseDateFormat.parse("1900年1月31日");
-		} catch (ParseException e) {
-			e.printStackTrace(); // To change body of catch statement use
-									// Options | File Templates.
-		}
-
+		//Date baseDate = null;
+        if (mBaseDateTime==-1) {
+            Calendar baseCalendar = Calendar.getInstance();
+            if (Build.VERSION.SDK_INT >= 29) {
+                baseCalendar.set(1900, 0, 30, 12, 0, 0);
+            } else {
+                baseCalendar.set(1900, 0, 31, 0, 0, 0);
+            }
+            baseCalendar.set(Calendar.MILLISECOND, 0);
+            mBaseDateTime = baseCalendar.getTimeInMillis();
+        }
+//		try {
+//			baseDate = chineseDateFormat.parse("1900年1月31日");
+//		} catch (ParseException e) {
+//			e.printStackTrace(); // To change body of catch statement use
+//									// Options | File Templates.
+//		}
+        // 求出和1900年1月31日相差的天数
+        // 2020.12.27 Wrong put 2 getTime().getTime()
+        if (Build.VERSION.SDK_INT >= 29) {
+            cal.set(Calendar.HOUR_OF_DAY, 12);
+        } else {
+            cal.set(Calendar.HOUR_OF_DAY, 0);
+        }
+        cal.set(Calendar.MINUTE,0);
+        cal.set(Calendar.SECOND,0);
+        cal.set(Calendar.MILLISECOND,0);
+        long timeInLong = cal.getTimeInMillis();//cal.getTime().getTime();
+        int offset = (int) ((timeInLong - mBaseDateTime) / 86400000L);
 		// 求出和1900年1月31日相差的天数
-		int offset = (int) ((cal.getTime().getTime() - baseDate.getTime()) / 86400000L);
+		//int offset = (int) ((cal.getTime().getTime() - baseDate.getTime()) / 86400000L);
 		dayCyl = offset + 40;
 		monCyl = 14;
 

@@ -804,7 +804,10 @@ public class CMain extends MyActivity {
         String fileName = "pic_" + String.valueOf(System.currentTimeMillis()) + ".jpg";
         File imageFile = new File(Environment.getExternalStorageDirectory(), fileName);
         Uri uri;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {//"com.hkbs.HKBS.provider"
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+            File filelocation = new File(getCacheDir(), fileName);
+            uri = FileProvider.getUriForFile(context,"com.hkbs.HKBS.provider", filelocation);
+        } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {//"com.hkbs.HKBS.provider"
             //uri = FileProvider.getUriForFile(context,BuildConfig.APPLICATION_ID + ".provider",imageFile);
             uri = FileProvider.getUriForFile(context,"com.hkbs.HKBS.provider",imageFile);
         } else {
@@ -851,6 +854,9 @@ public class CMain extends MyActivity {
         share.putExtra(android.content.Intent.EXTRA_SUBJECT, "「" +
                 (IS_2016_VERSION ?context.getString(R.string.app_name):context.getString(R.string.app_name_2015)) +
                 "」經文分享");
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+            share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
+        }
         share.putExtra(android.content.Intent.EXTRA_STREAM, uri);
         try {
             startActivity(Intent.createChooser(share, "分享圖像"));
