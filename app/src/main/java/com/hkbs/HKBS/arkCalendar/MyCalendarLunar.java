@@ -2,6 +2,8 @@ package com.hkbs.HKBS.arkCalendar;
 
 import android.os.Build;
 
+import com.hkbs.HKBS.arkUtil.MyUtil;
+
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
 import java.util.HashMap;
@@ -157,6 +159,10 @@ public class MyCalendarLunar {
                 baseCalendar.set(1900, 0, 31, 0, 0, 0);
             }
             baseCalendar.set(Calendar.MILLISECOND, 0);
+            int adjVal = MyUtil.getPrefInt(MyUtil.PREF_LUNAR_ADJ,0);
+            if (adjVal!=0){
+                baseCalendar.add(Calendar.DATE,adjVal*-1);
+            }
             mBaseDateTime = baseCalendar.getTimeInMillis();
         }
 //		try {

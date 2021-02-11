@@ -88,6 +88,7 @@
     <string name="about_langTraditional">繁體</string>
     <string name="about_langSimplified">簡體</string>
     <string name="about_calendarLocation">日曆地區</string>
+    <string name="about_calendarAdjustment">農曆微調</string>
     <string name="about_hk_holiday_term">*<a href="http://www.labour.gov.hk/tc/news/latest_holidays2017.htm">香港法定假期</a></string>
 
     <string name="about_arkist_address1">網頁Website：www.arkist.org</string>

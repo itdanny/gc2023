@@ -9,16 +9,12 @@ import android.net.Uri;
 import android.provider.CalendarContract;
 
 import com.hkbs.HKBS.CalendarAdapter;
-import com.hkbs.HKBS.MyApp;
-import com.hkbs.HKBS.MyHoliday;
 import com.hkbs.HKBS.arkUtil.MyUtil;
 
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
-import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.HashMap;
-import java.util.List;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -570,122 +566,122 @@ public class MyCalendar {
     }
     static final int NBR_OF_DAYS_SHOWN = 14;
     static final int FIRST_SECTION = 7;
-    static public List<ContentValues> get14DayEvents(Context context, Calendar firstDay, String curCalendarID){
-    	SimpleDateFormat sdfMMMEEEdd = new SimpleDateFormat("EEEMMMdd",Locale.US);
-    	Calendar lastDay = (Calendar) firstDay.clone();
-    	List<ContentValues> daysInRange = new ArrayList<ContentValues>();
-    	List<ContentValues> eventsInRange = new ArrayList<ContentValues>();
-    	String lunarTerm = "";
-		String lunarDate = "";
-		String defaultLang = MyUtil.getPrefStr(MyUtil.PREF_LANG, "HK");
-    	for (int i=0;i<NBR_OF_DAYS_SHOWN;i++){
-    		ContentValues eachDate = new ContentValues();
-    		MyDayEvents dayEvent = new MyDayEvents(MyDayEvents.TYPE_NONE, lastDay);
-    		eachDate.put(MyUtil.FIELD_Date, dayEvent.toYYYYMMDD());
-    		eachDate.put(MyUtil.FIELD_Name, sdfMMMEEEdd.format(lastDay.getTime()));
-    		eachDate.put(MyUtil.FIELD_Begin, dayEvent.getMinInMillsec()); // Not really begin, just keep a value
-    		eachDate.put(MyUtil.FIELD_End, dayEvent.getMaxInMillsec());
-    		// Lunar
-    		lunarTerm="";
-    		lunarDate="";
-    		if (!defaultLang.equals(MyUtil.PREF_LANG_EN)) {
-    			final MyCalendarLunar lunar = new MyCalendarLunar(lastDay, MyApp.mIsSimplifiedChinese);
-    			lunarTerm = MyCalendarLunar.solar.getSolarTerm(lastDay);
-    			lunarDate = lunar.toChineseMMDD();
-    		} 
-    		eachDate.put(MyUtil.FIELD_Abbrev, lunarTerm);
-    		eachDate.put(MyUtil.FIELD_CreatedDate, lunarDate);
-    		// Holiday
-    		//final String holidayText = CalendarAdapter.getHolidayText(context, lastDay);
-    		String holidayText = MyHoliday.getHolidayRemark(lastDay.getTime());
-            holidayText= holidayText.replace("*","");
-    		if (holidayText.startsWith("#")){
-    			holidayText=holidayText.substring(1);
-    		}    			
-    		eachDate.put(MyUtil.FIELD_Comment, holidayText);
-    		
-    		daysInRange.add(eachDate);
-    		lastDay.add(Calendar.DAY_OF_MONTH, 1);
-    	}
-    	MyDayEvents firstDayEvent = new MyDayEvents(MyDayEvents.TYPE_NONE, firstDay);
-    	MyDayEvents lastDayEvent = new MyDayEvents(MyDayEvents.TYPE_NONE, lastDay);
-    	Cursor cursor = getInstanceCursor(context, firstDayEvent.getMinInMillsec(), lastDayEvent.getMaxInMillsec(),curCalendarID);
-    	if (cursor!=null){
-    		if (cursor.getCount()>0 && cursor.moveToFirst()) {
-	    		do {
-	    			if (DEBUG) {
-		    			final String cursorTitle = cursor.getString(MyCalendar.INSTANCE_TITLE);
-	    				Calendar cursorDate = Calendar.getInstance();
-	    				cursorDate.setTimeInMillis(Long.parseLong(cursor.getString(0)));
-    					MyUtil.log(TAG, cursorTitle+" "+MyUtil.sdfYYYYMMDDHHMM.format(cursorDate.getTime()));
-    				}
-	    			// Find Days position
-	    			long iBegin = Long.parseLong(cursor.getString(MyCalendar.INSTANCE_BEGIN));
-    				long iEnd = Long.parseLong(cursor.getString(MyCalendar.INSTANCE_END));
-    				boolean iAllDay = !cursor.getString(MyCalendar.INSTANCE_ALL_DAY).equals("0");
-	    			for (int j=0;j<NBR_OF_DAYS_SHOWN;j++){
-	    				ContentValues dayRecord = daysInRange.get(j);
-	    				/*
-	    				 * Change utc2local to local: Found that a record in moring 5:00 fill to wrong date
-	    				 */
-	    				final int result = withinRange(
-	    						iBegin, iEnd, 
-	    						iAllDay,
-	    						dayRecord.getAsLong(MyUtil.FIELD_Begin),
-	    						dayRecord.getAsLong(MyUtil.FIELD_End));     	
-	    				if (result!=0){
-	    					Calendar iBeginCal = Calendar.getInstance();
-	    					iBeginCal.setTimeInMillis(iBegin);
-	    					ContentValues record = new ContentValues();
-	    					record.put(MyUtil.FIELD_Type,0);//Standard record
-	    					record.put(MyUtil.FIELD_Date,dayRecord.getAsString(MyUtil.FIELD_Date));
-	    					record.put(MyUtil.FIELD_Name,sdfMMMEEEdd.format(iBeginCal.getTime()));
-	    					record.put(MyUtil.FIELD_Content,cursor.getString(MyCalendar.INSTANCE_TITLE));
-	    					record.put(MyUtil.FIELD_Begin,iBegin);
-	    					record.put(MyUtil.FIELD_End,iEnd);
-	    					record.put(MyUtil.FIELD_EventID,Long.parseLong(cursor.getString(MyCalendar.INSTANCE_EVENT_ID)));	    					
-	    					record.put(MyUtil.FIELD_TagValue,iAllDay);
-	    					record.put(MyUtil.FIELD_Code,j<FIRST_SECTION?1:2);
-	    					eventsInRange.add(record);
-		    				//if (DEBUG) MyApp.log("#","Add record:"+sdfMMMEEEdd.format(iBeginCal.getTime()));
-	    				}
-	    			}
-	    		} while (cursor.moveToNext());
-    		}
-    		cursor.close();
-    	}
-    	// Add Calendar if not exists
-    	int dayIndex=0;
-    	int eventIndex=0;
-    	String lastEventDateStr = "";
-    	while (dayIndex<NBR_OF_DAYS_SHOWN){
-    		ContentValues dayInRange = daysInRange.get(dayIndex);
-    		String dayIndexDate = dayInRange.getAsString(MyUtil.FIELD_Date);
-    		int section = dayIndex<FIRST_SECTION?1:2;
-//    		MyApp.log(TAG,"dayIndexDate:"+dayIndexDate);
-    		if (eventIndex>=eventsInRange.size()){ // No more event record to analysis; just add
-    			lastEventDateStr = "";
-    			eventsInRange.add(eventIndex, getHeader(1,dayIndexDate,dayInRange,section));eventIndex++;//+1 for new record
-    			dayIndex++;
-    		} else {
-	    		ContentValues eventInRange = eventsInRange.get(eventIndex);
-	    		int result = dayIndexDate.compareTo(eventInRange.getAsString(MyUtil.FIELD_Date)); 
-	    		if (result<0){  // Event record date is still large; just add
-	    			lastEventDateStr = "";
-	    			eventsInRange.add(eventIndex, getHeader(1,dayIndexDate,dayInRange,section));eventIndex++;	    			
-	    			dayIndex++;//Not incremental to add TAIL
-	    		} else {
-	    			if (!eventInRange.getAsString(MyUtil.FIELD_Date).equals(lastEventDateStr)){
-	    				lastEventDateStr = eventInRange.getAsString(MyUtil.FIELD_Date);
-	    				eventsInRange.add(eventIndex,getHeader(1,lastEventDateStr,dayInRange,section));eventIndex++;
-	    				dayIndex++;
-	    			}
-	    			eventIndex++;
-	    		}
-    		}
-    	}
-    	return eventsInRange;
-    }
+//    static public List<ContentValues> get14DayEvents(Context context, Calendar firstDay, String curCalendarID){
+//    	SimpleDateFormat sdfMMMEEEdd = new SimpleDateFormat("EEEMMMdd",Locale.US);
+//    	Calendar lastDay = (Calendar) firstDay.clone();
+//    	List<ContentValues> daysInRange = new ArrayList<ContentValues>();
+//    	List<ContentValues> eventsInRange = new ArrayList<ContentValues>();
+//    	String lunarTerm = "";
+//		String lunarDate = "";
+//		String defaultLang = MyUtil.getPrefStr(MyUtil.PREF_LANG, "HK");
+//    	for (int i=0;i<NBR_OF_DAYS_SHOWN;i++){
+//    		ContentValues eachDate = new ContentValues();
+//    		MyDayEvents dayEvent = new MyDayEvents(MyDayEvents.TYPE_NONE, lastDay);
+//    		eachDate.put(MyUtil.FIELD_Date, dayEvent.toYYYYMMDD());
+//    		eachDate.put(MyUtil.FIELD_Name, sdfMMMEEEdd.format(lastDay.getTime()));
+//    		eachDate.put(MyUtil.FIELD_Begin, dayEvent.getMinInMillsec()); // Not really begin, just keep a value
+//    		eachDate.put(MyUtil.FIELD_End, dayEvent.getMaxInMillsec());
+//    		// Lunar
+//    		lunarTerm="";
+//    		lunarDate="";
+//    		if (!defaultLang.equals(MyUtil.PREF_LANG_EN)) {
+//    			final MyCalendarLunar lunar = new MyCalendarLunar(lastDay, MyApp.mIsSimplifiedChinese);
+//    			lunarTerm = MyCalendarLunar.solar.getSolarTerm(lastDay);
+//    			lunarDate = lunar.toChineseMMDD();
+//    		}
+//    		eachDate.put(MyUtil.FIELD_Abbrev, lunarTerm);
+//    		eachDate.put(MyUtil.FIELD_CreatedDate, lunarDate);
+//    		// Holiday
+//    		//final String holidayText = CalendarAdapter.getHolidayText(context, lastDay);
+//    		String holidayText = MyHoliday.getHolidayRemark(lastDay.getTime());
+//            holidayText= holidayText.replace("*","");
+//    		if (holidayText.startsWith("#")){
+//    			holidayText=holidayText.substring(1);
+//    		}
+//    		eachDate.put(MyUtil.FIELD_Comment, holidayText);
+//
+//    		daysInRange.add(eachDate);
+//    		lastDay.add(Calendar.DAY_OF_MONTH, 1);
+//    	}
+//    	MyDayEvents firstDayEvent = new MyDayEvents(MyDayEvents.TYPE_NONE, firstDay);
+//    	MyDayEvents lastDayEvent = new MyDayEvents(MyDayEvents.TYPE_NONE, lastDay);
+//    	Cursor cursor = getInstanceCursor(context, firstDayEvent.getMinInMillsec(), lastDayEvent.getMaxInMillsec(),curCalendarID);
+//    	if (cursor!=null){
+//    		if (cursor.getCount()>0 && cursor.moveToFirst()) {
+//	    		do {
+//	    			if (DEBUG) {
+//		    			final String cursorTitle = cursor.getString(MyCalendar.INSTANCE_TITLE);
+//	    				Calendar cursorDate = Calendar.getInstance();
+//	    				cursorDate.setTimeInMillis(Long.parseLong(cursor.getString(0)));
+//    					MyUtil.log(TAG, cursorTitle+" "+MyUtil.sdfYYYYMMDDHHMM.format(cursorDate.getTime()));
+//    				}
+//	    			// Find Days position
+//	    			long iBegin = Long.parseLong(cursor.getString(MyCalendar.INSTANCE_BEGIN));
+//    				long iEnd = Long.parseLong(cursor.getString(MyCalendar.INSTANCE_END));
+//    				boolean iAllDay = !cursor.getString(MyCalendar.INSTANCE_ALL_DAY).equals("0");
+//	    			for (int j=0;j<NBR_OF_DAYS_SHOWN;j++){
+//	    				ContentValues dayRecord = daysInRange.get(j);
+//	    				/*
+//	    				 * Change utc2local to local: Found that a record in moring 5:00 fill to wrong date
+//	    				 */
+//	    				final int result = withinRange(
+//	    						iBegin, iEnd,
+//	    						iAllDay,
+//	    						dayRecord.getAsLong(MyUtil.FIELD_Begin),
+//	    						dayRecord.getAsLong(MyUtil.FIELD_End));
+//	    				if (result!=0){
+//	    					Calendar iBeginCal = Calendar.getInstance();
+//	    					iBeginCal.setTimeInMillis(iBegin);
+//	    					ContentValues record = new ContentValues();
+//	    					record.put(MyUtil.FIELD_Type,0);//Standard record
+//	    					record.put(MyUtil.FIELD_Date,dayRecord.getAsString(MyUtil.FIELD_Date));
+//	    					record.put(MyUtil.FIELD_Name,sdfMMMEEEdd.format(iBeginCal.getTime()));
+//	    					record.put(MyUtil.FIELD_Content,cursor.getString(MyCalendar.INSTANCE_TITLE));
+//	    					record.put(MyUtil.FIELD_Begin,iBegin);
+//	    					record.put(MyUtil.FIELD_End,iEnd);
+//	    					record.put(MyUtil.FIELD_EventID,Long.parseLong(cursor.getString(MyCalendar.INSTANCE_EVENT_ID)));
+//	    					record.put(MyUtil.FIELD_TagValue,iAllDay);
+//	    					record.put(MyUtil.FIELD_Code,j<FIRST_SECTION?1:2);
+//	    					eventsInRange.add(record);
+//		    				//if (DEBUG) MyApp.log("#","Add record:"+sdfMMMEEEdd.format(iBeginCal.getTime()));
+//	    				}
+//	    			}
+//	    		} while (cursor.moveToNext());
+//    		}
+//    		cursor.close();
+//    	}
+//    	// Add Calendar if not exists
+//    	int dayIndex=0;
+//    	int eventIndex=0;
+//    	String lastEventDateStr = "";
+//    	while (dayIndex<NBR_OF_DAYS_SHOWN){
+//    		ContentValues dayInRange = daysInRange.get(dayIndex);
+//    		String dayIndexDate = dayInRange.getAsString(MyUtil.FIELD_Date);
+//    		int section = dayIndex<FIRST_SECTION?1:2;
+////    		MyApp.log(TAG,"dayIndexDate:"+dayIndexDate);
+//    		if (eventIndex>=eventsInRange.size()){ // No more event record to analysis; just add
+//    			lastEventDateStr = "";
+//    			eventsInRange.add(eventIndex, getHeader(1,dayIndexDate,dayInRange,section));eventIndex++;//+1 for new record
+//    			dayIndex++;
+//    		} else {
+//	    		ContentValues eventInRange = eventsInRange.get(eventIndex);
+//	    		int result = dayIndexDate.compareTo(eventInRange.getAsString(MyUtil.FIELD_Date));
+//	    		if (result<0){  // Event record date is still large; just add
+//	    			lastEventDateStr = "";
+//	    			eventsInRange.add(eventIndex, getHeader(1,dayIndexDate,dayInRange,section));eventIndex++;
+//	    			dayIndex++;//Not incremental to add TAIL
+//	    		} else {
+//	    			if (!eventInRange.getAsString(MyUtil.FIELD_Date).equals(lastEventDateStr)){
+//	    				lastEventDateStr = eventInRange.getAsString(MyUtil.FIELD_Date);
+//	    				eventsInRange.add(eventIndex,getHeader(1,lastEventDateStr,dayInRange,section));eventIndex++;
+//	    				dayIndex++;
+//	    			}
+//	    			eventIndex++;
+//	    		}
+//    		}
+//    	}
+//    	return eventsInRange;
+//    }
     static private ContentValues getHeader(int type, String date, ContentValues cv, int section){
     	ContentValues dayHeader = new ContentValues();
 		dayHeader.put(MyUtil.FIELD_Type,type); // Header Record

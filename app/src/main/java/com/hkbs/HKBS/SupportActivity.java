@@ -39,6 +39,9 @@ public class SupportActivity extends MyActivity implements OnClickListener {
     private Button btnHolyDayOff;
     private Button btnLangTradition;
     private Button btnLangSimpified;
+    private Button btnAdjIncrease;
+    private Button btnAdjDecrease;
+    private TextView txtAdjust;
 
 	public SupportActivity() {
 		
@@ -72,15 +75,20 @@ public class SupportActivity extends MyActivity implements OnClickListener {
 
         btnLangTradition = (Button) findViewById(R.id.xmlLangTraditional);
         btnLangTradition.setOnClickListener(this);
-
         btnLangSimpified = (Button) findViewById(R.id.xmlLangSimplified);
         btnLangSimpified.setOnClickListener(this);
 
         btnTaiWan = (Button) findViewById(R.id.xmlSupportTaiWan);
 		btnTaiWan.setOnClickListener(this);
-
 		btnHongKong = (Button) findViewById(R.id.xmlSupportHongKong);
 		btnHongKong.setOnClickListener(this);
+
+        btnAdjIncrease = (Button) findViewById(R.id.xmlSupportAdjIncrease);
+        btnAdjIncrease.setOnClickListener(this);
+        btnAdjDecrease = (Button) findViewById(R.id.xmlSupportAdjDecrease);
+        btnAdjDecrease.setOnClickListener(this);
+        txtAdjust = (TextView) findViewById(R.id.xmlSupportAdjValue);
+        txtAdjust.setText(String.valueOf(MyUtil.getPrefInt(MyUtil.PREF_LUNAR_ADJ,0)));
 
         ((TextView) findViewById(R.id.xmlSupportHK_Holiday_term)).setMovementMethod(LinkMovementMethod.getInstance());
 
@@ -276,6 +284,28 @@ public class SupportActivity extends MyActivity implements OnClickListener {
         case R.id.xmlSupportHolyDayOff:
             MyUtil.setPrefInt(MyUtil.PREF_HOLY_DAY, 0);
             setHolyDayColor();
+            break;
+        case R.id.xmlSupportAdjIncrease:
+            int newIncrease = MyUtil.getPrefInt(MyUtil.PREF_LUNAR_ADJ,0)+1;
+            MyUtil.setPrefInt(MyUtil.PREF_LUNAR_ADJ, newIncrease);
+            txtAdjust.setText(String.valueOf(newIncrease));
+            MyAlert.show(SupportActivity.this, getString(R.string.support_restart), new MyAlert.OkListener() {
+                @Override
+                public void ready(MyAlert alert) {
+                    restart(SupportActivity.this);
+                }
+            });
+            break;
+        case R.id.xmlSupportAdjDecrease:
+            int newDecrease = MyUtil.getPrefInt(MyUtil.PREF_LUNAR_ADJ,0)-1;
+            MyUtil.setPrefInt(MyUtil.PREF_LUNAR_ADJ, newDecrease);
+            txtAdjust.setText(String.valueOf(newDecrease));
+            MyAlert.show(SupportActivity.this, getString(R.string.support_restart), new MyAlert.OkListener() {
+                @Override
+                public void ready(MyAlert alert) {
+                    restart(SupportActivity.this);
+                }
+            });
             break;
 		}
         CWidgetBase.broadcastMe(SupportActivity.this);

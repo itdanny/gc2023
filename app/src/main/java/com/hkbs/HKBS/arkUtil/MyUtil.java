@@ -61,6 +61,7 @@ public class MyUtil {
 	final static public String PREF_COUNTRY = "prefCountry";
     final static public String PREF_HOLY_DAY = "prefHolyDay";
     final static public String PREF_NOT_HKBS = "prefNotHKBS";
+    final static public String PREF_LUNAR_ADJ = "prefLunarAdj";
 	
 	final static public String PREF_LANG_EN = "EN";
 	final static public String PREF_LANG = "prefLang"; // EN, HK, TW, CN
