@@ -103,6 +103,12 @@ public class MyDailyBread {
 	final static public String wBigAlign = "BigAlign";
 	final static public String wBigSize = "BigSize";
 	final static public String wSmallText = "SmallText";
+    final static public String wLunarYear = "LunarYear";
+    final static public String wLunarAnimal = "LunarAnimal";
+    final static public String wLunarMonth = "LunarMonth";
+    final static public String wLunarBigSmall = "LunarBigSmall";
+    final static public String wLunarDay = "LunarDay";
+    final static public String wLunarSeason = "LunarSeason";
 	
 //	static public MyDailyBread getInstance(Activity act){
 //		final Context context = act.getBaseContext();
@@ -425,6 +431,7 @@ public class MyDailyBread {
             int lastYear=0;
     		int lastMonth=0;
     		int lastDay=0;
+            int lunarDivider=0;
             Calendar newDate = Calendar.getInstance();
             newDate.set(Calendar.HOUR_OF_DAY, 0);
             newDate.set(Calendar.MINUTE, 0);
@@ -432,16 +439,8 @@ public class MyDailyBread {
 		    // 1st Line Header
 		    if (line!=null){
 		    	String [] titles = line.split(",");
-//		    	mEmptyContentValues = new ContentValues(titles.length);
-//		    	for (int k=0;k<titles.length;k++){
-//		    		mEmptyContentValues.put(titles[k], "");
-//		    	}
 		    	mValueList = new ArrayList<ContentValues>();
 		    	mMap = new HashMap<String, Integer>();
-//		    	validFrDate = Calendar.getInstance();
-//		    	validFrDate.set(2013, 0, 1, 0, 0, 0);
-//		    	validToDate = Calendar.getInstance();
-//		    	validToDate.set(2013, 0, 1, 59, 59, 59);		    			    	
 		    	line = bReader.readLine();
 		    	int counter=0;
 		    	if (IS_CHECK_FIELD_VALUES){
@@ -476,7 +475,23 @@ public class MyDailyBread {
                         }
                         lastYear = cv.getAsInteger(wGYear);
                         lastMonth = cv.getAsInteger(wGMonth) - 1;
-                        lastDay = cv.getAsInteger(wGDay);
+                        // Check Lunar Information is provided
+                        lunarDivider = cv.getAsString(wGDay).indexOf("^");
+                        if (lunarDivider==-1){
+                            lastDay = cv.getAsInteger(wGDay);
+                        } else {
+                            String pureLastDay = cv.getAsString(wGDay).substring(0,lunarDivider);
+                            String [] lunars = cv.getAsString(wGDay).substring(lunarDivider).split("\\^",8);
+                            cv.put(wLunarYear,lunars[1]);
+                            cv.put(wLunarAnimal,lunars[2]);
+                            cv.put(wLunarMonth,lunars[3]);
+                            cv.put(wLunarBigSmall,lunars[4]);
+                            cv.put(wLunarDay,lunars[5]);
+                            cv.put(wLunarSeason,lunars[6]);
+
+                            cv.put(wGDay,pureLastDay);
+                            lastDay = Integer.valueOf(pureLastDay);
+                        }
                         if (IS_CURRENT_YEAR_ONLY) {
                             if (CMain.IS_2016_VERSION) {
                                 if (lastYear < 2014) {

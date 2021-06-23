@@ -7,8 +7,8 @@ android {
         applicationId "com.hkbs.HKBS"
         minSdkVersion 14
         targetSdkVersion 30
-        versionCode 90
-        versionName "3.60"
+        versionCode 92
+        versionName "3.62"
         multiDexEnabled true
     }
 //    dexOptions {
@@ -41,7 +41,6 @@ dependencies {
 /*all*.exclude group: 'com.android.support', module: 'support-v4'*/
 allprojects {
     repositories {
-        jcenter()
         google()
     }}
 //configurations {

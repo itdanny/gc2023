@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
-import androidx.fragment.app.Fragment;
 import android.text.Html;
 import android.text.TextPaint;
 import android.text.TextUtils;
@@ -28,6 +27,8 @@ import org.arkist.share.AxDebug;
 import org.arkist.share.AxTools;
 
 import java.util.Calendar;
+
+import androidx.fragment.app.Fragment;
 
 /**
  * Created by dchow on 28/10/15.
@@ -354,15 +355,25 @@ public class DailyFragment extends Fragment {
             mWeekDayImage.setImageResource(mIsHoliday ? R.drawable.red_weekday_2015 : R.drawable.green_weekday_2015);
         }
         mWeekDay.setTextColor(getResources().getColor(R.color.white));
-
-        // Prepare data
-        final Calendar monthEndDate = (Calendar) mCalendar.clone();
-        int nbrOfDaysTo30 = 30-mLunar.getDay(); // Chinese Day
-        monthEndDate.add(Calendar.DAY_OF_MONTH, nbrOfDaysTo30);
-        final MyCalendarLunar monthEndLunar = new MyCalendarLunar(monthEndDate,MyApp.mIsSimplifiedChinese);
-        boolean isBigMonth = (monthEndLunar.getDay()==30)?true:false;
-        // Settting
-        mChiLunarMonth.setText(mLunar.toChineseMM() + (isBigMonth ? "大" : "小"));
+// 2021.06.21
+        String lunarMonth = mContentValues.getAsString(MyDailyBread.wLunarMonth);
+        if (lunarMonth!=null) {
+            String lunarBigSmall = mContentValues.getAsString(MyDailyBread.wLunarBigSmall);
+            if (lunarBigSmall==null){
+                mChiLunarMonth.setText(lunarMonth);
+            } else {
+                mChiLunarMonth.setText(lunarMonth+lunarBigSmall);
+            }
+        } else {
+            // Prepare data
+            final Calendar monthEndDate = (Calendar) mCalendar.clone();
+            int nbrOfDaysTo30 = 30 - mLunar.getDay(); // Chinese Day
+            monthEndDate.add(Calendar.DAY_OF_MONTH, nbrOfDaysTo30);
+            final MyCalendarLunar monthEndLunar = new MyCalendarLunar(monthEndDate, MyApp.mIsSimplifiedChinese);
+            boolean isBigMonth = (monthEndLunar.getDay() == 30) ? true : false;
+            // Settting
+            mChiLunarMonth.setText(mLunar.toChineseMM() + (isBigMonth ? "大" : "小"));
+        }
         mChiLunarMonth.setTextColor(mTextColor);
 
         int theDay = mCalendar.get(Calendar.DAY_OF_WEEK);
@@ -376,28 +387,51 @@ public class DailyFragment extends Fragment {
             case Calendar.SATURDAY: mWeekDay.setText("星期六 SAT"); break;
         }
 
-        mChiLunarDay.setText(mLunar.toChineseDD() + "日");
+        String lunarDay = mContentValues.getAsString(MyDailyBread.wLunarDay);
+        if (lunarDay!=null) {
+            mChiLunarDay.setText(lunarDay + "日");
+        } else {
+            mChiLunarDay.setText(mLunar.toChineseDD() + "日");
+        }
         mChiLunarDay.setTextColor(mTextColor);
 
-        mChiLunarYear.setText(mLunar.toChineseYY() + "年");
+        String lunarYear = mContentValues.getAsString(MyDailyBread.wLunarYear);
+        if (lunarYear!=null) {
+            mChiLunarYear.setText(lunarYear + "年");
+            mChiLeftYear.setText(lunarYear + "年");
+        } else {
+            mChiLunarYear.setText(mLunar.toChineseYY() + "年");
+            mChiLeftYear.setText(mLunar.toChineseYY()+"年");
+        }
         mChiLunarYear.setTextColor(mTextColor);
-
-        final String solarTerm=MyCalendarLunar.solar.getSolarTerm(mCalendar);
-
-        mChiLeftYear.setText(mLunar.toChineseYY()+"年");
         mChiLeftYear.setTextColor(mTextColor);
 
-        mChiLeftWeather.setText(solarTerm);
-        mChiLeftWeather.setTextColor(mTextColor);
-
-        if (solarTerm.equals("")){
-            mChiLeftWeather.setVisibility(View.GONE);
-            mChiLeftYear.setVisibility(View.GONE);
-            mChiLunarYear.setVisibility(View.VISIBLE);
+        String lunarSeason = mContentValues.getAsString(MyDailyBread.wLunarSeason);
+        if (lunarSeason!=null) {
+            mChiLeftWeather.setText(lunarSeason);
+            mChiLeftWeather.setTextColor(mTextColor);
+            if (lunarSeason.equals(".")){
+                mChiLeftWeather.setVisibility(View.GONE);
+                mChiLeftYear.setVisibility(View.GONE);
+                mChiLunarYear.setVisibility(View.VISIBLE);
+            } else {
+                mChiLeftWeather.setVisibility(View.VISIBLE);
+                mChiLeftYear.setVisibility(View.VISIBLE);
+                mChiLunarYear.setVisibility(View.GONE);
+            }
         } else {
-            mChiLeftWeather.setVisibility(View.VISIBLE);
-            mChiLeftYear.setVisibility(View.VISIBLE);
-            mChiLunarYear.setVisibility(View.GONE);
+            final String solarTerm = MyCalendarLunar.solar.getSolarTerm(mCalendar);
+            mChiLeftWeather.setText(solarTerm);
+            mChiLeftWeather.setTextColor(mTextColor);
+            if (solarTerm.equals("")){
+                mChiLeftWeather.setVisibility(View.GONE);
+                mChiLeftYear.setVisibility(View.GONE);
+                mChiLunarYear.setVisibility(View.VISIBLE);
+            } else {
+                mChiLeftWeather.setVisibility(View.VISIBLE);
+                mChiLeftYear.setVisibility(View.VISIBLE);
+                mChiLunarYear.setVisibility(View.GONE);
+            }
         }
         
 //        final ImageView pageImageFrameUpper = (ImageView) findViewById(getID(nbr, "ImageFrameUpper"));

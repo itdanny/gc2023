@@ -173,18 +173,11 @@ public class CalendarAdapter extends BaseAdapter {
 					}
 				} else {
 					MyCalendarLunar lunarDay = new MyCalendarLunar(curDayEvents.getCalendar(),MyApp.mIsSimplifiedChinese);
-////					if (lunarDay.getDay()==1){
-////						output = output + "<br><font color=\"blue\"><small>"+lunarDay.toChineseMM()+"</small></font>";
-////					} else if (lunarDay.getDay()==15){
-////						output = output + "<br><font color=\"blue\"><small>"+lunarDay.toChineseDD()+"</small></font>";
-////					} else {
-//						output = output + "<br><font color=\"black\"><small><small>"+lunarDay.toChineseDD()+"</small></small></font>";
-////					}
-						if (lunarDay.getDay()==1){
-							output = output + "<br><font color=\"black\"><small><small>"+lunarDay.toChineseMM()+"</small></small></font>";
-						} else {
-							output = output + "<br><font color=\"black\"><small><small>"+lunarDay.toChineseDD()+"</small></small></font>";
-						}
+                    if (lunarDay.getDay()==1){
+                        output = output + "<br><font color=\"black\"><small><small>"+lunarDay.toChineseMM()+"</small></small></font>";
+                    } else {
+                        output = output + "<br><font color=\"black\"><small><small>"+lunarDay.toChineseDD()+"</small></small></font>";
+                    }
 				}
 			}
 			// show ICON on SELECTED DAY
@@ -223,8 +216,6 @@ public class CalendarAdapter extends BaseAdapter {
 					dayView.setTextColor(actContext.getResources().getColor(R.color.weekdayTextActive));
 				}				
 			}
-			
-
 			output = output + MyCalendar.getCounterString(curDayEvents.counter,false) + "<br><small>" + curDayEvents.text + "</small>";
 			dayView.setText(Html.fromHtml(output));
 			
