@@ -1550,6 +1550,7 @@ public class CMain extends MyActivity {
 //      final String url = prefix+BOOKS_ENG[bookNbr-1]+"/"+chapterNbr+":"+verseNbr;
         final String url = prefix+"bookNbr="+bookNbr+"&chapterNbr="+chapterNbr+"&verseNbr="+verseNbr;
         Intent intent = new Intent(Intent.ACTION_VIEW);
+        Log.e(TAG, "Call another app " + url);
         intent.setData(Uri.parse(url));
         //onExitGoodCalendar(context);
         startActivity(intent);

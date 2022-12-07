@@ -4,9 +4,21 @@
     <modules>
       <module fileurl="file://$PROJECT_DIR$/gc2015.iml" filepath="$PROJECT_DIR$/gc2015.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/gc2015.app.iml" filepath="$PROJECT_DIR$/.idea/modules/app/gc2015.app.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/gc2015.app.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/gc2015.app.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/gc2015.app.main.iml" filepath="$PROJECT_DIR$/.idea/modules/app/gc2015.app.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/app/gc2015.app.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/app/gc2015.app.unitTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/libArkist/gc2015.libArkist.iml" filepath="$PROJECT_DIR$/.idea/modules/libArkist/gc2015.libArkist.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/libArkist/gc2015.libArkist.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/libArkist/gc2015.libArkist.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/libArkist/gc2015.libArkist.main.iml" filepath="$PROJECT_DIR$/.idea/modules/libArkist/gc2015.libArkist.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/libArkist/gc2015.libArkist.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/libArkist/gc2015.libArkist.unitTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/libFancyCoverFlow/gc2015.libFancyCoverFlow.iml" filepath="$PROJECT_DIR$/.idea/modules/libFancyCoverFlow/gc2015.libFancyCoverFlow.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/libFancyCoverFlow/gc2015.libFancyCoverFlow.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/libFancyCoverFlow/gc2015.libFancyCoverFlow.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/libFancyCoverFlow/gc2015.libFancyCoverFlow.main.iml" filepath="$PROJECT_DIR$/.idea/modules/libFancyCoverFlow/gc2015.libFancyCoverFlow.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/libFancyCoverFlow/gc2015.libFancyCoverFlow.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/libFancyCoverFlow/gc2015.libFancyCoverFlow.unitTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/libSuperToasts/gc2015.libSuperToasts.iml" filepath="$PROJECT_DIR$/.idea/modules/libSuperToasts/gc2015.libSuperToasts.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/libSuperToasts/gc2015.libSuperToasts.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/libSuperToasts/gc2015.libSuperToasts.androidTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/libSuperToasts/gc2015.libSuperToasts.main.iml" filepath="$PROJECT_DIR$/.idea/modules/libSuperToasts/gc2015.libSuperToasts.main.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/libSuperToasts/gc2015.libSuperToasts.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/libSuperToasts/gc2015.libSuperToasts.unitTest.iml" />
     </modules>
   </component>
 </project>

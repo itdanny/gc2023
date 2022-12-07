@@ -26,7 +26,6 @@ android {
             debuggable false
         }
     }
-    buildToolsVersion '30.0.2'
 }
 
 dependencies {
