@@ -7,8 +7,8 @@ import android.content.ComponentName;
 import android.content.ContentValues;
 import android.content.Context;
 import android.content.Intent;
-import android.os.AsyncTask;
 import android.os.Handler;
+import android.os.Looper;
 import android.text.TextUtils;
 import android.util.DisplayMetrics;
 import android.util.Log;
@@ -24,24 +24,31 @@ import org.arkist.share.AxDebug;
 import org.arkist.share.AxTools;
 
 import java.util.Calendar;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.Executors;
 
 public class CWidgetBase extends AppWidgetProvider {
-	final static private boolean DEBUG = true && CMain.DEBUG;
-	final static private String TAG = CWidgetBase.class.getSimpleName();
-	final static private String CHI_MONTHS [] = {"一","二","三","四","五","六","七","八","九","十","十一","十二"};
-    public boolean isLarger=false;
-	public CWidgetBase() {
+    final static private boolean DEBUG = true && CMain.DEBUG;
+    final static private String TAG = CWidgetBase.class.getSimpleName();
+    final static private String CHI_MONTHS[] = {"一", "二", "三", "四", "五", "六", "七", "八", "九", "十", "十一", "十二"};
+    public boolean isLarger = false;
 
-	}
-    public String getClassTag(){
+    public CWidgetBase() {
+
+    }
+
+    public String getClassTag() {
         return "";
     }
-    public String getLayoutTag(){
+
+    public String getLayoutTag() {
         return "";
     }
-    public int getLayoutId(){
+
+    public int getLayoutId() {
         return R.layout.activity_cwidget;
     }
+
     @Override
     public void onEnabled(Context context) {
         // Enter relevant functionality for when the first widget is created
@@ -51,12 +58,13 @@ public class CWidgetBase extends AppWidgetProvider {
     public void onDisabled(Context context) {
         // Enter relevant functionality for when the last widget is disabled
     }
-	@Override
-	public void onReceive(final Context context, Intent intent) {
-		super.onReceive(context, intent);
+
+    @Override
+    public void onReceive(final Context context, Intent intent) {
+        super.onReceive(context, intent);
         //if (intent !=null && intent.getAction()==Intent.ACTION_TIME_CHANGED) return;
-		// Whatever receive; just do it.
-		
+        // Whatever receive; just do it.
+
 ////		int actionID = intent.getIntExtra(AppWidgetManager.EXTRA_CUSTOM_EXTRAS,0);
 ////		switch (actionID){
 ////			case MyGoldBroadcast.REQUEST_WIDGET:
@@ -69,7 +77,7 @@ public class CWidgetBase extends AppWidgetProvider {
 ////				break;
 ////		}
 //		AxAlarm.setDailyOnDateChange(context);
-        MyUtil.log(getLayoutTag(), "widget.onReceive "+((intent!=null && intent.getAction()!=null)?intent.getAction():""));
+        MyUtil.log(getLayoutTag(), "widget.onReceive " + ((intent != null && intent.getAction() != null) ? intent.getAction() : ""));
         refreshAll(context);
 
         Thread thread = new Thread(new Runnable() {
@@ -79,107 +87,140 @@ public class CWidgetBase extends AppWidgetProvider {
             }
         });
         thread.start();
-	}
-    public String getClassName(){
+    }
+
+    public String getClassName() {
         return CWidgetBase.class.getName();
     }
-    private void refreshAll(Context context){
+
+    private void refreshAll(Context context) {
         AppWidgetManager appWidgetManager = AppWidgetManager.getInstance(context);
         ComponentName thisAppWidget = new ComponentName(context.getPackageName(), getClassName());
         int[] appWidgetIds = appWidgetManager.getAppWidgetIds(thisAppWidget);
-        MyUtil.log(getLayoutTag(), "RefreshAll "+appWidgetIds.length+ "("+context.getPackageName()+")");
+        MyUtil.log(getLayoutTag(), "RefreshAll " + appWidgetIds.length + "(" + context.getPackageName() + ")");
         onUpdate(context, appWidgetManager, appWidgetIds);
     }
+
     private Handler handler = new Handler();
     private Context mContext;
     private int[] mAppWidgetIds;
     private Runnable runnable = new Runnable() {
         @Override
         public void run() {
-            if (mContext==null || mAppWidgetIds==null) {
+            if (mContext == null || mAppWidgetIds == null) {
                 MyUtil.logError(getLayoutTag(), "invalid AppWidgetIds");
                 return;
             } else {
                 MyUtil.log(getLayoutTag(), "onUpdate nbrOfWidgets=" + mAppWidgetIds.length + " (Runnable)");
             }
-            for (int i=0; i<mAppWidgetIds.length; i++) {
+            for (int i = 0; i < mAppWidgetIds.length; i++) {
                 ReceiveRef recRef = new ReceiveRef(mContext, mAppWidgetIds[i], getLayoutId());
                 onRefresh(recRef); // No Intent
                 doUpdateAppWidgetNow(mContext, recRef.views, recRef.widgetID);
             }
         }
     };
+
     @Override
-	public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
-		super.onUpdate(context, appWidgetManager, appWidgetIds);
+    public void onUpdate(Context context, AppWidgetManager appWidgetManager, int[] appWidgetIds) {
+        super.onUpdate(context, appWidgetManager, appWidgetIds);
         MyUtil.log(getLayoutTag(), "onUpdate");
-        mContext=context;
-        mAppWidgetIds=appWidgetIds.clone();
+        mContext = context;
+        mAppWidgetIds = appWidgetIds.clone();
 //        handler.removeCallbacks(runnable);
 //        handler.postDelayed(runnable,750);
         runnable.run();
-	}
-	private void doUpdateAppWidgetNow(Context context, RemoteViews views, int widgetID){
-    	if (DEBUG) Log.i(getLayoutTag(),"doUpdateAppWidgetNow");
-    	AppWidgetManager appMgr = AppWidgetManager.getInstance(context);
-    	try {
-	    	if (widgetID==0){
-	    		ComponentName cname = new ComponentName(context, getClassName());
-	    		appMgr.updateAppWidget(cname, views);
-	    		if (DEBUG) Log.i(getLayoutTag(),"updateAppWidget All");
-	    	} else {
-	    		appMgr.updateAppWidget(widgetID, views);
-	    	}
-    	} catch (Exception e){
-    		Log.e(TAG, "Update Widget Error !");
-    		Log.e(TAG,e.getMessage());
-    	}
-	}
-	private void onRefresh(ReceiveRef recRef) {
-        MyUtil.log(getLayoutTag(), "widget.onRefresh widget="+recRef.widgetID);
-        MyUtil.initMyUtil(recRef.context);
-        RefreshAsyncTask refreshAsyncTask = new RefreshAsyncTask(this);
-        refreshAsyncTask.execute(recRef);
     }
-    static private class RefreshAsyncTask extends AsyncTask<ReceiveRef, Void, MyDailyBread>{
-        ReceiveRef recRef;
-        CWidgetBase mWidgetBase;
-        public RefreshAsyncTask(CWidgetBase cWidgetBase){
-            mWidgetBase=cWidgetBase;
-        }
-        @Override
-        protected MyDailyBread doInBackground(ReceiveRef... params) {
-            AxDebug.debug(this, "doInBackground Refresh");
-            recRef = params [0];
-            MyDailyBread mDailyBread = MyDailyBread.getInstance(recRef.context);
-            return mDailyBread;
-        }
-        @Override
-        protected void onPostExecute(MyDailyBread mDailyBread) {
-            super.onPostExecute(mDailyBread);
-            AxDebug.debug(this, "onPostExecute Refresh");
-            Intent intent = new Intent(recRef.context, CMain.class);
-            intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
-            intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-            final PendingIntent pendingIntent = PendingIntent.getActivity(recRef.context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
-            if (pendingIntent!=null) {
-                recRef.views.setOnClickPendingIntent(R.id.xmlPage1Middle, pendingIntent);
+
+    private void doUpdateAppWidgetNow(Context context, RemoteViews views, int widgetID) {
+        if (DEBUG) Log.i(getLayoutTag(), "doUpdateAppWidgetNow");
+        AppWidgetManager appMgr = AppWidgetManager.getInstance(context);
+        try {
+            if (widgetID == 0) {
+                ComponentName cname = new ComponentName(context, getClassName());
+                appMgr.updateAppWidget(cname, views);
+                if (DEBUG) Log.i(getLayoutTag(), "updateAppWidget All");
+            } else {
+                appMgr.updateAppWidget(widgetID, views);
             }
+        } catch (Exception e) {
+            Log.e(TAG, "Update Widget Error !");
+            Log.e(TAG, e.getMessage());
+        }
+    }
 
-            Intent broadcastIntent=new Intent(recRef.context, JustBroadcast.class);
-            final PendingIntent broadcastPendingIntent = PendingIntent.getActivity(recRef.context,
-                    0, broadcastIntent, PendingIntent.FLAG_UPDATE_CURRENT);//PendingIntent.FLAG_UPDATE_CURRENT
-            if (broadcastPendingIntent!=null) {
-                recRef.views.setOnClickPendingIntent(R.id.xmlPage1, broadcastPendingIntent);
+    ReceiveRef recRef;
+    CWidgetBase mWidgetBase;
+    MyDailyBread mDailyBread;
+
+    private void onRefresh(ReceiveRef _recRef) {
+        MyUtil.log(getLayoutTag(), "widget.onRefresh widget=" + recRef.widgetID);
+        MyUtil.initMyUtil(recRef.context);
+        //RefreshAsyncTask refreshAsyncTask = new RefreshAsyncTask(this);
+        //refreshAsyncTask.execute(recRef);
+        ExecutorService executor = Executors.newSingleThreadExecutor();
+        Handler handler = new Handler(Looper.getMainLooper());
+        recRef = _recRef;
+        mWidgetBase = this;
+        executor.execute(new Runnable() {
+            @Override
+            public void run() {
+                //背景處理邏輯程式區塊
+                AxDebug.debug(this, "doInBackground Refresh");
+                mDailyBread = MyDailyBread.getInstance(recRef.context);
+                handler.post(new Runnable() {
+                    @Override
+                    public void run() {
+                        //處理 UI 邏輯程式區塊
+                        doFunction(mDailyBread);
+                    }
+                });
             }
-            //recRef.views.setOnClickPendingIntent(R.id.xmlPage2, broadcastPendingIntent);
+        });
+    }
 
-            int nbr = 1;
-            Context context = recRef.context;
-            Calendar mDisplayDay = Calendar.getInstance();
+    //    static private class RefreshAsyncTask extends AsyncTask<ReceiveRef, Void, MyDailyBread>{
+//        ReceiveRef recRef;
+//        CWidgetBase mWidgetBase;
+//        public RefreshAsyncTask(CWidgetBase cWidgetBase){
+//            mWidgetBase=cWidgetBase;
+//        }
+//        @Override
+//        protected MyDailyBread doInBackground(ReceiveRef... params) {
+//            AxDebug.debug(this, "doInBackground Refresh");
+//            recRef = params [0];
+//            MyDailyBread mDailyBread = MyDailyBread.getInstance(recRef.context);
+//            return mDailyBread;
+//        }
+//        @Override
+//        protected void onPostExecute(MyDailyBread mDailyBread) {
+//            super.onPostExecute(mDailyBread);
+//            doFunction(mDailyBread);
+//        }
+    void doFunction(MyDailyBread myDailyBread) {
+        AxDebug.debug(this, "onPostExecute Refresh");
+        Intent intent = new Intent(recRef.context, CMain.class);
+        intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
+        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+        final PendingIntent pendingIntent = PendingIntent.getActivity(recRef.context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        if (pendingIntent != null) {
+            recRef.views.setOnClickPendingIntent(R.id.xmlPage1Middle, pendingIntent);
+        }
 
-            // DC 2018.11.01 Cancel below protection as we use current time to do index2date and date2index
+        Intent broadcastIntent = new Intent(recRef.context, JustBroadcast.class);
+        final PendingIntent broadcastPendingIntent = PendingIntent.getActivity(recRef.context,
+                0, broadcastIntent, PendingIntent.FLAG_UPDATE_CURRENT);//PendingIntent.FLAG_UPDATE_CURRENT
+        if (broadcastPendingIntent != null) {
+            recRef.views.setOnClickPendingIntent(R.id.xmlPage1, broadcastPendingIntent);
+        }
+        //recRef.views.setOnClickPendingIntent(R.id.xmlPage2, broadcastPendingIntent);
+
+        int nbr = 1;
+        Context context = recRef.context;
+        Calendar mDisplayDay = Calendar.getInstance();
+
+        // DC 2018.11.01 Cancel below protection as we use current time to do index2date and date2index
 //            // DC 2016.09.16 One More Day Or One Less Day for different Regions
 //            // Protect Function
 //            if (!MyDailyBread.allowBeyondRange && mDisplayDay.compareTo(mDailyBread.getValidToDate())>=0){
@@ -191,250 +232,264 @@ public class CWidgetBase extends AppWidgetProvider {
 //		mDisplayDay.set(Calendar.YEAR, 2014);
 //		mDisplayDay.set(Calendar.MONTH, 11);
 //		mDisplayDay.set(Calendar.DAY_OF_MONTH, 25);
-            int curYear = mDisplayDay.get(Calendar.YEAR);
-            int curMonth = mDisplayDay.get(Calendar.MONTH);
-            int curDay = mDisplayDay.get(Calendar.DAY_OF_MONTH);
+        int curYear = mDisplayDay.get(Calendar.YEAR);
+        int curMonth = mDisplayDay.get(Calendar.MONTH);
+        int curDay = mDisplayDay.get(Calendar.DAY_OF_MONTH);
 
-            final MyCalendarLunar lunar = new MyCalendarLunar(mDisplayDay,MyApp.mIsSimplifiedChinese);
-            final Calendar monthEndDate = (Calendar) mDisplayDay.clone();
-            String holiday = MyHoliday.getHolidayRemark(mDisplayDay.getTime());
-            holiday = holiday.replace("*","");
-            final boolean isHoliday = (!holiday.equals("") && !holiday.startsWith("#")) || mDisplayDay.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY;
-            int textColor = recRef.context.getResources().getColor(isHoliday?R.color.holiday:R.color.weekday);
-            if (holiday.startsWith("#")){
-                holiday=holiday.substring(1);
+        final MyCalendarLunar lunar = new MyCalendarLunar(mDisplayDay, MyApp.mIsSimplifiedChinese);
+        final Calendar monthEndDate = (Calendar) mDisplayDay.clone();
+        String holiday = MyHoliday.getHolidayRemark(mDisplayDay.getTime());
+        holiday = holiday.replace("*", "");
+        final boolean isHoliday = (!holiday.equals("") && !holiday.startsWith("#")) || mDisplayDay.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY;
+        int textColor = recRef.context.getResources().getColor(isHoliday ? R.color.holiday : R.color.weekday);
+        if (holiday.startsWith("#")) {
+            holiday = holiday.substring(1);
+        }
+        int nbrOfDaysTo30 = 30 - lunar.getDay(); // Chinese Day
+        monthEndDate.add(Calendar.DAY_OF_MONTH, nbrOfDaysTo30);
+        final MyCalendarLunar monthEndLunar = new MyCalendarLunar(monthEndDate, MyApp.mIsSimplifiedChinese);
+        boolean isBigMonth = (monthEndLunar.getDay() == 30) ? true : false;
+
+        /***********************************************************************
+         *  HOLIDAY
+         ************************************************************************/
+        final int holidayMaxChars = 7;
+        recRef.views.setViewVisibility(R.id.xmlPage1, View.VISIBLE);
+        if (TextUtils.isEmpty(holiday)) {
+            recRef.views.setViewVisibility(getID(context, nbr, "Holiday1"), View.GONE);
+            recRef.views.setViewVisibility(getID(context, nbr, "Holiday2"), View.GONE);
+        } else {
+            recRef.views.setViewVisibility(getID(context, nbr, "Holiday1"), View.VISIBLE);
+            // Split Empty String will cause 1st one be empty; So we remove 1st and add back
+            String str[] = holiday.substring(1).split("");
+            str[0] = holiday.substring(0, 1);
+            //ok now.
+            int remarkLength = Math.min(holidayMaxChars * 2, str.length);
+            int prefixlength = Math.min(holidayMaxChars, str.length);
+            String holidayRemark = "";
+            for (int i = 0; i < prefixlength; i++) {
+                holidayRemark += str[i] + (i == (prefixlength - 1) ? "" : "\n");
             }
-            int nbrOfDaysTo30 = 30-lunar.getDay(); // Chinese Day
-            monthEndDate.add(Calendar.DAY_OF_MONTH, nbrOfDaysTo30);
-            final MyCalendarLunar monthEndLunar = new MyCalendarLunar(monthEndDate,MyApp.mIsSimplifiedChinese);
-            boolean isBigMonth = (monthEndLunar.getDay()==30)?true:false;
-
-            /***********************************************************************
-             *  HOLIDAY
-             ************************************************************************/
-            final int holidayMaxChars=7;
-            recRef.views.setViewVisibility(R.id.xmlPage1, View.VISIBLE);
-            if (TextUtils.isEmpty(holiday)){
-                recRef.views.setViewVisibility(getID(context, nbr, "Holiday1"), View.GONE);
-                recRef.views.setViewVisibility(getID(context, nbr, "Holiday2"), View.GONE);
+            //pageHoliday1.setLines(prefixlength);
+            recRef.views.setTextViewText(getID(context, nbr, "Holiday1"), holidayRemark);
+            recRef.views.setTextColor(getID(context, nbr, "Holiday1"), textColor);
+            if (remarkLength > holidayMaxChars) {
+                recRef.views.setViewVisibility(getID(context, nbr, "Holiday2"), View.VISIBLE);
+                holidayRemark = "";
+                for (int i = holidayMaxChars; i < remarkLength; i++) {
+                    holidayRemark += str[i] + (i == (remarkLength - 1) ? "" : "\n");
+                }
+                //pageHoliday2.setLines(remarkLength-prefixlength);
+                recRef.views.setTextViewText(getID(context, nbr, "Holiday2"), holidayRemark);
+                recRef.views.setTextColor(getID(context, nbr, "Holiday2"), textColor);
             } else {
-                recRef.views.setViewVisibility(getID(context, nbr, "Holiday1"), View.VISIBLE);
-                // Split Empty String will cause 1st one be empty; So we remove 1st and add back
-                String str [] = holiday.substring(1).split("");
-                str[0] = holiday.substring(0,1);
-                //ok now.
-                int remarkLength = Math.min(holidayMaxChars*2,str.length);
-                int prefixlength = Math.min(holidayMaxChars, str.length);
-                String holidayRemark="";
-                for (int i=0;i<prefixlength;i++){
-                    holidayRemark+=str[i]+(i==(prefixlength-1)?"":"\n");
-                }
-                //pageHoliday1.setLines(prefixlength);
-                recRef.views.setTextViewText(getID(context, nbr, "Holiday1"), holidayRemark);
-                recRef.views.setTextColor(getID(context, nbr, "Holiday1"), textColor);
-                if (remarkLength>holidayMaxChars){
-                    recRef.views.setViewVisibility(getID(context, nbr, "Holiday2"), View.VISIBLE);
-                    holidayRemark="";
-                    for (int i=holidayMaxChars;i<remarkLength;i++){
-                        holidayRemark+=str[i]+(i==(remarkLength-1)?"":"\n");
-                    }
-                    //pageHoliday2.setLines(remarkLength-prefixlength);
-                    recRef.views.setTextViewText(getID(context, nbr, "Holiday2"), holidayRemark);
-                    recRef.views.setTextColor(getID(context, nbr, "Holiday2"), textColor);
-                } else {
-                    recRef.views.setViewVisibility(getID(context, nbr, "Holiday2"), View.GONE);
-                }
+                recRef.views.setViewVisibility(getID(context, nbr, "Holiday2"), View.GONE);
             }
-            /***********************************************************************
-             *  HOLY DAY
-             ************************************************************************/
-            if ((CMain.IS_2017_VERSION && Calendar.getInstance().get(Calendar.YEAR)>=2017) ||
-                    MyUtil.getPrefInt(MyUtil.PREF_HOLY_DAY,-1)<=0) {
+        }
+        /***********************************************************************
+         *  HOLY DAY
+         ************************************************************************/
+        if ((CMain.IS_2017_VERSION && Calendar.getInstance().get(Calendar.YEAR) >= 2017) ||
+                MyUtil.getPrefInt(MyUtil.PREF_HOLY_DAY, -1) <= 0) {
+            recRef.views.setViewVisibility(getID(context, nbr, "HolyDay1"), View.GONE);
+            recRef.views.setViewVisibility(getID(context, nbr, "HolyDay2"), View.GONE);
+        } else {
+            String holyDay = MyHoliday.getHolyDayText(mDisplayDay.getTime());
+            if (TextUtils.isEmpty(holyDay)) {
                 recRef.views.setViewVisibility(getID(context, nbr, "HolyDay1"), View.GONE);
                 recRef.views.setViewVisibility(getID(context, nbr, "HolyDay2"), View.GONE);
             } else {
-                String holyDay = MyHoliday.getHolyDayText(mDisplayDay.getTime());
-                if (TextUtils.isEmpty(holyDay)) {
-                    recRef.views.setViewVisibility(getID(context, nbr, "HolyDay1"), View.GONE);
+                recRef.views.setViewVisibility(getID(context, nbr, "HolyDay1"), View.VISIBLE);
+                recRef.views.setTextColor(getID(context, nbr, "HolyDay1"), textColor);
+                String holyDayLines[] = DailyFragment.getHolyDay2Lines(holyDay);
+                recRef.views.setTextViewText(getID(context, nbr, "HolyDay1"), holyDayLines[0]);
+                if (TextUtils.isEmpty(holyDayLines[1])) {
                     recRef.views.setViewVisibility(getID(context, nbr, "HolyDay2"), View.GONE);
                 } else {
-                    recRef.views.setViewVisibility(getID(context, nbr, "HolyDay1"), View.VISIBLE);
-                    recRef.views.setTextColor(getID(context, nbr, "HolyDay1"), textColor);
-                    String holyDayLines[] = DailyFragment.getHolyDay2Lines(holyDay);
-                    recRef.views.setTextViewText(getID(context, nbr, "HolyDay1"), holyDayLines[0]);
-                    if (TextUtils.isEmpty(holyDayLines[1])) {
-                        recRef.views.setViewVisibility(getID(context, nbr, "HolyDay2"), View.GONE);
-                    } else {
-                        recRef.views.setViewVisibility(getID(context, nbr, "HolyDay2"), View.VISIBLE);
-                        recRef.views.setTextColor(getID(context, nbr, "HolyDay2"), textColor);
-                        recRef.views.setTextViewText(getID(context, nbr, "HolyDay2"), holyDayLines[1]);
-                    }
+                    recRef.views.setViewVisibility(getID(context, nbr, "HolyDay2"), View.VISIBLE);
+                    recRef.views.setTextColor(getID(context, nbr, "HolyDay2"), textColor);
+                    recRef.views.setTextViewText(getID(context, nbr, "HolyDay2"), holyDayLines[1]);
                 }
             }
-            /***********************************************************************
-             *  DAY
-             ************************************************************************/
-            recRef.views.setTextViewText(getID(context, nbr, "Day"), String.valueOf(curDay));
-            recRef.views.setTextColor(getID(context, nbr, "Day"), textColor);
+        }
+        /***********************************************************************
+         *  DAY
+         ************************************************************************/
+        recRef.views.setTextViewText(getID(context, nbr, "Day"), String.valueOf(curDay));
+        recRef.views.setTextColor(getID(context, nbr, "Day"), textColor);
 
-            recRef.views.setTextViewText(getID(context, nbr, "EngYear"), String.valueOf(curYear));
-            recRef.views.setTextColor(getID(context, nbr, "EngYear"), textColor);
+        recRef.views.setTextViewText(getID(context, nbr, "EngYear"), String.valueOf(curYear));
+        recRef.views.setTextColor(getID(context, nbr, "EngYear"), textColor);
 
-            recRef.views.setTextViewText(getID(context, nbr, "EngMonthName"), MyUtil.sdfEngMMMM.format(mDisplayDay.getTime()));
-            recRef.views.setTextColor(getID(context, nbr, "EngMonthName"), textColor);
+        recRef.views.setTextViewText(getID(context, nbr, "EngMonthName"), MyUtil.sdfEngMMMM.format(mDisplayDay.getTime()));
+        recRef.views.setTextColor(getID(context, nbr, "EngMonthName"), textColor);
 
-            //recRef.views.setTextViewText(getID(context, nbr, "ChiMonthName"), MyUtil.sdfChiMMMM.format(mDisplayDay.getTime()));
-            recRef.views.setTextViewText(getID(context, nbr, "ChiMonthName"), CHI_MONTHS[mDisplayDay.get(Calendar.MONTH)]+"月");
-            recRef.views.setTextColor(getID(context, nbr, "ChiMonthName"), textColor);
+        //recRef.views.setTextViewText(getID(context, nbr, "ChiMonthName"), MyUtil.sdfChiMMMM.format(mDisplayDay.getTime()));
+        recRef.views.setTextViewText(getID(context, nbr, "ChiMonthName"), CHI_MONTHS[mDisplayDay.get(Calendar.MONTH)] + "月");
+        recRef.views.setTextColor(getID(context, nbr, "ChiMonthName"), textColor);
 
 //		recRef.views.setTextViewText(getID(context, nbr, "WeekDay"),
 //								MyUtil.sdfChiEEEE.format(mDisplayDay.getTime())+" "+
 //								MyUtil.sdfEEE.format(mDisplayDay.getTime()).toUpperCase());
-            int theDay = mDisplayDay.get(Calendar.DAY_OF_WEEK);
-            switch (theDay){
-                case Calendar.SUNDAY: recRef.views.setTextViewText(getID(context, nbr, "WeekDay"),"星期日 SUN"); break;
-                case Calendar.MONDAY: recRef.views.setTextViewText(getID(context, nbr, "WeekDay"),"星期一 MON"); break;
-                case Calendar.TUESDAY: recRef.views.setTextViewText(getID(context, nbr, "WeekDay"),"星期二 TUE"); break;
-                case Calendar.WEDNESDAY: recRef.views.setTextViewText(getID(context, nbr, "WeekDay"),"星期三 WED"); break;
-                case Calendar.THURSDAY: recRef.views.setTextViewText(getID(context, nbr, "WeekDay"),"星期四 THU"); break;
-                case Calendar.FRIDAY: recRef.views.setTextViewText(getID(context, nbr, "WeekDay"),"星期五 FRI"); break;
-                case Calendar.SATURDAY: recRef.views.setTextViewText(getID(context, nbr, "WeekDay"),"星期六 SAT"); break;
-            }
+        int theDay = mDisplayDay.get(Calendar.DAY_OF_WEEK);
+        switch (theDay) {
+            case Calendar.SUNDAY:
+                recRef.views.setTextViewText(getID(context, nbr, "WeekDay"), "星期日 SUN");
+                break;
+            case Calendar.MONDAY:
+                recRef.views.setTextViewText(getID(context, nbr, "WeekDay"), "星期一 MON");
+                break;
+            case Calendar.TUESDAY:
+                recRef.views.setTextViewText(getID(context, nbr, "WeekDay"), "星期二 TUE");
+                break;
+            case Calendar.WEDNESDAY:
+                recRef.views.setTextViewText(getID(context, nbr, "WeekDay"), "星期三 WED");
+                break;
+            case Calendar.THURSDAY:
+                recRef.views.setTextViewText(getID(context, nbr, "WeekDay"), "星期四 THU");
+                break;
+            case Calendar.FRIDAY:
+                recRef.views.setTextViewText(getID(context, nbr, "WeekDay"), "星期五 FRI");
+                break;
+            case Calendar.SATURDAY:
+                recRef.views.setTextViewText(getID(context, nbr, "WeekDay"), "星期六 SAT");
+                break;
+        }
 
-            recRef.views.setTextColor(getID(context, nbr, "WeekDay"), context.getResources().getColor(R.color.white));
-            if (curYear>=2016) {
-                //recRef.views.setTextColor(getID(context, nbr, "WeekDay"), textColor);
-                recRef.views.setImageViewResource(getID(context, nbr, "WeekImage"), isHoliday ? R.drawable.red_weekday_2016 : R.drawable.green_weekday_2016);
-            } else {
-                recRef.views.setImageViewResource(getID(context, nbr, "WeekImage"), isHoliday?R.drawable.red_weekday_2015:R.drawable.green_weekday_2015);
-            }
+        recRef.views.setTextColor(getID(context, nbr, "WeekDay"), context.getResources().getColor(R.color.white));
+        if (curYear >= 2016) {
+            //recRef.views.setTextColor(getID(context, nbr, "WeekDay"), textColor);
+            recRef.views.setImageViewResource(getID(context, nbr, "WeekImage"), isHoliday ? R.drawable.red_weekday_2016 : R.drawable.green_weekday_2016);
+        } else {
+            recRef.views.setImageViewResource(getID(context, nbr, "WeekImage"), isHoliday ? R.drawable.red_weekday_2015 : R.drawable.green_weekday_2015);
+        }
 
-            recRef.views.setTextViewText(getID(context, nbr, "ChiLunarDay"), lunar.toChineseDD()+"日");
-            recRef.views.setTextColor(getID(context, nbr, "ChiLunarDay"), textColor);
+        recRef.views.setTextViewText(getID(context, nbr, "ChiLunarDay"), lunar.toChineseDD() + "日");
+        recRef.views.setTextColor(getID(context, nbr, "ChiLunarDay"), textColor);
 
-            recRef.views.setTextViewText(getID(context, nbr, "ChiLunarMonth"),lunar.toChineseMM()+(isBigMonth?"大":"小"));
-            recRef.views.setTextColor(getID(context, nbr, "ChiLunarMonth"), textColor);
+        recRef.views.setTextViewText(getID(context, nbr, "ChiLunarMonth"), lunar.toChineseMM() + (isBigMonth ? "大" : "小"));
+        recRef.views.setTextColor(getID(context, nbr, "ChiLunarMonth"), textColor);
 
-            recRef.views.setTextViewText(getID(context, nbr, "ChiLunarYear"),lunar.toChineseYY()+"年");
-            recRef.views.setTextColor(getID(context, nbr, "ChiLunarYear"), textColor);
+        recRef.views.setTextViewText(getID(context, nbr, "ChiLunarYear"), lunar.toChineseYY() + "年");
+        recRef.views.setTextColor(getID(context, nbr, "ChiLunarYear"), textColor);
 
-            recRef.views.setTextViewText(getID(context, nbr, "ChiLeftYear"),lunar.toChineseYY()+"年");
-            recRef.views.setTextColor(getID(context, nbr, "ChiLeftYear"), textColor);
+        recRef.views.setTextViewText(getID(context, nbr, "ChiLeftYear"), lunar.toChineseYY() + "年");
+        recRef.views.setTextColor(getID(context, nbr, "ChiLeftYear"), textColor);
 
-            String lunarTerm = MyCalendarLunar.solar.getSolarTerm(mDisplayDay);
-            recRef.views.setTextViewText(getID(context, nbr, "ChiLeftWeather"),lunarTerm);
-            recRef.views.setTextColor(getID(context, nbr, "ChiLeftWeather"), textColor);
-            if (lunarTerm.equals("")){
-                recRef.views.setViewVisibility(getID(context, nbr, "ChiLunarYear"), View.VISIBLE);
-                recRef.views.setViewVisibility(getID(context, nbr, "ChiLeftYear"), View.GONE);
-                recRef.views.setViewVisibility(getID(context, nbr, "ChiLeftWeather"), View.GONE);
-            } else {
-                recRef.views.setViewVisibility(getID(context, nbr, "ChiLunarYear"), View.GONE);
-                recRef.views.setViewVisibility(getID(context, nbr, "ChiLeftYear"), View.VISIBLE);
-                recRef.views.setViewVisibility(getID(context, nbr, "ChiLeftWeather"), View.VISIBLE);
-            }
-            float layoutWidthInPixels=0;
-            if (CMain.IS_2016_VERSION) {
-                if (curYear>=2016  || MyDailyBread.IS_TEST_2016_YEAR) {
-                    String dimenIdStr = context.getString(R.string.widget_layoutType) + mWidgetBase.getClassTag() + "_width";
-                    //Log.e(TAG,"package name="+context.getPackageName());
-                    int dimenId = context.getResources().getIdentifier(dimenIdStr, "dimen", context.getPackageName());// "com.hkbs.HKBS"
+        String lunarTerm = MyCalendarLunar.solar.getSolarTerm(mDisplayDay);
+        recRef.views.setTextViewText(getID(context, nbr, "ChiLeftWeather"), lunarTerm);
+        recRef.views.setTextColor(getID(context, nbr, "ChiLeftWeather"), textColor);
+        if (lunarTerm.equals("")) {
+            recRef.views.setViewVisibility(getID(context, nbr, "ChiLunarYear"), View.VISIBLE);
+            recRef.views.setViewVisibility(getID(context, nbr, "ChiLeftYear"), View.GONE);
+            recRef.views.setViewVisibility(getID(context, nbr, "ChiLeftWeather"), View.GONE);
+        } else {
+            recRef.views.setViewVisibility(getID(context, nbr, "ChiLunarYear"), View.GONE);
+            recRef.views.setViewVisibility(getID(context, nbr, "ChiLeftYear"), View.VISIBLE);
+            recRef.views.setViewVisibility(getID(context, nbr, "ChiLeftWeather"), View.VISIBLE);
+        }
+        float layoutWidthInPixels = 0;
+        if (CMain.IS_2016_VERSION) {
+            if (curYear >= 2016 || MyDailyBread.IS_TEST_2016_YEAR) {
+                String dimenIdStr = context.getString(R.string.widget_layoutType) + mWidgetBase.getClassTag() + "_width";
+                //Log.e(TAG,"package name="+context.getPackageName());
+                int dimenId = context.getResources().getIdentifier(dimenIdStr, "dimen", context.getPackageName());// "com.hkbs.HKBS"
 
+                try {
+                    layoutWidthInPixels = context.getResources().getDimension(dimenId);
+                } catch (Exception e1) {
                     try {
+                        dimenIdStr = "v" + mWidgetBase.getClassTag() + "_width";
+                        dimenId = context.getResources().getIdentifier(dimenIdStr, "dimen", context.getPackageName());// "com.hkbs.HKBS"
                         layoutWidthInPixels = context.getResources().getDimension(dimenId);
-                    } catch (Exception e1) {
-                        try {
-                            dimenIdStr = "v" + mWidgetBase.getClassTag() + "_width";
-                            dimenId = context.getResources().getIdentifier(dimenIdStr, "dimen", context.getPackageName());// "com.hkbs.HKBS"
-                            layoutWidthInPixels = context.getResources().getDimension(dimenId);
-                        } catch (Exception e2) {
-                            Log.e(TAG, "Cannot find dimen resource = " + dimenId + " " + dimenIdStr);
-                        }
+                    } catch (Exception e2) {
+                        Log.e(TAG, "Cannot find dimen resource = " + dimenId + " " + dimenIdStr);
                     }
-                    // For Widget only since some layout is very small
-                    // Scale down image caused image quality bad
-                    if (layoutWidthInPixels < 650) {
-                        recRef.views.setImageViewResource(getID(context, nbr, "ImageFrame"), isHoliday || MyDailyBread.IS_TEST_2016_HOLIDAY ? R.drawable.red_frame_2016_26 : R.drawable.green_frame_2016_26);
-                    } else {
-                        recRef.views.setImageViewResource(getID(context, nbr, "ImageFrame"), isHoliday || MyDailyBread.IS_TEST_2016_HOLIDAY ? R.drawable.red_frame_2016 : R.drawable.green_frame_2016);
-                    }
-                    recRef.views.setViewVisibility(getID(context, nbr, "ImageFrameUpper"), View.GONE);
-                    recRef.views.setViewVisibility(getID(context, nbr, "ImageFrameLower"), View.GONE);
-                    recRef.views.setViewVisibility(getID(context, nbr, "ImageFrame"), View.VISIBLE);
-                } else {
-                    recRef.views.setImageViewResource(getID(context, nbr, "ImageFrameUpper"), isHoliday ? R.drawable.red_frame_2015_upper : R.drawable.green_frame_2015_upper);
-                    recRef.views.setImageViewResource(getID(context, nbr, "ImageFrameLower"), isHoliday ? R.drawable.red_frame_2015_upper : R.drawable.green_frame_2015_upper);
-                    recRef.views.setViewVisibility(getID(context, nbr, "ImageFrameUpper"), View.VISIBLE);
-                    recRef.views.setViewVisibility(getID(context, nbr, "ImageFrameLower"), View.VISIBLE);
-                    recRef.views.setViewVisibility(getID(context, nbr, "ImageFrame"), View.GONE);
-
                 }
-            } else {
-                recRef.views.setImageViewResource(getID(context, nbr, "ImageFrame"), isHoliday ? R.drawable.red_frame_2015 : R.drawable.green_frame_2015);
+                // For Widget only since some layout is very small
+                // Scale down image caused image quality bad
+                if (layoutWidthInPixels < 650) {
+                    recRef.views.setImageViewResource(getID(context, nbr, "ImageFrame"), isHoliday || MyDailyBread.IS_TEST_2016_HOLIDAY ? R.drawable.red_frame_2016_26 : R.drawable.green_frame_2016_26);
+                } else {
+                    recRef.views.setImageViewResource(getID(context, nbr, "ImageFrame"), isHoliday || MyDailyBread.IS_TEST_2016_HOLIDAY ? R.drawable.red_frame_2016 : R.drawable.green_frame_2016);
+                }
                 recRef.views.setViewVisibility(getID(context, nbr, "ImageFrameUpper"), View.GONE);
                 recRef.views.setViewVisibility(getID(context, nbr, "ImageFrameLower"), View.GONE);
                 recRef.views.setViewVisibility(getID(context, nbr, "ImageFrame"), View.VISIBLE);
-            }
-            if (curYear>=2016) {
-                recRef.views.setImageViewResource(getID(context, nbr, "ImageIcon"), isHoliday ? R.drawable.red_icon_2016 : R.drawable.green_icon_2016);
             } else {
-                recRef.views.setImageViewResource(getID(context, nbr, "ImageIcon"), isHoliday?R.drawable.red_icon_2015:R.drawable.green_icon_2015);
+                recRef.views.setImageViewResource(getID(context, nbr, "ImageFrameUpper"), isHoliday ? R.drawable.red_frame_2015_upper : R.drawable.green_frame_2015_upper);
+                recRef.views.setImageViewResource(getID(context, nbr, "ImageFrameLower"), isHoliday ? R.drawable.red_frame_2015_upper : R.drawable.green_frame_2015_upper);
+                recRef.views.setViewVisibility(getID(context, nbr, "ImageFrameUpper"), View.VISIBLE);
+                recRef.views.setViewVisibility(getID(context, nbr, "ImageFrameLower"), View.VISIBLE);
+                recRef.views.setViewVisibility(getID(context, nbr, "ImageFrame"), View.GONE);
+
             }
-            // get ContentValues from dailyBread file
-            ContentValues cv = mDailyBread.getContentValues(curYear, curMonth, curDay);
+        } else {
+            recRef.views.setImageViewResource(getID(context, nbr, "ImageFrame"), isHoliday ? R.drawable.red_frame_2015 : R.drawable.green_frame_2015);
+            recRef.views.setViewVisibility(getID(context, nbr, "ImageFrameUpper"), View.GONE);
+            recRef.views.setViewVisibility(getID(context, nbr, "ImageFrameLower"), View.GONE);
+            recRef.views.setViewVisibility(getID(context, nbr, "ImageFrame"), View.VISIBLE);
+        }
+        if (curYear >= 2016) {
+            recRef.views.setImageViewResource(getID(context, nbr, "ImageIcon"), isHoliday ? R.drawable.red_icon_2016 : R.drawable.green_icon_2016);
+        } else {
+            recRef.views.setImageViewResource(getID(context, nbr, "ImageIcon"), isHoliday ? R.drawable.red_icon_2015 : R.drawable.green_icon_2015);
+        }
+        // get ContentValues from dailyBread file
+        ContentValues cv = mDailyBread.getContentValues(curYear, curMonth, curDay);
 /**********************************************************
  GOLD TEXT
  *********************************************************
  */
-            recRef.views.setTextViewText(getID(context, nbr, "GoldVerse"), cv.getAsString(MyDailyBread.wGoldVerse) + (curYear >= 2016 ? ";和合本" : "；和合本修訂版"));
-            recRef.views.setTextColor(getID(context, nbr, "GoldVerse"), textColor);
+        recRef.views.setTextViewText(getID(context, nbr, "GoldVerse"), cv.getAsString(MyDailyBread.wGoldVerse) + (curYear >= 2016 ? ";和合本" : "；和合本修訂版"));
+        recRef.views.setTextColor(getID(context, nbr, "GoldVerse"), textColor);
 
-            String mGoldText;
-            mGoldText = cv.getAsString(MyDailyBread.wGoldText).replace("#", "\n");
-            mGoldText = mGoldText.substring(0, mGoldText.length());
-            recRef.views.setTextViewText(getID(context, nbr, "GoldText"), mGoldText);
-            recRef.views.setTextColor(getID(context, nbr, "GoldText"), textColor);
+        String mGoldText;
+        mGoldText = cv.getAsString(MyDailyBread.wGoldText).replace("#", "\n");
+        mGoldText = mGoldText.substring(0, mGoldText.length());
+        recRef.views.setTextViewText(getID(context, nbr, "GoldText"), mGoldText);
+        recRef.views.setTextColor(getID(context, nbr, "GoldText"), textColor);
 
-            if (cv.getAsString(MyDailyBread.wGoldText).split("#").length>=4){
-                recRef.views.setViewVisibility(getID(context, nbr, "GoldVerse"), View.GONE);
-            }
+        if (cv.getAsString(MyDailyBread.wGoldText).split("#").length >= 4) {
+            recRef.views.setViewVisibility(getID(context, nbr, "GoldVerse"), View.GONE);
+        }
 
 /**********************************************************
  WISDOM TEXT
  *********************************************************
  */
-            recRef.views.setTextViewText(getID(context, nbr, "BigText"), cv.getAsString(MyDailyBread.wBigText).replace("#", "\n"));
-            recRef.views.setTextColor(getID(context, nbr, "BigText"), textColor);
+        recRef.views.setTextViewText(getID(context, nbr, "BigText"), cv.getAsString(MyDailyBread.wBigText).replace("#", "\n"));
+        recRef.views.setTextColor(getID(context, nbr, "BigText"), textColor);
 
-            recRef.views.setTextViewText(getID(context, nbr, "BigHint"), cv.getAsString(MyDailyBread.wSmallText));
-            recRef.views.setTextColor(getID(context, nbr, "BigHint"), textColor);
+        recRef.views.setTextViewText(getID(context, nbr, "BigHint"), cv.getAsString(MyDailyBread.wSmallText));
+        recRef.views.setTextColor(getID(context, nbr, "BigHint"), textColor);
 
-            // All completed ..... show
-            recRef.views.setViewVisibility(R.id.xmlWidgetLoading, View.GONE);
-            recRef.views.setViewVisibility(R.id.xmlPage1, View.VISIBLE);
+        // All completed ..... show
+        recRef.views.setViewVisibility(R.id.xmlWidgetLoading, View.GONE);
+        recRef.views.setViewVisibility(R.id.xmlPage1, View.VISIBLE);
 
 /**********************************************************
  DEBUG ONLY - SHOW LAYOUT SIZE
  *********************************************************
  */
-            if (CMain.DEBUG_LAYOUT){
-                String appVersionName = "?";
-                try {
-                    appVersionName = context.getPackageManager().getPackageInfo(context.getPackageName(),0).versionName;
-                } catch (Exception e){
-                    //
-                }
-                appVersionName="v"+appVersionName+"."+context.getString(R.string.widget_deviceType)+mWidgetBase.getClassTag()+" "+AxTools.getScreenWidth()+":"+layoutWidthInPixels;
-                Log.w(TAG, appVersionName);
-                recRef.views.setTextViewText(R.id.xmlWidgetVersion, appVersionName);
-                recRef.views.setTextColor(R.id.xmlWidgetVersion, textColor);
-                recRef.views.setViewVisibility(R.id.xmlWidgetVersion, View.VISIBLE);
-            } else {
-                recRef.views.setViewVisibility(R.id.xmlWidgetVersion, View.GONE);
+        if (CMain.DEBUG_LAYOUT) {
+            String appVersionName = "?";
+            try {
+                appVersionName = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
+            } catch (Exception e) {
+                //
             }
-            mWidgetBase.doUpdateAppWidgetNow(recRef.context,recRef.views,recRef.widgetID);
-            MyUtil.log(mWidgetBase.getLayoutTag(), "widget.onRefresh.Finish");
+            appVersionName = "v" + appVersionName + "." + context.getString(R.string.widget_deviceType) + mWidgetBase.getClassTag() + " " + AxTools.getScreenWidth() + ":" + layoutWidthInPixels;
+            Log.w(TAG, appVersionName);
+            recRef.views.setTextViewText(R.id.xmlWidgetVersion, appVersionName);
+            recRef.views.setTextColor(R.id.xmlWidgetVersion, textColor);
+            recRef.views.setViewVisibility(R.id.xmlWidgetVersion, View.VISIBLE);
+        } else {
+            recRef.views.setViewVisibility(R.id.xmlWidgetVersion, View.GONE);
         }
+        mWidgetBase.doUpdateAppWidgetNow(recRef.context, recRef.views, recRef.widgetID);
+        MyUtil.log(mWidgetBase.getLayoutTag(), "widget.onRefresh.Finish");
+    }
         private int getID(Context context, int nbr, String extension){
             int resultVal = context.getResources().getIdentifier("xmlPage"+nbr+extension, "id",context.getPackageName());
             if (resultVal==0){
@@ -442,7 +497,7 @@ public class CWidgetBase extends AppWidgetProvider {
             }
             return resultVal;
         }
-    }
+//    }
 
 	static class ReceiveRef{
 		public Context context;

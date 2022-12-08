@@ -1,12 +1,12 @@
 apply plugin: 'com.android.application'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 33
 
     defaultConfig {0
         applicationId "com.hkbs.HKBS"
         minSdkVersion 14
-        targetSdkVersion 30
+        targetSdkVersion 33
         versionCode 92
         versionName "3.62"
         multiDexEnabled true
@@ -41,7 +41,13 @@ dependencies {
 allprojects {
     repositories {
         google()
-    }}
+    }
+    gradle.projectsEvaluated {
+        tasks.withType(JavaCompile) {
+            options.compilerArgs << "-Xlint:unchecked" << "-Xlint:deprecation"
+        }
+    }
+}
 //configurations {
 //    all*.exclude group: 'com.google.android.gms', module: 'play-services'
 //}

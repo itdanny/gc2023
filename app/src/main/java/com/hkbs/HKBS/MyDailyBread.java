@@ -465,7 +465,7 @@ public class MyDailyBread {
                     }
                     ContentValues cv=null;
                     if (validLine) {
-                        cv = new ContentValues(titles.length);
+                        cv = new ContentValues();//ContentValues(titles.length)
                         // Assign to mValueList
                         for (int i=0;i<titles.length;i++){
                             cv.put(titles[i],fields[i]);
