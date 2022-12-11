@@ -3,9 +3,9 @@ apply plugin: 'com.android.application'
 android {
     compileSdkVersion 33
 
-    defaultConfig {0
+    defaultConfig {
         applicationId "com.hkbs.HKBS"
-        minSdkVersion 14
+        minSdkVersion 24 // 2016 Android 7 or above Android-N <95.8%>
         targetSdkVersion 33
         versionCode 92
         versionName "3.62"
@@ -35,7 +35,12 @@ dependencies {
     implementation project(':libSuperToasts')
     //implementation 'androidx.multidex:multidex:2.0.0'
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
-
+    // DC 202212
+    implementation 'androidx.preference:preference:1.2.0'
+    implementation 'androidx.appcompat:appcompat:1.1.0'
+    implementation 'androidx.viewpager2:viewpager2:1.0.0'
+    implementation 'androidx.window:window:1.0.0'
+    implementation 'androidx.work:work-runtime-ktx:2.7.0'
 }
 /*all*.exclude group: 'com.android.support', module: 'support-v4'*/
 allprojects {

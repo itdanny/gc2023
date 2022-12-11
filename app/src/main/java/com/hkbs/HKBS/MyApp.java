@@ -23,9 +23,15 @@ public class MyApp extends Application {//extends MultiDexApplication
     private Locale mAppLocale;
     static public Context mNewLangContext;
     static public boolean mIsSimplifiedChinese;
+    private static MyApp mApp = null;
+    public static Context context()
+    {
+        return mApp.getApplicationContext();
+    }
     @Override
     public void onCreate() {
         super.onCreate();
+        mApp = this;
         AxTools.init(getApplicationContext());
         updateConfig(getApplicationContext());
     }
@@ -53,13 +59,19 @@ public class MyApp extends Application {//extends MultiDexApplication
             updateConfigLocale(context, context.getResources().getConfiguration(), mAppLocale);
         }
     }
+    @SuppressWarnings("deprecation")
     private void updateConfigLocale(Context context, Configuration newConfig, Locale locale){
         if (mAppLocale !=null){
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.N) {
                 newConfig.setLocales(new LocaleList(locale));
             } else {
-                //noinspection deprecation
-                newConfig.locale=locale;
+                // DC 202212
+                //newConfig.locale=locale;
+                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {
+                    newConfig.setLocale(locale);
+                } else {
+                    newConfig.locale=locale;
+                }
             }
             Locale.setDefault(locale);
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN_MR1) {

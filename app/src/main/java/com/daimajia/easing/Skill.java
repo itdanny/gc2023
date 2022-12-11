@@ -99,9 +99,13 @@ public enum  Skill {
         easingMethod = clazz;
     }
 
+    //DC  202212
+    @SuppressWarnings("unchecked")
     public BaseEasingMethod getMethod(float duration) {
         try {
-            return (BaseEasingMethod)easingMethod.getConstructor(float.class).newInstance(duration);
+            // DC 20212
+//            return (BaseEasingMethod)easingMethod.getConstructor(float.class).newInstance(duration);
+            return (BaseEasingMethod)easingMethod.getConstructor(new Class<?>[]{float.class}).newInstance(duration);
         } catch (Exception e) {
             e.printStackTrace();
             throw new Error("Can not init easingMethod instance");

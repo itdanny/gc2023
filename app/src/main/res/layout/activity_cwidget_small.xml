@@ -355,5 +355,5 @@
         android:gravity="left"
         android:text="ns"
         android:textSize="3sp"
-        android:textColor="@color/greyWhite"/>
+        android:textColor="@color/black"/>
 </RelativeLayout>

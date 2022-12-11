@@ -1,10 +1,5 @@
 package org.arkist.share;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Locale;
-import java.util.Map;
-
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
@@ -12,7 +7,6 @@ import android.content.res.AssetManager;
 import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Handler;
-import android.preference.PreferenceManager;
 import android.util.DisplayMetrics;
 import android.util.TypedValue;
 import android.view.Gravity;
@@ -28,6 +22,13 @@ import com.github.johnpersano.supertoasts.SuperCardToast;
 import com.github.johnpersano.supertoasts.SuperToast.Type;
 import com.github.johnpersano.supertoasts.util.OnDismissListener;
 
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Locale;
+import java.util.Map;
+
+import androidx.preference.PreferenceManager;
+
 public class AxTools {
 	static private Context mContext;// Application, Service and Broadcast should assign this value
 	static public SharedPreferences mPreferences;
@@ -41,7 +42,7 @@ public class AxTools {
 	}
 	static public void init(Context context){
 		mContext=context;
-		mPreferences=PreferenceManager.getDefaultSharedPreferences(context);
+		mPreferences= PreferenceManager.getDefaultSharedPreferences(context);
 	}
 	static private List<Resources> resourceList = new ArrayList<Resources>();
 	static public void unbindDrawables(View view) {

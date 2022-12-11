@@ -1,7 +1,6 @@
 package com.hkbs.HKBS.arkCalendar;
 
 import android.annotation.SuppressLint;
-import android.content.ContentUris;
 import android.content.ContentValues;
 import android.content.Context;
 import android.database.Cursor;
@@ -14,7 +13,6 @@ import com.hkbs.HKBS.arkUtil.MyUtil;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.Calendar;
-import java.util.HashMap;
 import java.util.Locale;
 import java.util.TimeZone;
 
@@ -62,19 +60,19 @@ public class MyCalendar {
 	static public final int INSTANCE_TITLE=2;
 	static public final int INSTANCE_ALL_DAY=3;
 	static public final int INSTANCE_EVENT_ID=4;
-	static private final String[] INSTANCE_FIELDS = {
-		Api8.BEGIN,
-		Api8.END,
-		Api8.TITLE,
-		Api8.ALL_DAY,
-		Api8.EVENT_ID
-      };
-	static private final String[] REMINDER_FIELDS = {
-		Api8._ID,
-		Api8.EVENT_ID,
-		Api8.MINUTES,
-		Api8.METHOD		
-      };
+//	static private final String[] INSTANCE_FIELDS = {
+//		Api8.BEGIN,
+//		Api8.END,
+//		Api8.TITLE,
+//		Api8.ALL_DAY,
+//		Api8.EVENT_ID
+//      };
+//	static private final String[] REMINDER_FIELDS = {
+//		Api8._ID,
+//		Api8.EVENT_ID,
+//		Api8.MINUTES,
+//		Api8.METHOD
+//      };
 	static private final String[] EVENTS_FIELDS_14 = {
 		CalendarContract.Events._ID,
 		CalendarContract.Events.DTSTART, 
@@ -99,29 +97,29 @@ public class MyCalendar {
 //		CalendarContract.Events.ORIGINAL_SYNC_ID
 		};
 		// Events.AVAILABILITY // Busy (0), Free (1), Tentative (2)
-	static private final String[] EVENTS_FIELDS_8 = {
-		Api8._ID,
-		Api8.DTSTART, 
-		Api8.DTEND,
-		Api8.TITLE,
-		Api8.RRULE,
-		Api8.ALL_DAY,
-		Api8.CALENDAR_ID,
-		Api8.DESCRIPTION,
-		Api8.HAS_ALARM,
-		Api8.EVENT_LOCATION,
-		Api8.EVENT_TIMEZONE,
-		Api8.VISIBILITY, // default (0), confidential (1), private (2) public (3)
-		Api8.DURATION,
-		Api8.LAST_DATE,
-		Api8.RDATE,
-		Api8.EXDATE
-//		Api8.EXRULE,
-//		Api8.ORIGINAL_ALL_DAY,   
-//		Api8.ORIGINAL_ID,
-//		Api8.ORIGINAL_INSTANCE_TIME, // For recurring's single event (All except this one...then this one can't recur again)
-//		Api8.ORIGINAL_SYNC_ID
-		};
+//	static private final String[] EVENTS_FIELDS_8 = {
+//		Api8._ID,
+//		Api8.DTSTART,
+//		Api8.DTEND,
+//		Api8.TITLE,
+//		Api8.RRULE,
+//		Api8.ALL_DAY,
+//		Api8.CALENDAR_ID,
+//		Api8.DESCRIPTION,
+//		Api8.HAS_ALARM,
+//		Api8.EVENT_LOCATION,
+//		Api8.EVENT_TIMEZONE,
+//		Api8.VISIBILITY, // default (0), confidential (1), private (2) public (3)
+//		Api8.DURATION,
+//		Api8.LAST_DATE,
+//		Api8.RDATE,
+//		Api8.EXDATE
+////		Api8.EXRULE,
+////		Api8.ORIGINAL_ALL_DAY,
+////		Api8.ORIGINAL_ID,
+////		Api8.ORIGINAL_INSTANCE_TIME, // For recurring's single event (All except this one...then this one can't recur again)
+////		Api8.ORIGINAL_SYNC_ID
+//		};
 		// "eventStatus" // tentative (0), confirmed (1) or canceled (2):	
 	static private final int CALENDAR_ID=0;
 	static private final int CALENDAR_DISPLAY_NAME=1;
@@ -137,37 +135,37 @@ public class MyCalendar {
 		};
 	static private final String[] CALENDAR_FIELDS_8 = { 
 			"_id","displayName","selected","ownerAccount","sync_events"};
-	@SuppressLint("NewApi")
-	static public Uri getInstanceUri() {
-		if (android.os.Build.VERSION.SDK_INT >= 14) {
-			return CalendarContract.Instances.CONTENT_URI;
-		} else {
-			return Uri.parse(Api8.URI_INSTANCES);
-		}
-	}
-	@SuppressLint("NewApi")
-	static public Uri getReminderUri() {
-		if (android.os.Build.VERSION.SDK_INT >= 14) {
-			return CalendarContract.Reminders.CONTENT_URI;
-		} else {
-			return Uri.parse(Api8.URI_REMINDERS);
-		}
-	}
-	@SuppressLint("NewApi")
-	static public Uri getEventUri() {
-		if (android.os.Build.VERSION.SDK_INT >= 14) {
-			return CalendarContract.Events.CONTENT_URI;
-		} else {
-			return Uri.parse(Api8.URI_EVENTS);
-		}
-	}
-	@SuppressLint("NewApi")
+//	@SuppressLint("NewApi")
+//	static public Uri getInstanceUri() {
+//		if (android.os.Build.VERSION.SDK_INT >= 14) {
+//			return CalendarContract.Instances.CONTENT_URI;
+//		} else {
+//			return Uri.parse(Api8.URI_INSTANCES);
+//		}
+//	}
+//	@SuppressLint("NewApi")
+//	static public Uri getReminderUri() {
+//		if (android.os.Build.VERSION.SDK_INT >= 14) {
+//			return CalendarContract.Reminders.CONTENT_URI;
+//		} else {
+//			return Uri.parse(Api8.URI_REMINDERS);
+//		}
+//	}
+//	@SuppressLint("NewApi")
+//	static public Uri getEventUri() {
+//		if (android.os.Build.VERSION.SDK_INT >= 14) {
+//			return CalendarContract.Events.CONTENT_URI;
+//		} else {
+//			return Uri.parse(Api8.URI_EVENTS);
+//		}
+//	}
+//	@SuppressLint("NewApi")
 	static public Uri getCalendarUri() {
-		if (android.os.Build.VERSION.SDK_INT >= 14) {
+//		if (android.os.Build.VERSION.SDK_INT >= 14) {
 			return CalendarContract.Calendars.CONTENT_URI;
-		} else {
-			return Uri.parse(Api8.URI_CALENDARS);
-		}
+//		} else {
+//			return Uri.parse(Api8.URI_CALENDARS);
+//		}
 	}
 //	static protected Uri baseUri = Uri.parse(Api8.URI_CALENDARS);
 //	static protected Map<String, Account> accounts;
@@ -382,93 +380,91 @@ public class MyCalendar {
 		String symbol = isBlack?PREFIX_SYMBOL_BLACK:PREFIX_SYMBOL_WHITE;
 		return str.substring(0, 1).equals(symbol.substring(0, 1));
 	}
-	static public HashMap<String, String> getEventCursor(Context context, String eventID){
-		Uri.Builder builder = MyCalendar.getEventUri().buildUpon();
-		if (DEBUG) MyUtil.log(TAG,"SDK:"+android.os.Build.VERSION.SDK_INT);
-		String [] events = (android.os.Build.VERSION.SDK_INT >= 14)?EVENTS_FIELDS_14:EVENTS_FIELDS_8;
-		HashMap<String, String> map = new HashMap<String, String>();
-		try {
-			Cursor cursor = context.getContentResolver().query(builder.build(),events,Api8._ID+"="+eventID, null, null);
-			if (cursor.moveToFirst()){
-				for (int i=0;i<events.length;i++){
-					map.put(events[i], cursor.getString(i));		
-				}
-			}		
-			cursor.close();
-		} catch (Exception e){
-			// Nothing
-		}
-    	return map;
-	}
-	static public Cursor getReminderCursor(Context context, String eventID){
-		Uri.Builder builder = MyCalendar.getReminderUri().buildUpon();
-		try{
-			Cursor cursor = context.getContentResolver().query(builder.build(),REMINDER_FIELDS,  
-					Api8.EVENT_ID+"="+eventID, null, null);
-			return cursor;
-		} catch (Exception e){
-			return null;
-		}
-	}
-	static public Cursor getInstanceCursor(Context context, Calendar frCal, Calendar toCal){
-		return getInstanceCursor(context, frCal.getTimeInMillis(), toCal.getTimeInMillis());
-	}
-	static public Cursor getInstanceCursor(Context context, long frCal, long toCal){
-		return getInstanceCursor(context, frCal, toCal, "");
-	}
-	static public Cursor getInstanceCursor(Context context, long frCal, long toCal, String curCalendarID){
-		Uri.Builder builder = MyCalendar.getInstanceUri().buildUpon();
-//		frCal = MyCalendar.getFrIncludeDay(frCal);
-//		toCal = MyCalendar.getToIncludeDay(toCal);
-    	ContentUris.appendId(builder, frCal);
-    	ContentUris.appendId(builder, toCal);
-    	String sqlStr = "";
-    	MyCalendarList calList [] = MyCalendar.getCalendars(context);
-    	if (curCalendarID.equals("")){
-    		for (int i=0;i<calList.length;i++){
-	    		if (calList[i].selected){
-	    			if (sqlStr.equals("")){
-	    				sqlStr = Api8.CALENDAR_ID+"="+calList[i].id+" ";
-	    			} else {
-	    				sqlStr = sqlStr + " OR "+Api8.CALENDAR_ID+"="+calList[i].id;
-	    			}
-	    		}
-	    	}
-    	} else {
-	    	for (int i=0;i<calList.length;i++){
-    			if (calList[i].id.equals(curCalendarID) && calList[i].selected){
-    				sqlStr = Api8.CALENDAR_ID+"="+calList[i].id+" ";
-    				break;
-    			}
-    		}
-    	}
-    	if (!sqlStr.equals("")){
-    		sqlStr = "("+sqlStr+") AND ";
-    	}
-    	String frStr=String.valueOf(frCal);
-    	String toStr=String.valueOf(toCal);
-    	// 4 Scenario: 1) Fr/To InRange 2) Fr/To OutRange 3) Fr Out/To In 4) Fr In/To Out
-    	sqlStr = sqlStr + 
-    			"(("+Api8.BEGIN+">="+frStr+" AND "+Api8.BEGIN+"<="+toStr+" AND " +
-    			Api8.END+">="+frStr+" AND "+Api8.END+"<="+toStr+") " + " OR " +
-    			
-			     "("+Api8.BEGIN+"<="+frStr+" AND "+Api8.END+">="+toStr+") "+" OR " +
-			     
-				"("+Api8.BEGIN+"<="+frStr+" AND "+
-				Api8.END+">="+frStr+" AND "+Api8.END+"<="+toStr+") "+" OR " +
-						
-				"("+Api8.END+">="+toStr+" AND "+
-				Api8.BEGIN+">="+frStr+" AND "+Api8.BEGIN+"<="+toStr+") "+" ) ";
-    	try {
-    		if (DEBUG) MyUtil.log(TAG,sqlStr);
-	    	Cursor cursor = context.getContentResolver().query(builder.build(),INSTANCE_FIELDS,  
-	    			sqlStr, null,  Api8.BEGIN + " ASC ");
-	    	return cursor;
-    	} catch (Exception err){
-    		if (DEBUG) MyUtil.logError(TAG,"Query Error:"+err.getMessage());
-    		return null;
-    	}
-	}
+//	static public HashMap<String, String> getEventCursor(Context context, String eventID){
+//		Uri.Builder builder = MyCalendar.getEventUri().buildUpon();
+//		if (DEBUG) MyUtil.log(TAG,"SDK:"+android.os.Build.VERSION.SDK_INT);
+//		String [] events = (android.os.Build.VERSION.SDK_INT >= 14)?EVENTS_FIELDS_14:EVENTS_FIELDS_8;
+//		HashMap<String, String> map = new HashMap<String, String>();
+//		try {
+//			Cursor cursor = context.getContentResolver().query(builder.build(),events,Api8._ID+"="+eventID, null, null);
+//			if (cursor.moveToFirst()){
+//				for (int i=0;i<events.length;i++){
+//					map.put(events[i], cursor.getString(i));
+//				}
+//			}
+//			cursor.close();
+//		} catch (Exception e){
+//			// Nothing
+//		}
+//    	return map;
+//	}
+//	static public Cursor getReminderCursor(Context context, String eventID){
+//		Uri.Builder builder = MyCalendar.getReminderUri().buildUpon();
+//		try{
+//			Cursor cursor = context.getContentResolver().query(builder.build(),REMINDER_FIELDS,
+//					Api8.EVENT_ID+"="+eventID, null, null);
+//			return cursor;
+//		} catch (Exception e){
+//			return null;
+//		}
+//	}
+//	static public Cursor getInstanceCursor(Context context, Calendar frCal, Calendar toCal){
+//		return getInstanceCursor(context, frCal.getTimeInMillis(), toCal.getTimeInMillis());
+//	}
+//	static public Cursor getInstanceCursor(Context context, long frCal, long toCal){
+//		return getInstanceCursor(context, frCal, toCal, "");
+//	}
+//	static public Cursor getInstanceCursor(Context context, long frCal, long toCal, String curCalendarID){
+//		Uri.Builder builder = MyCalendar.getInstanceUri().buildUpon();
+//    	ContentUris.appendId(builder, frCal);
+//    	ContentUris.appendId(builder, toCal);
+//    	String sqlStr = "";
+//    	MyCalendarList calList [] = MyCalendar.getCalendars(context);
+//    	if (curCalendarID.equals("")){
+//    		for (int i=0;i<calList.length;i++){
+//	    		if (calList[i].selected){
+//	    			if (sqlStr.equals("")){
+//	    				sqlStr = Api8.CALENDAR_ID+"="+calList[i].id+" ";
+//	    			} else {
+//	    				sqlStr = sqlStr + " OR "+Api8.CALENDAR_ID+"="+calList[i].id;
+//	    			}
+//	    		}
+//	    	}
+//    	} else {
+//	    	for (int i=0;i<calList.length;i++){
+//    			if (calList[i].id.equals(curCalendarID) && calList[i].selected){
+//    				sqlStr = Api8.CALENDAR_ID+"="+calList[i].id+" ";
+//    				break;
+//    			}
+//    		}
+//    	}
+//    	if (!sqlStr.equals("")){
+//    		sqlStr = "("+sqlStr+") AND ";
+//    	}
+//    	String frStr=String.valueOf(frCal);
+//    	String toStr=String.valueOf(toCal);
+//    	// 4 Scenario: 1) Fr/To InRange 2) Fr/To OutRange 3) Fr Out/To In 4) Fr In/To Out
+//    	sqlStr = sqlStr +
+//    			"(("+Api8.BEGIN+">="+frStr+" AND "+Api8.BEGIN+"<="+toStr+" AND " +
+//    			Api8.END+">="+frStr+" AND "+Api8.END+"<="+toStr+") " + " OR " +
+//
+//			     "("+Api8.BEGIN+"<="+frStr+" AND "+Api8.END+">="+toStr+") "+" OR " +
+//
+//				"("+Api8.BEGIN+"<="+frStr+" AND "+
+//				Api8.END+">="+frStr+" AND "+Api8.END+"<="+toStr+") "+" OR " +
+//
+//				"("+Api8.END+">="+toStr+" AND "+
+//				Api8.BEGIN+">="+frStr+" AND "+Api8.BEGIN+"<="+toStr+") "+" ) ";
+//    	try {
+//    		if (DEBUG) MyUtil.log(TAG,sqlStr);
+//	    	Cursor cursor = context.getContentResolver().query(builder.build(),INSTANCE_FIELDS,
+//	    			sqlStr, null,  Api8.BEGIN + " ASC ");
+//	    	return cursor;
+//    	} catch (Exception err){
+//    		if (DEBUG) MyUtil.logError(TAG,"Query Error:"+err.getMessage());
+//    		return null;
+//    	}
+//	}
 	static public int withinRange(long frDay, long toDay, boolean isAllDay, long rangeFrDay, long rangeToDay){
 		// 4 Scenario: 1) Fr/To InRange 2) Fr/To OutRange 3) Fr Out/To In 4) Fr In/To Out
 		
@@ -526,42 +522,42 @@ public class MyCalendar {
 		return nextDay;
 	}
     static public MyDayEvents[] getEachDayEvents(Context context, Calendar today, boolean isGetEvents){
-    	MyDayEvents [] dayEvents=CalendarAdapter.getDaysArray(today);
+    	MyDayEvents [] dayEvents= CalendarAdapter.getDaysArray(today);
     	Calendar extraOneDay = Calendar.getInstance();
     	extraOneDay.setTimeInMillis(dayEvents[dayEvents.length-1].getMaxInMillsec());
     	extraOneDay.add(Calendar.DAY_OF_MONTH, 1);
     	if (!isGetEvents) return dayEvents;
-    	Cursor cursor = getInstanceCursor(context, dayEvents[0].getMinInMillsec(), extraOneDay.getTimeInMillis());
-    	if (cursor!=null){
-    		if (cursor.getCount()>0 && cursor.moveToFirst()) {
-	    		do {
-	    			final String cursorTitle = cursor.getString(2);
-	    			if (DEBUG) {
-	    				Calendar cursorDate = Calendar.getInstance();
-	    				cursorDate.setTimeInMillis(Long.parseLong(cursor.getString(0)));
-	    				MyUtil.log(TAG, cursorTitle+" "+MyUtil.sdfYYYYMMDDHHMM.format(cursorDate.getTime()));
-    				}
-	    			// Find Days position
-	    			int nbrOfDays=dayEvents.length;
-	    			for (int j=0;j<nbrOfDays;j++){
-	    				/*
-	    				 * Change utc2local to local: Found that a record in moring 5:00 fill to wrong date
-	    				 */
-	    				final int result = withinRange(
-	    						Long.parseLong(cursor.getString(MyCalendar.INSTANCE_BEGIN)), 
-	    						Long.parseLong(cursor.getString(MyCalendar.INSTANCE_END)),
-	    						!cursor.getString(MyCalendar.INSTANCE_ALL_DAY).equals("0"),
-	    						dayEvents[j].getMinInMillsec(),
-	    						dayEvents[j].getMaxInMillsec());
-	    				if (result!=0){
-	    					dayEvents[j].counter++;
-							dayEvents[j].text = dayEvents[j].text + (dayEvents[j].text.equals("")?"":FIELD_SEPERATOR) +cursorTitle.substring(0, Math.min(CELL_EVENT_LENGTH,cursorTitle.length()));
-	    				}
-	    			}
-	    		} while (cursor.moveToNext());
-    		}
-    		cursor.close();
-    	} 
+//    	Cursor cursor = getInstanceCursor(context, dayEvents[0].getMinInMillsec(), extraOneDay.getTimeInMillis());
+//    	if (cursor!=null){
+//    		if (cursor.getCount()>0 && cursor.moveToFirst()) {
+//	    		do {
+//	    			final String cursorTitle = cursor.getString(2);
+//	    			if (DEBUG) {
+//	    				Calendar cursorDate = Calendar.getInstance();
+//	    				cursorDate.setTimeInMillis(Long.parseLong(cursor.getString(0)));
+//	    				MyUtil.log(TAG, cursorTitle+" "+MyUtil.sdfYYYYMMDDHHMM.format(cursorDate.getTime()));
+//    				}
+//	    			// Find Days position
+//	    			int nbrOfDays=dayEvents.length;
+//	    			for (int j=0;j<nbrOfDays;j++){
+//	    				/*
+//	    				 * Change utc2local to local: Found that a record in moring 5:00 fill to wrong date
+//	    				 */
+//	    				final int result = withinRange(
+//	    						Long.parseLong(cursor.getString(MyCalendar.INSTANCE_BEGIN)),
+//	    						Long.parseLong(cursor.getString(MyCalendar.INSTANCE_END)),
+//	    						!cursor.getString(MyCalendar.INSTANCE_ALL_DAY).equals("0"),
+//	    						dayEvents[j].getMinInMillsec(),
+//	    						dayEvents[j].getMaxInMillsec());
+//	    				if (result!=0){
+//	    					dayEvents[j].counter++;
+//							dayEvents[j].text = dayEvents[j].text + (dayEvents[j].text.equals("")?"":FIELD_SEPERATOR) +cursorTitle.substring(0, Math.min(CELL_EVENT_LENGTH,cursorTitle.length()));
+//	    				}
+//	    			}
+//	    		} while (cursor.moveToNext());
+//    		}
+//    		cursor.close();
+//    	}
     	return dayEvents;
     }
     static final int NBR_OF_DAYS_SHOWN = 14;

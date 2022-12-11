@@ -1,11 +1,11 @@
 apply plugin: 'com.android.library'
 
 android {
-    compileSdkVersion 30
+    compileSdkVersion 33
 
     defaultConfig {
-        minSdkVersion 14
-        targetSdkVersion 30
+        minSdkVersion 24
+        targetSdkVersion 33
     }
     buildTypes {
         release {
@@ -21,5 +21,6 @@ dependencies {
     implementation project(':libSuperToasts')
     implementation files('libs/libGoogleAnalyticsServices.jar')
     implementation 'androidx.legacy:legacy-support-v4:1.0.0'
+    implementation 'androidx.preference:preference:1.2.0'
 }
 

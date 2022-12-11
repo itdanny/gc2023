@@ -1,27 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
     package="com.hkbs.HKBS">
-
-    <!--<uses-permission android:name="android.permission.GET_TASKS" />-->
-    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />
+<!--    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />-->
     <uses-permission android:name="android.permission.INTERNET" />
-    <uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>
-    <uses-permission android:name="android.permission.READ_CALENDAR" />
-    <uses-permission android:name="android.permission.WRITE_CALENDAR" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+<!--    <uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>-->
+<!--    <uses-permission android:name="android.permission.READ_CALENDAR" />-->
+<!--    <uses-permission android:name="android.permission.WRITE_CALENDAR" />-->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION" />
-    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />
-    <uses-permission android:name="android.permission.READ_PHONE_STATE" />
-    <uses-permission android:name="android.permission.BOOT_COMPLETED" />
-    <uses-permission android:name="android.permission.RECEVIE_BOOT_COMPLETED" />
-<!-- Add harwareAccelerated to avoid Fatal Signal 11
-    http://stackoverflow.com/questions/14023291/fatal-signal-11-sigsegv-at-0x00000000-code-1-phonegap
--->
-
+    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
+<!--    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />-->
+<!--    <uses-permission android:name="android.permission.READ_PHONE_STATE" />-->
+<!--    <uses-permission android:name="android.permission.BOOT_COMPLETED" />-->
+<!--    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />-->
+<!--    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION"/>-->
     <application
         android:name="com.hkbs.HKBS.MyApp"
-        android:hardwareAccelerated="@bool/HardwareAcceration"
+        android:hardwareAccelerated="@bool/hardwareAccelerated"
         android:vmSafeMode="@bool/VmSafeMode"
         android:requestLegacyExternalStorage="true"
         android:largeHeap="true"
@@ -30,55 +24,20 @@
         android:launchMode="singleTop"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
-        android:theme="@style/AppTheme"
-        android:fullBackupContent="@xml/backup_descriptor"> <!-- @android:style/Theme.DeviceDefault -->
-        <!-- 2020.12.21
-        ApplicationID is defined in build.gradle "com.hkbs.HKBS"
-        Before ... due to use DEX, it use other applicationID -->
-        <provider
-            android:name="androidx.core.content.FileProvider"
-            android:authorities="com.hkbs.HKBS.provider"
-            android:exported="false"
-            android:grantUriPermissions="true">
-            <meta-data
-                android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
-        </provider>
-        <receiver
-            android:name="com.hkbs.MyGoldBroadcast"
-            android:enabled="true"
-            android:exported="true"
-            android:permission="android.permission.RECEIVE_BOOT_COMPLETED"> <!-- listen to reboot events -->
-            <intent-filter>
-                <action android:name="AxAlarm_11" />
-                <action android:name="AxAlarm_12" />
-                <action android:name="android.intent.action.BOOT_COMPLETED" />
-                <action android:name="android.intent.action.PACKAGE_ADDED" />
-                <action android:name="android.intent.action.PACKAGE_REMOVED" />
-                <action android:name="android.intent.action.PACKAGE_FIRST_LAUNCH" />
-                <action android:name="android.intent.action.SCREEN_ON" />
-                <action android:name="android.intent.action.SCREEN_OFF" />
-                <action android:name="android.intent.action.ACTION_SHUTDOWN" />
-                <action android:name="android.intent.action.DATE_CHANGED" />
-                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
-                <!--<action android:name="android.intent.action.TIME_SET" />-->
-                <action android:name="android.intent.action.TIME_TICK" />
-                <action android:name="com.hkbs.HKBS.WidgetUpdate" />
-            </intent-filter>
-        </receiver>
+        android:theme="@style/AppTheme">
         <activity
-            android:name=".CMain"
+            android:name="CMain"
             android:exported="true"
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:launchMode="singleTop"
             android:label="@string/app_name"
             android:screenOrientation="portrait"
             android:theme="@style/SplashscreenTheme">
-            <intent-filter>
-                <action android:name="android.intent.action.MAIN" />
-                <category android:name="android.intent.category.DEFAULT" />
-                <category android:name="android.intent.category.LAUNCHER" />
-            </intent-filter>
+                        <intent-filter>
+                            <action android:name="android.intent.action.MAIN" />
+                            <category android:name="android.intent.category.DEFAULT" />
+                            <category android:name="android.intent.category.LAUNCHER" />
+                        </intent-filter>
         </activity>
         <activity
             android:name=".CalendarActivity"
@@ -95,17 +54,9 @@
             android:configChanges="orientation|keyboardHidden|screenSize"
             android:screenOrientation="portrait" >
         </activity>
-        <activity
-            android:name=".AlarmActivity"
-            android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" >
-        </activity>
-        <activity
-            android:name=".JustBroadcast">
-        </activity>
         <receiver android:name=".CWidgetNormal"
             android:exported="true"
-                  android:label="標準版面">
+            android:label="標準版面">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
@@ -120,11 +71,10 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/my_widget_provider" />
         </receiver>
-        <!--android:enabled="@bool/largerWidget"-->
         <receiver android:name=".CWidgetLarge"
             android:exported="true"
-                  android:label="大版面"
-                  >
+            android:label="大版面"
+            >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
@@ -139,10 +89,10 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/my_widget_provider_large" />
         </receiver>
-       <!--android:enabled="@bool/smallerWidget"-->
+        <!--android:enabled="@bool/smallerWidget"-->
         <receiver android:name=".CWidgetSmall"
             android:exported="true"
-                  android:label="小版面">
+            android:label="小版面">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
@@ -160,8 +110,8 @@
         <!--android:enabled="@bool/middleWidget"-->
         <receiver android:name=".CWidgetMiddle"
             android:exported="true"
-                  android:label="中版面"
-                  >
+            android:label="中版面"
+            >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
@@ -179,8 +129,8 @@
         <!--android:enabled="@bool/xlargerWidget"-->
         <receiver android:name=".CWidgetXLarge"
             android:exported="true"
-                  android:label="特大版面"
-                  >
+            android:label="特大版面"
+            >
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
@@ -195,16 +145,14 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/my_widget_provider_xlarge" />
         </receiver>
-        <!--
-        n
-        sn
-        ln
-        nl
-        nm
-        sm
-        ns
-        lx
-        -->
+        <provider
+            android:name="androidx.core.content.FileProvider"
+            android:authorities="com.hkbs.HKBS.provider"
+            android:exported="false"
+            android:grantUriPermissions="true">
+            <meta-data
+                android:name="android.support.FILE_PROVIDER_PATHS"
+                android:resource="@xml/provider_paths"/>
+        </provider>
     </application>
-
 </manifest>

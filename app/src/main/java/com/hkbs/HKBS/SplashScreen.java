@@ -4,6 +4,7 @@ import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
 import android.os.Handler;
+import android.os.Looper;
 import android.widget.ImageView;
 
 public class SplashScreen extends Activity {
@@ -23,7 +24,7 @@ public class SplashScreen extends Activity {
             } else{
             imageView.setImageResource(R.drawable.splash_640_960);
         }
-        new Handler().postDelayed(new Runnable() {
+        new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
  
             /*
              * Showing splash screen with a timer. This will be useful when you

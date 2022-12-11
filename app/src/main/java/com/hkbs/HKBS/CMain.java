@@ -1,7 +1,5 @@
 package com.hkbs.HKBS;
 
-import android.Manifest;
-import android.annotation.TargetApi;
 import android.app.ActivityManager;
 import android.app.AlertDialog;
 import android.appwidget.AppWidgetManager;
@@ -11,7 +9,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.DialogInterface;
 import android.content.Intent;
-import android.content.pm.PackageManager;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -20,6 +17,7 @@ import android.os.Build;
 import android.os.Bundle;
 import android.os.Environment;
 import android.os.Handler;
+import android.os.Looper;
 import android.provider.MediaStore.Images;
 import android.text.TextUtils;
 import android.util.Log;
@@ -35,7 +33,6 @@ import com.hkbs.HKBS.arkUtil.MyGestureListener;
 import com.hkbs.HKBS.arkUtil.MyPermission;
 import com.hkbs.HKBS.arkUtil.MyUtil;
 import com.hkbs.HKBS.util.SystemUiHider;
-import com.hkbs.MyGoldBroadcast;
 
 import org.arkist.share.AxImageView;
 import org.arkist.share.AxTools;
@@ -45,23 +42,27 @@ import java.io.OutputStream;
 import java.util.Calendar;
 import java.util.List;
 
-import androidx.core.app.ActivityCompat;
-import androidx.core.content.ContextCompat;
+import androidx.activity.result.ActivityResult;
+import androidx.activity.result.ActivityResultCallback;
+import androidx.activity.result.ActivityResultLauncher;
+import androidx.activity.result.contract.ActivityResultContracts;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
-import androidx.fragment.app.FragmentStatePagerAdapter;
-import androidx.viewpager.widget.ViewPager;
+import androidx.fragment.app.FragmentActivity;
+import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.widget.ViewPager2;
+
 
 /**
  * An example full-screen activity that shows and hides the system UI (i.e.
  * status bar and navigation/system bar) with user interaction.
- * 
+ *
  * @see SystemUiHider
  */
 public class CMain extends MyActivity {
     final static public boolean IS_2016_VERSION = true;
     final static public boolean IS_2017_VERSION = true;
+
     static public boolean is_2016DayShown() {
         if (mDisplayDay == null) {
             Calendar calendar = Calendar.getInstance();
@@ -72,7 +73,8 @@ public class CMain extends MyActivity {
 //        return calendar.get(Calendar.YEAR)>=2016;
         return curYear >= 2016;
     }
-//    final static private boolean IS_2015_OR_LATER = true;
+
+    //    final static private boolean IS_2015_OR_LATER = true;
     final static public boolean DEBUG = true;
     final static public boolean DEBUG_LAYOUT = false;
 
@@ -82,7 +84,7 @@ public class CMain extends MyActivity {
     private static final int AUTO_HIDE_DELAY_MILLIS = 1500;
     static public MyDailyBread mDailyBread;
 
-//    static public int mCalendarYear = 2015;
+    //    static public int mCalendarYear = 2015;
 //    static private float _scaleDensity = 0;
     static private Calendar mDisplayDay;
     //	private View mContentsView;
@@ -93,11 +95,12 @@ public class CMain extends MyActivity {
 
     //private ViewAnimator mViewAnimator;
     private boolean isTitleShown = false;
-    private CustomViewPager mPager;
+    private ViewPager2 mPager;
+    private boolean isScrolling = false;
     private CustomViewAdapter mAdapter;
 
     private View mRootView;
-    static int showOutOfBoundsIfAllowBeyondRange=0; // Toggle to show system is out-of-bound
+    static int showOutOfBoundsIfAllowBeyondRange = 0; // Toggle to show system is out-of-bound
     private Handler handler;
 
     @Override
@@ -105,6 +108,7 @@ public class CMain extends MyActivity {
         super.onSaveInstanceState(InstanceState);
         InstanceState.clear();
     }
+
     @Override
     public void onRequestPermissionsResult(int requestCode, String[] permissions, int[] grantResults) {
         if (!MyPermission.getInstance().onRequestPermissionsResult(
@@ -114,28 +118,28 @@ public class CMain extends MyActivity {
                 new MyPermission.Callback() {
                     @Override
                     public void onRequestResult(int requestCode, boolean success) {
-                        switch (requestCode){
+                        switch (requestCode) {
                             case MyPermission.REQUEST_ACCESS_STORAGE:
                                 if (success) {
                                     onClickShare(getBaseContext(), true);
                                 }
                                 break;
-                            case MyPermission.REQUEST_ACCESS_ALARM:
-                                if (success) {
-                                    AxAlarm.setDailyAlarm(CMain.this, AxAlarm.MODE.SET_DEFAULT, 9, 0, MyGoldBroadcast.class);
-                                    AxAlarm.setDailyOnDateChange(CMain.this);
-                                }
-                                break;
+//                            case MyPermission.REQUEST_ACCESS_ALARM:
+//                                if (success) {
+//                                    AxAlarm.setDailyAlarm(CMain.this, AxAlarm.MODE.SET_DEFAULT, 9, 0, MyGoldBroadcast.class);
+//                                    AxAlarm.setDailyOnDateChange(CMain.this);
+//                                }
+//                                break;
                         }
                     }
-                })){
+                })) {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
 
     @Override
     public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (mPager==null || mPager.isScrolling) return false;
+        if (mPager == null || isScrolling) return false;
         switch (keyCode) {
             case KeyEvent.KEYCODE_W:
             case KeyEvent.KEYCODE_DPAD_UP:
@@ -160,114 +164,96 @@ public class CMain extends MyActivity {
                 return super.onKeyDown(keyCode, event);
         }
     }
+
     private GestureDetector mGesture;
     private View.OnTouchListener mViewOnTouch;
 
-    private class CustomViewAdapter extends FragmentStatePagerAdapter {
+    private class CustomViewAdapter extends FragmentStateAdapter {
         Calendar mCalendar;
         Context mContext;
-        public CustomViewAdapter(FragmentManager fm, Context context) {
-            super(fm);
-            mContext = context;
+
+        public CustomViewAdapter(FragmentActivity fa) {
+            super(fa);
+            mContext = getBaseContext();//context;
             mCalendar = Calendar.getInstance();
         }
+
         @Override
-        public Fragment getItem(int position) {
+        public Fragment createFragment(int position) {
             mCalendar.setTimeInMillis(CMain.mDailyBread.getValidFrDate().getTimeInMillis());
             mCalendar.add(Calendar.DAY_OF_YEAR, position);
-            int year=mCalendar.get(Calendar.YEAR);
-            int month=mCalendar.get(Calendar.MONTH);
-            int day=mCalendar.get(Calendar.DAY_OF_MONTH);
-            MyUtil.log(TAG, "Get Item:"+year+","+month+","+day);
+            int year = mCalendar.get(Calendar.YEAR);
+            int month = mCalendar.get(Calendar.MONTH);
+            int day = mCalendar.get(Calendar.DAY_OF_MONTH);
+            MyUtil.log(TAG, "Get Item:" + year + "," + month + "," + day);
             return DailyFragment.getInstance(year, month, day);
         }
+
         @Override
-        public int getCount() {
-            if (nbrOfItems==-1){
-                nbrOfItems=(int) CMain.mDailyBread.getNbrOfValidDays(mContext);
+        public int getItemCount() {
+            if (nbrOfItems == -1) {
+                nbrOfItems = (int) CMain.mDailyBread.getNbrOfValidDays(mContext);
             }
             return nbrOfItems;
         }
-        private int nbrOfItems=-1;
+
+        private int nbrOfItems = -1;
     }
 
     @Override
     protected void attachBaseContext(Context newBase) {
-        if (MyApp.mNewLangContext!=null) {
+        if (MyApp.mNewLangContext != null) {
             super.attachBaseContext(MyApp.mNewLangContext);
         } else {
             super.attachBaseContext(newBase);
         }
     }
 
-//    @Override
-//    protected void onDestroy() {
-//        super.onDestroy();
-//        this.unregisterReceiver(myGoldBroadcast);
-//    }
     @Override
     protected void onCreate(Bundle savedInstanceState) {
-//        //Test
-//        Context context = getApplicationContext();
-//        Calendar end = Calendar.getInstance();
-//        end.set(2015, 0, 1, 0, 0, 0);
-//        AxDebug.error(TAG, "Diff=" + MyDailyBread.date2index(context, end));
-//
-//        end.set(2015, 0, 2, 0, 0, 0);
-//        AxDebug.error(TAG, "Diff=" + MyDailyBread.date2index(context, end));
-//
-//        end.set(2016, 5, 30, 0, 0, 0);
-//        AxDebug.error(TAG, "Diff=" + MyDailyBread.date2index(context, end));
-//
-//        end.set(2016, 2, 15, 0, 0, 0);
-//        AxDebug.error(TAG, "Diff=" + MyDailyBread.date2index(context, end));
-//
-//        AxDebug.error(TAG,"End");
-//
-
-        Log.e(TAG, "*** Start " + getPackageName()+" ***");
+        Log.e(TAG, "*** Start " + getPackageName() + " ***");
         super.onCreate(savedInstanceState);
         requestWindowFeature(Window.FEATURE_NO_TITLE);
-        mDailyBread = MyDailyBread.getInstance(CMain.this);
-        mDisplayDay = MyDailyBread.getInstance(getApplicationContext()).index2date(getApplicationContext(),0);
+
+        mDailyBread = MyDailyBread.getInstance(this);
+        mDisplayDay = MyDailyBread.getInstance(getApplicationContext()).index2date(getApplicationContext(), 0);
         mDisplayDay = MyDailyBread.getValidCalendar(this, mDisplayDay);
         AxTools.init(CMain.this);
-//        scaleDensity(getApplicationContext());
         MyUtil.initMyUtil(this);
         if (DEBUG) MyUtil.log(TAG, "StartApp3..............");
 
-//		final ActivityManager activityManager = (ActivityManager) getSystemService(Context.ACTIVITY_SERVICE);
-//		final List<RunningTaskInfo> recentTasks = activityManager.getRunningTasks(Integer.MAX_VALUE);
-//	    for (int i = 0; i < recentTasks.size(); i++){
-//	        MyUtil.log(TAG, "Application executed : " +recentTasks.get(i).baseActivity.toShortString()+ "\t\t ID: "+recentTasks.get(i).id+"");         
-//	    }
-//		
         setContentView(R.layout.activity_cmain);
-
         mRootView = findViewById(R.id.xmlRoot);
-        mViewOnTouch =  new View.OnTouchListener() {
+        mViewOnTouch = new View.OnTouchListener() {
             @Override
             public boolean onTouch(View v, MotionEvent event) {
-                if (mGesture==null){
+                if (mGesture == null) {
                     mGesture = new GestureDetector(getApplicationContext(), new MyGestureListener(new MyGestureListener.Callback() {
                         @Override
                         public boolean onClick(MotionEvent e) { // !!! SetClicable to TRUE !!!
-                            if (DEBUG) MyUtil.log(TAG, "onClick day="+mDisplayDay.get(Calendar.DAY_OF_MONTH));
+                            if (DEBUG)
+                                MyUtil.log(TAG, "onClick day=" + mDisplayDay.get(Calendar.DAY_OF_MONTH));
+                            setControlsVisibility(!isTitleShown);
+                            return true;
+                        }
+
+                        @Override
+                        public boolean onLongPress(MotionEvent e) {
+                            if (DEBUG)
+                                MyUtil.log(TAG, "onClick day=" + mDisplayDay.get(Calendar.DAY_OF_MONTH));
                             setControlsVisibility(!isTitleShown);
                             //setControlsVisibility(true);
                             return true;
                         }
-                        @Override public boolean onLongPress(MotionEvent e) {
-                            if (DEBUG) MyUtil.log(TAG, "onClick day="+mDisplayDay.get(Calendar.DAY_OF_MONTH));
-                            setControlsVisibility(!isTitleShown);
-                            //setControlsVisibility(true);
-                            return true;
-                        }
-                        @Override public boolean onRight() {
+
+                        @Override
+                        public boolean onRight() {
                             gotoNextDay();
                             return true;
                         }
-                        @Override public boolean onLeft() {
+
+                        @Override
+                        public boolean onLeft() {
                             gotoPrevDay();
                             return true;
                         }
@@ -279,92 +265,71 @@ public class CMain extends MyActivity {
         };
         mRootView.setOnTouchListener(mViewOnTouch);
 
-        AxImageView clickLeftView = (AxImageView) findViewById(R.id.xmlMainClickLeft);
-        clickLeftView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                delayedHide();
-                gotoPrevDay();
-            }
+        AxImageView clickLeftView = findViewById(R.id.xmlMainClickLeft);
+        clickLeftView.setOnClickListener(v -> {
+            delayedHide();
+            gotoPrevDay();
         });
-        AxImageView clickRightView = (AxImageView) findViewById(R.id.xmlMainClickRight);
-        clickRightView.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                delayedHide();
-                gotoNextDay();
-            }
+        AxImageView clickRightView = findViewById(R.id.xmlMainClickRight);
+        clickRightView.setOnClickListener(v -> {
+            delayedHide();
+            gotoNextDay();
         });
 
         mDisplayDay = Calendar.getInstance();
         mDisplayDay = MyDailyBread.getValidCalendar(this, mDisplayDay);
-//        mViewAnimator = (ViewAnimator) findViewById(R.id.xmlMainContents);
-
         mControlsView = findViewById(R.id.xmlMainControls);
         mLeftRightPanel = findViewById(R.id.xmlMainClickPanel);
         mTitleView = findViewById(R.id.xmlMainTitle);
 
         onCreateSetButtons();
 
-        if (ContextCompat.checkSelfPermission(this,
-                Manifest.permission.SET_ALARM)
-                != PackageManager.PERMISSION_GRANTED) {
-            // Should we show an explanation?
-            if (ActivityCompat.shouldShowRequestPermissionRationale(this,
-                    Manifest.permission.SET_ALARM)) {
-                // Show an explanation to the user *asynchronously* -- don't block
-                // this thread waiting for the user's response! After the user
-                // sees the explanation, try again to request the permission.
-            } else {
-                // No explanation needed, we can request the permission.
-                ActivityCompat.requestPermissions(this,
-                        new String[]{Manifest.permission.SET_ALARM}, MyPermission.REQUEST_ACCESS_ALARM);
-                // MY_PERMISSIONS_REQUEST_READ_CONTACTS is an
-                // app-defined int constant. The callback method gets the
-                // result of the request.
-            }
-        } else {
-            AxAlarm.setDailyAlarm(CMain.this, AxAlarm.MODE.SET_DEFAULT, 9, 0, MyGoldBroadcast.class);
-            AxAlarm.setDailyOnDateChange(CMain.this);
-        }
-//        myGoldBroadcast = new MyGoldBroadcast();
-//        this.registerReceiver(myGoldBroadcast,new IntentFilter(AxAlarm.MANIFEST_ACTION_ALARM));
-
-        CWidgetBase.broadcastMe(CMain.this);
-
-        mPager = (CustomViewPager) findViewById(R.id.pager);
+        mPager = findViewById(R.id.pager);
         mPager.setOffscreenPageLimit(1);
-        mAdapter = new CustomViewAdapter(getSupportFragmentManager(), CMain.this);
+        // DC 202212 mAdapter = new CustomViewAdapter(getSupportFragmentManager(), CMain.this);
+        mAdapter = new CustomViewAdapter(CMain.this);
         mPager.setAdapter(mAdapter);
-        mPager.callBack = new CustomViewPager.CallBack() {
-            @Override
-            public void clicked(MotionEvent motionEvent) {
-                //onClickItem(motionEvent);
-                if (DEBUG) MyUtil.log(TAG, "onClicked");
-                //setControlsVisibility(!isTitleShown);
-                setControlsVisibility(true);
-                //mRootView.performClick();
+        mPager.getChildAt(mPager.getCurrentItem()).setOnTouchListener((v, event) -> {
+            switch (event.getAction()) {
+                case MotionEvent.ACTION_DOWN:
+                    v.setTag(1);
+                    break;
+                case MotionEvent.ACTION_MOVE:
+                    v.setTag(0);
+                    break;
+                case MotionEvent.ACTION_UP:
+                    if ((int) v.getTag() == 1) {
+                        v.setTag(0);
+                        setControlsVisibility(true);
+                        return true;
+                    }
+                    v.setTag(0);
+                    break;
             }
-        };
-        mPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {
+            return false;
+        });
+        mPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             boolean lastPageChange = false;
             boolean fistPageChange = false;
 
             @Override
             public void onPageScrolled(int position, float positionOffset, int positionOffsetPixels) {
-                int lastIdx = mAdapter.getCount() - 1;
+                super.onPageScrolled(position, positionOffset, positionOffsetPixels);
+                int lastIdx = mAdapter.getItemCount() - 1;
                 if (lastPageChange && position == lastIdx) {
                     Calendar calendar = (Calendar) mDailyBread.getValidToDate().clone();
-                    calendar.add(Calendar.MONTH,1);
-                    MyDailyBread.showOutOfBounds(getApplicationContext(),calendar);
+                    calendar.add(Calendar.MONTH, 1);
+                    MyDailyBread.showOutOfBounds(getApplicationContext(), calendar);
                 } else if (fistPageChange && position == 0) {
-                    MyDailyBread.showOutOfBounds(getApplicationContext(),mDailyBread.getValidFrDate());
+                    MyDailyBread.showOutOfBounds(getApplicationContext(), mDailyBread.getValidFrDate());
                 }
-                mPager.isScrolling = false;
+                isScrolling = false;
             }
+
             @Override
-            public void onPageSelected(int i) {
-                mDisplayDay = MyDailyBread.getInstance(getApplicationContext()).index2date(getApplicationContext(),i);
+            public void onPageSelected(int position) {
+                super.onPageSelected(position);
+                mDisplayDay = MyDailyBread.getInstance(getApplicationContext()).index2date(getApplicationContext(), position);
                 mDisplayDay = MyDailyBread.getValidCalendar(CMain.this, mDisplayDay);
 //                mDisplayDay = (Calendar) mDailyBread.getValidFrDate().clone();
 //                mDisplayDay.add(Calendar.DAY_OF_MONTH, i);
@@ -373,32 +338,24 @@ public class CMain extends MyActivity {
                 onRefreshPage(mDisplayDay, false, false);
                 if (DEBUG)
                     Log.i(TAG, "onPageSelected day=" + mDisplayDay.get(Calendar.DAY_OF_MONTH) + " end");
-                mPager.isScrolling = false;
-
-                // 2018.11.01 Not display out of bounds
-//                if (MyDailyBread.allowBeyondRange && mDisplayDay.getTimeInMillis()>MyDailyBread.getInstance(CMain.this).getValidToDate().getTimeInMillis()){
-//                    if (showOutOfBoundsIfAllowBeyondRange==0){
-//                        MyDailyBread.showOutOfBounds(getApplicationContext(),mDisplayDay);
-//                    }
-//                    showOutOfBoundsIfAllowBeyondRange++;
-//                    if (showOutOfBoundsIfAllowBeyondRange>3) showOutOfBoundsIfAllowBeyondRange=0;
-//                }
-
+                isScrolling = false;
             }
 
             @Override
             public void onPageScrollStateChanged(int state) {
-                int lastIdx = mAdapter.getCount() - 1;
+                super.onPageScrollStateChanged(state);
+                int lastIdx = mAdapter.getItemCount() - 1;
                 int curItem = mPager.getCurrentItem();
-                if (curItem == lastIdx && state == ViewPager.SCROLL_STATE_DRAGGING)
+                if (curItem == lastIdx && state == ViewPager2.SCROLL_STATE_DRAGGING)
                     lastPageChange = true;
                 else lastPageChange = false;
-                if (curItem == 0 && state == ViewPager.SCROLL_STATE_DRAGGING) fistPageChange = true;
+                if (curItem == 0 && state == ViewPager2.SCROLL_STATE_DRAGGING)
+                    fistPageChange = true;
                 else fistPageChange = false;
-                if (state == ViewPager.SCROLL_STATE_IDLE) {
-                    mPager.isScrolling = false;
+                if (state == ViewPager2.SCROLL_STATE_IDLE) {
+                    isScrolling = false;
                 } else {
-                    mPager.isScrolling = true;
+                    isScrolling = true;
                 }
             }
         });
@@ -414,11 +371,12 @@ public class CMain extends MyActivity {
         //checkUpdateVersion();
 
     }
-    @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
+
+    // @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void setControlsVisibility(boolean isVisible) {
         if (this.isFinishing()) return;
-        if (isVisible && isTitleShown){
-            isVisible=false;
+        if (isVisible && isTitleShown) {
+            isVisible = false;
         }
         onCreateSetButtons();
 
@@ -448,8 +406,6 @@ public class CMain extends MyActivity {
             mShortAnimTime = getResources().getInteger(android.R.integer.config_shortAnimTime);
         }
         mTitleView.animate().translationY(isVisible ? 0 : -mTitleHeight).setDuration(mShortAnimTime);
-//            mControlsView.setVisibility(isVisible ? View.VISIBLE : View.GONE);
-//            mTitleView.setVisibility(isVisible ? View.VISIBLE : View.GONE);
         mLeftRightPanel.setVisibility(isVisible ? View.VISIBLE : View.GONE);
         if (isVisible) {
             // Schedule a hide().
@@ -490,10 +446,10 @@ public class CMain extends MyActivity {
             rightView.setVisibility(View.GONE);
             rightVisibility = rightView.getVisibility();
         }
-
-        contentView.setDrawingCacheEnabled(true);
-        //contentView.buildDrawingCache(true);
-        screenShot = contentView.getDrawingCache();
+// DC 202212
+//        contentView.setDrawingCacheEnabled(true);
+//        screenShot = contentView.getDrawingCache();
+        screenShot = MyUtil.getBitmapFromView(contentView);
         if (screenShot == null) {
             screenShot = takeSnapshot(contentView);
             if (screenShot == null) {
@@ -501,7 +457,6 @@ public class CMain extends MyActivity {
             }
         }
         //contentView.setDrawingCacheEnabled(false);
-
         mControlsView.setVisibility(controlVisibility);
         mTitleView.setVisibility(titleVisibility);
         if (leftView != null) leftView.setVisibility(leftVisibility);
@@ -558,7 +513,7 @@ public class CMain extends MyActivity {
         });
 
         Button btnOnLineBible = (Button) findViewById(R.id.mainBtnOnlineBible);
-        if (CMain.is_2016DayShown()){
+        if (CMain.is_2016DayShown()) {
             btnOnLineBible.setText(R.string.main_support);
             btnOnLineBible.setOnClickListener(new View.OnClickListener() {
                 @Override
@@ -577,36 +532,36 @@ public class CMain extends MyActivity {
         }
 
         Button mainBtnPlan = (Button) findViewById(R.id.mainBtnOfflineBible);
-            mainBtnPlan.setText(R.string.main_arkist);
-            mainBtnPlan.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View v) {
-                    onClickOfflineBible(CMain.this);
-                }
-            });
-            if (mainBtnPlan != null) {
-                Intent intent = CMain.this.getPackageManager().getLaunchIntentForPackage("org.arkist.cnote");
-                if (intent != null) { // Exist
-                    mainBtnPlan.setText(R.string.BibleApp);
-                }
+        mainBtnPlan.setText(R.string.main_arkist);
+        mainBtnPlan.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                onClickOfflineBible(CMain.this);
             }
+        });
+        if (mainBtnPlan != null) {
+            Intent intent = CMain.this.getPackageManager().getLaunchIntentForPackage("org.arkist.cnote");
+            if (intent != null) { // Exist
+                mainBtnPlan.setText(R.string.BibleApp);
+            }
+        }
 
         Button mainBtnShare = (Button) findViewById(R.id.mainBtnShare);
         mainBtnShare.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                onClickShare(CMain.this,false);
+                onClickShare(CMain.this, false);
             }
         });
 
-        Button mainBtnAlarm = (Button) findViewById(R.id.mainBtnAlarm);
-        //mainBtnAlarm.setOnTouchListener(mDelayHideTouchListener);
-        mainBtnAlarm.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClickAlarm(CMain.this);
-            }
-        });
+//        Button mainBtnAlarm = (Button) findViewById(R.id.mainBtnAlarm);
+//        //mainBtnAlarm.setOnTouchListener(mDelayHideTouchListener);
+//        mainBtnAlarm.setOnClickListener(new View.OnClickListener() {
+//            @Override
+//            public void onClick(View v) {
+//                onClickAlarm(CMain.this);
+//            }
+//        });
 
         Button mainBtnAbout = (Button) findViewById(R.id.mainBtnAbout);
         //mainBtnAbout.setOnTouchListener(mDelayHideTouchListener);
@@ -643,7 +598,7 @@ public class CMain extends MyActivity {
         // Trigger the initial hide() shortly after the activity has been
         // created, to briefly hint to the user that UI controls
         // are available.
-        delayedHide(100);
+        //       delayedHide(100);
     }
 
     /**
@@ -659,7 +614,7 @@ public class CMain extends MyActivity {
 //        }
 //    };
 
-    Handler mHideHandler = new Handler();
+    Handler mHideHandler = new Handler(Looper.getMainLooper());
     Runnable mHideRunnable = new Runnable() {
         @Override
         public void run() {
@@ -668,15 +623,12 @@ public class CMain extends MyActivity {
         }
     };
 
-    /**
-     * Schedules a call to hide() in [delay] milliseconds, canceling any
-     * previously scheduled calls.
-     */
     public void delayedHide() {
         int delayMillis = AUTO_HIDE_DELAY_MILLIS;
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
     }
+
     public void delayedHide(int delayMillis) {
         mHideHandler.removeCallbacks(mHideRunnable);
         mHideHandler.postDelayed(mHideRunnable, delayMillis);
@@ -740,32 +692,35 @@ public class CMain extends MyActivity {
         if (!MyPermission.getInstance().checkPermission(
                 CMain.this,
                 MyPermission.REQUEST_ACCESS_STORAGE,
-                suppressRequestPermission)){
+                suppressRequestPermission)) {
             return;
         }
         saveScreenShot();
         popSelectTextImage(context, shareListener);
     }
-    private ContentValues getContentValues(Context context){
+
+    private ContentValues getContentValues(Context context) {
         ContentValues cv;
         try {
             int curYear = mDisplayDay.get(Calendar.YEAR);
             int curMonth = mDisplayDay.get(Calendar.MONTH);
             int curDay = mDisplayDay.get(Calendar.DAY_OF_MONTH);
             cv = mDailyBread.getContentValues(curYear, curMonth, curDay);
-        } catch (Exception ignored){
+        } catch (Exception ignored) {
             Calendar calendar = MyDailyBread.getInstance(context).getValidToDate();
             cv = mDailyBread.getContentValues(calendar.get(Calendar.YEAR), calendar.get(Calendar.MONTH), calendar.get(Calendar.DAY_OF_MONTH));
         }
         return cv;
     }
-    private String getContentValueGoldVerse(){
+
+    private String getContentValueGoldVerse() {
         int curYear = mDisplayDay.get(Calendar.YEAR);
         int curMonth = mDisplayDay.get(Calendar.MONTH);
         int curDay = mDisplayDay.get(Calendar.DAY_OF_MONTH);
         ContentValues cv = mDailyBread.getContentValues(curYear, curMonth, curDay);
         return cv.getAsString(MyDailyBread.wGoldVerse) + (curYear >= 2016 ? "" : "；和合本修訂版");
     }
+
     private void copyText(Context context) {
         try {
             ContentValues cv = getContentValues(context);
@@ -776,7 +731,7 @@ public class CMain extends MyActivity {
             mgr.copyToClipboard(CMain.this, verse);
             Toast.makeText(getApplicationContext(), R.string.main_copy_to_pasteboard, Toast.LENGTH_SHORT).show();
             //onClickSupport(CMain.this);
-        } catch (Exception ignored){
+        } catch (Exception ignored) {
             Toast.makeText(getApplicationContext(), R.string.main_nothing_to_copy, Toast.LENGTH_SHORT).show();
         }
     }
@@ -804,12 +759,12 @@ public class CMain extends MyActivity {
         String fileName = "pic_" + String.valueOf(System.currentTimeMillis()) + ".jpg";
         File imageFile = new File(Environment.getExternalStorageDirectory(), fileName);
         Uri uri;
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             File filelocation = new File(getCacheDir(), fileName);
-            uri = FileProvider.getUriForFile(context,"com.hkbs.HKBS.provider", filelocation);
+            uri = FileProvider.getUriForFile(context, "com.hkbs.HKBS.provider", filelocation);
         } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.M) {//"com.hkbs.HKBS.provider"
             //uri = FileProvider.getUriForFile(context,BuildConfig.APPLICATION_ID + ".provider",imageFile);
-            uri = FileProvider.getUriForFile(context,"com.hkbs.HKBS.provider",imageFile);
+            uri = FileProvider.getUriForFile(context, "com.hkbs.HKBS.provider", imageFile);
         } else {
             uri = Uri.fromFile(imageFile);
         }
@@ -838,7 +793,7 @@ public class CMain extends MyActivity {
             outstream.flush();
             outstream.close();
         } catch (Exception e) {
-            if (tryCounter==1) {
+            if (tryCounter == 1) {
                 try {
 
                 } catch (Exception e1) {
@@ -852,15 +807,15 @@ public class CMain extends MyActivity {
         Intent share = new Intent(Intent.ACTION_SEND);
         share.setType("image/jpeg");
         share.putExtra(android.content.Intent.EXTRA_SUBJECT, "「" +
-                (IS_2016_VERSION ?context.getString(R.string.app_name):context.getString(R.string.app_name_2015)) +
+                (IS_2016_VERSION ? context.getString(R.string.app_name) : context.getString(R.string.app_name_2015)) +
                 "」經文分享");
-        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R){
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
             share.addFlags(Intent.FLAG_GRANT_READ_URI_PERMISSION);
         }
         share.putExtra(android.content.Intent.EXTRA_STREAM, uri);
         try {
             startActivity(Intent.createChooser(share, "分享圖像"));
-        } catch (Exception e){
+        } catch (Exception e) {
             Toast.makeText(this, "Error", Toast.LENGTH_LONG).show();
         }
 //		Intent share = new Intent(Intent.ACTION_SEND);
@@ -886,7 +841,7 @@ public class CMain extends MyActivity {
                     "」" + getString(R.string.main_share_bible));//getResources().getString(R.string.app_name)
             intent.putExtra(android.content.Intent.EXTRA_TEXT, verse);
             startActivity(Intent.createChooser(intent, getResources().getString(R.string.app_name_2015)));
-        } catch (Exception ignored){
+        } catch (Exception ignored) {
 
         }
     }
@@ -1070,7 +1025,7 @@ public class CMain extends MyActivity {
             {"20", "箴言", "箴"},
             {"21", "传道书", "传"},
             {"22", "雅歌", "歌"},
-            {"23","以赛亚书","赛"},
+            {"23", "以赛亚书", "赛"},
             {"24", "耶利米书", "耶"},
             {"25", "耶利米哀歌", "哀"},
             {"26", "以西结书", "结"},
@@ -1129,12 +1084,12 @@ public class CMain extends MyActivity {
 //        bookName.replace("一", "壹");
 //        bookName.replace("二", "貳");
 //        bookName.replace("三", "參");
-        bookName=bookName.replace("壹","一");//約翰壹書4章18節
-        bookName=bookName.replace("貳","二");
-        bookName=bookName.replace("參","三");
-        String lang = AxTools.getPrefStr(MyApp.PREF_APP_LANG,"");
+        bookName = bookName.replace("壹", "一");//約翰壹書4章18節
+        bookName = bookName.replace("貳", "二");
+        bookName = bookName.replace("參", "三");
+        String lang = AxTools.getPrefStr(MyApp.PREF_APP_LANG, "");
         String bookAbbrev = "";
-        if (lang.equalsIgnoreCase(MyApp.PREF_APP_LANG_CN)){
+        if (lang.equalsIgnoreCase(MyApp.PREF_APP_LANG_CN)) {
             for (int i = 0; i < BOOKS_CHS.length; i++) {
                 if (bookName.equalsIgnoreCase(BOOKS_CHS[i][1])) {
                     bookAbbrev = BOOKS_CHS[i][2];
@@ -1152,7 +1107,7 @@ public class CMain extends MyActivity {
             }
         }
         if (bookAbbrev.equalsIgnoreCase("")) {
-            MyUtil.logError(TAG, "Cannot find:" + bcv.substring(0, digitFirstPos).trim()+"("+bookName+")");
+            MyUtil.logError(TAG, "Cannot find:" + bcv.substring(0, digitFirstPos).trim() + "(" + bookName + ")");
             return null;
         }
         int digitStopPos = 0;
@@ -1222,65 +1177,65 @@ public class CMain extends MyActivity {
         //return "rc 創 5:2";
     }
 
-    @Override
-    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
-        super.onActivityResult(requestCode, resultCode, intent);
-        if (DEBUG) MyUtil.log(TAG, "onActivityResult:" + requestCode + "," + resultCode);
-        switch (requestCode) {
-            case MyUtil.REQUEST_CALENDAR:
-                if (resultCode == RESULT_OK) {
-                    long newTime = intent.getLongExtra(MyUtil.EXTRA_SELECT_MILLSEC, 0);
-                    if (DEBUG) MyUtil.log(TAG, "CMain:" + newTime);
-                    if (newTime != 0) {
-                        Calendar newDate = Calendar.getInstance();
-                        newDate.setTimeInMillis(newTime);
-                        if (isWithinRange(newDate, 0)) {
-                            mDisplayDay.setTimeInMillis(newTime);
-                        } else {
-                            if (newDate.compareTo(mDailyBread.getValidFrDate()) < 0){
-                                mDisplayDay.setTimeInMillis(mDailyBread.getValidFrDate().getTimeInMillis());
-                            } else {
-                                mDisplayDay.setTimeInMillis(mDailyBread.getValidToDate().getTimeInMillis());
-                            }
-                        }
-                        onRefreshPage(mDisplayDay,false, true);
-                    }
-                }
-                overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
-                break;
-            case MyUtil.REQUEST_ABOUT:
-                overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
-                break;
-            case MyUtil.REQUEST_SUPPORT:
-                overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
-                break;
-        }
-    }
+//    @Override
+//    public void onActivityResult(int requestCode, int resultCode, Intent intent) {
+//        super.onActivityResult(requestCode, resultCode, intent);
+//        if (DEBUG) MyUtil.log(TAG, "onActivityResult:" + requestCode + "," + resultCode);
+//        switch (requestCode) {
+//            case MyUtil.REQUEST_CALENDAR:
+//                if (resultCode == RESULT_OK) {
+//                    long newTime = intent.getLongExtra(MyUtil.EXTRA_SELECT_MILLSEC, 0);
+//                    if (DEBUG) MyUtil.log(TAG, "CMain:" + newTime);
+//                    if (newTime != 0) {
+//                        Calendar newDate = Calendar.getInstance();
+//                        newDate.setTimeInMillis(newTime);
+//                        if (isWithinRange(newDate, 0)) {
+//                            mDisplayDay.setTimeInMillis(newTime);
+//                        } else {
+//                            if (newDate.compareTo(mDailyBread.getValidFrDate()) < 0){
+//                                mDisplayDay.setTimeInMillis(mDailyBread.getValidFrDate().getTimeInMillis());
+//                            } else {
+//                                mDisplayDay.setTimeInMillis(mDailyBread.getValidToDate().getTimeInMillis());
+//                            }
+//                        }
+//                        onRefreshPage(mDisplayDay,false, true);
+//                    }
+//                }
+//                overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
+//                break;
+//            case MyUtil.REQUEST_ABOUT:
+//                overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
+//                break;
+//            case MyUtil.REQUEST_SUPPORT:
+//                overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
+//                break;
+//        }
+//    }
 
     private boolean isWithinRange(Calendar checkDate, int nbrOfDates) {
-        if (MyDailyBread.allowBeyondRange && checkDate.get(Calendar.YEAR)>=MyDailyBread.beyondFrYear && checkDate.get(Calendar.YEAR)<=MyDailyBread.beyondToYear){
+        if (MyDailyBread.allowBeyondRange && checkDate.get(Calendar.YEAR) >= MyDailyBread.beyondFrYear && checkDate.get(Calendar.YEAR) <= MyDailyBread.beyondToYear) {
             return true;
         }
         Calendar frDate = (Calendar) mDailyBread.getValidFrDate().clone();
-        frDate.set(Calendar.HOUR_OF_DAY,0);
-        frDate.set(Calendar.MINUTE,0);
-        frDate.set(Calendar.SECOND,0);
-        frDate.set(Calendar.MILLISECOND,0);
+        frDate.set(Calendar.HOUR_OF_DAY, 0);
+        frDate.set(Calendar.MINUTE, 0);
+        frDate.set(Calendar.SECOND, 0);
+        frDate.set(Calendar.MILLISECOND, 0);
         Calendar toDate = (Calendar) mDailyBread.getValidToDate().clone();
-        toDate.set(Calendar.HOUR_OF_DAY,23);
-        toDate.set(Calendar.MINUTE,59);
-        toDate.set(Calendar.SECOND,59);
+        toDate.set(Calendar.HOUR_OF_DAY, 23);
+        toDate.set(Calendar.MINUTE, 59);
+        toDate.set(Calendar.SECOND, 59);
         toDate.set(Calendar.MILLISECOND, 0);
         toDate.add(Calendar.SECOND, 1);
         Calendar tmpDate = (Calendar) checkDate.clone();
-        tmpDate.set(Calendar.HOUR_OF_DAY,11);
-        tmpDate.set(Calendar.MINUTE,59);
+        tmpDate.set(Calendar.HOUR_OF_DAY, 11);
+        tmpDate.set(Calendar.MINUTE, 59);
         tmpDate.set(Calendar.SECOND, 59);
         tmpDate.set(Calendar.MILLISECOND, 0);
-        tmpDate.add(Calendar.DAY_OF_MONTH,nbrOfDates);
+        tmpDate.add(Calendar.DAY_OF_MONTH, nbrOfDates);
         if (tmpDate.compareTo(frDate) < 0 ||
-            tmpDate.compareTo(toDate) >= 0   ) {
-            MyDailyBread.showOutOfBounds(getApplicationContext(),tmpDate);
+                tmpDate.compareTo(toDate) >= 0) {
+            MyDailyBread.showOutOfBounds(getApplicationContext(), tmpDate);
             return false;
         } else {
             return true;
@@ -1310,7 +1265,7 @@ public class CMain extends MyActivity {
 
         String defaultCountry = MyUtil.getPrefStr(MyUtil.PREF_COUNTRY, "");
         if (TextUtils.isEmpty(defaultCountry)) {
-            handler = new Handler();
+            handler = new Handler(Looper.getMainLooper());
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -1345,7 +1300,7 @@ public class CMain extends MyActivity {
                         if (CMain.isAppInForground(CMain.this) && !CMain.this.isFinishing()) {
                             alertBuilder.show();
                         }
-                    } catch (Exception ignored){
+                    } catch (Exception ignored) {
 
                     }
                 }
@@ -1356,22 +1311,24 @@ public class CMain extends MyActivity {
         AxTools.runLater(500, new Runnable() {
             @Override
             public void run() {
-            try {
-                if (CMain.isAppInForground(CMain.this) && !CMain.this.isFinishing()) {
-                    DailyFragment dailyFragment = (DailyFragment) mAdapter.getItem(mPager.getCurrentItem());
-                    dailyFragment.onRefreshScreen();
-                    mAdapter.notifyDataSetChanged();
-                }
-            } catch (Exception ignored){
+                try {
+                    if (CMain.isAppInForground(CMain.this) && !CMain.this.isFinishing()) {
+                        // DC 202212 DailyFragment dailyFragment = (DailyFragment) mAdapter.getItemCount(mPager.getCurrentItem());
+                        DailyFragment dailyFragment = (DailyFragment) mAdapter.createFragment(mPager.getCurrentItem());
+                        dailyFragment.onRefreshScreen();
+                        mAdapter.notifyDataSetChanged();
+                    }
+                } catch (Exception ignored) {
 
-            }
+                }
             }
         });
     }
-    private void askHolyDay(){
+
+    private void askHolyDay() {
         int showHolyDay = MyUtil.getPrefInt(MyUtil.PREF_HOLY_DAY, -1);
         if (showHolyDay == -1) {
-            handler = new Handler();
+            handler = new Handler(Looper.getMainLooper());
             handler.postDelayed(new Runnable() {
                 @Override
                 public void run() {
@@ -1407,16 +1364,10 @@ public class CMain extends MyActivity {
             askNotHKBS();
         }
     }
-    private void askNotHKBS(){
-//        PackageManager pm = this.getPackageManager();
-//        PackageInfo pInfo = null;
-//        try {
-//            pInfo =  pm.getPackageInfo(this.getPackageName(),0);
-//        } catch (PackageManager.NameNotFoundException e1) {
-//            e1.printStackTrace();
-//        }
+
+    private void askNotHKBS() {
         Calendar calendar = Calendar.getInstance();
-        if (calendar.get(Calendar.YEAR)<=2015) {
+        if (calendar.get(Calendar.YEAR) <= 2015) {
             int showNotHkbs = MyUtil.getPrefInt(MyUtil.PREF_NOT_HKBS, -1);
             if (showNotHkbs == -1) {
                 MyUtil.setPrefInt(MyUtil.PREF_NOT_HKBS, 0);
@@ -1471,9 +1422,9 @@ public class CMain extends MyActivity {
 //		}
 //	}
     public void gotoPrevDay() {
-        if (mPager.isScrolling) return;
+        if (isScrolling) return;
         if (!MyDailyBread.allowBeyondRange && !isWithinRange(mDisplayDay, -1)) {
-            MyDailyBread.showOutOfBounds(getApplicationContext(),mDisplayDay);
+            MyDailyBread.showOutOfBounds(getApplicationContext(), mDisplayDay);
         } else {
             mDisplayDay.add(Calendar.DAY_OF_MONTH, -1);
             onRefreshPage(mDisplayDay, true, true);
@@ -1481,62 +1432,104 @@ public class CMain extends MyActivity {
     }
 
     public void gotoPriorMonth() {
-        if (mPager.isScrolling) return;
+        if (isScrolling) return;
         Calendar newCalendar = Calendar.getInstance();
         newCalendar.setTimeInMillis(mDisplayDay.getTimeInMillis());
         newCalendar.add(Calendar.MONTH, -1);
-        if (!MyDailyBread.allowBeyondRange && !isWithinRange(newCalendar,0)) {
-            MyDailyBread.showOutOfBounds(getApplicationContext(),newCalendar);
+        if (!MyDailyBread.allowBeyondRange && !isWithinRange(newCalendar, 0)) {
+            MyDailyBread.showOutOfBounds(getApplicationContext(), newCalendar);
             newCalendar.setTimeInMillis(mDailyBread.getValidFrDate().getTimeInMillis());
         }
         mDisplayDay.setTimeInMillis(newCalendar.getTimeInMillis());
         onRefreshPage(mDisplayDay, false, true);
     }
+
     public void gotoNextDay() {
-        if (mPager.isScrolling) return;
+        if (isScrolling) return;
         if (!MyDailyBread.allowBeyondRange && !isWithinRange(mDisplayDay, 1)) {
             Calendar calendar = (Calendar) mDisplayDay.clone();
-            calendar.add(Calendar.MONTH,1);
-            MyDailyBread.showOutOfBounds(getApplicationContext(),calendar);
+            calendar.add(Calendar.MONTH, 1);
+            MyDailyBread.showOutOfBounds(getApplicationContext(), calendar);
         } else {
             mDisplayDay.add(Calendar.DAY_OF_MONTH, 1);
             onRefreshPage(mDisplayDay, true, true);
         }
     }
 
-    public  void gotoNextMonth() {
-        if (mPager.isScrolling) return;
+    public void gotoNextMonth() {
+        if (isScrolling) return;
         Calendar newCalendar = Calendar.getInstance();
         newCalendar.setTimeInMillis(mDisplayDay.getTimeInMillis());
         newCalendar.add(Calendar.MONTH, +1);
-        if (!MyDailyBread.allowBeyondRange && !isWithinRange(newCalendar,0)) {
-            MyDailyBread.showOutOfBounds(getApplicationContext(),newCalendar);
+        if (!MyDailyBread.allowBeyondRange && !isWithinRange(newCalendar, 0)) {
+            MyDailyBread.showOutOfBounds(getApplicationContext(), newCalendar);
             newCalendar.setTimeInMillis(mDailyBread.getValidToDate().getTimeInMillis());
         }
         mDisplayDay.setTimeInMillis(newCalendar.getTimeInMillis());
         onRefreshPage(mDisplayDay, false, true);
 
     }
+
     private void onRefreshPage(Calendar calendar, final boolean smooth, boolean setPager) {
         final int position = MyDailyBread.date2index(getApplicationContext(), calendar);//Exclude last day
         if (setPager) {
             mPager.setCurrentItem(position, smooth);
         }
     }
-    private void onClickViewSupport(Context context){
-        MyUtil.trackClick(context, "Support", "M");
-        Intent intent = new Intent(context, SupportActivity.class);
-        startActivityForResult(intent, MyUtil.REQUEST_SUPPORT);
-        overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
-        return;
-    }
-    private void onClickOnLineBible(Context context){
+
+    ActivityResultLauncher<Intent> resultLauncher = registerForActivityResult(
+            new ActivityResultContracts.StartActivityForResult(),
+            new ActivityResultCallback<ActivityResult>() {
+                @Override
+                public void onActivityResult(ActivityResult result) {
+                    int resultCode = result.getResultCode();
+                    // There are no request codes
+                    Intent data = result.getData();
+                    if (data==null) return;
+                    // theRequest
+                    int requestCode = data.getIntExtra(MyUtil.EXTRA_REQUEST, -1);
+                    switch (requestCode) {
+                        case MyUtil.REQUEST_ALARM:
+                            break;
+                        case MyUtil.REQUEST_CALENDAR:
+                            if (resultCode == RESULT_OK) {
+                                long newTime = data.getLongExtra(MyUtil.EXTRA_SELECT_MILLSEC, 0);
+                                if (DEBUG) MyUtil.log(TAG, "CMain:" + newTime);
+                                if (newTime != 0) {
+                                    Calendar newDate = Calendar.getInstance();
+                                    newDate.setTimeInMillis(newTime);
+                                    if (isWithinRange(newDate, 0)) {
+                                        mDisplayDay.setTimeInMillis(newTime);
+                                    } else {
+                                        if (newDate.compareTo(mDailyBread.getValidFrDate()) < 0) {
+                                            mDisplayDay.setTimeInMillis(mDailyBread.getValidFrDate().getTimeInMillis());
+                                        } else {
+                                            mDisplayDay.setTimeInMillis(mDailyBread.getValidToDate().getTimeInMillis());
+                                        }
+                                    }
+                                    onRefreshPage(mDisplayDay, false, true);
+                                }
+                            }
+                            overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
+                            break;
+                        case MyUtil.REQUEST_ABOUT:
+                            overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
+                            break;
+                        case MyUtil.REQUEST_SUPPORT:
+                            overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
+                            break;
+                    }
+                }
+
+            });
+
+    private void onClickOnLineBible(Context context) {
         MyUtil.trackClick(context, "BibleOnLine", "M");
         final Object eabcv[] = getEBCV(getContentValueGoldVerse());
         //final String prefix = "http://rcuv.hkbs.org.hk/bible_list.php?dowhat=&version=RCUV&bible=";
         //final String prefix = "http://rcuv.hkbs.org.hk/RCUV_1/";
         String prefix;
-        if (CMain.is_2016DayShown()){
+        if (CMain.is_2016DayShown()) {
             prefix = "http://arkist.org/MyBibleMap/_php/getReadBibleUrl.php?editionNbr=2&";
         } else {
             prefix = "http://arkist.org/MyBibleMap/_php/getReadBibleUrl.php?editionNbr=1&";
@@ -1548,14 +1541,15 @@ public class CMain extends MyActivity {
         final int verseNbr = (Integer) eabcv[4];
 //		final String url = prefix+BOOKS_ENG[bookNbr-1]+chapter+chapterNbr+suffix;
 //      final String url = prefix+BOOKS_ENG[bookNbr-1]+"/"+chapterNbr+":"+verseNbr;
-        final String url = prefix+"bookNbr="+bookNbr+"&chapterNbr="+chapterNbr+"&verseNbr="+verseNbr;
+        final String url = prefix + "bookNbr=" + bookNbr + "&chapterNbr=" + chapterNbr + "&verseNbr=" + verseNbr;
         Intent intent = new Intent(Intent.ACTION_VIEW);
         Log.e(TAG, "Call another app " + url);
         intent.setData(Uri.parse(url));
         //onExitGoodCalendar(context);
         startActivity(intent);
     }
-//	private void onClickViewHkbsBible(Context context){
+
+    //	private void onClickViewHkbsBible(Context context){
 //		boolean isShownAdBanner = AxTools.getPrefBoolean("pref_showBanner", false);
 //		//isShownAdBanner=false;
 //		if (isShownAdBanner){
@@ -1612,10 +1606,10 @@ public class CMain extends MyActivity {
 //		onExitGoodCalendar(context);
 //		startActivity(intent);
 //	}
-    private void startBibleMap(Context context, Intent intent, ComponentName componentName){
+    private void startBibleMap(Context context, Intent intent, ComponentName componentName) {
         final Object eabcv[] = getEBCV(getContentValueGoldVerse());
-        final String finalEabcv = (String) eabcv[0]+ (String) eabcv[1]+" "+eabcv[3]+":"+eabcv[4];
-        MyUtil.log(TAG, "bcv:"+finalEabcv);
+        final String finalEabcv = (String) eabcv[0] + (String) eabcv[1] + " " + eabcv[3] + ":" + eabcv[4];
+        MyUtil.log(TAG, "bcv:" + finalEabcv);
         intent.setComponent(componentName);
         intent.setFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_MULTIPLE_TASK); // Disable bring existing task to foreground; Should used with New_Task
@@ -1628,17 +1622,18 @@ public class CMain extends MyActivity {
         //onExitGoodCalendar(context);
         context.startActivity(intent);
     }
-	private void onClickOfflineBible(Context context){
+
+    private void onClickOfflineBible(Context context) {
         Intent intent = context.getPackageManager().getLaunchIntentForPackage("org.arkist.cnote");
-        if (intent != null){
+        if (intent != null) {
             MyUtil.trackClick(context, "BibleApp", "M");
             //intent.setComponent(new ComponentName("org.arkist.cnote","org.arkist.cnote.WebActivity"));
             try {
-                startBibleMap(context,intent,new ComponentName("org.arkist.cnote","org.arkist.bx.BxActivity"));
-            } catch (Exception e){
+                startBibleMap(context, intent, new ComponentName("org.arkist.cnote", "org.arkist.bx.BxActivity"));
+            } catch (Exception e) {
                 try {
                     startBibleMap(context, intent, new ComponentName("org.arkist.cnote", "org.arkist.cnote.KnockActivity"));
-                } catch (Exception e2){
+                } catch (Exception e2) {
                     Toast.makeText(getApplicationContext(), R.string.main_cannot_find_bible_app, Toast.LENGTH_SHORT).show();
                 }
             }
@@ -1650,68 +1645,58 @@ public class CMain extends MyActivity {
                 downloadIntent.setData(Uri.parse("market://details?id=org.arkist.cnote"));
                 //onExitGoodCalendar(context);
                 startActivity(downloadIntent);
-            } catch (Exception e){
+            } catch (Exception e) {
                 MyUtil.trackClick(context, "BiblePlayStoreError", "M");
                 Toast.makeText(getApplicationContext(), R.string.main_cannot_find_bible_app, Toast.LENGTH_SHORT).show();
             }
         }
-	}
-//	private void onClickViewILoveTheBible(Context context){
-//		Intent intent = context.getPackageManager().getLaunchIntentForPackage("hk.org.hkbs.ilovethebible");
-//		if (intent != null){
-//			MyUtil.trackClick(context, "PlanApp", "M");
-//			context.startActivity(intent);
-//		} else {
-//			try {
-//				MyUtil.trackClick(context, "PlanPlayStore", "M");
-//				Toast.makeText(getApplicationContext(), "找尋讀經計劃App", Toast.LENGTH_SHORT).show();
-//				Intent downloadIntent = new Intent(Intent.ACTION_VIEW);
-//				downloadIntent.setData(Uri.parse("market://details?id=hk.org.hkbs.ilovethebible"));
-//				startActivity(downloadIntent);
-//			} catch (Exception e){
-//				MyUtil.trackClick(context, "PlanPlayStoreError", "M");
-//				Toast.makeText(getApplicationContext(), "找尋不到此機讀經計劃App版本", Toast.LENGTH_SHORT).show();
-//			}
-//		}
-//	}
-	private void onClickSelectCalendar(Context context){
-		MyUtil.trackClick(context, "Calendar", "M");
-		Intent intent = new Intent(context, CalendarActivity.class);
-		intent.putExtra(MyUtil.EXTRA_TYPE, MyUtil.EXTRA_TYPE_SELECT);
-		intent.putExtra(MyUtil.EXTRA_DEFAULT_DATE, MyUtil.sdfYYYYMMDDHHMM.format(mDisplayDay.getTime()));
-		startActivityForResult(intent, MyUtil.REQUEST_CALENDAR);
-		overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
-	}
-	private void onClickToday(Context context){
-		MyUtil.trackClick(context, "Today", "M");
-		Calendar newDate = Calendar.getInstance();
-		if (isWithinRange(newDate,0)){
+    }
+
+    private void onClickSelectCalendar(Context context) {
+        MyUtil.trackClick(context, "Calendar", "M");
+        Intent intent = new Intent(this, CalendarActivity.class);
+        intent.putExtra(MyUtil.EXTRA_REQUEST, MyUtil.REQUEST_CALENDAR);
+        intent.putExtra(MyUtil.EXTRA_TYPE, MyUtil.EXTRA_TYPE_SELECT);
+        intent.putExtra(MyUtil.EXTRA_DEFAULT_DATE, MyUtil.sdfYYYYMMDDHHMM.format(mDisplayDay.getTime()));
+        resultLauncher.launch(intent);
+        overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
+    }
+
+    private void onClickToday(Context context) {
+        MyUtil.trackClick(context, "Today", "M");
+        Calendar newDate = Calendar.getInstance();
+        if (isWithinRange(newDate, 0)) {
             MyUtil.sdfYYYYMMDD.setTimeZone(newDate.getTimeZone());
-			String newDateStr = MyUtil.sdfYYYYMMDD.format(newDate.getTime());
+            String newDateStr = MyUtil.sdfYYYYMMDD.format(newDate.getTime());
             mDisplayDay.setTimeZone(newDate.getTimeZone());
             mDisplayDay.setTimeInMillis(newDate.getTimeInMillis());
-            onRefreshPage(mDisplayDay,false, true);
-			Toast.makeText(context,newDateStr, Toast.LENGTH_SHORT).show();
-		}
-	}
-	private void onClickAbout(Context context){
-		MyUtil.trackClick(context, "About", "M");
-		Intent intent = new Intent(context, AboutActivity.class);
-		startActivityForResult(intent, MyUtil.REQUEST_ABOUT);
-		overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);		
-	}
-	private void onClickSupport(Context context){
-		MyUtil.trackClick(context, "Support", "M");
-		Intent intent = new Intent(context, SupportActivity.class);
-		startActivityForResult(intent, MyUtil.REQUEST_SUPPORT);
-		overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
-	}
-	private void onClickAlarm(Context context){
-		MyUtil.trackClick(context, "Alarm", "M");
-		Intent intent = new Intent(context, AlarmActivity.class);
-		startActivityForResult(intent, MyUtil.REQUEST_ALARM);
-		overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
-	}
+            onRefreshPage(mDisplayDay, false, true);
+            Toast.makeText(context, newDateStr, Toast.LENGTH_SHORT).show();
+        }
+    }
+
+    private void onClickAbout(Context context) {
+        MyUtil.trackClick(context, "About", "M");
+        Intent intent = new Intent(this, AboutActivity.class);
+        intent.putExtra(MyUtil.EXTRA_REQUEST, MyUtil.REQUEST_ABOUT);
+        resultLauncher.launch(intent);
+        overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
+    }
+
+    private void onClickSupport(Context context) {
+        MyUtil.trackClick(context, "Support", "M");
+        Intent intent = new Intent(this, SupportActivity.class);
+        intent.putExtra(MyUtil.EXTRA_REQUEST, MyUtil.REQUEST_SUPPORT);
+        resultLauncher.launch(intent);
+        overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
+    }
+//	private void onClickAlarm(Context context){
+//		MyUtil.trackClick(context, "Alarm", "M");
+//        Intent intent = new Intent(this, AlarmActivity.class);
+//        intent.putExtra(MyUtil.EXTRA_REQUEST, MyUtil.REQUEST_ALARM);
+//        resultLauncher.launch(intent);
+//		overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
+//	}
 //    /**
 //     * A paint that has utilities dealing with painting text.
 //     * @author <a href="maillto:nospam">Ben Barkay</a>
@@ -1846,7 +1831,7 @@ public class CMain extends MyActivity {
 //        }
 //    }
 
-//    private void showUpdateDialog(){
+    //    private void showUpdateDialog(){
 //        final AlertDialog.Builder builder = new AlertDialog.Builder(this);
 //        builder.setTitle("找到新的更新");
 //        builder.setPositiveButton("更新", new DialogInterface.OnClickListener() {
@@ -1872,7 +1857,7 @@ public class CMain extends MyActivity {
 //        builder.setCancelable(false);
 //        dialog = builder.show();
 //    }
-    public static boolean isAppInForground(Context context){
+    public static boolean isAppInForground(Context context) {
         boolean isInForeground = false;
         ActivityManager am = (ActivityManager) context.getSystemService(Context.ACTIVITY_SERVICE);
         List<ActivityManager.RunningAppProcessInfo> runningProcesses = am.getRunningAppProcesses();

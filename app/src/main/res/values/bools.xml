@@ -4,6 +4,6 @@
     <bool name="smallerWidget">true</bool>
     <bool name="middleWidget">true</bool>
     <bool name="xlargerWidget">true</bool>
-    <bool name="HardwareAcceration">true</bool>
+    <bool name="hardwareAccelerated">true</bool>
     <bool name="VmSafeMode">false</bool>
 </resources>

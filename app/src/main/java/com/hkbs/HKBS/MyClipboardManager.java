@@ -1,10 +1,5 @@
 package com.hkbs.HKBS;
 
-import java.io.FileInputStream;
-import java.io.FileNotFoundException;
-import java.io.IOException;
-import java.io.InputStreamReader;
-
 import android.annotation.SuppressLint;
 import android.content.ClipData;
 import android.content.ContentResolver;
@@ -13,8 +8,11 @@ import android.content.Intent;
 import android.content.res.AssetFileDescriptor;
 import android.net.Uri;
 import android.util.Log;
-import android.text.*;
-import android.content.*;
+
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.IOException;
+import java.io.InputStreamReader;
 
 public class MyClipboardManager {
 
@@ -42,11 +40,6 @@ public class MyClipboardManager {
 	@SuppressLint("NewApi")
 	public String readFromClipboard(Context context) {
 	    int sdk = android.os.Build.VERSION.SDK_INT;
-	    if (sdk < android.os.Build.VERSION_CODES.HONEYCOMB) {
-	        android.text.ClipboardManager clipboard = (android.text.ClipboardManager) context
-	                .getSystemService(context.CLIPBOARD_SERVICE);
-	        return clipboard.getText().toString();
-	    } else {
 	        android.content.ClipboardManager clipboard = (android.content.ClipboardManager) context
 	                .getSystemService(Context.CLIPBOARD_SERVICE);
 
@@ -75,7 +68,7 @@ public class MyClipboardManager {
 
 	            return text;
 	        }
-	    }
+
 	    return "";
 	}
 

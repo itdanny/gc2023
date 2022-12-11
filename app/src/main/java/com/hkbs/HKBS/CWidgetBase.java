@@ -10,15 +10,12 @@ import android.content.Intent;
 import android.os.Handler;
 import android.os.Looper;
 import android.text.TextUtils;
-import android.util.DisplayMetrics;
 import android.util.Log;
 import android.view.View;
-import android.view.WindowManager;
 import android.widget.RemoteViews;
 
 import com.hkbs.HKBS.arkCalendar.MyCalendarLunar;
 import com.hkbs.HKBS.arkUtil.MyUtil;
-import com.hkbs.MyGoldBroadcast;
 
 import org.arkist.share.AxDebug;
 import org.arkist.share.AxTools;
@@ -26,6 +23,8 @@ import org.arkist.share.AxTools;
 import java.util.Calendar;
 import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
+
+import androidx.core.content.ContextCompat;
 
 public class CWidgetBase extends AppWidgetProvider {
     final static private boolean DEBUG = true && CMain.DEBUG;
@@ -80,13 +79,13 @@ public class CWidgetBase extends AppWidgetProvider {
         MyUtil.log(getLayoutTag(), "widget.onReceive " + ((intent != null && intent.getAction() != null) ? intent.getAction() : ""));
         refreshAll(context);
 
-        Thread thread = new Thread(new Runnable() {
-            @Override
-            public void run() {
-                AxAlarm.setDailyOnDateChange(context);
-            }
-        });
-        thread.start();
+//        Thread thread = new Thread(new Runnable() {
+//            @Override
+//            public void run() {
+//                AxAlarm.setDailyOnDateChange(context);
+//            }
+//        });
+//        thread.start();
     }
 
     public String getClassName() {
@@ -101,7 +100,7 @@ public class CWidgetBase extends AppWidgetProvider {
         onUpdate(context, appWidgetManager, appWidgetIds);
     }
 
-    private Handler handler = new Handler();
+
     private Context mContext;
     private int[] mAppWidgetIds;
     private Runnable runnable = new Runnable() {
@@ -154,8 +153,8 @@ public class CWidgetBase extends AppWidgetProvider {
     MyDailyBread mDailyBread;
 
     private void onRefresh(ReceiveRef _recRef) {
-        MyUtil.log(getLayoutTag(), "widget.onRefresh widget=" + recRef.widgetID);
-        MyUtil.initMyUtil(recRef.context);
+        MyUtil.log(getLayoutTag(), "widget.onRefresh widget=" + _recRef.widgetID);
+        MyUtil.initMyUtil(_recRef.context);
         //RefreshAsyncTask refreshAsyncTask = new RefreshAsyncTask(this);
         //refreshAsyncTask.execute(recRef);
         ExecutorService executor = Executors.newSingleThreadExecutor();
@@ -203,18 +202,17 @@ public class CWidgetBase extends AppWidgetProvider {
         intent.addFlags(Intent.FLAG_ACTIVITY_SINGLE_TOP);
         intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
         intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        final PendingIntent pendingIntent = PendingIntent.getActivity(recRef.context, 0, intent, PendingIntent.FLAG_UPDATE_CURRENT);
+        final PendingIntent pendingIntent = PendingIntent.getActivity(recRef.context, 0, intent,PendingIntent.FLAG_IMMUTABLE |  PendingIntent.FLAG_UPDATE_CURRENT);
         if (pendingIntent != null) {
             recRef.views.setOnClickPendingIntent(R.id.xmlPage1Middle, pendingIntent);
         }
 
-        Intent broadcastIntent = new Intent(recRef.context, JustBroadcast.class);
-        final PendingIntent broadcastPendingIntent = PendingIntent.getActivity(recRef.context,
-                0, broadcastIntent, PendingIntent.FLAG_UPDATE_CURRENT);//PendingIntent.FLAG_UPDATE_CURRENT
-        if (broadcastPendingIntent != null) {
-            recRef.views.setOnClickPendingIntent(R.id.xmlPage1, broadcastPendingIntent);
-        }
-        //recRef.views.setOnClickPendingIntent(R.id.xmlPage2, broadcastPendingIntent);
+//        Intent broadcastIntent = new Intent(recRef.context, JustBroadcast.class);
+//        final PendingIntent broadcastPendingIntent = PendingIntent.getActivity(recRef.context,
+//                0, broadcastIntent, PendingIntent.FLAG_UPDATE_CURRENT);//PendingIntent.FLAG_UPDATE_CURRENT
+//        if (broadcastPendingIntent != null) {
+//            recRef.views.setOnClickPendingIntent(R.id.xmlPage1, broadcastPendingIntent);
+//        }
 
         int nbr = 1;
         Context context = recRef.context;
@@ -241,7 +239,9 @@ public class CWidgetBase extends AppWidgetProvider {
         String holiday = MyHoliday.getHolidayRemark(mDisplayDay.getTime());
         holiday = holiday.replace("*", "");
         final boolean isHoliday = (!holiday.equals("") && !holiday.startsWith("#")) || mDisplayDay.get(Calendar.DAY_OF_WEEK) == Calendar.SUNDAY;
-        int textColor = recRef.context.getResources().getColor(isHoliday ? R.color.holiday : R.color.weekday);
+        // DC202212
+        // int textColor = recRef.context.getResources().getColor(isHoliday ? R.color.holiday : R.color.weekday);
+        int textColor = ContextCompat.getColor(recRef.context, isHoliday ? R.color.holiday : R.color.weekday);
         if (holiday.startsWith("#")) {
             holiday = holiday.substring(1);
         }
@@ -356,7 +356,8 @@ public class CWidgetBase extends AppWidgetProvider {
                 break;
         }
 
-        recRef.views.setTextColor(getID(context, nbr, "WeekDay"), context.getResources().getColor(R.color.white));
+        // DC202212 recRef.views.setTextColor(getID(context, nbr, "WeekDay"), context.getResources().getColor(R.color.white));
+        recRef.views.setTextColor(getID(context, nbr, "WeekDay"), ContextCompat.getColor(context,R.color.white));
         if (curYear >= 2016) {
             //recRef.views.setTextColor(getID(context, nbr, "WeekDay"), textColor);
             recRef.views.setImageViewResource(getID(context, nbr, "WeekImage"), isHoliday ? R.drawable.red_weekday_2016 : R.drawable.green_weekday_2016);
@@ -472,21 +473,26 @@ public class CWidgetBase extends AppWidgetProvider {
  DEBUG ONLY - SHOW LAYOUT SIZE
  *********************************************************
  */
-        if (CMain.DEBUG_LAYOUT) {
-            String appVersionName = "?";
-            try {
-                appVersionName = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
-            } catch (Exception e) {
-                //
-            }
-            appVersionName = "v" + appVersionName + "." + context.getString(R.string.widget_deviceType) + mWidgetBase.getClassTag() + " " + AxTools.getScreenWidth() + ":" + layoutWidthInPixels;
-            Log.w(TAG, appVersionName);
-            recRef.views.setTextViewText(R.id.xmlWidgetVersion, appVersionName);
-            recRef.views.setTextColor(R.id.xmlWidgetVersion, textColor);
+//        if (CMain.DEBUG_LAYOUT) {
+//            String appVersionName = "?";
+//            try {
+//                //DC202212 appVersionName = context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+//                    appVersionName =  context.getPackageManager().getPackageInfo(context.getPackageName(), PackageManager.PackageInfoFlags.of(0)).versionName;
+//                } else {
+//                    appVersionName =  context.getPackageManager().getPackageInfo(context.getPackageName(), 0).versionName;
+//                }
+//            } catch (Exception e) {
+//                //
+//            }
+//            appVersionName = "v" + appVersionName + "." + context.getString(R.string.widget_deviceType) + mWidgetBase.getClassTag() + " " + AxTools.getScreenWidth() + ":" + layoutWidthInPixels;
+//            Log.w(TAG, appVersionName);
+//            recRef.views.setTextViewText(R.id.xmlWidgetVersion, appVersionName);
+//            recRef.views.setTextColor(R.id.xmlWidgetVersion, textColor);
+//            recRef.views.setViewVisibility(R.id.xmlWidgetVersion, View.VISIBLE);
+//        } else {
             recRef.views.setViewVisibility(R.id.xmlWidgetVersion, View.VISIBLE);
-        } else {
-            recRef.views.setViewVisibility(R.id.xmlWidgetVersion, View.GONE);
-        }
+//        }
         mWidgetBase.doUpdateAppWidgetNow(recRef.context, recRef.views, recRef.widgetID);
         MyUtil.log(mWidgetBase.getLayoutTag(), "widget.onRefresh.Finish");
     }
@@ -520,16 +526,18 @@ public class CWidgetBase extends AppWidgetProvider {
 		public ReceiveRef(Context context, int widgetID, int layoutId) {
             this.mLayoutId=layoutId;
             this.context = context;
-            DisplayMetrics metrics = new DisplayMetrics();
-            WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-            wm.getDefaultDisplay().getMetrics(metrics);
+// DC 202212
+//            DisplayMetrics metrics = new DisplayMetrics();
+//            WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+//            wm.getDefaultDisplay().getMetrics(metrics);
             int screen_type=(int) context.getResources().getDimension(R.dimen.screen_type);
             // 240 -> 216 ; 320 -> 339
             int smallSize= AxTools.dp2px(180);//widget size is 180
             int standardSize=AxTools.dp2px(240);//widget size is 240
             int sw600Size=AxTools.dp2px(360);//AxTools.dp2px(360);//widget size is 360
             int largeHeight=AxTools.dp2px(480);//AxTools.dp2px(360);//widget size is 360
-            if (DEBUG) Log.i(TAG,"screenType:"+screen_type+" "+metrics.widthPixels+" "+smallSize+" "+standardSize+" "+sw600Size+" "+largeHeight);
+// DC 202212
+//            if (DEBUG) Log.i(TAG,"screenType:"+screen_type+" "+metrics.widthPixels+" "+smallSize+" "+standardSize+" "+sw600Size+" "+largeHeight);
             //if (android.os.Build.MODEL.equalsIgnoreCase("SM-A8000")){
 //            if (MyUtil.scaleDensity(context)==3 && MyUtil.widthPixels(context)==1080 && MyUtil.heightPixels(context)==1920){
 //                this.views = new RemoteViews(context.getPackageName(), R.layout.activity_cwidget_large);
@@ -548,15 +556,10 @@ public class CWidgetBase extends AppWidgetProvider {
 	// All Activities can have receiver but we centrallized all receive in MyGoldBroadcast and use Filter to control.
 	// This app won't answer call individually
     static private int intentCounter;
-	static public void broadcastMe(Context context){
-		if (DEBUG) MyUtil.log(TAG, "Alarm.broadcastme.");
-		Intent intent=new Intent(context,MyGoldBroadcast.class);
-        intent.setAction("com.hkbs.HKBS.WidgetUpdate");
-		//intent.setData(ContentUris.withAppendedId(Uri.EMPTY, buttonID));
-//		intent.putExtra(AxAlarm.EXTRA_BROADCAST_CODE, MyGoldBroadcast.REQUEST_WIDGET);
-        // below statment should be different on every call so that it won't reuse and can't broadcase wrong variables
-//		intentCounter++;
-//		intent.setData(Uri.withAppendedPath(Uri.parse(MyGoldBroadcast.URI_SCHEME+ "://widget/"+ MyGoldBroadcast.REQUEST_WIDGET+"/"),String.valueOf(intentCounter)));
-		context.sendBroadcast(intent);
-	}
+//	static public void broadcastMe(Context context){
+//		if (DEBUG) MyUtil.log(TAG, "Alarm.broadcastme.");
+//		Intent intent=new Intent(context,MyGoldBroadcast.class);
+//        intent.setAction("com.hkbs.HKBS.WidgetUpdate");
+//    	context.sendBroadcast(intent);
+//	}
 }

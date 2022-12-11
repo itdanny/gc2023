@@ -5,22 +5,30 @@ import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.graphics.Bitmap;
+import android.graphics.Canvas;
 import android.graphics.Matrix;
 import android.graphics.drawable.BitmapDrawable;
 import android.graphics.drawable.Drawable;
 import android.os.Build;
-import android.preference.PreferenceManager;
 import android.telephony.TelephonyManager;
 import android.util.DisplayMetrics;
 import android.util.Log;
+import android.view.View;
 import android.view.WindowManager;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
 
+import com.hkbs.HKBS.MyApp;
+
 import java.text.SimpleDateFormat;
+import java.util.Calendar;
+import java.util.Date;
+import java.util.GregorianCalendar;
 import java.util.Locale;
 import java.util.Map;
 import java.util.TimeZone;
+
+import androidx.preference.PreferenceManager;
 
 //import com.google.analytics.tracking.android.EasyTracker;
 //import com.google.analytics.tracking.android.MapBuilder;
@@ -52,7 +60,8 @@ public class MyUtil {
 	final static public String FIELD_EventID = "EventID";
 	final static public String FIELD_TagValue = "TagValue";
 	final static public String FIELD_Code = "Code";
-	
+
+    final static public String EXTRA_REQUEST = "extraRequest";
 	final static public String EXTRA_TYPE = "extraType";
 	final static public String EXTRA_TYPE_SELECT = "extraTypeSelect";
 	final static public String EXTRA_DEFAULT_DATE = "extraDefaultDate";
@@ -90,6 +99,47 @@ public class MyUtil {
 	
 	public MyUtil() {		
 	}
+    public static Bitmap getBitmapFromView(View view) {
+        Bitmap bitmap = Bitmap.createBitmap(
+                view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888
+        );
+        Canvas canvas = new Canvas(bitmap);
+        view.draw(canvas);
+        return bitmap;
+    }
+
+    public static Bitmap getBitmapFromViewByColor(View view,int defaultColor) {
+        Bitmap bitmap = Bitmap.createBitmap(
+                view.getWidth(), view.getHeight(), Bitmap.Config.ARGB_8888
+        );
+        Canvas canvas = new Canvas(bitmap);
+        canvas.drawColor(defaultColor);
+        view.draw(canvas);
+        return bitmap;
+    }
+    public static int timeZoneOffsetInMillsec(){
+//        TimeZone tz = TimeZone.getDefault();
+//        Calendar cal = GregorianCalendar.getInstance(tz);
+//        return tz.getOffset(cal.getTimeInMillis());
+        return TimeZone.getDefault().getOffset(System.currentTimeMillis());
+    }
+    public static String timeZoneOffsetInString(){
+        int offsetInMillis = TimeZone.getDefault().getOffset(System.currentTimeMillis());
+        String offset = String.format("%02d:%02d", Math.abs(offsetInMillis / 3600000), Math.abs((offsetInMillis / 60000) % 60));
+        return "GMT"+(offsetInMillis >= 0 ? "+" : "-") + offset;
+    }
+    public static long getJulianDay(long startDate) {
+        // startDate - the milliseconds since January 1, 1970, 00:00:00 GMT.
+        GregorianCalendar date = (GregorianCalendar) GregorianCalendar.getInstance(TimeZone.getDefault());
+        date.setTime(new Date(startDate));
+        date.set(Calendar.HOUR_OF_DAY, 0);
+        date.set(Calendar.MINUTE, 0);
+        date.set(Calendar.SECOND, 0);
+        date.set(Calendar.MILLISECOND, 0);
+        //transform your calendar to a long in the way you prefer
+        return date.getTimeInMillis();
+    }
+
 	static public void initMyUtil(Context context){
 		mContext=context;
 		utcYMD.setTimeZone(TimeZone.getTimeZone("UTC"));
@@ -142,7 +192,8 @@ public class MyUtil {
 		curCal = curCal[0].split("-");
 		DatePickerDialog dlg;
         dlg = new DatePickerDialog(context,
-                android.R.style.Theme_Holo_Light_Dialog_NoActionBar, listener,
+                // DC 202212
+                0, listener,
                 Integer.parseInt(curCal[0]),
                 Integer.parseInt(curCal[1])-1,
                 Integer.parseInt(curCal[2]));
@@ -168,11 +219,11 @@ public class MyUtil {
 
 	    // Create a new bitmap and convert it to a format understood by the ImageView
 	    Bitmap scaledBitmap = Bitmap.createBitmap(bitmap, 0, 0, width, height, matrix, true);
-	    BitmapDrawable result = new BitmapDrawable(scaledBitmap);
+	    //BitmapDrawable result = new BitmapDrawable(scaledBitmap);
+        BitmapDrawable drawable = new BitmapDrawable(MyApp.context().getResources(), scaledBitmap);
 //	    width = scaledBitmap.getWidth();
 //	    height = scaledBitmap.getHeight();
-	    
-	    return result;
+	    return drawable;
 	}
 	static public void scaleImage(ImageView view, int boundBoxInDp)	{
 	    // Get the ImageView and its bitmap
@@ -253,26 +304,38 @@ public class MyUtil {
     static private float _scaleDensity=0;
     public static float scaleDensity(Context context){
     	if (_scaleDensity==0){
-	    	final WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-	    	final DisplayMetrics dm = new DisplayMetrics();
-            if (Build.VERSION.SDK_INT >=17) {
-                wm.getDefaultDisplay().getRealMetrics(dm);
-            } else {
-                wm.getDefaultDisplay().getMetrics(dm);
-            }
-	        return dm.scaledDensity;
+            // DC 202212
+            return MyUtil.getDisplayMetrics(context).density;
+//            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.R) {
+//                Configuration config = MyApp.context().getResources().getConfiguration();
+//                return (config.densityDpi) / 160f;
+//            } else {
+//                DisplayMetrics metrics = MyApp.context().getResources().getDisplayMetrics();
+//                return metrics.density;
+//            }
+//        	final WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+//	    	final DisplayMetrics dm = new DisplayMetrics();
+//            if (Build.VERSION.SDK_INT >=17) {
+//                wm.getDefaultDisplay().getRealMetrics(dm);
+//            } else {
+//                wm.getDefaultDisplay().getMetrics(dm);
+//            }
+//	        return dm.scaledDensity;
     	} else {
     		return _scaleDensity;
     	}
     }
     public static double diagnol(Context context){
-    	final WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-    	final DisplayMetrics dm = new DisplayMetrics();
-        if (Build.VERSION.SDK_INT >=17) {
-            wm.getDefaultDisplay().getRealMetrics(dm);
-        } else {
-            wm.getDefaultDisplay().getMetrics(dm);
-        }
+        // DC 202212
+//    	final WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+//    	final DisplayMetrics dm = new DisplayMetrics();
+//        if (Build.VERSION.SDK_INT >=17) {
+//            wm.getDefaultDisplay().getRealMetrics(dm);
+//        } else {
+//            wm.getDefaultDisplay().getMetrics(dm);
+//        }
+        DisplayMetrics dm = MyUtil.getDisplayMetrics(context);
+//        final DisplayMetrics dm = MyApp.context().getResources().getDisplayMetrics();
     	final float heightInches = dm.heightPixels /dm.ydpi;
         final float widthInches = dm.widthPixels /dm.xdpi;
         return Math.sqrt((heightInches*heightInches)+(widthInches*widthInches));
@@ -281,23 +344,52 @@ public class MyUtil {
     	return MyUtil.diagnol(context)>6.5f; 
     }
     public static int heightPixels(Context context){
-    	final WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-    	final DisplayMetrics dm = new DisplayMetrics();
-        if (Build.VERSION.SDK_INT >=17) {
-            wm.getDefaultDisplay().getRealMetrics(dm);
-        } else {
-            wm.getDefaultDisplay().getMetrics(dm);
-        }
+//    	final WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+//    	final DisplayMetrics dm = new DisplayMetrics();
+//        if (Build.VERSION.SDK_INT >=17) {
+//            wm.getDefaultDisplay().getRealMetrics(dm);
+//        } else {
+//            wm.getDefaultDisplay().getMetrics(dm);
+//        }
+        final DisplayMetrics dm = MyApp.context().getResources().getDisplayMetrics();
         return dm.heightPixels;
     }
     public static int widthPixels(Context context){
-    	final WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
-    	final DisplayMetrics dm = new DisplayMetrics();
-        if (Build.VERSION.SDK_INT >=17) {
-            wm.getDefaultDisplay().getRealMetrics(dm);
-        } else {
-            wm.getDefaultDisplay().getMetrics(dm);
-        }
+//    	final WindowManager wm = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+//    	final DisplayMetrics dm = new DisplayMetrics();
+//        if (Build.VERSION.SDK_INT >=17) {
+//            wm.getDefaultDisplay().getRealMetrics(dm);
+//        } else {
+//            wm.getDefaultDisplay().getMetrics(dm);
+//        }
+        final DisplayMetrics dm = MyApp.context().getResources().getDisplayMetrics();
         return dm.widthPixels;
     }
+
+static public DisplayMetrics getDisplayMetrics(Context context) {
+    if (Build.VERSION.SDK_INT>= Build.VERSION_CODES.R) {
+        return context.getResources().getDisplayMetrics();
+    } else {
+        DisplayMetrics dm = new DisplayMetrics();
+        WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
+        windowManager.getDefaultDisplay().getRealMetrics(dm);
+        return dm;
+    }
+}
+//    static public Display getDisplay(Context context){
+//        if (Build.VERSION.SDK_INT>=Build.VERSION_CODES.R){
+//            return getDisplayApiR(context);
+//        } else {
+//            return getDisplayApiL(context);
+//        }
+//    }
+//    @RequiresApi(api=Build.VERSION_CODES.LOLLIPOP)
+//    private static Display getDisplayApiL(Context context){
+//        WindowManager wm = (WindowManager)context.getSystemService(Context.WINDOW_SERVICE);
+//        return wm.getDefaultDisplay();
+//    }
+//    @RequiresApi(api=Build.VERSION_CODES.R)
+//    private static Display getDisplayApiR(Context context){
+//        return context.getDisplay();
+//    }
 }

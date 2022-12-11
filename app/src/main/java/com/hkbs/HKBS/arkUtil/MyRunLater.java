@@ -1,6 +1,7 @@
 package com.hkbs.HKBS.arkUtil;
 
 import android.os.Handler;
+import android.os.Looper;
 
 public class MyRunLater {
 	public interface Callback {
@@ -15,21 +16,21 @@ public class MyRunLater {
 	private void myRun(int delay, Callback callback){
 		final Callback runLaterCallback = callback;
 		final int runLaterDelay = delay;
-		Handler handler = new Handler();
+        // DC 202212
 		if (delay==0){
-			handler.post(new Runnable() {
-				@Override
-				public void run() {
-					runLaterCallback.ready();										
-				}
-			});
+            new Handler(Looper.getMainLooper()).post(new Runnable() {
+                @Override
+                public void run() {
+                    runLaterCallback.ready();
+                }
+            });
 		} else {
-			handler.postDelayed(new Runnable() {
-				@Override
-				public void run() {
-					runLaterCallback.ready();										
-				}
-			},runLaterDelay);
+            new Handler(Looper.getMainLooper()).postDelayed(new Runnable() {
+                @Override
+                public void run() {
+                    runLaterCallback.ready();
+                }
+            }, runLaterDelay);
 		}
 	}
 }

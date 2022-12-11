@@ -69,10 +69,11 @@ public class MyPermission {
                 case REQUEST_ACCESS_STORAGE:
                     permissionDesc = context.getString(R.string.permissionStorage);
                     permission_1 = Manifest.permission.WRITE_EXTERNAL_STORAGE;
+                    permission_2 = Manifest.permission.READ_EXTERNAL_STORAGE;
                     permission = ContextCompat.checkSelfPermission(context, permission_1);
-//                    if (permission == PackageManager.PERMISSION_GRANTED) {
-//                        permission = ContextCompat.checkSelfPermission(context, permission_2);
-//                    }
+                    if (permission == PackageManager.PERMISSION_GRANTED) {
+                        permission = ContextCompat.checkSelfPermission(context, permission_2);
+                    }
                     permissionArr = new String[]{
                             Manifest.permission.READ_EXTERNAL_STORAGE,
                             Manifest.permission.WRITE_EXTERNAL_STORAGE};

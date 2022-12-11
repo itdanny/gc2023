@@ -17,7 +17,6 @@
 package com.hkbs.HKBS;
 
 import android.content.Context;
-import android.text.Html;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -40,6 +39,9 @@ import java.util.HashMap;
 import java.util.Locale;
 import java.util.Map;
 
+import androidx.core.content.ContextCompat;
+import androidx.core.text.HtmlCompat;
+
 public class CalendarAdapter extends BaseAdapter {
 	static final public SimpleDateFormat sdfDate = new SimpleDateFormat("yyyyMMdd", Locale.US);
 	static final boolean IS_SHOW_LUNAR_DAY_ON_SUNDAY_ONLY = false;
@@ -47,13 +49,13 @@ public class CalendarAdapter extends BaseAdapter {
 	static final int GRID_TYPE_TITLE = 0;
 	static final int GRID_TYPE_CELL = 1;
 	// references to our items
-	public MyDayEvents[] daysEvents;
-	private MyDayEvents[] daysTitles;
+	public MyDayEvents[] daysEvents=new MyDayEvents[]{};
+	private MyDayEvents[] daysTitles=new MyDayEvents[]{};
 
 	private Context actContext;
 	private Calendar displayMonth;
 	public Calendar selectedDate;
-	private ArrayList<String> items;
+	private ArrayList<String> items= new ArrayList<>();
 	private int gridType;
 	private String defaultLang;
 	private Calendar today;
@@ -198,33 +200,33 @@ public class CalendarAdapter extends BaseAdapter {
 					txtCell.setBackgroundResource(R.color.calendarTodayBkg);					
 			} else { 
 				if (isOtherMonthCell) {
-					txtCell.setBackgroundColor(actContext.getResources().getColor(R.color.calendarOffBkg));
+					txtCell.setBackgroundColor(ContextCompat.getColor(MyApp.context(),R.color.calendarOffBkg));
 				} else {
-					txtCell.setBackgroundColor(actContext.getResources().getColor(R.color.calendarOnBkg));
+					txtCell.setBackgroundColor(ContextCompat.getColor(MyApp.context(),R.color.calendarOnBkg));
 				}
 			}
 			if (isOtherMonthCell) {
 				if (isHoliday) {
-					dayView.setTextColor(actContext.getResources().getColor(R.color.sundayTextInActive));
+					dayView.setTextColor(ContextCompat.getColor(MyApp.context(),R.color.sundayTextInActive));
 				} else {
-					dayView.setTextColor(actContext.getResources().getColor(R.color.weekdayTextInActive));
+					dayView.setTextColor(ContextCompat.getColor(MyApp.context(),R.color.weekdayTextInActive));
 				}
 			} else {
 				if (isHoliday) {
-					dayView.setTextColor(actContext.getResources().getColor(R.color.sundayTextActive));
+					dayView.setTextColor(ContextCompat.getColor(MyApp.context(),R.color.sundayTextActive));
 				} else {
-					dayView.setTextColor(actContext.getResources().getColor(R.color.weekdayTextActive));
+					dayView.setTextColor(ContextCompat.getColor(MyApp.context(),R.color.weekdayTextActive));
 				}				
 			}
 			output = output + MyCalendar.getCounterString(curDayEvents.counter,false) + "<br><small>" + curDayEvents.text + "</small>";
-			dayView.setText(Html.fromHtml(output));
+			dayView.setText(HtmlCompat.fromHtml(output,HtmlCompat.FROM_HTML_MODE_LEGACY));
 			
 			//if (!getHolidayText(actContext, curCal).equals("")){
 			if (!holiday.equals("") && !holiday.startsWith("#")){
 				if (isOtherMonthCell) {
-					dayView.setTextColor(actContext.getResources().getColor(R.color.sundayTextInActive));
+					dayView.setTextColor(ContextCompat.getColor(MyApp.context(),R.color.sundayTextInActive));
 				} else {
-					dayView.setTextColor(actContext.getResources().getColor(R.color.sundayTextActive));
+					dayView.setTextColor(ContextCompat.getColor(MyApp.context(),R.color.sundayTextActive));
 				}
 			}			
 		}
@@ -305,8 +307,6 @@ public class CalendarAdapter extends BaseAdapter {
 		// clear items
 		items.clear();
 		daysEvents = MyCalendar.getEachDayEvents(actContext, displayMonth,false);
-//		daysEvents = getDaysArray(displayMonth);
-//		MyApp.log("?", ".......NbrOfEvents:"+daysEvents.length);
 	}
 
 	public static String getFullDayName(int day) {

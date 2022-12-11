@@ -24,6 +24,7 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_alignParentTop="true"
+            android:gravity="center"
             android:orientation="horizontal" >
 
             <TextView
@@ -36,7 +37,7 @@
                 android:gravity="left"
                 android:inputType="none"
                 android:text="201X"
-                android:textSize="22sp" />
+                android:textSize="20sp" />
 
             <TextView
                 android:id="@+id/xmlPage1EngMonthName"
@@ -45,7 +46,7 @@
                 android:gravity="center"
                 android:inputType="none"
                 android:text="Decemeber"
-                android:textSize="28sp"
+                android:textSize="26sp"
                 android:textStyle="bold" />
 
             <TextView
@@ -57,8 +58,8 @@
                 android:layout_weight="1"
                 android:gravity="right"
                 android:inputType="none"
-                android:text="一月"
-                android:textSize="22sp" />
+                android:text="十二月"
+                android:textSize="20sp" />
             
         </LinearLayout>
 
@@ -351,6 +352,18 @@
             android:gravity="right|bottom"
             android:text="Hint …………………."
             android:textSize="14sp" />
+        <TextView
+            android:id="@+id/xmlWidgetVersion"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:layout_alignParentBottom="true"
+            android:layout_alignParentLeft="true"
+            android:layout_marginLeft="2dp"
+            android:layout_marginBottom="1dp"
+            android:gravity="left"
+            android:text="."
+            android:textSize="18sp"
+            android:textColor="@color/greyWhite"/>
     </RelativeLayout>
 
 </LinearLayout>

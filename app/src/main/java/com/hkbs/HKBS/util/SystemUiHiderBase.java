@@ -1,8 +1,12 @@
 package com.hkbs.HKBS.util;
 
 import android.app.Activity;
+import android.os.Build;
 import android.view.View;
+import android.view.WindowInsets;
 import android.view.WindowManager;
+
+import androidx.annotation.RequiresApi;
 
 /**
  * A base implementation of {@link SystemUiHider}. Uses APIs available in all
@@ -15,10 +19,10 @@ public class SystemUiHiderBase extends SystemUiHider {
 	 */
 	private boolean mVisible = true;
 
-	/**
-	 * Constructor not intended to be called by clients. Use
-	 * {@link SystemUiHider#getInstance} to obtain an instance.
-	 */
+//	/**
+//	 * Constructor not intended to be called by clients. Use
+//	 * {@link SystemUiHider#getInstance} to obtain an instance.
+//	 */
 	protected SystemUiHiderBase(Activity activity, View anchorView, int flags) {
 		super(activity, anchorView, flags);
 	}
@@ -40,20 +44,24 @@ public class SystemUiHiderBase extends SystemUiHider {
 		return mVisible;
 	}
 
-	@Override
+	@RequiresApi(api = Build.VERSION_CODES.R)
+    @Override
 	public void hide() {
 		if ((mFlags & FLAG_FULLSCREEN) != 0) {
-			mActivity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
-					WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            mActivity.getWindow().getInsetsController().hide(WindowInsets.Type.statusBars());
+//			mActivity.getWindow().setFlags(WindowManager.LayoutParams.FLAG_FULLSCREEN,
+//					WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		}
 		mOnVisibilityChangeListener.onVisibilityChange(false);
 		mVisible = false;
 	}
 
-	@Override
+	@RequiresApi(api = Build.VERSION_CODES.R)
+    @Override
 	public void show() {
 		if ((mFlags & FLAG_FULLSCREEN) != 0) {
-			mActivity.getWindow().setFlags(0, WindowManager.LayoutParams.FLAG_FULLSCREEN);
+            mActivity.getWindow().getInsetsController().hide(WindowInsets.Type.statusBars());
+//			mActivity.getWindow().setFlags(0, WindowManager.LayoutParams.FLAG_FULLSCREEN);
 		}
 		mOnVisibilityChangeListener.onVisibilityChange(true);
 		mVisible = true;

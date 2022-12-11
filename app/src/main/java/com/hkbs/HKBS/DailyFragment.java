@@ -4,7 +4,6 @@ import android.content.ContentValues;
 import android.graphics.Paint;
 import android.graphics.Rect;
 import android.os.Bundle;
-import android.text.Html;
 import android.text.TextPaint;
 import android.text.TextUtils;
 import android.util.Log;
@@ -28,6 +27,8 @@ import org.arkist.share.AxTools;
 
 import java.util.Calendar;
 
+import androidx.core.content.ContextCompat;
+import androidx.core.text.HtmlCompat;
 import androidx.fragment.app.Fragment;
 
 /**
@@ -113,6 +114,7 @@ public class DailyFragment extends Fragment {
         mLunar = new MyCalendarLunar(mCalendar,true);
         onRefreshScreen();
     }
+
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
                              Bundle savedInstanceState) {
@@ -210,7 +212,7 @@ public class DailyFragment extends Fragment {
         if (mHolidayText.startsWith("#")) {
             mHolidayText = mHolidayText.substring(1);
         }
-        mTextColor = getResources().getColor(mIsHoliday ? R.color.holiday : R.color.weekday);        
+        mTextColor = ContextCompat.getColor(MyApp.context(),mIsHoliday ? R.color.holiday : R.color.weekday);
 
         setRow1YearAndMonth();
         setRow2Day();
@@ -255,8 +257,9 @@ public class DailyFragment extends Fragment {
         } else {
             mHoliday1View.setVisibility(View.VISIBLE);
             // Split Empty String will cause 1st one be empty; So we remove 1st and add back
-            String str [] = mHolidayText.substring(1).split("");
-            str[0] = mHolidayText.substring(0,1);
+//            String str [] = mHolidayText.substring(1).split("");
+//            str[0] = mHolidayText.substring(0,1);
+            String str[] = mHolidayText.split("");
             //ok now.
             int remarkLength = Math.min(maxCharacters * 2, str.length);
             int prefixlength = Math.min(maxCharacters, str.length);
@@ -354,7 +357,7 @@ public class DailyFragment extends Fragment {
         } else {
             mWeekDayImage.setImageResource(mIsHoliday ? R.drawable.red_weekday_2015 : R.drawable.green_weekday_2015);
         }
-        mWeekDay.setTextColor(getResources().getColor(R.color.white));
+        mWeekDay.setTextColor(ContextCompat.getColor(MyApp.context(),R.color.white));
 // 2021.06.21
         String lunarMonth = mContentValues.getAsString(MyDailyBread.wLunarMonth);
         if (lunarMonth!=null) {
@@ -445,16 +448,16 @@ public class DailyFragment extends Fragment {
 
         //if (CMain.IS_2016_VERSION){
         if (mThisPageYear >=2016) {
-            mGoldFrame.setImageDrawable(getResources().getDrawable(mIsHoliday?R.drawable.red_frame_2016:R.drawable.green_frame_2016));
+            mGoldFrame.setImageDrawable(ContextCompat.getDrawable(getActivity(),mIsHoliday?R.drawable.red_frame_2016:R.drawable.green_frame_2016));
             mGoldFrame.setVisibility(View.VISIBLE);
         } else {
             ImageView upperFrame = (ImageView) mRootView.findViewById(R.id.xmlPage1ImageFrameUpper);
             ImageView lowerFrame = (ImageView) mRootView.findViewById(R.id.xmlPage1ImageFrameLower);
-            mGoldFrame.setImageDrawable(getResources().getDrawable(mIsHoliday?R.drawable.red_frame_2015:R.drawable.green_frame_2015));
+            mGoldFrame.setImageDrawable(ContextCompat.getDrawable(getActivity(),mIsHoliday?R.drawable.red_frame_2015:R.drawable.green_frame_2015));
 
             mGoldFrame.setVisibility(View.GONE);
-            upperFrame.setImageDrawable(getResources().getDrawable(mIsHoliday ? R.drawable.red_frame_2015_upper : R.drawable.green_frame_2015_upper));
-            lowerFrame.setImageDrawable(getResources().getDrawable(mIsHoliday ? R.drawable.red_frame_2015_upper : R.drawable.green_frame_2015_upper));
+            upperFrame.setImageDrawable(ContextCompat.getDrawable(getActivity(),mIsHoliday ? R.drawable.red_frame_2015_upper : R.drawable.green_frame_2015_upper));
+            lowerFrame.setImageDrawable(ContextCompat.getDrawable(getActivity(),mIsHoliday ? R.drawable.red_frame_2015_upper : R.drawable.green_frame_2015_upper));
             upperFrame.setVisibility(View.VISIBLE);
             lowerFrame.setVisibility(View.VISIBLE);
         }
@@ -628,13 +631,13 @@ public class DailyFragment extends Fragment {
 
         //if (CMain.IS_2016_VERSION){
         if (mThisPageYear >=2016) {
-            mWisdomIcon.setImageDrawable(getResources().getDrawable(mIsHoliday ? R.drawable.red_icon_2016 : R.drawable.green_icon_2016));
+            mWisdomIcon.setImageDrawable(ContextCompat.getDrawable(getActivity(),mIsHoliday ? R.drawable.red_icon_2016 : R.drawable.green_icon_2016));
         } else {
             mWisdomIcon.setScaleType(ImageView.ScaleType.FIT_XY);
             if (mThisPageYear >= 2016) {
                 mWisdomIcon.setImageDrawable(null);
             } else {
-                mWisdomIcon.setImageDrawable(getResources().getDrawable(mIsHoliday ? R.drawable.red_icon_2015 : R.drawable.green_icon_2015));
+                mWisdomIcon.setImageDrawable(ContextCompat.getDrawable(getActivity(),mIsHoliday ? R.drawable.red_icon_2015 : R.drawable.green_icon_2015));
             }
         }
 
@@ -679,7 +682,7 @@ public class DailyFragment extends Fragment {
         if (colonPos>=0){
             wisdomText= "<small>"+wisdomText.substring(0, colonPos+1)+"</small>"+wisdomText.substring(colonPos+1).replace("#", "<br>");
             wisdomText=wisdomText+"<br>";
-            mWisdomTextView.setText(Html.fromHtml(wisdomText));
+            mWisdomTextView.setText(HtmlCompat.fromHtml(wisdomText,HtmlCompat.FROM_HTML_MODE_LEGACY));
         } else {
             mWisdomTextView.setText(wisdomText.replace("#", "\n"));
         }

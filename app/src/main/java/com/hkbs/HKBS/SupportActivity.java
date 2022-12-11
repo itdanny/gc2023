@@ -1,23 +1,15 @@
 package com.hkbs.HKBS;
 
 import android.app.Activity;
-import android.app.ActivityManager;
-import android.app.AlarmManager;
-import android.app.PendingIntent;
 import android.content.Context;
 import android.content.Intent;
-import android.graphics.Point;
 import android.net.Uri;
 import android.os.Build;
 import android.os.Bundle;
-import android.os.Process;
 import android.text.method.LinkMovementMethod;
-import android.util.DisplayMetrics;
-import android.view.Display;
 import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.Window;
-import android.view.WindowManager;
 import android.widget.Button;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -25,9 +17,9 @@ import android.widget.Toast;
 import com.hkbs.HKBS.arkUtil.MyAlert;
 import com.hkbs.HKBS.arkUtil.MyUtil;
 
-import org.arkist.share.AxDebug;
-
 import java.util.Calendar;
+
+import androidx.core.content.ContextCompat;
 
 public class SupportActivity extends MyActivity implements OnClickListener {
 
@@ -117,8 +109,9 @@ public class SupportActivity extends MyActivity implements OnClickListener {
         MyDailyBread dailyBread = MyDailyBread.getInstance(SupportActivity.this);
         String appVersionName = "?";
         try {
-            //appVersionName = String.valueOf(getPackageManager().getPackageInfo(getPackageName(),0).versionCode);
-            appVersionName = getPackageManager().getPackageInfo(getPackageName(),0).versionName;
+            // DC 202212
+           appVersionName = MyApp.context().getApplicationInfo().name;
+          //appVersionName = getPackageManager().getPackageInfo(getPackageName(),0).versionName;
         } catch (Exception e){
             //
         }
@@ -141,40 +134,29 @@ public class SupportActivity extends MyActivity implements OnClickListener {
                         MyUtil.heightPixels(SupportActivity.this)+"\n";
         return body;
     }
-    private void setRealDeviceSizeInPixels() {
-        WindowManager windowManager = getWindowManager();
-        Display display = windowManager.getDefaultDisplay();
-        DisplayMetrics displayMetrics = new DisplayMetrics();
-        if (Build.VERSION.SDK_INT >=17) {
-            display.getRealMetrics(displayMetrics);
-        } else {
-            display.getMetrics(displayMetrics);
-        }
-
-        // since SDK_INT = 1;
-        mWidthPixels = displayMetrics.widthPixels;
-        mHeightPixels = displayMetrics.heightPixels;
-
-        // includes window decorations (statusbar bar/menu bar)
-        if (Build.VERSION.SDK_INT >= 14 && Build.VERSION.SDK_INT < 17) {
-            try {
-                mWidthPixels = (Integer) Display.class.getMethod("getRawWidth").invoke(display);
-                mHeightPixels = (Integer) Display.class.getMethod("getRawHeight").invoke(display);
-            } catch (Exception ignored) {
-            }
-        }
-
-        // includes window decorations (statusbar bar/menu bar)
-        if (Build.VERSION.SDK_INT >= 17) {
-            try {
-                Point realSize = new Point();
-                Display.class.getMethod("getRealSize", Point.class).invoke(display, realSize);
-                mWidthPixels = realSize.x;
-                mHeightPixels = realSize.y;
-            } catch (Exception ignored) {
-            }
-        }
-    }
+//    private void setRealDeviceSizeInPixels() {
+//        final DisplayMetrics displayMetrics = MyApp.context().getResources().getDisplayMetrics();
+//        mWidthPixels = displayMetrics.widthPixels;
+//        mHeightPixels = displayMetrics.heightPixels;
+//        // includes window decorations (statusbar bar/menu bar)
+//        if (Build.VERSION.SDK_INT >= 14 && Build.VERSION.SDK_INT < 17) {
+//            try {
+//                mWidthPixels = (Integer) Display.class.getMethod("getRawWidth").invoke(display);
+//                mHeightPixels = (Integer) Display.class.getMethod("getRawHeight").invoke(display);
+//            } catch (Exception ignored) {
+//            }
+//        }
+//        // includes window decorations (statusbar bar/menu bar)
+//        if (Build.VERSION.SDK_INT >= 17) {
+//            try {
+//                Point realSize = new Point();
+//                Display.class.getMethod("getRealSize", Point.class).invoke(display, realSize);
+//                mWidthPixels = realSize.x;
+//                mHeightPixels = realSize.y;
+//            } catch (Exception ignored) {
+//            }
+//        }
+//    }
     private void setHolyDayColor(){
         if (CMain.IS_2017_VERSION && Calendar.getInstance().get(Calendar.YEAR)>=2017) {
             findViewById(R.id.xmlSupportHolyDayTitle).setVisibility(View.GONE);
@@ -188,34 +170,36 @@ public class SupportActivity extends MyActivity implements OnClickListener {
         }
         int showHolyDay = MyUtil.getPrefInt(MyUtil.PREF_HOLY_DAY,0);
         if (showHolyDay==0){
-            btnHolyDayOn.setTextColor(getResources().getColor(R.color.white));
-            btnHolyDayOff.setTextColor(getResources().getColor(R.color.black));
+            btnHolyDayOn.setTextColor(ContextCompat.getColor(MyApp.context(),R.color.white));
+            btnHolyDayOff.setTextColor(ContextCompat.getColor(MyApp.context(),R.color.black));
         } else {
-            btnHolyDayOn.setTextColor(getResources().getColor(R.color.black));
-            btnHolyDayOff.setTextColor(getResources().getColor(R.color.white));
+            btnHolyDayOn.setTextColor(ContextCompat.getColor(MyApp.context(),R.color.black));
+            btnHolyDayOff.setTextColor(ContextCompat.getColor(MyApp.context(),R.color.white));
         }
     }
     private void setLangColor(){
-        btnLangSimpified.setTextColor(getResources().getColor(R.color.white));
-        btnLangTradition.setTextColor(getResources().getColor(R.color.white));
+        Context context = MyApp.context();
+        btnLangSimpified.setTextColor(ContextCompat.getColor(context, R.color.white));
+        btnLangTradition.setTextColor(ContextCompat.getColor(context,R.color.white));
         String lang = MyUtil.getPrefStr(MyApp.PREF_APP_LANG, MyApp.PREF_APP_LANG_TW);
         if (lang.equalsIgnoreCase(MyApp.PREF_APP_LANG_CN)){
-            btnLangSimpified.setTextColor(getResources().getColor(R.color.black));
+            btnLangSimpified.setTextColor(ContextCompat.getColor(context,R.color.black));
         } else {
-            btnLangTradition.setTextColor(getResources().getColor(R.color.black));
+            btnLangTradition.setTextColor(ContextCompat.getColor(context,R.color.black));
         }
     }
 	private void setCountryColor(){
-		btnTaiWan.setTextColor(getResources().getColor(R.color.white));
-		btnHongKong.setTextColor(getResources().getColor(R.color.white));
-		btnOther.setTextColor(getResources().getColor(R.color.white));
+        Context context = MyApp.context();
+		btnTaiWan.setTextColor(ContextCompat.getColor(context,R.color.white));
+		btnHongKong.setTextColor(ContextCompat.getColor(context,R.color.white));
+		btnOther.setTextColor(ContextCompat.getColor(context,R.color.white));
 		String country = MyUtil.getPrefStr(MyUtil.PREF_COUNTRY, "");
 		if (country.equalsIgnoreCase("TW")){
-			btnTaiWan.setTextColor(getResources().getColor(R.color.black));
+			btnTaiWan.setTextColor(ContextCompat.getColor(context,R.color.black));
 		} else if (country.equalsIgnoreCase("HK")){
-			btnHongKong.setTextColor(getResources().getColor(R.color.black));
+			btnHongKong.setTextColor(ContextCompat.getColor(context,R.color.black));
 		} else {
-			btnOther.setTextColor(getResources().getColor(R.color.black));
+			btnOther.setTextColor(ContextCompat.getColor(context,R.color.black));
 		}
 	}
 	@Override
@@ -308,40 +292,52 @@ public class SupportActivity extends MyActivity implements OnClickListener {
 //            });
 //            break;
 		}
-        CWidgetBase.broadcastMe(SupportActivity.this);
+//        CWidgetBase.broadcastMe(SupportActivity.this);
 	}
     private void restart(Activity activity){
-        Intent intent = activity.getPackageManager().getLaunchIntentForPackage(activity.getPackageName());
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
-        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
-        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
-        //intent.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
-        int mPendingIntentId = 99999;
-        PendingIntent mPendingIntent = PendingIntent.getActivity(activity, mPendingIntentId, intent, PendingIntent.FLAG_CANCEL_CURRENT);
-        AlarmManager mgr = (AlarmManager) activity.getSystemService(Context.ALARM_SERVICE);
-        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 400, mPendingIntent);
+        System.exit(0);
+//        if (Build.VERSION.SDK_INT>=11){
+//            recreate();
+//        } else {
+//            Intent intent = getIntent();
+//            intent.addFlags(Intent.FLAG_ACTIVITY_NO_ANIMATION);
+//            finish();
+//            overridePendingTransition(0,0);
+//            startActivity(intent);
+//            overridePendingTransition(0,0);
+//        }
 
-        if (activity!=null) {
-            try {
-                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
-                    activity.finishAndRemoveTask();
-                    activity.finishAffinity();
-                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
-                    activity.finishAffinity();
-                } else {
-                    if (!activity.isFinishing()) {
-                        activity.finish();
-                    }
-                }
-            } catch (Exception e){
-                AxDebug.error(this,e.getMessage());
-            }
-        }
+//        Intent intent = activity.getPackageManager().getLaunchIntentForPackage(activity.getPackageName());
+//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TOP);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+//        intent.addFlags(Intent.FLAG_ACTIVITY_CLEAR_TASK);
+//        //intent.setFlags(Intent.FLAG_ACTIVITY_EXCLUDE_FROM_RECENTS);
+//        int mPendingIntentId = 99999;
+//        PendingIntent mPendingIntent = PendingIntent.getActivity(activity, mPendingIntentId, intent,PendingIntent.FLAG_IMMUTABLE |  PendingIntent.FLAG_CANCEL_CURRENT);
+//        AlarmManager mgr = (AlarmManager) activity.getSystemService(Context.ALARM_SERVICE);
+//        mgr.set(AlarmManager.RTC, System.currentTimeMillis() + 400, mPendingIntent);
+//
+//        if (activity!=null) {
+//            try {
+//                if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+//                    activity.finishAndRemoveTask();
+//                    activity.finishAffinity();
+//                } else if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.JELLY_BEAN) {
+//                    activity.finishAffinity();
+//                } else {
+//                    if (!activity.isFinishing()) {
+//                        activity.finish();
+//                    }
+//                }
+//            } catch (Exception e){
+//                AxDebug.error(this,e.getMessage());
+//            }
+//        }
+//
+//        ActivityManager am = (ActivityManager) activity.getSystemService(Activity.ACTIVITY_SERVICE);
+//        String currentPackageName = activity.getPackageName();
+//        am.killBackgroundProcesses(currentPackageName);
 
-        ActivityManager am = (ActivityManager) activity.getSystemService(Activity.ACTIVITY_SERVICE);
-        String currentPackageName = activity.getPackageName();
-        am.killBackgroundProcesses(currentPackageName);
-
-        Process.killProcess(Process.myPid());
+        //Process.killProcess(Process.myPid());
     }
 }

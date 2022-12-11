@@ -93,9 +93,9 @@ public abstract class SystemUiHider {
 	 *            {@link #FLAG_HIDE_NAVIGATION}, and
 	 *            {@link #FLAG_LAYOUT_IN_SCREEN_OLDER_DEVICES}.
 	 */
-	public static SystemUiHider getInstance(Activity activity, View anchorView, int flags) {
-        return new SystemUiHiderHoneycomb(activity, anchorView, flags);
-    }
+//	public static SystemUiHider getInstance(Activity activity, View anchorView, int flags) {
+//        return new SystemUiHiderHoneycomb(activity, anchorView, flags);
+//    }
 
 	protected SystemUiHider(Activity activity, View anchorView, int flags) {
 		mActivity = activity;

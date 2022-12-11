@@ -4,8 +4,6 @@ import android.content.ContentValues;
 import android.content.Context;
 import android.content.SharedPreferences;
 import android.os.Build;
-import androidx.fragment.app.Fragment;
-import androidx.fragment.app.FragmentManager;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.View;
@@ -23,10 +21,13 @@ import java.util.Map;
 import java.util.Map.Entry;
 import java.util.Set;
 
+import androidx.fragment.app.Fragment;
+import androidx.fragment.app.FragmentManager;
+
 public class AxDebug {
 	static final private String TAG = AxDebug.class.getSimpleName();
 	static private Context mContext;
-	static private boolean mReportProblem=true;
+	static private boolean mReportProblem=false;
 	
 	static public void init(Context context){
 		mContext=context;
