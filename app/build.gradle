@@ -7,9 +7,15 @@ android {
         applicationId "com.hkbs.HKBS"
         minSdkVersion 24 // 2016 Android 7 or above Android-N <95.8%>
         targetSdkVersion 33
-        versionCode 92
-        versionName "3.62"
-        multiDexEnabled true
+        versionCode 95
+        versionName "3.65"
+        multiDexEnabled false
+    }
+
+    bundle {
+        storeArchive {
+            enable = false
+        }
     }
 //    dexOptions {
 //        preDexLibraries = false
