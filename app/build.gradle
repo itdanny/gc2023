@@ -7,8 +7,8 @@ android {
         applicationId "com.hkbs.HKBS"
         minSdkVersion 24 // 2016 Android 7 or above Android-N <95.8%>
         targetSdkVersion 33
-        versionCode 95
-        versionName "3.65"
+        versionCode 96
+        versionName "3.66"
         multiDexEnabled false
     }
 
@@ -47,6 +47,7 @@ dependencies {
     implementation 'androidx.viewpager2:viewpager2:1.0.0'
     implementation 'androidx.window:window:1.0.0'
     implementation 'androidx.work:work-runtime-ktx:2.7.0'
+    implementation 'com.google.android.material:material:1.5.0'
 }
 /*all*.exclude group: 'com.android.support', module: 'support-v4'*/
 allprojects {

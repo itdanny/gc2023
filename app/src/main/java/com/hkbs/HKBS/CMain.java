@@ -22,14 +22,12 @@ import android.provider.MediaStore.Images;
 import android.text.TextUtils;
 import android.util.Log;
 import android.view.GestureDetector;
-import android.view.KeyEvent;
 import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
 import android.widget.Toast;
 
-import com.hkbs.HKBS.arkUtil.MyGestureListener;
 import com.hkbs.HKBS.arkUtil.MyPermission;
 import com.hkbs.HKBS.arkUtil.MyUtil;
 import com.hkbs.HKBS.util.SystemUiHider;
@@ -136,34 +134,42 @@ public class CMain extends MyActivity {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
-
     @Override
-    public boolean onKeyDown(int keyCode, KeyEvent event) {
-        if (mPager == null || isScrolling) return false;
-        switch (keyCode) {
-            case KeyEvent.KEYCODE_W:
-            case KeyEvent.KEYCODE_DPAD_UP:
-                gotoPriorMonth();
-                return true;
-            case KeyEvent.KEYCODE_A:
-            case KeyEvent.KEYCODE_DPAD_LEFT:
-                gotoPrevDay();
-                return true;
-            case KeyEvent.KEYCODE_X:
-            case KeyEvent.KEYCODE_DPAD_DOWN:
-                gotoNextMonth();
-                return true;
-            case KeyEvent.KEYCODE_D:
-            case KeyEvent.KEYCODE_DPAD_RIGHT:
-                gotoNextDay();
-                return true;
-            case KeyEvent.KEYCODE_S:
-                onClickToday(this);
-                return true;
-            default:
-                return super.onKeyDown(keyCode, event);
-        }
+    public void onBackPressed() {
+        //Execute your code here
+        finish();
     }
+
+    // DC 202212
+    // Use Keyboard to control will disable onBackPressed
+
+//    @Override
+//    public boolean onKeyDown(int keyCode, KeyEvent event) {
+//        if (mPager == null || isScrolling || MyUtil.DEBUG_APP) return false;
+//        switch (keyCode) {
+//            case KeyEvent.KEYCODE_W:
+//            case KeyEvent.KEYCODE_DPAD_UP:
+//                gotoPriorMonth();
+//                return true;
+//            case KeyEvent.KEYCODE_A:
+//            case KeyEvent.KEYCODE_DPAD_LEFT:
+//                gotoPrevDay();
+//                return true;
+//            case KeyEvent.KEYCODE_X:
+//            case KeyEvent.KEYCODE_DPAD_DOWN:
+//                gotoNextMonth();
+//                return true;
+//            case KeyEvent.KEYCODE_D:
+//            case KeyEvent.KEYCODE_DPAD_RIGHT:
+//                gotoNextDay();
+//                return true;
+//            case KeyEvent.KEYCODE_S:
+//                onClickToday(this);
+//                return true;
+//            default:
+//                return super.onKeyDown(keyCode, event);
+//        }
+//    }
 
     private GestureDetector mGesture;
     private View.OnTouchListener mViewOnTouch;
@@ -224,46 +230,46 @@ public class CMain extends MyActivity {
 
         setContentView(R.layout.activity_cmain);
         mRootView = findViewById(R.id.xmlRoot);
-        mViewOnTouch = new View.OnTouchListener() {
-            @Override
-            public boolean onTouch(View v, MotionEvent event) {
-                if (mGesture == null) {
-                    mGesture = new GestureDetector(getApplicationContext(), new MyGestureListener(new MyGestureListener.Callback() {
-                        @Override
-                        public boolean onClick(MotionEvent e) { // !!! SetClicable to TRUE !!!
-                            if (DEBUG)
-                                MyUtil.log(TAG, "onClick day=" + mDisplayDay.get(Calendar.DAY_OF_MONTH));
-                            setControlsVisibility(!isTitleShown);
-                            return true;
-                        }
-
-                        @Override
-                        public boolean onLongPress(MotionEvent e) {
-                            if (DEBUG)
-                                MyUtil.log(TAG, "onClick day=" + mDisplayDay.get(Calendar.DAY_OF_MONTH));
-                            setControlsVisibility(!isTitleShown);
-                            //setControlsVisibility(true);
-                            return true;
-                        }
-
-                        @Override
-                        public boolean onRight() {
-                            gotoNextDay();
-                            return true;
-                        }
-
-                        @Override
-                        public boolean onLeft() {
-                            gotoPrevDay();
-                            return true;
-                        }
-                    }));
-                }
-                mGesture.onTouchEvent(event);
-                return false;
-            }
-        };
-        mRootView.setOnTouchListener(mViewOnTouch);
+//        mViewOnTouch = new View.OnTouchListener() {
+//            @Override
+//            public boolean onTouch(View v, MotionEvent event) {
+//                if (mGesture == null) {
+//                    mGesture = new GestureDetector(getApplicationContext(), new MyGestureListener(new MyGestureListener.Callback() {
+//                        @Override
+//                        public boolean onClick(MotionEvent e) { // !!! SetClicable to TRUE !!!
+//                            if (DEBUG)
+//                                MyUtil.log(TAG, "onClick day=" + mDisplayDay.get(Calendar.DAY_OF_MONTH));
+//                            setControlsVisibility(!isTitleShown);
+//                            return true;
+//                        }
+//
+//                        @Override
+//                        public boolean onLongPress(MotionEvent e) {
+//                            if (DEBUG)
+//                                MyUtil.log(TAG, "onClick day=" + mDisplayDay.get(Calendar.DAY_OF_MONTH));
+//                            setControlsVisibility(!isTitleShown);
+//                            //setControlsVisibility(true);
+//                            return true;
+//                        }
+//
+//                        @Override
+//                        public boolean onRight() {
+//                            gotoNextDay();
+//                            return true;
+//                        }
+//
+//                        @Override
+//                        public boolean onLeft() {
+//                            gotoPrevDay();
+//                            return true;
+//                        }
+//                    }));
+//                }
+//                mGesture.onTouchEvent(event);
+//                return false;
+//            }
+//        };
+//        mRootView.setOnTouchListener(mViewOnTouch);
 
         AxImageView clickLeftView = findViewById(R.id.xmlMainClickLeft);
         clickLeftView.setOnClickListener(v -> {
@@ -546,49 +552,20 @@ public class CMain extends MyActivity {
             }
         }
 
-        Button mainBtnShare = (Button) findViewById(R.id.mainBtnShare);
-        mainBtnShare.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClickShare(CMain.this, false);
-            }
-        });
+        Button mainBtnShare = findViewById(R.id.mainBtnShare);
+        mainBtnShare.setOnClickListener(v -> onClickShare(CMain.this, false));
 
-//        Button mainBtnAlarm = (Button) findViewById(R.id.mainBtnAlarm);
-//        //mainBtnAlarm.setOnTouchListener(mDelayHideTouchListener);
-//        mainBtnAlarm.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View v) {
-//                onClickAlarm(CMain.this);
-//            }
-//        });
+        Button mainBtnAlarm = findViewById(R.id.mainBtnAlarm);
+        mainBtnAlarm.setOnClickListener(v -> onClickAlarm(CMain.this));
 
-        Button mainBtnAbout = (Button) findViewById(R.id.mainBtnAbout);
-        //mainBtnAbout.setOnTouchListener(mDelayHideTouchListener);
-        mainBtnAbout.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClickAbout(CMain.this);
-            }
-        });
+        Button mainBtnAbout = findViewById(R.id.mainBtnAbout);
+        mainBtnAbout.setOnClickListener(v -> onClickAbout(CMain.this));
 
-        Button mainBtnCopy = (Button) findViewById(R.id.mainBtnCopy);
-        //mainBtnSupport.setOnTouchListener(mDelayHideTouchListener);
-        mainBtnCopy.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClickCopy(CMain.this);
-            }
-        });
+        Button mainBtnCopy = findViewById(R.id.mainBtnCopy);
+        mainBtnCopy.setOnClickListener(v -> onClickCopy(CMain.this));
 
-        Button mainBtnToday = (Button) findViewById(R.id.mainBtnToday);
-        //mainBtnToday.setOnTouchListener(mDelayHideTouchListener);
-        mainBtnToday.setOnClickListener(new View.OnClickListener() {
-            @Override
-            public void onClick(View v) {
-                onClickToday(CMain.this);
-            }
-        });
+        Button mainBtnToday = findViewById(R.id.mainBtnToday);
+        mainBtnToday.setOnClickListener(v -> onClickToday(CMain.this));
     }
 
     @Override
@@ -1690,13 +1667,14 @@ public class CMain extends MyActivity {
         resultLauncher.launch(intent);
         overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
     }
-//	private void onClickAlarm(Context context){
-//		MyUtil.trackClick(context, "Alarm", "M");
-//        Intent intent = new Intent(this, AlarmActivity.class);
-//        intent.putExtra(MyUtil.EXTRA_REQUEST, MyUtil.REQUEST_ALARM);
-//        resultLauncher.launch(intent);
-//		overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
-//	}
+
+    private void onClickAlarm(Context context){
+		MyUtil.trackClick(context, "Alarm", "M");
+        Intent intent = new Intent(this, AlarmActivity.class);
+        intent.putExtra(MyUtil.EXTRA_REQUEST, MyUtil.REQUEST_ALARM);
+        resultLauncher.launch(intent);
+		overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
+	}
 //    /**
 //     * A paint that has utilities dealing with painting text.
 //     * @author <a href="maillto:nospam">Ben Barkay</a>

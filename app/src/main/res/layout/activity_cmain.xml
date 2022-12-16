@@ -96,16 +96,16 @@
                     android:textSize="12dp"
                     android:textColor="@color/white" />
 
-<!--                <Button-->
-<!--                    android:id="@+id/mainBtnAlarm"                    -->
-<!--                    android:layout_width="0dp"-->
-<!--                    android:layout_height="wrap_content"-->
-<!--                    android:layout_gravity="center"-->
-<!--                    android:layout_weight="1"-->
-<!--                    android:gravity="center"-->
-<!--                    android:text="@string/main_alarm"-->
-<!--                    android:textSize="12dp"-->
-<!--                    android:textColor="@color/white" />-->
+                <Button
+                    android:id="@+id/mainBtnAlarm"
+                    android:layout_width="0dp"
+                    android:layout_height="wrap_content"
+                    android:layout_gravity="center"
+                    android:layout_weight="1"
+                    android:gravity="center"
+                    android:text="@string/main_alarm"
+                    android:textSize="12dp"
+                    android:textColor="@color/white" />
 
                 <Button
                     android:id="@+id/mainBtnCalendar"

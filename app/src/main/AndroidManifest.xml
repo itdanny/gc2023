@@ -1,60 +1,78 @@
 <?xml version="1.0" encoding="utf-8"?>
 <manifest xmlns:android="http://schemas.android.com/apk/res/android"
+    xmlns:tools="http://schemas.android.com/tools"
     package="com.hkbs.HKBS">
-<!--    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />-->
+
+    <!-- VERSIONCODE.S <Beg> -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS"/>
+    <uses-permission android:name="android.permission.SCHEDULE_EXACT_ALARM"/>
+    <!-- VERSIONCODE.S <End> -->
+    <uses-permission android:name="com.android.alarm.permission.SET_ALARM" />
     <uses-permission android:name="android.permission.INTERNET" />
-<!--    <uses-permission android:name="com.android.alarm.permission.SET_ALARM"/>-->
-<!--    <uses-permission android:name="android.permission.READ_CALENDAR" />-->
-<!--    <uses-permission android:name="android.permission.WRITE_CALENDAR" />-->
     <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" />
-    <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" />
-<!--    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />-->
-<!--    <uses-permission android:name="android.permission.READ_PHONE_STATE" />-->
-<!--    <uses-permission android:name="android.permission.BOOT_COMPLETED" />-->
-<!--    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />-->
-<!--    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION"/>-->
+    <uses-permission
+        android:name="android.permission.WRITE_EXTERNAL_STORAGE"
+        tools:ignore="ScopedStorage" />
+    <!--    <uses-permission android:name="android.permission.READ_CALENDAR" />-->
+    <!--    <uses-permission android:name="android.permission.WRITE_CALENDAR" />-->
+    <!--    <uses-permission android:name="android.permission.KILL_BACKGROUND_PROCESSES" />-->
+    <!--    <uses-permission android:name="android.permission.ACCESS_NETWORK_STATE" />-->
+    <!--    <uses-permission android:name="android.permission.READ_PHONE_STATE" />-->
+    <!--    <uses-permission android:name="android.permission.ACCESS_MEDIA_LOCATION"/>-->
+    <uses-permission android:name="android.permission.BOOT_COMPLETED" />
+    <uses-permission android:name="android.permission.RECEIVE_BOOT_COMPLETED" />
+
+<!--    android:hardwareAccelerated="@bool/hardwareAccelerated"-->
+<!--    android:vmSafeMode="@bool/VmSafeMode"-->
     <application
-        android:name="com.hkbs.HKBS.MyApp"
-        android:hardwareAccelerated="@bool/hardwareAccelerated"
-        android:vmSafeMode="@bool/VmSafeMode"
-        android:requestLegacyExternalStorage="true"
-        android:largeHeap="true"
+        android:name=".MyApp"
         android:allowBackup="true"
         android:allowClearUserData="true"
-        android:launchMode="singleTop"
         android:icon="@drawable/ic_launcher"
         android:label="@string/app_name"
+        android:largeHeap="true"
+        android:launchMode="singleTop"
+        android:requestLegacyExternalStorage="true"
         android:theme="@style/AppTheme">
+
         <activity
-            android:name="CMain"
-            android:exported="true"
+            android:name=".CMain"
             android:configChanges="orientation|keyboardHidden|screenSize"
+            android:exported="true"
             android:launchMode="singleTop"
-            android:label="@string/app_name"
             android:screenOrientation="portrait"
-            android:theme="@style/SplashscreenTheme">
-                        <intent-filter>
-                            <action android:name="android.intent.action.MAIN" />
-                            <category android:name="android.intent.category.DEFAULT" />
-                            <category android:name="android.intent.category.LAUNCHER" />
-                        </intent-filter>
+            android:theme="@style/SplashscreenTheme"
+            tools:ignore="LockedOrientationActivity">
+            <intent-filter>
+                <action android:name="android.intent.action.MAIN" />
+
+                <category android:name="android.intent.category.DEFAULT" />
+                <category android:name="android.intent.category.LAUNCHER" />
+            </intent-filter>
         </activity>
+        <activity
+            android:name=".AlarmActivity"
+            android:configChanges="orientation|keyboardHidden|screenSize"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity" />
         <activity
             android:name=".CalendarActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" >
-        </activity>
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity"/>
         <activity
             android:name=".AboutActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" >
-        </activity>
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity"/>
         <activity
             android:name=".SupportActivity"
             android:configChanges="orientation|keyboardHidden|screenSize"
-            android:screenOrientation="portrait" >
-        </activity>
-        <receiver android:name=".CWidgetNormal"
+            android:screenOrientation="portrait"
+            tools:ignore="LockedOrientationActivity"/>
+
+        <receiver
+            android:name=".CWidgetNormal"
             android:exported="true"
             android:label="標準版面">
             <intent-filter>
@@ -71,10 +89,10 @@
                 android:name="android.appwidget.provider"
                 android:resource="@xml/my_widget_provider" />
         </receiver>
-        <receiver android:name=".CWidgetLarge"
+        <receiver
+            android:name=".CWidgetLarge"
             android:exported="true"
-            android:label="大版面"
-            >
+            android:label="大版面">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
@@ -90,7 +108,8 @@
                 android:resource="@xml/my_widget_provider_large" />
         </receiver>
         <!--android:enabled="@bool/smallerWidget"-->
-        <receiver android:name=".CWidgetSmall"
+        <receiver
+            android:name=".CWidgetSmall"
             android:exported="true"
             android:label="小版面">
             <intent-filter>
@@ -108,10 +127,10 @@
                 android:resource="@xml/my_widget_provider_small" />
         </receiver>
         <!--android:enabled="@bool/middleWidget"-->
-        <receiver android:name=".CWidgetMiddle"
+        <receiver
+            android:name=".CWidgetMiddle"
             android:exported="true"
-            android:label="中版面"
-            >
+            android:label="中版面">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
@@ -127,10 +146,10 @@
                 android:resource="@xml/my_widget_provider_middle" />
         </receiver>
         <!--android:enabled="@bool/xlargerWidget"-->
-        <receiver android:name=".CWidgetXLarge"
+        <receiver
+            android:name=".CWidgetXLarge"
             android:exported="true"
-            android:label="特大版面"
-            >
+            android:label="特大版面">
             <intent-filter>
                 <action android:name="android.appwidget.action.APPWIDGET_UPDATE" />
                 <action android:name="android.intent.action.TIMEZONE_CHANGED" />
@@ -152,7 +171,35 @@
             android:grantUriPermissions="true">
             <meta-data
                 android:name="android.support.FILE_PROVIDER_PATHS"
-                android:resource="@xml/provider_paths"/>
+                android:resource="@xml/provider_paths" />
         </provider>
+        <!--
+        android:process=":remote"
+        https://social.msdn.microsoft.com/Forums/en-US/6e0d306d-7cbc-4085-9524-afcc4532e82c/alarm-manager-setrepeating-is-not-working-in-background-and-app-got-killed?forum=xamarinforms
+        -->
+        <receiver
+            android:name=".MyGoldBroadcast"
+            android:enabled="true"
+            android:exported="true"
+            android:permission="android.permission.RECEIVE_BOOT_COMPLETED"
+            android:process=":remote"> <!-- listen to reboot events -->
+            <intent-filter>
+                <action android:name="AxAlarm_11" />
+                <action android:name="AxAlarm_12" />
+                <action android:name="android.app.action.SCHEDULE_EXACT_ALARM_PERMISSION_STATE_CHANGED" />
+                <action android:name="android.intent.action.BOOT_COMPLETED" />
+                <action android:name="android.intent.action.PACKAGE_ADDED" />
+                <action android:name="android.intent.action.PACKAGE_REMOVED" />
+                <action android:name="android.intent.action.PACKAGE_FIRST_LAUNCH" />
+                <action android:name="android.intent.action.SCREEN_ON" />
+                <action android:name="android.intent.action.SCREEN_OFF" />
+                <action android:name="android.intent.action.ACTION_SHUTDOWN" />
+                <action android:name="android.intent.action.DATE_CHANGED" />
+                <action android:name="android.intent.action.TIMEZONE_CHANGED" />
+                <action android:name="android.intent.action.TIME_SET" />
+                <action android:name="android.intent.action.TIME_TICK" />
+                <action android:name="com.hkbs.HKBS.WidgetUpdate" />
+            </intent-filter>
+        </receiver>
     </application>
 </manifest>

@@ -26,7 +26,11 @@ public class MyApp extends Application {//extends MultiDexApplication
     private static MyApp mApp = null;
     public static Context context()
     {
-        return mApp.getApplicationContext();
+        Context appContext = mApp.getApplicationContext();
+        if (appContext==null) {
+            appContext =  AxTools.getContext();
+        }
+        return appContext;
     }
     @Override
     public void onCreate() {
@@ -82,7 +86,7 @@ public class MyApp extends Application {//extends MultiDexApplication
                 mNewLangContext = context.createConfigurationContext(newConfig);
             } else {
                 //noinspection deprecation
-                context.getResources().updateConfiguration(newConfig, context.getResources().getDisplayMetrics());
+                context.getResources().updateConfiguration(newConfig, AxTools.getAxDisplayMetrics());
             }
         }
     }

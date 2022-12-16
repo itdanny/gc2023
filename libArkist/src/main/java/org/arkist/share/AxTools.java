@@ -3,8 +3,6 @@ package org.arkist.share;
 import android.app.Activity;
 import android.content.Context;
 import android.content.SharedPreferences;
-import android.content.res.AssetManager;
-import android.content.res.Configuration;
 import android.content.res.Resources;
 import android.os.Handler;
 import android.util.DisplayMetrics;
@@ -14,6 +12,7 @@ import android.view.View;
 import android.view.View.OnClickListener;
 import android.view.ViewGroup;
 import android.view.ViewGroup.LayoutParams;
+import android.view.WindowManager;
 import android.widget.RelativeLayout;
 import android.widget.TextView;
 import android.widget.Toast;
@@ -24,81 +23,110 @@ import com.github.johnpersano.supertoasts.util.OnDismissListener;
 
 import java.util.ArrayList;
 import java.util.List;
-import java.util.Locale;
 import java.util.Map;
 
 import androidx.preference.PreferenceManager;
 
+import static android.content.Context.WINDOW_SERVICE;
+import static androidx.core.content.ContextCompat.getSystemService;
+
 public class AxTools {
-	static private Context mContext;// Application, Service and Broadcast should assign this value
-	static public SharedPreferences mPreferences;
-	static public enum MsgType {INFO, DETAIL, ERROR, EXPLAIN, PROGRSS};
-	static public enum TextSize {BASIC, SMALLER, LARGER};
-	
-	public AxTools() {
-	}
-	static public Context getContext(){
-		return mContext;
-	}
-	static public void init(Context context){
-		mContext=context;
-		mPreferences= PreferenceManager.getDefaultSharedPreferences(context);
-	}
-	static private List<Resources> resourceList = new ArrayList<Resources>();
-	static public void unbindDrawables(View view) {
+    static private Context mContext;// Application, Service and Broadcast should assign this value
+    static public SharedPreferences mPreferences;
+
+    static public enum MsgType {INFO, DETAIL, ERROR, EXPLAIN, PROGRSS}
+
+    ;
+
+    static public enum TextSize {BASIC, SMALLER, LARGER}
+
+    ;
+
+    public AxTools() {
+    }
+
+    static public Context getContext() {
+        return mContext;
+    }
+
+    static public void init(Context context) {
+        mContext = context;
+        mPreferences = PreferenceManager.getDefaultSharedPreferences(context);
+    }
+
+    static private List<Resources> resourceList = new ArrayList<Resources>();
+
+    static public void unbindDrawables(View view) {
         if (view.getBackground() != null) {
-        	view.getBackground().setCallback(null);
+            view.getBackground().setCallback(null);
         }
         if (view instanceof ViewGroup) {
             for (int i = 0; i < ((ViewGroup) view).getChildCount(); i++) {
-            	unbindDrawables(((ViewGroup) view).getChildAt(i));
+                unbindDrawables(((ViewGroup) view).getChildAt(i));
             }
             ((ViewGroup) view).removeAllViews();
         }
-        view=null;
+        view = null;
     }
-	static public Resources getResourceByLocale(Context context, Locale locale){
-		for (Resources resource : resourceList){
-			if (resource.getConfiguration().locale==locale){
-				return resource;				
-			}
-		}
-		Resources standardResources = context.getResources();
-		AssetManager assets = standardResources.getAssets();
-		DisplayMetrics metrics = standardResources.getDisplayMetrics();
-		Configuration config = new Configuration(standardResources.getConfiguration());
-		config.locale = locale;
-		Resources defaultResources = new Resources(assets, metrics, config);
-		resourceList.add(defaultResources);
-		return defaultResources;
-	}
-	/*
-	 * To get resource dependent width & height:
-	 * final WindowManager wm = (WindowManager) getAppContext().getSystemService(Context.WINDOW_SERVICE);
-	 * final DisplayMetrics dm = new DisplayMetrics();
-	 * wm.getDefaultDisplay().getMetrics(dm);
-	 * return dm.heightPixels;
-	 */
-	public static int getScreenWidth(){// Not App; Not Device but Screen (Rotate may change)
-		return (int) Resources.getSystem().getDisplayMetrics().widthPixels;
-	}
-	public static int getScreenHeight(){
-		return (int) Resources.getSystem().getDisplayMetrics().heightPixels;
-	}
-	public static int dp2px(float dp){
-		return (int) (dp * Resources.getSystem().getDisplayMetrics().scaledDensity+0.5f);
-	}
-	public static float px2dp(int px){
-	    return (float) (px / Resources.getSystem().getDisplayMetrics().scaledDensity);
-	}
-	public static float px2in(int px) {
-		return (float) (px / Resources.getSystem().getDisplayMetrics().scaledDensity);
-	}	
-	public static int px2sp(int px) {
-	    return (int) (px / Resources.getSystem().getDisplayMetrics().scaledDensity);
-	}
-	
-//	static public int dp2px(float dpValue) {
+
+    //	static public Resources getResourceByLocale(Context context, Locale locale){
+//		for (Resources resource : resourceList){
+//			if (resource.getConfiguration().locale==locale){
+//				return resource;
+//			}
+//		}
+//		Resources standardResources = context.getResources();
+//		AssetManager assets = standardResources.getAssets();
+//		DisplayMetrics metrics = standardResources.getDisplayMetrics();
+//		Configuration config = new Configuration(standardResources.getConfiguration());
+//		config.locale = locale;
+//		Resources defaultResources = new Resources(assets, metrics, config);
+//		resourceList.add(defaultResources);
+//		return defaultResources;
+//	}
+    public static DisplayMetrics getAxDisplayMetrics() {
+        try {
+            return Resources.getSystem().getDisplayMetrics();
+        } catch (Exception ignore) {
+            WindowManager wm = (WindowManager) mContext.getSystemService(WINDOW_SERVICE);
+            final DisplayMetrics displayMetrics = new DisplayMetrics();
+            wm.getDefaultDisplay().getMetrics(displayMetrics);
+            return displayMetrics;
+        }
+    }
+
+    /*
+     * To get resource dependent width & height:
+     * final WindowManager wm = (WindowManager) getAppContext().getSystemService(Context.WINDOW_SERVICE);
+     * final DisplayMetrics dm = new DisplayMetrics();
+     * wm.getDefaultDisplay().getMetrics(dm);
+     * return dm.heightPixels;
+     */
+    public static int getScreenWidth() {// Not App; Not Device but Screen (Rotate may change)
+        return (int) getAxDisplayMetrics().widthPixels;
+    }
+
+    public static int getScreenHeight() {
+        return (int) getAxDisplayMetrics().heightPixels;
+    }
+
+    public static int dp2px(float dp) {
+        return (int) (dp * getAxDisplayMetrics().scaledDensity + 0.5f);
+    }
+
+    public static float px2dp(int px) {
+        return (float) (px / getAxDisplayMetrics().scaledDensity);
+    }
+
+    public static float px2in(int px) {
+        return (float) (px / getAxDisplayMetrics().scaledDensity);
+    }
+
+    public static int px2sp(int px) {
+        return (int) (px / getAxDisplayMetrics().scaledDensity);
+    }
+
+    //	static public int dp2px(float dpValue) {
 //		//int margin = (int) TypedValue.applyDimension(TypedValue.COMPLEX_UNIT_DIP, 8, getResources().getDisplayMetrics());
 //		return (int) (dpValue * scaleDensity() + 0.5f);
 //	}
@@ -149,113 +177,130 @@ public class AxTools {
 //	    float density = _activity.getResources().getDisplayMetrics().density;
 //	    return Math.round((float)dp * density);
 //	}
-	static public void runFollow(Runnable runnable){
-		Handler handler = new Handler();
-		handler.post(runnable);
-	}
-	static public void runLater(Runnable runnable){
-		Handler handler = new Handler();
-		handler.postDelayed(runnable,100);
-	}
-	static public void runLater(long delayMillis, Runnable runnable){
-		Handler handler = new Handler();
-		handler.postDelayed(runnable,delayMillis);
-	}
-	static public Map<String,?> getPrefAll(){
-		return mPreferences.getAll();		
-	}
-	static public void setPrefBoolean(String key, boolean bool){
-		mPreferences.edit().putBoolean(key, bool).commit();
-	}
-	static public boolean getPrefBoolean(String key, boolean defaultValue){
-		return mPreferences.getBoolean(key, defaultValue);
-	}
-	static public void setPrefInt(String key, Integer value){
-		mPreferences.edit().putInt(key, value).commit();
-	}
-	static public Integer getPrefInt(String key, Integer defaultValue){
-		return mPreferences.getInt(key, defaultValue);
-	}
-	static public void setPrefLong(String key, long value){
-		mPreferences.edit().putLong(key, value).commit();
-	}
-	static public long getPrefLong(String key, long defaultValue){
-		return mPreferences.getLong(key, defaultValue);
-	}
-	static public void setPrefStr(String key, String value){
-		mPreferences.edit().putString(key, value).commit();
-	}
-	static public String getPrefStr(String key, String defaultValue){		
-		return mPreferences.getString(key, defaultValue);
-	}
-	static public String padZero(long value, int nbrOfZero){
-    	return String.format("%0"+nbrOfZero+"d", value);
+    static public void runFollow(Runnable runnable) {
+        Handler handler = new Handler();
+        handler.post(runnable);
     }
-	static public int getDigits(String str){
-		String checkDigits="";
-		int checkDigit;
-		for (int i=0;i<str.length();i++){
-			checkDigit=str.codePointAt(i);
-			if (checkDigit>=48 && checkDigit<=57){ 
-				checkDigits+=str.charAt(i);
-			} else {
-				if (!checkDigits.equals("")) {
-					break;
-				}
-			}
-		}
-		int result=0;
-		try {
-			result = Integer.valueOf(checkDigits); 
-		} catch (Exception e){}
-		return result;
-	}
-	static public void toast(MsgType msgType, Activity activity, int stringID){
-		toast(msgType, activity, activity.getString(stringID));
-	}
-	static public void toast(MsgType msgType, Activity activity, CharSequence text){
-		if (activity==null || activity.isFinishing() ){
-			AxDebug.error("*", "Toast without context:"+text);
-			//return null;
-			return;
-		}
-		toast(msgType, activity, null, text);
-	}
-	static public void toast(MsgType msgType, Context context, View cardRootView, CharSequence text){
-		// To use SuperCardToast:- LinearLayout with name card_container is required
-		int bkgColor=0;
-		int duration=2000;
-		if (msgType==MsgType.ERROR){
-			duration=2750; // Medium
-			bkgColor=R.color.axMsgError;
-		} else if (msgType==MsgType.INFO){
-			duration=2000; // Short
-			bkgColor=R.color.axMsgInfo;
-		} else if (msgType==MsgType.DETAIL){
-			duration=3500;// Long
-			bkgColor=R.color.axMsgInfo;
-		} else if (msgType==MsgType.EXPLAIN){
-			duration=3500; // Long
-			bkgColor=R.color.axMsgWarn;
-		} else if (msgType==MsgType.PROGRSS){
-			duration=2750; // Medium
-			bkgColor=R.color.axMsgInfo;			
-		}
-		int gap = AxTools.dp2px(6);
-		Toast customToast = new Toast(context);
-		TextView textView = new TextView(context);
-		textView.setGravity(Gravity.CENTER);
-		textView.setPadding(0, gap, 0, gap);
-		textView.setText(text);
-		textView.setTextSize(px2sp((int) AxTools.getSmallerTextSize()));
-		textView.setTextColor(context.getResources().getColor(R.color.white));
-		textView.setBackgroundResource(bkgColor);
-		RelativeLayout relativeLayout = new RelativeLayout(context);
-		relativeLayout.addView(textView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
-		customToast.setView(relativeLayout);
-		customToast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
-		customToast.setDuration(duration);
-		customToast.show();
+
+    static public void runLater(Runnable runnable) {
+        Handler handler = new Handler();
+        handler.postDelayed(runnable, 100);
+    }
+
+    static public void runLater(long delayMillis, Runnable runnable) {
+        Handler handler = new Handler();
+        handler.postDelayed(runnable, delayMillis);
+    }
+
+    static public Map<String, ?> getPrefAll() {
+        return mPreferences.getAll();
+    }
+
+    static public void setPrefBoolean(String key, boolean bool) {
+        mPreferences.edit().putBoolean(key, bool).commit();
+    }
+
+    static public boolean getPrefBoolean(String key, boolean defaultValue) {
+        return mPreferences.getBoolean(key, defaultValue);
+    }
+
+    static public void setPrefInt(String key, Integer value) {
+        mPreferences.edit().putInt(key, value).commit();
+    }
+
+    static public Integer getPrefInt(String key, Integer defaultValue) {
+        return mPreferences.getInt(key, defaultValue);
+    }
+
+    static public void setPrefLong(String key, long value) {
+        mPreferences.edit().putLong(key, value).commit();
+    }
+
+    static public long getPrefLong(String key, long defaultValue) {
+        return mPreferences.getLong(key, defaultValue);
+    }
+
+    static public void setPrefStr(String key, String value) {
+        mPreferences.edit().putString(key, value).commit();
+    }
+
+    static public String getPrefStr(String key, String defaultValue) {
+        return mPreferences.getString(key, defaultValue);
+    }
+
+    static public String padZero(long value, int nbrOfZero) {
+        return String.format("%0" + nbrOfZero + "d", value);
+    }
+
+    static public int getDigits(String str) {
+        String checkDigits = "";
+        int checkDigit;
+        for (int i = 0; i < str.length(); i++) {
+            checkDigit = str.codePointAt(i);
+            if (checkDigit >= 48 && checkDigit <= 57) {
+                checkDigits += str.charAt(i);
+            } else {
+                if (!checkDigits.equals("")) {
+                    break;
+                }
+            }
+        }
+        int result = 0;
+        try {
+            result = Integer.valueOf(checkDigits);
+        } catch (Exception e) {
+        }
+        return result;
+    }
+
+    static public void toast(MsgType msgType, Activity activity, int stringID) {
+        toast(msgType, activity, activity.getString(stringID));
+    }
+
+    static public void toast(MsgType msgType, Activity activity, CharSequence text) {
+        if (activity == null || activity.isFinishing()) {
+            AxDebug.error("*", "Toast without context:" + text);
+            //return null;
+            return;
+        }
+        toast(msgType, activity, null, text);
+    }
+
+    static public void toast(MsgType msgType, Context context, View cardRootView, CharSequence text) {
+        // To use SuperCardToast:- LinearLayout with name card_container is required
+        int bkgColor = 0;
+        int duration = 2000;
+        if (msgType == MsgType.ERROR) {
+            duration = 2750; // Medium
+            bkgColor = R.color.axMsgError;
+        } else if (msgType == MsgType.INFO) {
+            duration = 2000; // Short
+            bkgColor = R.color.axMsgInfo;
+        } else if (msgType == MsgType.DETAIL) {
+            duration = 3500;// Long
+            bkgColor = R.color.axMsgInfo;
+        } else if (msgType == MsgType.EXPLAIN) {
+            duration = 3500; // Long
+            bkgColor = R.color.axMsgWarn;
+        } else if (msgType == MsgType.PROGRSS) {
+            duration = 2750; // Medium
+            bkgColor = R.color.axMsgInfo;
+        }
+        int gap = AxTools.dp2px(6);
+        Toast customToast = new Toast(context);
+        TextView textView = new TextView(context);
+        textView.setGravity(Gravity.CENTER);
+        textView.setPadding(0, gap, 0, gap);
+        textView.setText(text);
+        textView.setTextSize(px2sp((int) AxTools.getSmallerTextSize()));
+        textView.setTextColor(context.getResources().getColor(R.color.white));
+        textView.setBackgroundResource(bkgColor);
+        RelativeLayout relativeLayout = new RelativeLayout(context);
+        relativeLayout.addView(textView, new LayoutParams(LayoutParams.MATCH_PARENT, LayoutParams.WRAP_CONTENT));
+        customToast.setView(relativeLayout);
+        customToast.setGravity(Gravity.CENTER_VERTICAL, 0, 0);
+        customToast.setDuration(duration);
+        customToast.show();
 //		try {
 //			SuperCardToast superToast = new SuperCardToast(context,cardRootView,msgType==MsgType.PROGRSS?Type.PROGRESS:Type.STANDARD);
 //			if (msgType==MsgType.ERROR){
@@ -283,35 +328,40 @@ public class AxTools {
 //			Toast.makeText(context, text, Toast.LENGTH_LONG).show();
 //			return;// null;
 //		}
-	}
-	static public SuperCardToast toast(Activity activity, CharSequence text, OnClickListener onClickListener, OnDismissListener onDismissListener){
-		if (activity==null || activity.isFinishing() ){
-			AxDebug.error("*", "Toast without context:"+text);
-			return null;
-		}
-		SuperCardToast superToast = new SuperCardToast(activity, Type.BUTTON);
-		superToast.setDuration(3500); // Long
-		//superToast.setBackgroundResource(R.color.msgInfo);
-		superToast.setTextSize(px2sp(AxTools.getSmallerTextSize()));
-		superToast.setText(text);
-		superToast.getTextView().setGravity(Gravity.CENTER);
-		superToast.setButtonOnClickListener(onClickListener);
-		superToast.setOnDismissListener(onDismissListener);		
-		superToast.show();
-		return superToast;
-	}
-	static public void setTextViewSize(TextSize size, TextView view){
-		view.setTextSize(TypedValue.COMPLEX_UNIT_PX, size==TextSize.BASIC?AxTools.getBasicTextSize():(size==TextSize.LARGER?AxTools.getLargerTextSize():AxTools.getSmallerTextSize()));			
-	}
-	static public int getBasicTextSize(){
-		return mContext.getResources().getDimensionPixelSize(R.dimen.ax_text_size_basic);
-	}
-	static public int getLargerTextSize(){
-		return (int)(getBasicTextSize()*1.2);
-	}
-	static public int getSmallerTextSize(){
-		return (int)(getBasicTextSize()*0.8);
-	}
+    }
+
+    static public SuperCardToast toast(Activity activity, CharSequence text, OnClickListener onClickListener, OnDismissListener onDismissListener) {
+        if (activity == null || activity.isFinishing()) {
+            AxDebug.error("*", "Toast without context:" + text);
+            return null;
+        }
+        SuperCardToast superToast = new SuperCardToast(activity, Type.BUTTON);
+        superToast.setDuration(3500); // Long
+        //superToast.setBackgroundResource(R.color.msgInfo);
+        superToast.setTextSize(px2sp(AxTools.getSmallerTextSize()));
+        superToast.setText(text);
+        superToast.getTextView().setGravity(Gravity.CENTER);
+        superToast.setButtonOnClickListener(onClickListener);
+        superToast.setOnDismissListener(onDismissListener);
+        superToast.show();
+        return superToast;
+    }
+
+    static public void setTextViewSize(TextSize size, TextView view) {
+        view.setTextSize(TypedValue.COMPLEX_UNIT_PX, size == TextSize.BASIC ? AxTools.getBasicTextSize() : (size == TextSize.LARGER ? AxTools.getLargerTextSize() : AxTools.getSmallerTextSize()));
+    }
+
+    static public int getBasicTextSize() {
+        return mContext.getResources().getDimensionPixelSize(R.dimen.ax_text_size_basic);
+    }
+
+    static public int getLargerTextSize() {
+        return (int) (getBasicTextSize() * 1.2);
+    }
+
+    static public int getSmallerTextSize() {
+        return (int) (getBasicTextSize() * 0.8);
+    }
 
 
 }

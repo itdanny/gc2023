@@ -4,6 +4,7 @@ import android.annotation.SuppressLint;
 import android.app.DatePickerDialog;
 import android.content.Context;
 import android.content.SharedPreferences;
+import android.content.res.Resources;
 import android.graphics.Bitmap;
 import android.graphics.Canvas;
 import android.graphics.Matrix;
@@ -29,6 +30,8 @@ import java.util.Map;
 import java.util.TimeZone;
 
 import androidx.preference.PreferenceManager;
+
+import static android.content.Context.WINDOW_SERVICE;
 
 //import com.google.analytics.tracking.android.EasyTracker;
 //import com.google.analytics.tracking.android.MapBuilder;
@@ -368,7 +371,18 @@ public class MyUtil {
 
 static public DisplayMetrics getDisplayMetrics(Context context) {
     if (Build.VERSION.SDK_INT>= Build.VERSION_CODES.R) {
-        return context.getResources().getDisplayMetrics();
+        try {
+            return context.getResources().getDisplayMetrics();
+        } catch (Exception e){
+            try {
+                return Resources.getSystem().getDisplayMetrics();
+            } catch (Exception ignore) {
+                WindowManager wm = (WindowManager) context.getSystemService(WINDOW_SERVICE);
+                final DisplayMetrics displayMetrics = new DisplayMetrics();
+                wm.getDefaultDisplay().getMetrics(displayMetrics);
+                return displayMetrics;
+            }
+        }
     } else {
         DisplayMetrics dm = new DisplayMetrics();
         WindowManager windowManager = (WindowManager) context.getSystemService(Context.WINDOW_SERVICE);
