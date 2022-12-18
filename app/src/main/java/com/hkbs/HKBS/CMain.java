@@ -21,8 +21,6 @@ import android.os.Looper;
 import android.provider.MediaStore.Images;
 import android.text.TextUtils;
 import android.util.Log;
-import android.view.GestureDetector;
-import android.view.MotionEvent;
 import android.view.View;
 import android.view.Window;
 import android.widget.Button;
@@ -44,10 +42,12 @@ import androidx.activity.result.ActivityResult;
 import androidx.activity.result.ActivityResultCallback;
 import androidx.activity.result.ActivityResultLauncher;
 import androidx.activity.result.contract.ActivityResultContracts;
+import androidx.annotation.NonNull;
 import androidx.core.content.FileProvider;
 import androidx.fragment.app.Fragment;
 import androidx.fragment.app.FragmentActivity;
 import androidx.viewpager2.adapter.FragmentStateAdapter;
+import androidx.viewpager2.adapter.FragmentViewHolder;
 import androidx.viewpager2.widget.ViewPager2;
 
 
@@ -134,6 +134,7 @@ public class CMain extends MyActivity {
             super.onRequestPermissionsResult(requestCode, permissions, grantResults);
         }
     }
+
     @Override
     public void onBackPressed() {
         //Execute your code here
@@ -145,17 +146,19 @@ public class CMain extends MyActivity {
 
 //
 
-    private GestureDetector mGesture;
-    private View.OnTouchListener mViewOnTouch;
+    //private GestureDetector mGesture;
+    // private View.OnTouchListener mViewOnTouch;
 
     private class CustomViewAdapter extends FragmentStateAdapter {
         Calendar mCalendar;
         Context mContext;
+        View.OnClickListener mOnClickListener;
 
-        public CustomViewAdapter(FragmentActivity fa) {
+        public CustomViewAdapter(FragmentActivity fa, View.OnClickListener onClickListener) {
             super(fa);
             mContext = getBaseContext();//context;
             mCalendar = Calendar.getInstance();
+            mOnClickListener = onClickListener;
         }
 
         @Override
@@ -167,6 +170,13 @@ public class CMain extends MyActivity {
             int day = mCalendar.get(Calendar.DAY_OF_MONTH);
             MyUtil.log(TAG, "Get Item:" + year + "," + month + "," + day);
             return DailyFragment.getInstance(year, month, day);
+        }
+
+        @Override
+        public void onBindViewHolder(@NonNull FragmentViewHolder holder, int position, @NonNull List<Object> payloads) {
+            super.onBindViewHolder(holder, position, payloads);
+            holder.itemView.setClickable(true);
+            holder.itemView.setOnClickListener(mOnClickListener);
         }
 
         @Override
@@ -267,27 +277,41 @@ public class CMain extends MyActivity {
         mPager = findViewById(R.id.pager);
         mPager.setOffscreenPageLimit(1);
         // DC 202212 mAdapter = new CustomViewAdapter(getSupportFragmentManager(), CMain.this);
-        mAdapter = new CustomViewAdapter(CMain.this);
-        mPager.setAdapter(mAdapter);
-        mPager.getChildAt(mPager.getCurrentItem()).setOnTouchListener((v, event) -> {
-            switch (event.getAction()) {
-                case MotionEvent.ACTION_DOWN:
-                    v.setTag(1);
-                    break;
-                case MotionEvent.ACTION_MOVE:
-                    v.setTag(0);
-                    break;
-                case MotionEvent.ACTION_UP:
-                    if ((int) v.getTag() == 1) {
-                        v.setTag(0);
-                        setControlsVisibility(true);
-                        return true;
-                    }
-                    v.setTag(0);
-                    break;
+        mAdapter = new CustomViewAdapter(CMain.this, new View.OnClickListener() {
+            @Override
+            public void onClick(View v) {
+                setControlsVisibility(true);
             }
-            return false;
         });
+        mPager.setAdapter(mAdapter);
+
+//        View myTopView = mPager.getChildAt(mPager.getCurrentItem());
+//        ArrayList<View> allViewsWithinMyTopView = getAllChildren(myTopView);
+//        for (View child : allViewsWithinMyTopView) {
+//            child.setClickable(true);
+//            child.setOnClickListener(v->setControlsVisibility(true));
+//        }
+//        mPager.getChildAt(mPager.getCurrentItem()).setClickable(true);
+//        mPager.getChildAt(mPager.getCurrentItem()).setOnClickListener(v -> setControlsVisibility(true));
+//        mPager.getChildAt(mPager.getCurrentItem()).setOnTouchListener((v, event) -> {
+//          //  switch (event.getAction()) {
+//                case MotionEvent.ACTION_DOWN:
+//                    v.setTag(1);
+//                    break;
+//                case MotionEvent.ACTION_MOVE:
+//                    v.setTag(0);
+//                    break;
+//                case MotionEvent.ACTION_UP:
+//                    if ((int) v.getTag() == 1) {
+//                        v.setTag(0);
+//                        setControlsVisibility(true);
+//                        return true;
+//                    }
+//                    v.setTag(0);
+//                    break;
+//            }
+//            return false;
+//        });
         mPager.registerOnPageChangeCallback(new ViewPager2.OnPageChangeCallback() {
             boolean lastPageChange = false;
             boolean fistPageChange = false;
@@ -352,6 +376,29 @@ public class CMain extends MyActivity {
 
     }
 
+    //    private ArrayList<View> getAllChildren(View v) {
+//
+//        if (!(v instanceof ViewGroup)) {
+//            ArrayList<View> viewArrayList = new ArrayList<View>();
+//            viewArrayList.add(v);
+//            return viewArrayList;
+//        }
+//
+//        ArrayList<View> result = new ArrayList<View>();
+//
+//        ViewGroup vg = (ViewGroup) v;
+//        for (int i = 0; i < vg.getChildCount(); i++) {
+//
+//            View child = vg.getChildAt(i);
+//
+//            ArrayList<View> viewArrayList = new ArrayList<View>();
+//            viewArrayList.add(v);
+//            viewArrayList.addAll(getAllChildren(child));
+//
+//            result.addAll(viewArrayList);
+//        }
+//        return result;
+//    }
     // @TargetApi(Build.VERSION_CODES.HONEYCOMB_MR2)
     private void setControlsVisibility(boolean isVisible) {
         if (this.isFinishing()) return;
@@ -1436,7 +1483,7 @@ public class CMain extends MyActivity {
                     int resultCode = result.getResultCode();
                     // There are no request codes
                     Intent data = result.getData();
-                    if (data==null) return;
+                    if (data == null) return;
                     // theRequest
                     int requestCode = data.getIntExtra(MyUtil.EXTRA_REQUEST, -1);
                     switch (requestCode) {
@@ -1642,13 +1689,13 @@ public class CMain extends MyActivity {
         overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
     }
 
-    private void onClickAlarm(Context context){
-		MyUtil.trackClick(context, "Alarm", "M");
+    private void onClickAlarm(Context context) {
+        MyUtil.trackClick(context, "Alarm", "M");
         Intent intent = new Intent(this, AlarmActivity.class);
         intent.putExtra(MyUtil.EXTRA_REQUEST, MyUtil.REQUEST_ALARM);
         resultLauncher.launch(intent);
-		overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
-	}
+        overridePendingTransition(R.anim.zoom_enter, R.anim.zoom_exit);
+    }
 //    /**
 //     * A paint that has utilities dealing with painting text.
 //     * @author <a href="maillto:nospam">Ben Barkay</a>
