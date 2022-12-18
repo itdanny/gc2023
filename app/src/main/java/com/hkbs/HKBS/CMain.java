@@ -143,33 +143,7 @@ public class CMain extends MyActivity {
     // DC 202212
     // Use Keyboard to control will disable onBackPressed
 
-//    @Override
-//    public boolean onKeyDown(int keyCode, KeyEvent event) {
-//        if (mPager == null || isScrolling || MyUtil.DEBUG_APP) return false;
-//        switch (keyCode) {
-//            case KeyEvent.KEYCODE_W:
-//            case KeyEvent.KEYCODE_DPAD_UP:
-//                gotoPriorMonth();
-//                return true;
-//            case KeyEvent.KEYCODE_A:
-//            case KeyEvent.KEYCODE_DPAD_LEFT:
-//                gotoPrevDay();
-//                return true;
-//            case KeyEvent.KEYCODE_X:
-//            case KeyEvent.KEYCODE_DPAD_DOWN:
-//                gotoNextMonth();
-//                return true;
-//            case KeyEvent.KEYCODE_D:
-//            case KeyEvent.KEYCODE_DPAD_RIGHT:
-//                gotoNextDay();
-//                return true;
-//            case KeyEvent.KEYCODE_S:
-//                onClickToday(this);
-//                return true;
-//            default:
-//                return super.onKeyDown(keyCode, event);
-//        }
-//    }
+//
 
     private GestureDetector mGesture;
     private View.OnTouchListener mViewOnTouch;

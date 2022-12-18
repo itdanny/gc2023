@@ -110,7 +110,7 @@ public class SupportActivity extends MyActivity implements OnClickListener {
         String appVersionName = "?";
         try {
             // DC 202212
-           appVersionName = MyApp.context().getApplicationInfo().name;
+           appVersionName = BuildConfig.VERSION_NAME;//MyApp.context().getApplicationInfo().ver;
           //appVersionName = getPackageManager().getPackageInfo(getPackageName(),0).versionName;
         } catch (Exception e){
             //

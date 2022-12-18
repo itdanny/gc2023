@@ -26,7 +26,7 @@ import android.widget.TextView;
 
 import com.hkbs.HKBS.arkCalendar.MyCalendar;
 import com.hkbs.HKBS.arkCalendar.MyCalendar.MyDayEvents;
-import com.hkbs.HKBS.arkCalendar.MyCalendarLunar;
+import com.hkbs.HKBS.arkCalendar.MyChineseCalendar;
 import com.hkbs.HKBS.arkUtil.MySquareView;
 import com.hkbs.HKBS.arkUtil.MyUtil;
 
@@ -161,24 +161,34 @@ public class CalendarAdapter extends BaseAdapter {
 			// show CHINESE LUNAR term
 			String term="";
 			if (!defaultLang.equals(MyUtil.PREF_LANG_EN)){
-				term = MyCalendarLunar.solar.getSolarTerm(curCal);
+//				term = MyCalendarLunar.solar.getSolarTerm(curCal);
+                MyChineseCalendar myCC = new MyChineseCalendar(curCal,MyApp.mIsSimplifiedChinese);
+                term = myCC.ccSolar();
 				term = term.equals("")?"":"<small><small>"+term+"</small></small>";
 			}
 			output = output + term;
 			// Show Chinese Lunar day on Sunday
 			String holiday = MyHoliday.getHolidayRemark(curCal.getTime());
 			final boolean isHoliday = ((!holiday.equals("") && !holiday.startsWith("#")) || (curCal.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY));
-			if (!defaultLang.equals(MyUtil.PREF_LANG_EN)){				
+            final MyChineseCalendar tmpCC = new MyChineseCalendar(curDayEvents.getCalendar(), MyApp.mIsSimplifiedChinese);
+            if (!defaultLang.equals(MyUtil.PREF_LANG_EN)){
 				if (IS_SHOW_LUNAR_DAY_ON_SUNDAY_ONLY){
 					if (curCal.get(Calendar.DAY_OF_WEEK)==Calendar.SUNDAY){
-						output = output + "<br><small>("+(new MyCalendarLunar(curDayEvents.getCalendar(),MyApp.mIsSimplifiedChinese)).toMMDD()+")</small>";
+//                        output = output + "<br><small>("+(new MyCalendarLunar(curDayEvents.getCalendar(),MyApp.mIsSimplifiedChinese)).toMMDD()+")</small>";
+
+                        output = output + "<br><small>("+tmpCC.monthDay()+")</small>";
 					}
 				} else {
-					MyCalendarLunar lunarDay = new MyCalendarLunar(curDayEvents.getCalendar(),MyApp.mIsSimplifiedChinese);
-                    if (lunarDay.getDay()==1){
-                        output = output + "<br><font color=\"black\"><small><small>"+lunarDay.toChineseMM()+"</small></small></font>";
+//					MyCalendarLunar lunarDay = new MyCalendarLunar(curDayEvents.getCalendar(),MyApp.mIsSimplifiedChinese);
+//                    if (lunarDay.getDay()==1){
+//                        output = output + "<br><font color=\"black\"><small><small>"+lunarDay.toChineseMM()+"</small></small></font>";
+//                    } else {
+//                        output = output + "<br><font color=\"black\"><small><small>"+lunarDay.toChineseDD()+"</small></small></font>";
+//                    }
+                    if (tmpCC.day()==1){
+                        output = output + "<br><font color=\"black\"><small><small>"+tmpCC.ccMonth()+"</small></small></font>";
                     } else {
-                        output = output + "<br><font color=\"black\"><small><small>"+lunarDay.toChineseDD()+"</small></small></font>";
+                        output = output + "<br><font color=\"black\"><small><small>"+tmpCC.ccDay()+"</small></small></font>";
                     }
 				}
 			}

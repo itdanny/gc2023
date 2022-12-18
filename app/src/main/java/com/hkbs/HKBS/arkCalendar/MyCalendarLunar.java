@@ -142,11 +142,14 @@ public class MyCalendarLunar {
 	 */
 	static private boolean mIsSimpleChinese;
     static private long mBaseDateTime=-1;
+
+    //http://time4j.net/javadoc-en/net/time4j/calendar/ChineseCalendar.html
+    // Use this version -> https://github.com/MenoData/Time4A
+    // http://www.docjar.com/html/api/com/ibm/icu/util/ChineseCalendar.java.html
 	public MyCalendarLunar(Calendar cal, boolean isSimpleChinese) {
 		mIsSimpleChinese=isSimpleChinese;
 		@SuppressWarnings("unused")
 		int yearCyl, monCyl, dayCyl;
-
 		int leapMonth = 0;
 		//Date baseDate = null;
         if (mBaseDateTime==-1) {
@@ -250,7 +253,7 @@ public class MyCalendarLunar {
 		month = iMonth;
 		day = offset + 1;
 	}
-	public static String getChinaDayString(int day) {
+	private static String getChinaDayString(int day) {
 		String chineseTen[] = { "初", "十", "廿", "卅" };
 		int n = day % 10 == 0 ? 9 : day % 10 - 1;
 		if (day > 30) return "";

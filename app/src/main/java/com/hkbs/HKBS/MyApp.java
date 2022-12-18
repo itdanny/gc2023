@@ -5,11 +5,15 @@ import android.content.Context;
 import android.content.res.Configuration;
 import android.os.Build;
 import android.os.LocaleList;
-//import androidx.multidex.MultiDexApplication;
+
+import com.hkbs.HKBS.arkCalendar.MyChineseCalendar;
+
+import net.time4j.android.ApplicationStarter;
 
 import org.arkist.share.AxDebug;
 import org.arkist.share.AxTools;
 
+import java.util.Calendar;
 import java.util.Locale;
 
 /**
@@ -36,6 +40,9 @@ public class MyApp extends Application {//extends MultiDexApplication
     public void onCreate() {
         super.onCreate();
         mApp = this;
+        // CHinese Calendar https://github.com/MenoData/Time4A
+        ApplicationStarter.initialize(this, true);
+        MyChineseCalendar mcc = new MyChineseCalendar(Calendar.getInstance(),false);
         AxTools.init(getApplicationContext());
         updateConfig(getApplicationContext());
     }

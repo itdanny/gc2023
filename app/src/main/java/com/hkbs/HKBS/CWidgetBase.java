@@ -14,7 +14,7 @@ import android.util.Log;
 import android.view.View;
 import android.widget.RemoteViews;
 
-import com.hkbs.HKBS.arkCalendar.MyCalendarLunar;
+import com.hkbs.HKBS.arkCalendar.MyChineseCalendar;
 import com.hkbs.HKBS.arkUtil.MyUtil;
 
 import org.arkist.share.AxDebug;
@@ -234,7 +234,8 @@ public class CWidgetBase extends AppWidgetProvider {
         int curMonth = mDisplayDay.get(Calendar.MONTH);
         int curDay = mDisplayDay.get(Calendar.DAY_OF_MONTH);
 
-        final MyCalendarLunar lunar = new MyCalendarLunar(mDisplayDay, MyApp.mIsSimplifiedChinese);
+       // final MyCalendarLunar lunar = new MyCalendarLunar(mDisplayDay, MyApp.mIsSimplifiedChinese);
+        final MyChineseCalendar myCC = new MyChineseCalendar(mDisplayDay, MyApp.mIsSimplifiedChinese);
         final Calendar monthEndDate = (Calendar) mDisplayDay.clone();
         String holiday = MyHoliday.getHolidayRemark(mDisplayDay.getTime());
         holiday = holiday.replace("*", "");
@@ -245,10 +246,10 @@ public class CWidgetBase extends AppWidgetProvider {
         if (holiday.startsWith("#")) {
             holiday = holiday.substring(1);
         }
-        int nbrOfDaysTo30 = 30 - lunar.getDay(); // Chinese Day
+        int nbrOfDaysTo30 = 30 - myCC.day(); // Chinese Day
         monthEndDate.add(Calendar.DAY_OF_MONTH, nbrOfDaysTo30);
-        final MyCalendarLunar monthEndLunar = new MyCalendarLunar(monthEndDate, MyApp.mIsSimplifiedChinese);
-        boolean isBigMonth = (monthEndLunar.getDay() == 30) ? true : false;
+        //final MyCalendarLunar monthEndLunar = new MyCalendarLunar(monthEndDate, MyApp.mIsSimplifiedChinese);
+        //boolean isBigMonth = (monthEndLunar.getDay() == 30) ? true : false;
 
         /***********************************************************************
          *  HOLIDAY
@@ -365,19 +366,26 @@ public class CWidgetBase extends AppWidgetProvider {
             recRef.views.setImageViewResource(getID(context, nbr, "WeekImage"), isHoliday ? R.drawable.red_weekday_2015 : R.drawable.green_weekday_2015);
         }
 
-        recRef.views.setTextViewText(getID(context, nbr, "ChiLunarDay"), lunar.toChineseDD() + "日");
+//        recRef.views.setTextViewText(getID(context, nbr, "ChiLunarDay"), lunar.toChineseDD() + "日");
+        recRef.views.setTextViewText(getID(context, nbr, "ChiLunarDay"), myCC.ccDay() + "日");
         recRef.views.setTextColor(getID(context, nbr, "ChiLunarDay"), textColor);
 
-        recRef.views.setTextViewText(getID(context, nbr, "ChiLunarMonth"), lunar.toChineseMM() + (isBigMonth ? "大" : "小"));
+//        recRef.views.setTextViewText(getID(context, nbr, "ChiLunarMonth"), lunar.toChineseMM() + (isBigMonth ? "大" : "小"));
+        recRef.views.setTextViewText(getID(context, nbr, "ChiLunarMonth"), myCC.ccMonth() + myCC.ccMonthBigSmall());
         recRef.views.setTextColor(getID(context, nbr, "ChiLunarMonth"), textColor);
 
-        recRef.views.setTextViewText(getID(context, nbr, "ChiLunarYear"), lunar.toChineseYY() + "年");
+//        recRef.views.setTextViewText(getID(context, nbr, "ChiLunarYear"), lunar.toChineseYY() + "年");
+        recRef.views.setTextViewText(getID(context, nbr, "ChiLunarYear"),myCC.year() + "年");
         recRef.views.setTextColor(getID(context, nbr, "ChiLunarYear"), textColor);
 
-        recRef.views.setTextViewText(getID(context, nbr, "ChiLeftYear"), lunar.toChineseYY() + "年");
+        //recRef.views.setTextViewText(getID(context, nbr, "ChiLeftYear"), lunar.toChineseYY() + "年");
+        recRef.views.setTextViewText(getID(context, nbr, "ChiLeftYear"), myCC.year() + "年");
         recRef.views.setTextColor(getID(context, nbr, "ChiLeftYear"), textColor);
 
-        String lunarTerm = MyCalendarLunar.solar.getSolarTerm(mDisplayDay);
+        //cMyCalendarLunar.solar.getSolarTerm(mDisplayDay);
+        MyChineseCalendar tmpCC = new MyChineseCalendar(mDisplayDay, MyApp.mIsSimplifiedChinese);
+        String lunarTerm =tmpCC.ccSolar();
+
         recRef.views.setTextViewText(getID(context, nbr, "ChiLeftWeather"), lunarTerm);
         recRef.views.setTextColor(getID(context, nbr, "ChiLeftWeather"), textColor);
         if (lunarTerm.equals("")) {

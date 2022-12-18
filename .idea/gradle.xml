@@ -17,6 +17,7 @@
             <option value="$PROJECT_DIR$/libArkist" />
             <option value="$PROJECT_DIR$/libFancyCoverFlow" />
             <option value="$PROJECT_DIR$/libSuperToasts" />
+            <option value="$PROJECT_DIR$/time4j-android" />
           </set>
         </option>
       </GradleProjectSettings>

@@ -19,6 +19,7 @@
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/libSuperToasts/gc2015.libSuperToasts.androidTest.iml" filepath="$PROJECT_DIR$/.idea/modules/libSuperToasts/gc2015.libSuperToasts.androidTest.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/libSuperToasts/gc2015.libSuperToasts.main.iml" filepath="$PROJECT_DIR$/.idea/modules/libSuperToasts/gc2015.libSuperToasts.main.iml" />
       <module fileurl="file://$PROJECT_DIR$/.idea/modules/libSuperToasts/gc2015.libSuperToasts.unitTest.iml" filepath="$PROJECT_DIR$/.idea/modules/libSuperToasts/gc2015.libSuperToasts.unitTest.iml" />
+      <module fileurl="file://$PROJECT_DIR$/.idea/modules/time4j-android/gc2015.time4j-android.iml" filepath="$PROJECT_DIR$/.idea/modules/time4j-android/gc2015.time4j-android.iml" />
     </modules>
   </component>
 </project>
