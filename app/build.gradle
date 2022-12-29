@@ -7,8 +7,8 @@ android {
         applicationId "com.hkbs.HKBS"
         minSdkVersion 24 // 2016 Android 7 or above Android-N <95.8%>
         targetSdkVersion 33
-        versionCode 99
-        versionName "3.69"
+        versionCode 100
+        versionName "3.70"
         multiDexEnabled false
     }
 
