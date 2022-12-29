@@ -103,7 +103,13 @@ public class AxAlarm {
         //-- for Good Calendar --
         AlarmManager am = (AlarmManager) context.getSystemService(Context.ALARM_SERVICE);
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.S && !am.canScheduleExactAlarms()) {
-            context.startActivity(new Intent(ACTION_REQUEST_SCHEDULE_EXACT_ALARM, Uri.parse("package:" + context.getPackageName())));
+            Intent intent = new Intent(ACTION_REQUEST_SCHEDULE_EXACT_ALARM, Uri.parse("package:" + context.getPackageName()));
+            intent.addFlags(Intent.FLAG_ACTIVITY_NEW_TASK);
+            try {
+                context.startActivity(intent);
+            } catch (Exception e){
+                MyApp.context().startActivity(intent);
+            }
             return;
         }
         context = context.getApplicationContext();
